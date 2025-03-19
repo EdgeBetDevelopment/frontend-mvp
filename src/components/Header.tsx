@@ -30,7 +30,7 @@ export const HEADER_PAGES = [
 
 const Header = () => {
   return (
-    <div className="border-border flex w-full items-center justify-between rounded-2xl bg-transparent p-3 backdrop-blur-sm">
+    <div className="border-border flex w-full items-center justify-between rounded-2xl bg-transparent p-3 backdrop-blur-xl">
       <Logo />
 
       <div className="flex items-center gap-4">
