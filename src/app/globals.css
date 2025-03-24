@@ -176,6 +176,14 @@
   @apply font-medium text-6xl text-center align-bottom capitalize;
 }
 
-.tl-paraghraph {
+.tl-paraghraph1 {
+  @apply font-normal text-lg leading-7 tracking-normal text-center align-bottom text-text-secondary;
+}
+
+.tl-paraghraph2 {
+  @apply align-middle text-base font-normal tracking-normal text-text-secondary;
+}
+
+.tl-paraghraph3 {
   @apply align-middle text-sm font-normal tracking-normal text-text-secondary;
 }

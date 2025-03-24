@@ -63,7 +63,7 @@ const SposrtCard = () => {
               Basketball Euroleague
             </div>
 
-            <div className="text-text-secondary tl-paraghraph">
+            <div className="text-text-secondary tl-paraghraph3">
               Basketball Euroleague
             </div>
           </div>

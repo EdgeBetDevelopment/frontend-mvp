@@ -89,7 +89,7 @@ const EventsTableBlock = () => {
     <div className="flex flex-col gap-9">
       <div className="flex flex-col items-center gap-9">
         <h3 className="tl-heading1">Upcoming Major Events</h3>
-        <p className="tl-paraghraph text-primary">
+        <p className="tl-paraghraph1 text-primary">
           Track the biggest sports events and get expert predictions with latest
           odds analysis.
         </p>
