@@ -6,8 +6,8 @@ import SearchIcon from '@/assets/icons/search.svg';
 
 const HeroBlock = () => {
   return (
-    <div className="tl-container flex flex-col items-center gap-6">
-      <div className="flex flex-col items-center gap-6">
+    <div className="tl-container flex w-full flex-col items-center gap-6">
+      <div className="flex max-w-[811px] flex-col items-center gap-6">
         <h2 className="text-center align-bottom text-6xl font-medium capitalize">
           Level Up Your Esports Experience with edgebet
         </h2>
@@ -18,7 +18,7 @@ const HeroBlock = () => {
       </div>
 
       <Input
-        className="w-full! max-w-[480px]!"
+        containerClassName="w-full max-w-[480px]"
         icon={<SearchIcon />}
         placeholder="Search sports..."
       />

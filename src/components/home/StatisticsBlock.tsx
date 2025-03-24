@@ -25,7 +25,7 @@ const STATISTICS = [
 
 const StatisticsBlock = () => {
   return (
-    <div className="tl-container border-border-secondary flex flex-col items-center gap-9 overflow-hidden rounded-3xl border bg-[#32323280] p-8">
+    <div className="tl-container border-border-secondary flex w-full flex-col items-center gap-9 overflow-hidden rounded-3xl border bg-[#32323280] p-8">
       <div className="relative flex flex-col items-center gap-9">
         <div className="absolute top-0 left-0 h-full w-full rounded-full bg-[#84FDF750] blur-[300px]" />
 

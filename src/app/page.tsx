@@ -1,5 +1,7 @@
 import React from 'react';
 
+import CTABlock from '@/components/CTABlock';
+import EventsTableBlock from '@/components/home/EventsTable';
 import HeroBlock from '@/components/home/HeroBlock';
 import SportsList from '@/components/home/SportsList';
 import StatisticsBlock from '@/components/home/StatisticsBlock';
@@ -7,11 +9,19 @@ import StatisticsBlock from '@/components/home/StatisticsBlock';
 export default function Home() {
   return (
     <div>
-      <HeroBlock />
+      <div className="mb-[90px] flex flex-col gap-[90px]">
+        <HeroBlock />
 
-      <SportsList />
+        <SportsList />
 
-      <StatisticsBlock />
+        <StatisticsBlock />
+
+        <div className="tl-container w-full">
+          <EventsTableBlock />
+        </div>
+
+        <CTABlock />
+      </div>
     </div>
   );
 }

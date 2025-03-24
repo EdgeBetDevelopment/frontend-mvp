@@ -35,7 +35,7 @@ export default function RootLayout({
           <Header />
         </div>
 
-        <div className="pt-[108px]">{children}</div>
+        <div className="pt-[232px]">{children}</div>
 
         <Footer />
       </body>
