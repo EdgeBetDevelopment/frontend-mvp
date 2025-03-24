@@ -31,11 +31,11 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} relative antialiased`}
       >
-        <div className="fixed top-9 left-1/2 w-full max-w-[800px] -translate-x-1/2 transform">
+        <div className="fixed top-9 left-1/2 z-30 w-full max-w-[800px] -translate-x-1/2 transform">
           <Header />
         </div>
 
-        {children}
+        <div className="pt-[232px]">{children}</div>
 
         <Footer />
       </body>
