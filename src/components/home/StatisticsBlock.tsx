@@ -64,7 +64,7 @@ const StatisticsItem = ({ title, description, value }: IStatisticsItem) => {
         {title}
       </div>
 
-      <div className="tl-paraghraph max-w-[228px]">{description}</div>
+      <div className="tl-paraghraph3 max-w-[228px]">{description}</div>
 
       <div className="text-primary-brand align-middle text-6xl font-bold tracking-normal">
         {value}

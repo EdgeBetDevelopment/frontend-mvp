@@ -9,22 +9,22 @@ import { Button } from './ui/button';
 export const HEADER_PAGES = [
   {
     name: 'Testimonials',
-    link: ROUTES.HOME,
+    link: ROUTES.TESTIMONIALS,
   },
 
   {
     name: 'Methodology',
-    link: ROUTES.HOME,
+    link: ROUTES.METHODOLOGY,
   },
 
   {
     name: 'Pricing',
-    link: ROUTES.HOME,
+    link: ROUTES.PRICING,
   },
 
   {
     name: 'Community',
-    link: ROUTES.HOME,
+    link: ROUTES.COMMUNITY,
   },
 ];
 

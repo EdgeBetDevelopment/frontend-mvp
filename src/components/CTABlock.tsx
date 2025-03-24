@@ -14,7 +14,7 @@ const CTABlock = () => {
             <span className="text-primary-brand">Before Everyone Else</span>
           </h3>
 
-          <p className="tl-paraghraph">
+          <p className="tl-paraghraph1">
             Join thousands of smart bettors who receive premium insights,
             real-time odds analysis, and expert predictions. Our AI-powered
             platform helps you make informed decisions and maximize your winning
