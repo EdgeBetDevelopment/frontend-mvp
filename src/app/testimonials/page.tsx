@@ -76,7 +76,7 @@ const Testimonials = () => {
   const reversedTestimonials = TESTIMONIAL_DATA.slice().reverse();
 
   return (
-    <div className="tl-container mb-[90px] flex flex-col items-center gap-[90px]">
+    <div className="tl-container my-[90px] flex flex-col items-center gap-[90px]">
       <PageTitle
         title="user reviews"
         description="Discover what our community of successful bettors has to say about
@@ -85,7 +85,6 @@ const Testimonials = () => {
           through AI-powered predictions and expert analysis."
       />
 
-      {/* Flexbox Layout */}
       <div className="flex items-start gap-[18px]">
         <div className="flex flex-col gap-[18px]">
           {TESTIMONIAL_DATA.map((testimonial) => (
