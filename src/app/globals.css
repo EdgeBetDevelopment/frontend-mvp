@@ -46,6 +46,7 @@
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
   --surface-primary: #282828;
+  --surface-secondary: #1A1A1A;
 }
 
 .dark {
@@ -123,6 +124,7 @@
      --color-text-secondary: var(--text-secondary);
      --color-primary-brand: var(--primary-brand);
      --color-surface-primary: var(--surface-primary);
+     --color-surface-secondary: var(--surface-secondary);
 }
 
 @layer base {
@@ -139,6 +141,10 @@
   @apply flex justify-between items-center;
 }
 
+.tl-flex-icon {
+  @apply flex items-center gap-2;
+}
+
 .tl-container {
   @apply mx-auto px-4 max-w-[1352px];
 }
@@ -150,6 +156,10 @@
 .tl-gradient {
   background: linear-gradient(180deg, rgba(220, 253, 207, 0.07) 0%, rgba(46, 65, 58, 0) 100%), 
   linear-gradient(180deg, rgba(220, 253, 207, 0.07) 40.2%, rgba(46, 65, 58, 0) 205.16%);
+}
+
+.tl-gradient-mistBlue {
+  background: linear-gradient(112.71deg, rgba(73, 160, 187, 0.40) 19.64%, rgba(168, 238, 255, 0.52) 55.1%, rgba(73, 160, 187, 0.20) 100%);
 }
 
 .tl-mask-gradient-top {
@@ -187,3 +197,4 @@
 .tl-paraghraph3 {
   @apply align-middle text-sm font-normal tracking-normal text-text-secondary;
 }
+
