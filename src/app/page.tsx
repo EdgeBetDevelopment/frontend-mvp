@@ -9,7 +9,7 @@ import StatisticsBlock from '@/components/home/StatisticsBlock';
 export default function Home() {
   return (
     <div>
-      <div className="mb-[90px] flex flex-col gap-[90px]">
+      <div className="my-[90px] flex flex-col gap-[90px]">
         <HeroBlock />
 
         <SportsList />
