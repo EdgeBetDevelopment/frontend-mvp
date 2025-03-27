@@ -2,36 +2,47 @@
 
 import React from 'react';
 import dayjs from 'dayjs';
+import { NumericFormat } from 'react-number-format';
 
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { IGame } from '@/types/game';
 import CardContainer from '../ui/containers/CardContainer';
+import { Input } from '../ui/input';
 
 import CalendarIcon from '@/assets/icons/calendar.svg';
+import CancelIcon from '@/assets/icons/cancel.svg';
 import ChevronRightIcon from '@/assets/icons/chevron-right.svg';
 import ClockIcon from '@/assets/icons/clock.svg';
 import NFLLogoImage from '@/assets/nflLogo.png';
 import TeamLogo1Image from '@/assets/teamLogo1.png';
 import TeamLogo2Image from '@/assets/teamLogo2.png';
 
-interface IGameCard {
+interface ITrackGameCard {
   game: IGame;
   onClickFullAnalysis: () => void;
-  onClickTrackBet: () => void;
+  onClickClearTrackBet: () => void;
 }
 
-const GameCard = ({
+const TrackGameCard = ({
   game,
   onClickFullAnalysis,
-  onClickTrackBet,
-}: IGameCard) => {
+  onClickClearTrackBet,
+}: ITrackGameCard) => {
   const formattedDate = dayjs(game.gameTimeUTC).format('MM/DD/YYYY');
   const formattedTime = dayjs(game.gameTimeUTC).format('HH:mm');
 
   return (
-    <CardContainer className="tl-gradient-mistBlue border-border flex flex-col gap-3">
+    <CardContainer className="tl-gradient-mistBlue border-border relative flex flex-col gap-3">
+      <Button
+        className="absolute top-1 right-1"
+        variant="clear"
+        size="icon"
+        onClick={onClickClearTrackBet}
+      >
+        <CancelIcon />
+      </Button>
+
       <div className="flex items-center">
         <div className="relative flex items-center">
           <Avatar className="border-border bg-surface-secondary h-11 w-11 rounded-full border p-1.5">
@@ -70,14 +81,19 @@ const GameCard = ({
               <AvatarImage src={NFLLogoImage.src} />
             </div>
           </Avatar>
-          NFL
-          <ChevronRightIcon className="text-text-secondary" />
-          NFC North Wild Card Playoff Game
-        </div>
 
-        <div className="tl-paraghraph2 text-text-primary">
-          Borem ipsum dolor sit amet, consectetur adipiscing elit. Nunc
-          vulputate libero et velit interdum, ac aliquet odio mattis.
+          <div>NFL</div>
+
+          <div>
+            <ChevronRightIcon className="text-text-secondary h-[25px] w-[25px]" />
+          </div>
+
+          <div
+            title="NFC North Wild Card Playoff Game"
+            className="line-clamp-1"
+          >
+            NFC North Wild Card Playoff Game
+          </div>
         </div>
 
         <div>
@@ -86,26 +102,27 @@ const GameCard = ({
           </Button>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
-          <Badge size="md" variant="mistBlue">
-            Recommended bet <span className="text-text-primary">1.61</span>
-          </Badge>
-
-          <Badge size="md" variant="mistBlue">
-            Best value <span className="text-text-primary">2.29</span>
-          </Badge>
-
-          <Badge size="md" variant="mistBlue">
-            Safer bet <span className="text-text-primary">1.4</span>
-          </Badge>
+        <div className="flex flex-col items-center gap-4">
+          <NumericFormat
+            value={12323}
+            label="Betting odds"
+            className="align-middle text-base font-normal tracking-normal"
+            customInput={Input}
+            decimalSeparator="."
+          />
+          <NumericFormat
+            value={12323}
+            label="Bet amount"
+            disabled
+            className="align-middle text-base font-normal tracking-normal"
+            customInput={Input}
+            thousandSeparator
+            prefix={'$'}
+          />
         </div>
-
-        <Button onClick={onClickTrackBet} variant="gradient" className="w-full">
-          Track bet
-        </Button>
       </div>
     </CardContainer>
   );
 };
 
-export default GameCard;
+export default TrackGameCard;
