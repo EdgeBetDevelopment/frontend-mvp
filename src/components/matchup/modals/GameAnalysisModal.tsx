@@ -11,7 +11,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { IGame, ITeam } from '@/types/game';
+import { useStore } from '@/store';
+import { ITeam } from '@/types/game';
 
 import ClockBackIcon from '@/assets/icons/clock-back.svg';
 import StatisticsIcon from '@/assets/icons/statistics.svg';
@@ -20,10 +21,11 @@ import NFLLogoImage from '@/assets/nflLogo.png';
 interface IGameAnalysisModal {
   open: boolean;
   onClose: () => void;
-  game: IGame | null;
 }
 
-const GameAnalysisModal = ({ open, onClose, game }: IGameAnalysisModal) => {
+const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
+  const { selectedGame: game } = useStore();
+
   if (!game) {
     return null;
   }
