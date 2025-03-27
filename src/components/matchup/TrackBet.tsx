@@ -7,6 +7,7 @@ import { z } from 'zod';
 
 import TrackGameCard from '@/components/matchup/TrackGameCard';
 import { Button } from '@/components/ui/button';
+import { useStore } from '@/store';
 import { IGame } from '@/types/game';
 import { Form } from '../ui/form';
 
@@ -15,14 +16,14 @@ const formSchema = z.object({
 });
 
 const TrackBet = ({
-  trackedGame,
   onClickFullAnalysis,
   onClickClearTrackBet,
 }: {
-  trackedGame: any;
   onClickFullAnalysis: (game: IGame) => void;
   onClickClearTrackBet: () => void;
 }) => {
+  const { trackedGame } = useStore();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 
 import GameCard from '@/components/matchup/GameCard';
@@ -9,13 +9,13 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
 import useModalManager from '@/hooks/useModalManager';
 import apiService from '@/services';
+import { useStore } from '@/store';
 import { IGame } from '@/types/game';
 import GameAnalysisModal from '../../components/matchup/modals/GameAnalysisModal';
 
 const Matchup = () => {
   const { openModal, closeModal, isModalOpen } = useModalManager();
-  const [selectedGame, setSelectedGame] = useState<IGame | null>(null);
-  const [trackedGame, setTrackedGame] = useState<IGame | null>(null);
+  const { setTrackedGame, setSelectedGame } = useStore();
 
   const { data = { games: [] }, isLoading } = useQuery<any>({
     queryKey: ['scrore-board'],
@@ -49,7 +49,7 @@ const Matchup = () => {
               ? Array.from({ length: 4 }).map((_, index) => (
                   <Skeleton
                     key={index}
-                    className="h-[342px] w-full rounded-3xl"
+                    className="h-[411px] w-[462px] rounded-3xl"
                   />
                 ))
               : data.games.map((game: IGame) => (
@@ -64,7 +64,6 @@ const Matchup = () => {
         </ScrollArea>
 
         <TrackBet
-          trackedGame={trackedGame}
           onClickFullAnalysis={onClickFullAnalysis}
           onClickClearTrackBet={onClickClearTrackBet}
         />
@@ -73,7 +72,6 @@ const Matchup = () => {
       <GameAnalysisModal
         open={isModalOpen('gameAnalysis')}
         onClose={onClickCloseModal}
-        game={selectedGame}
       />
     </>
   );

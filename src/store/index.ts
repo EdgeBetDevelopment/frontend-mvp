@@ -1,21 +1,14 @@
 import { create } from 'zustand';
-import { devtools, persist } from 'zustand/middleware';
+import { devtools } from 'zustand/middleware';
 
-interface BearState {
-  bears: number;
-  increase: (by: number) => void;
-}
+import { matchupSlice } from './slices/matchupSlice';
 
-export const useStore = create<BearState>()(
-  devtools(
-    persist(
-      (set) => ({
-        bears: 0,
-        increase: (by) => set((state) => ({ bears: state.bears + by })),
-      }),
-      {
-        name: 'bear-storage',
-      },
-    ),
-  ),
+type AuthState = ReturnType<typeof matchupSlice>;
+
+type IStore = AuthState;
+
+export const useStore = create<IStore>()(
+  devtools((...a) => ({
+    ...matchupSlice(...a),
+  })),
 );
