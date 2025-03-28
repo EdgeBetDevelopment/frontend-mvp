@@ -5,6 +5,7 @@ import { Geist, Geist_Mono } from 'next/font/google';
 
 import Footer from '@/components/Footer';
 import Header from '@/components/Header';
+import { AuthProvider } from '@/context/AuthContext';
 import TanstackQueryProvider from '@/providers/QueryProvider';
 
 const geistSans = Geist({
@@ -29,19 +30,21 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="!scroll-smooth">
-      <TanstackQueryProvider>
-        <body
-          className={`${geistSans.variable} ${geistMono.variable} relative antialiased`}
-        >
-          <div className="fixed top-9 left-1/2 z-30 w-full max-w-[800px] -translate-x-1/2 transform">
-            <Header />
-          </div>
+      <AuthProvider>
+        <TanstackQueryProvider>
+          <body
+            className={`${geistSans.variable} ${geistMono.variable} relative antialiased`}
+          >
+            <div className="fixed top-9 left-1/2 z-30 w-full max-w-[800px] -translate-x-1/2 transform">
+              <Header />
+            </div>
 
-          <div className="pt-[142px]">{children}</div>
+            <div className="pt-[142px]">{children}</div>
 
-          <Footer />
-        </body>
-      </TanstackQueryProvider>
+            <Footer />
+          </body>
+        </TanstackQueryProvider>
+      </AuthProvider>
     </html>
   );
 }
