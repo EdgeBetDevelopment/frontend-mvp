@@ -26,6 +26,10 @@ export const HEADER_PAGES = [
     name: 'Community',
     link: ROUTES.COMMUNITY,
   },
+  {
+    name: 'Matchup',
+    link: ROUTES.MATCHUP,
+  },
 ];
 
 const Header = () => {

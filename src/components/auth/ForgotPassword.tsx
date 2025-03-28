@@ -8,7 +8,7 @@ import H2 from './H2';
 
 import ArrowRight from '@/assets/icons/arrow-right.svg';
 
-const ForgetPassword: React.FC = () => {
+const ForgotPassword: React.FC = () => {
   const [email, setEmail] = useState('');
 
   const [errors, setErrors] = useState<{
@@ -44,7 +44,7 @@ const ForgetPassword: React.FC = () => {
       onSubmit={handleLogin}
       className="auth-form mt-20 mb-40 flex w-full max-w-[800px] flex-col items-center justify-center gap-6 rounded-3xl px-40 py-14"
     >
-      <H2 text="Forget Password" />
+      <H2 text="Forgot Password" />
 
       <p className="text-center text-base text-[#B3B3B3]">
         Enter your email address
@@ -70,4 +70,4 @@ const ForgetPassword: React.FC = () => {
   );
 };
 
-export default ForgetPassword;
+export default ForgotPassword;
