@@ -21,7 +21,7 @@ const prettierConfig = {
   singleQuote: true,
   tabWidth: 2,
   trailingComma: 'all',
-  plugins: ["prettier-plugin-tailwindcss"]
+  plugins: ['prettier-plugin-tailwindcss'],
 };
 
 const eslintConfig = [
@@ -36,7 +36,7 @@ const eslintConfig = [
     files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx', '**/*.json'],
     plugins: {
       'unused-imports': unusedImports,
-      "simple-import-sort": simpleImportSort,
+      'simple-import-sort': simpleImportSort,
       json: jsonPlugin,
       prettier: eslintPluginPrettierRecommended,
     },
@@ -44,26 +44,25 @@ const eslintConfig = [
     rules: {
       'prettier/prettier': ['error', prettierConfig],
 
-
-      "simple-import-sort/imports": [
-        "error",
+      'simple-import-sort/imports': [
+        'error',
         {
-          "groups": [
+          groups: [
             // 1. Side effect imports at the start.
-            ["^\\u0000"],
+            ['^\\u0000'],
             // 2. `react` and packages: Things that start with a letter (or digit or underscore), or `@` followed by a letter.
-            ["^react$", "^@?\\w"],
+            ['^react$', '^@?\\w'],
             // 3. Absolute imports and other imports.
             // Anything not matched in another group.
-            ["^@", "^"],
+            ['^@', '^'],
             // 4. relative imports from same folder "./"
-            ["^\\./"],
+            ['^\\./'],
             // 5. style module imports always come last
-            ["^.+\\.(module.css|module.scss)$"],
+            ['^.+\\.(module.css|module.scss)$'],
             // 6. media imports
-            ["^.+\\.(gif|png|svg|jpg)$"]
-          ]
-        }
+            ['^.+\\.(gif|png|svg|jpg)$'],
+          ],
+        },
       ],
 
       '@typescript-eslint/no-unused-vars': 'off',
@@ -81,11 +80,7 @@ const eslintConfig = [
       '@typescript-eslint/no-explicit-any': 'warn',
     },
 
-    ignores: [
-      'node_modules/',
-      '.next/',
-      'build/',
-    ],
+    ignores: ['node_modules/', '.next/', 'build/'],
   },
 ];
 

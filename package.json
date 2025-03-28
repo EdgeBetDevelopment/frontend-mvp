@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
+    "forcebuild": "next build || true",
     "start": "next start",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
