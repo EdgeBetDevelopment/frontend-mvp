@@ -8,4 +8,5 @@ export const ROUTES = {
   LOGIN: '/login',
   SIGN_UP: '/sign-up',
   RESET_PASS: '/reset-password',
+  MATCHUP: '/matchup',
 };

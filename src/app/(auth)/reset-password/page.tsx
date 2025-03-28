@@ -1,9 +1,9 @@
-import ForgetPassword from '@/components/auth/ForgetPassword';
+import ForgotPassword from '@/components/auth/ForgotPassword';
 
 const ResetPassword = () => {
   return (
     <div className="flex w-full flex-col items-center justify-center">
-      <ForgetPassword />
+      <ForgotPassword />
     </div>
   );
 };

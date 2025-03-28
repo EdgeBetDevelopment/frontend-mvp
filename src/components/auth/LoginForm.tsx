@@ -114,7 +114,7 @@ const LoginForm: React.FC = () => {
         className="w-full max-w-[800px] text-end text-base text-[#84FDF7]"
         href={ROUTES.RESET_PASS}
       >
-        Forget Password?
+        Forgot Password?
       </Link>
 
       <AuthButton handleClick={handleLogin} type="submit">
