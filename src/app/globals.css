@@ -215,6 +215,10 @@
   @apply font-medium text-6xl text-center align-bottom capitalize;
 }
 
+.tl-heading2 {
+  @apply font-medium text-3xl text-center align-bottom capitalize;
+}
+
 .tl-paraghraph1 {
   @apply font-normal text-lg leading-7 tracking-normal text-center align-bottom text-text-secondary;
 }
