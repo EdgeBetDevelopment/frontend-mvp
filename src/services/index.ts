@@ -32,6 +32,8 @@ const apiService = {
       `/api/v1/nba/get_player_by_id/${query}`,
     );
 
+    console.log(response);
+
     return response.data;
   },
 
