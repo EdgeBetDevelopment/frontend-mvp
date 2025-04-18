@@ -9,4 +9,5 @@ export const ROUTES = {
   SIGN_UP: '/sign-up',
   RESET_PASS: '/reset-password',
   MATCHUP: '/matchup',
+  PLAYER: (id: string) => `/player/${id}`,
 };
