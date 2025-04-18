@@ -48,7 +48,23 @@ const PlayerProfile = () => {
             with consistent accuracy in major event outcomes.
           </p>
           <div className="flex w-full flex-row items-center justify-between px-15">
-            <div></div>
+            <div className="flex w-full max-w-[374px] flex-col gap-5">
+              <div className="bg-top-section flex flex-row gap-4 rounded-xl px-5 py-4">
+                <div className="flex w-full flex-col items-center gap-1 rounded-xl bg-[#34D4414D] py-1">
+                  <h3 className="text-2xl font-semibold text-[#34D399]">80</h3>
+                  <p className="text-xs font-normal text-[#EBEBEB]">Wins</p>
+                </div>
+                <div className="flex w-full flex-col items-center gap-1 rounded-xl bg-[#D877294D] py-1">
+                  <h3 className="text-2xl font-semibold text-[#FF9812]">70</h3>
+                  <p className="text-xs font-normal text-[#EBEBEB]">Draws</p>
+                </div>
+                <div className="flex w-full flex-col items-center gap-1 rounded-xl bg-[#DF303033] py-1">
+                  <h3 className="text-2xl font-semibold text-[#DC2626]">20</h3>
+                  <p className="text-xs font-normal text-[#EBEBEB]">Losses</p>
+                </div>
+              </div>
+              <div className="bg-graph-section min-h-[244px] min-w-[374px] rounded-xl"></div>
+            </div>
             <div className="w-full max-w-[926px]">
               <LeagueTable />
             </div>
