@@ -1,10 +1,12 @@
+'use client';
+
 import React from 'react';
 import Link from 'next/link';
 
 import { ROUTES } from '@/routes';
+import Logo from '../Logo';
 
-import Logo from './Logo';
-import { Button } from './ui/button';
+import Profile from './Profile';
 
 export const HEADER_PAGES = [
   {
@@ -45,7 +47,7 @@ const Header = () => {
         ))}
       </div>
 
-      <Button variant="gradient">Get Started</Button>
+      <Profile />
     </div>
   );
 };

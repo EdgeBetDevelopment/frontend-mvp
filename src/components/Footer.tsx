@@ -1,7 +1,9 @@
+'use client';
+
 import React from 'react';
 import Link from 'next/link';
 
-import { HEADER_PAGES } from './Header';
+import { HEADER_PAGES } from './header';
 import Logo from './Logo';
 import { Separator } from './ui/separator';
 

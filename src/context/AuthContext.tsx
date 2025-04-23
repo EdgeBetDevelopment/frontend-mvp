@@ -1,10 +1,11 @@
 'use client';
 
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 
 interface AuthContextType {
   accessToken: string | null;
   refreshToken: string | null;
+  isAuthenticated: boolean;
   setTokens: (tokens: { accessToken: string; refreshToken?: string }) => void;
   clearTokens: () => void;
 }
@@ -32,7 +33,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     refreshToken?: string;
   }) => {
     setAccessToken(accessToken);
-
     localStorage.setItem('accessToken', accessToken);
 
     if (refreshToken) {
@@ -48,9 +48,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     localStorage.removeItem('refreshToken');
   };
 
+  const isAuthenticated = useMemo(() => !!accessToken, [accessToken]);
+
   return (
     <AuthContext.Provider
-      value={{ accessToken, refreshToken, setTokens, clearTokens }}
+      value={{
+        accessToken,
+        refreshToken,
+        isAuthenticated,
+        setTokens,
+        clearTokens,
+      }}
     >
       {children}
     </AuthContext.Provider>

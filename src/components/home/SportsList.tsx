@@ -1,84 +1,141 @@
-import React from 'react';
+'use client';
 
-import { Button } from '../ui/button';
+import React, { ReactNode } from 'react';
+import { useRouter } from 'next/navigation';
+
+import useModalManager from '@/hooks/useModalManager';
+import { ROUTES } from '@/routes';
+import ComingSoonModal from '../modals/ComingSoonModal';
+
+import SportsCard, { EmptyCard } from './SportCard';
 
 import AmericanFootballIcon from '@/assets/icons/american-football.svg';
+import BaseballIcon from '@/assets/icons/baseball.svg';
+import FootbalIcon from '@/assets/icons/football.svg';
+import TennisIcon from '@/assets/icons/tenins.svg';
+
+interface ISport {
+  title: string;
+  subtitle: string;
+  icon: ReactNode;
+  link?: string;
+}
+
+export const sports: ISport[] = [
+  {
+    title: 'NCAAF',
+    subtitle: 'US College Football',
+    icon: <AmericanFootballIcon />,
+  },
+  {
+    title: 'NCAAF Championship Winner',
+    subtitle: 'US Football',
+    icon: <AmericanFootballIcon />,
+  },
+  {
+    title: 'NFL Super Bowl Winner',
+    subtitle: 'Super Bowl Winner 2024/2025',
+    icon: <AmericanFootballIcon />,
+  },
+  {
+    title: 'NFL',
+    subtitle: 'US Football',
+    icon: <AmericanFootballIcon />,
+  },
+  {
+    title: 'Basketball Euroleague',
+    subtitle: 'Basketball Euroleague',
+    icon: <FootbalIcon />,
+  },
+  {
+    title: 'NBA',
+    subtitle: 'US Basketball',
+    icon: <FootbalIcon />,
+    link: ROUTES.MATCHUP,
+  },
+  {
+    title: 'NCAAB',
+    subtitle: 'US College Basketball',
+    icon: <BaseballIcon />,
+  },
+  {
+    title: 'NCAAB Championship Winner',
+    subtitle: 'US College Basketball Championship Winner',
+    icon: <AmericanFootballIcon />,
+  },
+  {
+    title: 'MLB World Series Winner',
+    subtitle: 'World Series Winner 2025',
+    icon: <BaseballIcon />,
+  },
+  {
+    title: 'MLB',
+    subtitle: 'US College Football',
+    icon: <FootbalIcon />,
+  },
+
+  {
+    title: 'Tennis',
+    subtitle: 'Grand Slam Tournaments',
+    icon: <TennisIcon />,
+  },
+
+  {
+    title: 'WTA Tours',
+    subtitle: 'Masters Tennis',
+    icon: <TennisIcon />,
+  },
+];
 
 const SportsList = () => {
+  const { isModalOpen, closeModal, openModal } = useModalManager();
+  const router = useRouter();
+
+  const onViewPredictions = (sport: ISport) => {
+    if (!!sport.link) {
+      router.push(sport.link);
+    } else {
+      openModal('coming-soon');
+    }
+  };
+
   return (
-    <div>
-      <div className="grid gap-[18px]">
-        <div className="tl-container tl-mask-gradient-top grid w-full grid-cols-4 gap-[18px]">
-          <EmptyCard />
-          <EmptyCard />
-          <EmptyCard />
-          <EmptyCard />
-        </div>
+    <>
+      <div>
+        <div className="grid gap-[18px]">
+          <div className="tl-container tl-mask-gradient-top grid w-full grid-cols-4 gap-[18px]">
+            <EmptyCard />
+            <EmptyCard />
+            <EmptyCard />
+            <EmptyCard />
+          </div>
 
-        <div className="tl-container grid w-full grid-cols-4 gap-[18px]">
-          <SposrtCard />
-          <SposrtCard />
-          <SposrtCard />
-          <SposrtCard />
-          <SposrtCard />
-          <SposrtCard />
-          <SposrtCard />
-          <SposrtCard />
-        </div>
+          <div className="tl-container grid w-full grid-cols-4 gap-[18px]">
+            {sports.map((sport, index) => (
+              <SportsCard
+                onViewPredictions={() => onViewPredictions(sport)}
+                isActive={!!sport.link}
+                key={index}
+                sport={sport}
+              />
+            ))}
+          </div>
 
-        <div className="tl-container tl-mask-gradient-bottom grid w-full grid-cols-4 gap-[18px]">
-          <EmptyCard />
-          <EmptyCard />
-          <EmptyCard />
-          <EmptyCard />
+          <div className="tl-container tl-mask-gradient-bottom grid w-full grid-cols-4 gap-[18px]">
+            <EmptyCard />
+            <EmptyCard />
+            <EmptyCard />
+            <EmptyCard />
+          </div>
         </div>
       </div>
-    </div>
+
+      <ComingSoonModal
+        isOpen={isModalOpen('coming-soon')}
+        onClose={() => closeModal('coming-soon')}
+      />
+    </>
   );
 };
 
 export default SportsList;
-
-const SposrtCard = () => {
-  return (
-    <div className="relative">
-      <div className="bg-primary-brand absolute top-0 left-1/2 -z-10 h-[8px] w-[80px] -translate-1/2 rounded-full" />
-
-      <div
-        style={{
-          background: `
-        linear-gradient(180deg, rgba(220, 253, 207, 0.07) 0%, rgba(46, 65, 58, 0) 100%),
-        linear-gradient(180deg, rgba(220, 253, 207, 0.07) 40.2%, rgba(46, 65, 58, 0) 205.16%)
-      `,
-        }}
-        className="border-border relative z-10 flex flex-col gap-11 rounded-[24px] border p-5 backdrop-blur-md"
-      >
-        <div className="flex flex-col gap-3">
-          <div className="border-border tl-gradient flex h-12 w-12 items-center justify-center rounded-[10px] border">
-            <AmericanFootballIcon />
-          </div>
-
-          <div>
-            <div className="align-middle text-lg leading-6 font-semibold">
-              Basketball Euroleague
-            </div>
-
-            <div className="text-text-secondary tl-paraghraph3">
-              Basketball Euroleague
-            </div>
-          </div>
-        </div>
-
-        <div>
-          <Button variant="gradient">View Predictions</Button>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-const EmptyCard = () => {
-  return (
-    <div className="border-border h-[239px] rounded-[24px] border p-5"></div>
-  );
-};

@@ -1,12 +1,19 @@
 'use client';
 
-import { useState } from 'react';
+import React from 'react';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+import { z } from 'zod';
 
 import { useAuth } from '@/context/AuthContext';
 import { ROUTES } from '@/routes';
 import apiService from '@/services';
+import { Form, FormField } from '../ui/form';
+import Loader from '../ui/loader';
 
 import AuthButton from './AuthButton';
 import AuthFormInput from './AuthFormInput';
@@ -15,153 +22,185 @@ import H2 from './H2';
 import ArrowRight from '@/assets/icons/arrow-right.svg';
 import GoogleIcon from '@/assets/icons/google.svg';
 
+const signUpSchema = z
+  .object({
+    name: z
+      .string()
+      .min(2, 'Name is too short')
+      .max(30, 'Name is too long')
+      .regex(/^[a-zA-Zа-яА-ЯёЁіІїЇєЄ\s-]+$/, 'Invalid characters in name'),
+    email: z.string().email('Invalid email format'),
+    phone: z.string().regex(/^\+?\d{10,15}$/, 'Invalid phone number'),
+    password: z
+      .string()
+      .min(8, 'Password must be at least 8 characters')
+      .regex(/\d/, 'Password must include at least one number')
+      .regex(/[a-zA-Z]/, 'Password must include at least one letter'),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: 'Passwords do not match',
+    path: ['confirmPassword'],
+  });
+
+type SignUpFormValues = z.infer<typeof signUpSchema>;
+
 const SignUpForm: React.FC = () => {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [phone, setPhone] = useState('');
-
-  const [showPassword, setShowPassword] = useState(false);
-  const [errors, setErrors] = useState<{
-    name?: string;
-    email?: string;
-    password?: string;
-    confirmPassword?: string;
-    phone?: string;
-    error?: string;
-  }>({});
-
   const router = useRouter();
-
   const { setTokens } = useAuth();
 
-  const validateName = (name: string) =>
-    /^[a-zA-Zа-яА-ЯёЁіІїЇєЄ\s-]{2,30}$/.test(name);
-  const validateEmail = (email: string) =>
-    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  const validatePassword = (password: string) =>
-    password.length >= 8 && /\d/.test(password) && /[a-zA-Z]/.test(password);
-  const validatePhone = (phone: string) => /^\+?\d{10,15}$/.test(phone);
+  const form = useForm<SignUpFormValues>({
+    resolver: zodResolver(signUpSchema),
+    defaultValues: {
+      name: '',
+      email: '',
+      phone: '',
+      password: '',
+      confirmPassword: '',
+    },
+  });
 
-  const handleSignUp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const newErrors: {
-      name?: string;
-      email?: string;
-      password?: string;
-      confirmPassword?: string;
-      phone?: string;
-    } = {};
+  const {
+    handleSubmit,
+    formState: { errors },
+  } = form;
 
-    if (!validateName(name))
-      newErrors.name = 'Invalid name (only letters, 2-30 characters)';
-    if (!validateEmail(email)) newErrors.email = 'Invalid email format';
-    if (!validatePassword(password))
-      newErrors.password =
-        'Password must be at least 8 characters, include a number and a letter';
-    if (password !== confirmPassword)
-      newErrors.confirmPassword = 'Passwords do not match';
-    if (!validatePhone(phone)) newErrors.phone = 'Invalid phone number';
+  const { mutate: signUp, isPending } = useMutation({
+    mutationFn: apiService.signUp,
+    onSuccess: (data) => {
+      setTokens({
+        accessToken: data.access_token,
+        refreshToken: data.refresh_token,
+      });
+      router.push(ROUTES.HOME);
+    },
+    onError: () => {
+      toast.error('Sign up failed. Please check your data.');
+    },
+  });
 
-    setErrors(newErrors);
-
-    if (Object.keys(newErrors).length === 0) {
-      try {
-        const accessToken = await apiService.signUp({
-          email,
-          password,
-          username: name,
-          phone_number: phone,
-        });
-        setTokens({ accessToken });
-
-        router.push('/');
-      } catch (err) {
-        console.log(err);
-        setErrors({ error: 'Login failed. Please check your credentials.' });
-      }
-    }
+  const onSubmit = (values: SignUpFormValues) => {
+    signUp({
+      email: values.email,
+      password: values.password,
+      username: values.name,
+      phone_number: values.phone,
+    });
   };
 
   return (
-    <form
-      onSubmit={handleSignUp}
-      className="auth-form mt-20 mb-40 flex w-full max-w-[800px] flex-col items-center justify-center gap-6 rounded-3xl px-40 py-14"
-    >
-      <H2 text="Welcome!" />
+    <Form {...form}>
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="auth-form mt-20 mb-40 flex w-full max-w-[800px] flex-col items-center justify-center gap-6 rounded-3xl px-40 py-14"
+      >
+        <H2 text="Welcome!" />
 
-      <AuthButton type="button">
-        <GoogleIcon />
-        <p>Sign up with Google</p>
-      </AuthButton>
+        <AuthButton type="button">
+          <GoogleIcon />
+          <p>Sign up with Google</p>
+        </AuthButton>
 
-      <p className="text-center text-base text-[#B3B3B3]">
-        Or, Sign up with email
-      </p>
+        <p className="text-center text-base text-[#B3B3B3]">
+          Or, Sign up with email
+        </p>
 
-      {errors.error && <p className="text-red-500">{errors.error}</p>}
+        <div className="flex w-full max-w-[800px] flex-col gap-5">
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <AuthFormInput
+                {...field}
+                handleChange={field.onChange}
+                type="text"
+                placeholder="Enter Your Name"
+                error={errors.name?.message}
+                disabled={isPending}
+              />
+            )}
+          />
 
-      <div className="flex w-full max-w-[800px] flex-col gap-5">
-        <AuthFormInput
-          handleChange={setName}
-          value={name}
-          type="text"
-          placeholder="Enter Your Name"
-        />
-        {errors.name && <p className="text-sm text-red-500">{errors.name}</p>}
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <AuthFormInput
+                {...field}
+                handleChange={field.onChange}
+                type="email"
+                placeholder="Enter Your Email"
+                error={errors.email?.message}
+                disabled={isPending}
+              />
+            )}
+          />
 
-        <AuthFormInput
-          handleChange={setEmail}
-          value={email}
-          type="email"
-          placeholder="Enter Your Email"
-        />
-        {errors.email && <p className="text-sm text-red-500">{errors.email}</p>}
+          <FormField
+            control={form.control}
+            name="phone"
+            render={({ field }) => (
+              <AuthFormInput
+                {...field}
+                handleChange={field.onChange}
+                type="tel"
+                placeholder="Enter Your Phone"
+                error={errors.phone?.message}
+                disabled={isPending}
+              />
+            )}
+          />
 
-        <AuthFormInput
-          handleChange={setPhone}
-          value={phone}
-          type="tel"
-          placeholder="Enter Your Phone"
-        />
-        {errors.phone && <p className="text-sm text-red-500">{errors.phone}</p>}
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <AuthFormInput
+                {...field}
+                handleChange={field.onChange}
+                type="password"
+                placeholder="Enter Password"
+                error={errors.password?.message}
+                disabled={isPending}
+              />
+            )}
+          />
 
-        <AuthFormInput
-          showPassword={showPassword}
-          setShowPassword={setShowPassword}
-          handleChange={setPassword}
-          value={password}
-          type={showPassword ? 'text' : 'password'}
-          placeholder="Enter Password"
-        />
-        {errors.password && (
-          <p className="text-sm text-red-500">{errors.password}</p>
-        )}
+          <FormField
+            control={form.control}
+            name="confirmPassword"
+            render={({ field }) => (
+              <AuthFormInput
+                {...field}
+                handleChange={field.onChange}
+                type="password"
+                placeholder="Confirm Password"
+                error={errors.confirmPassword?.message}
+                disabled={isPending}
+              />
+            )}
+          />
+        </div>
 
-        <AuthFormInput
-          handleChange={setConfirmPassword}
-          value={confirmPassword}
-          type="password"
-          placeholder="Confirm Password"
-        />
-        {errors.confirmPassword && (
-          <p className="text-sm text-red-500">{errors.confirmPassword}</p>
-        )}
-      </div>
+        <AuthButton disabled={isPending} type="submit">
+          {isPending ? (
+            <Loader />
+          ) : (
+            <>
+              <p>Create Account</p>
+              <ArrowRight />
+            </>
+          )}
+        </AuthButton>
 
-      <AuthButton handleClick={handleSignUp} type="submit">
-        <p>Create Account</p>
-        <ArrowRight />
-      </AuthButton>
-
-      <p className="text-center text-base text-[#B3B3B3]">
-        Already have an account?{' '}
-        <Link className="text-[#84FDF7]" href={ROUTES.LOGIN}>
-          Log in
-        </Link>
-      </p>
-    </form>
+        <p className="text-center text-base text-[#B3B3B3]">
+          Already have an account?{' '}
+          <Link className="text-[#84FDF7]" href={ROUTES.LOGIN}>
+            Log in
+          </Link>
+        </p>
+      </form>
+    </Form>
   );
 };
 
