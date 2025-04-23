@@ -10,6 +10,7 @@ export const ROUTES = {
 
   PROFILE: {
     TRACKER: '/profile/tracker',
+    PICK_OF_DAY: '/profile/pick-of-day',
   },
 
   AUTH: {

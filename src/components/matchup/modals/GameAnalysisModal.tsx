@@ -2,17 +2,12 @@
 
 import React from 'react';
 
+import { useStore } from '@/store';
+import { ITeam } from '@/types/game';
 import { Avatar, AvatarImage } from '@/ui/avatar';
 import { Badge } from '@/ui/badge';
 import CardContainer from '@/ui/containers/CardContainer';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/ui/dialog';
-import { useStore } from '@/store';
-import { ITeam } from '@/types/game';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/ui/dialog';
 
 import ClockBackIcon from '@/assets/icons/clock-back.svg';
 import StatisticsIcon from '@/assets/icons/statistics.svg';
@@ -58,8 +53,8 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
             </div>
 
             <div className="flex items-center gap-2.5">
-              <AnalysisTeamCard team={game.homeTeam} />
-              <AnalysisTeamCard team={game.awayTeam} />
+              <AnalysisTeamCard team={game?.homeTeam} />
+              <AnalysisTeamCard team={game?.awayTeam} />
             </div>
           </CardContainer>
         </div>
@@ -80,7 +75,7 @@ const AnalysisTeamCard = ({ team }: { team: ITeam }) => {
           </div>
         </Avatar>
 
-        <div className="text-text-primary">{team.teamName}</div>
+        <div className="text-text-primary">{team?.teamName}</div>
       </div>
 
       <div className="tl-paraghraph3">
@@ -90,13 +85,13 @@ const AnalysisTeamCard = ({ team }: { team: ITeam }) => {
 
       <div className="flex flex-wrap items-center gap-2">
         <Badge size="md" variant="green">
-          <span className="text-text-primary">Number of wins</span> {team.wins}
+          <span className="text-text-primary">Number of wins</span> {team?.wins}
         </Badge>
         <Badge size="md" variant="orange">
           <span className="text-text-primary">In draws</span> 20
         </Badge>
         <Badge size="md" variant="red">
-          <span className="text-text-primary">Losses</span> {team.losses}
+          <span className="text-text-primary">Losses</span> {team?.losses}
         </Badge>
       </div>
     </CardContainer>

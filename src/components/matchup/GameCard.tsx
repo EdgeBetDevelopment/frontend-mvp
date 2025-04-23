@@ -3,10 +3,10 @@
 import React from 'react';
 import dayjs from 'dayjs';
 
+import { IGame } from '@/types/game';
 import { Avatar, AvatarImage } from '@/ui/avatar';
 import { Badge } from '@/ui/badge';
 import { Button } from '@/ui/button';
-import { IGame } from '@/types/game';
 import CardContainer from '../../ui/containers/CardContainer';
 
 import CalendarIcon from '@/assets/icons/calendar.svg';

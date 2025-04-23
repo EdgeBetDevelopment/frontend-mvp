@@ -51,6 +51,10 @@ const AuthorizedUser = () => {
 
         <DropdownMenuSeparator />
 
+        <Link className="cursor-pointer" href={ROUTES.PROFILE.PICK_OF_DAY}>
+          <DropdownMenuItem>Pick Of The Day</DropdownMenuItem>
+        </Link>
+
         <Link className="cursor-pointer" href={ROUTES.PROFILE.TRACKER}>
           <DropdownMenuItem>Tracker Page</DropdownMenuItem>
         </Link>
