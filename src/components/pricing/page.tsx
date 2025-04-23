@@ -1,8 +1,8 @@
 import React from 'react';
 
 import PageTitle from '@/components/PageTitle';
-import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
+import { Button } from '@/ui/button';
+import { Separator } from '@/ui/separator';
 
 import GridBgImage from '@/assets/gridBg.png';
 import ArrowRightIcon from '@/assets/icons/arrow-right.svg';

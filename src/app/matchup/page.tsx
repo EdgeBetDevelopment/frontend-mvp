@@ -5,8 +5,8 @@ import { useQuery } from '@tanstack/react-query';
 
 import GameCard from '@/components/matchup/GameCard';
 import TrackBet from '@/components/matchup/TrackBet';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Skeleton } from '@/components/ui/skeleton';
+import { ScrollArea } from '@/ui/scroll-area';
+import { Skeleton } from '@/ui/skeleton';
 import useModalManager from '@/hooks/useModalManager';
 import apiService from '@/services';
 import { useStore } from '@/store';

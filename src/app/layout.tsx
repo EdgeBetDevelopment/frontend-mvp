@@ -5,7 +5,7 @@ import { Geist, Geist_Mono } from 'next/font/google';
 
 import Footer from '@/components/Footer';
 import Header from '@/components/header';
-import { Toaster } from '@/components/ui/sonner';
+import { Toaster } from '@/ui/sonner';
 import { AuthProvider } from '@/context/AuthContext';
 import TanstackQueryProvider from '@/providers/QueryProvider';
 

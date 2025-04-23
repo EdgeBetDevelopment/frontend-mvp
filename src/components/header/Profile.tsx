@@ -4,9 +4,9 @@ import React from 'react';
 import Link from 'next/link';
 import { FaRegUser } from 'react-icons/fa';
 
-import { Button } from '@/components/ui/button';
 import { useAuth } from '@/context/AuthContext';
 import { ROUTES } from '@/routes';
+import { Button } from '@/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,7 +14,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '../ui/dropdown-menu';
+} from '../../ui/dropdown-menu';
 
 const Profile = () => {
   const { isAuthenticated } = useAuth();
@@ -26,7 +26,7 @@ export default Profile;
 
 const UnauthorizedUser = () => {
   return (
-    <Link href={ROUTES.LOGIN}>
+    <Link href={ROUTES.AUTH.LOGIN}>
       <Button variant="gradient">Get Started</Button>
     </Link>
   );
@@ -51,7 +51,9 @@ const AuthorizedUser = () => {
 
         <DropdownMenuSeparator />
 
-        <DropdownMenuItem onClick={() => {}}>Tracker Page</DropdownMenuItem>
+        <Link className="cursor-pointer" href={ROUTES.PROFILE.TRACKER}>
+          <DropdownMenuItem>Tracker Page</DropdownMenuItem>
+        </Link>
 
         <DropdownMenuItem variant="destructive" onClick={onLogOut}>
           Log Out

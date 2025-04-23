@@ -12,8 +12,8 @@ import { z } from 'zod';
 import { useAuth } from '@/context/AuthContext';
 import { ROUTES } from '@/routes';
 import apiService from '@/services';
-import { Form, FormField } from '../ui/form';
-import Loader from '../ui/loader';
+import { Form, FormField } from '../../ui/form';
+import Loader from '../../ui/loader';
 
 import AuthButton from './AuthButton';
 import AuthFormInput from './AuthFormInput';
@@ -195,7 +195,7 @@ const SignUpForm: React.FC = () => {
 
         <p className="text-center text-base text-[#B3B3B3]">
           Already have an account?{' '}
-          <Link className="text-[#84FDF7]" href={ROUTES.LOGIN}>
+          <Link className="text-[#84FDF7]" href={ROUTES.AUTH.LOGIN}>
             Log in
           </Link>
         </p>

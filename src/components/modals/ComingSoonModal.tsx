@@ -1,5 +1,5 @@
-import { Button } from '../ui/button';
-import { Dialog, DialogContent } from '../ui/dialog';
+import { Button } from '../../ui/button';
+import { Dialog, DialogContent } from '../../ui/dialog';
 
 interface ComingSoonModalProps {
   isOpen: boolean;

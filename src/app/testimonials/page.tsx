@@ -2,7 +2,7 @@ import React from 'react';
 
 import CTABlock from '@/components/CTABlock';
 import PageTitle from '@/components/PageTitle';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/ui/avatar';
 
 import AvatarPlaceholderImage from '@/assets/avatar.png';
 

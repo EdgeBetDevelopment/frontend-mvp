@@ -2,7 +2,7 @@ import React from 'react';
 import Image from 'next/image';
 
 import PageTitle from '@/components/PageTitle';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/ui/button';
 
 import DiscordImage from '@/assets/discord.png';
 import GridBgImage from '@/assets/gridBg.png';

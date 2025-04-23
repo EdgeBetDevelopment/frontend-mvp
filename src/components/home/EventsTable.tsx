@@ -1,13 +1,13 @@
 import React from 'react';
 
-import { Badge } from '../ui/badge';
+import { Badge } from '../../ui/badge';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '../ui/select';
+} from '../../ui/select';
 import {
   Table,
   TableBody,
@@ -15,7 +15,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '../ui/table';
+} from '../../ui/table';
 
 const TABLE_DATA = [
   {
@@ -102,9 +102,9 @@ const EventsTableBlock = () => {
 
 export default EventsTableBlock;
 
-const EventsTable = () => {
+export const EventsTable = () => {
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex w-full flex-col gap-6">
       <div className="tl-flex-between">
         <Select>
           <SelectTrigger className="w-[300px]">

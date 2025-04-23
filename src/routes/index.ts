@@ -5,9 +5,16 @@ export const ROUTES = {
   METHODOLOGY: '/methodology',
   PRICING: '/pricing',
   COMMUNITY: '/community',
-  LOGIN: '/login',
-  SIGN_UP: '/sign-up',
-  RESET_PASS: '/reset-password',
   MATCHUP: '/matchup',
   PLAYER: (id: string) => `/player/${id}`,
+
+  PROFILE: {
+    TRACKER: '/profile/tracker',
+  },
+
+  AUTH: {
+    LOGIN: '/auth/login',
+    SIGN_UP: '/auth/sign-up',
+    RESET_PASS: '/auth/reset-password',
+  },
 };

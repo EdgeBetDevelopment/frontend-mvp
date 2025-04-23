@@ -1,10 +1,20 @@
-import React from 'react';
+'use client';
 
-import { Button } from './ui/button';
+import React from 'react';
+import Link from 'next/link';
+
+import { useAuth } from '@/context/AuthContext';
+import { ROUTES } from '@/routes';
+
+import { Button } from '../ui/button';
 
 import RightArrowIcon from '@/assets/icons/arrow-right.svg';
 
 const CTABlock = () => {
+  const { isAuthenticated } = useAuth();
+
+  if (isAuthenticated) return null;
+
   return (
     <div className="tl-container relative w-full overflow-hidden rounded-3xl bg-black p-9 py-20">
       <div className="relative z-10 flex w-full flex-col items-center justify-center gap-9">
@@ -22,9 +32,11 @@ const CTABlock = () => {
           </p>
         </div>
 
-        <Button>
-          Sign Up <RightArrowIcon />
-        </Button>
+        <Link href={ROUTES.AUTH.SIGN_UP}>
+          <Button>
+            Sign Up <RightArrowIcon />
+          </Button>
+        </Link>
       </div>
       <div
         className="absolute inset-0"

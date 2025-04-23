@@ -12,8 +12,8 @@ import { z } from 'zod';
 import { useAuth } from '@/context/AuthContext';
 import { ROUTES } from '@/routes';
 import apiService from '@/services';
-import { Form, FormField, FormMessage } from '../ui/form';
-import Loader from '../ui/loader';
+import { Form, FormField, FormMessage } from '../../ui/form';
+import Loader from '../../ui/loader';
 
 import AuthButton from './AuthButton';
 import AuthFormInput from './AuthFormInput';
@@ -139,7 +139,7 @@ const LoginForm: React.FC = () => {
 
         <Link
           className="w-full max-w-[800px] text-end text-base text-[#84FDF7]"
-          href={ROUTES.RESET_PASS}
+          href={ROUTES.AUTH.RESET_PASS}
         >
           Forgot Password?
         </Link>
@@ -157,7 +157,7 @@ const LoginForm: React.FC = () => {
 
         <p className="text-center text-base text-[#B3B3B3]">
           Don&apos;t have an account yet?{' '}
-          <Link className="text-[#84FDF7]" href={ROUTES.SIGN_UP}>
+          <Link className="text-[#84FDF7]" href={ROUTES.AUTH.SIGN_UP}>
             Create Account
           </Link>
         </p>

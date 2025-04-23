@@ -4,11 +4,11 @@ import React from 'react';
 import dayjs from 'dayjs';
 import { NumericFormat } from 'react-number-format';
 
-import { Avatar, AvatarImage } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
+import { Avatar, AvatarImage } from '@/ui/avatar';
+import { Button } from '@/ui/button';
 import { IGame } from '@/types/game';
-import CardContainer from '../ui/containers/CardContainer';
-import { Input } from '../ui/input';
+import CardContainer from '../../ui/containers/CardContainer';
+import { Input } from '../../ui/input';
 
 import CalendarIcon from '@/assets/icons/calendar.svg';
 import CancelIcon from '@/assets/icons/cancel.svg';

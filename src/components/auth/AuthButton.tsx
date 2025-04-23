@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 
-import { Button } from '../ui/button';
+import { Button } from '../../ui/button';
 
 interface IAuthButtonProps {
   type?: 'button' | 'submit' | 'reset' | undefined;

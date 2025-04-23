@@ -2,15 +2,15 @@
 
 import React from 'react';
 
-import { Avatar, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
-import CardContainer from '@/components/ui/containers/CardContainer';
+import { Avatar, AvatarImage } from '@/ui/avatar';
+import { Badge } from '@/ui/badge';
+import CardContainer from '@/ui/containers/CardContainer';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
+} from '@/ui/dialog';
 import { useStore } from '@/store';
 import { ITeam } from '@/types/game';
 

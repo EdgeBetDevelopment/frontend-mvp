@@ -5,7 +5,7 @@ import Link from 'next/link';
 
 import { HEADER_PAGES } from './header';
 import Logo from './Logo';
-import { Separator } from './ui/separator';
+import { Separator } from '../ui/separator';
 
 import FacebookIcon from '@/assets/icons/facebook.svg';
 import InstagramIcon from '@/assets/icons/instagram.svg';

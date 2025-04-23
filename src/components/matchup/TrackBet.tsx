@@ -6,10 +6,10 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 import TrackGameCard from '@/components/matchup/TrackGameCard';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/ui/button';
 import { useStore } from '@/store';
 import { IGame } from '@/types/game';
-import { Form } from '../ui/form';
+import { Form } from '../../ui/form';
 
 const formSchema = z.object({
   bet: z.string().email(),
