@@ -3,6 +3,7 @@
 import React, { ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 
+import { useBreakpoint } from '@/hooks/useBreakpoint';
 import useModalManager from '@/hooks/useModalManager';
 import { ROUTES } from '@/routes';
 import ComingSoonModal from '../modals/ComingSoonModal';
@@ -88,6 +89,8 @@ export const sports: ISport[] = [
 ];
 
 const SportsList = () => {
+  const breakpoint = useBreakpoint();
+
   const { isModalOpen, closeModal, openModal } = useModalManager();
   const router = useRouter();
 
@@ -99,18 +102,25 @@ const SportsList = () => {
     }
   };
 
+  const getEmptyCardsCount = () => {
+    if (breakpoint === 'lg') return 4;
+    if (breakpoint === 'md') return 3;
+    return 2;
+  };
+
+  const emptyCards = Array.from({ length: getEmptyCardsCount() }).map(
+    (_, i) => <EmptyCard key={`empty-${i}`} />,
+  );
+
   return (
     <>
       <div>
         <div className="grid gap-[18px]">
-          <div className="tl-container tl-mask-gradient-top grid w-full grid-cols-4 gap-[18px]">
-            <EmptyCard />
-            <EmptyCard />
-            <EmptyCard />
-            <EmptyCard />
+          <div className="tl-container tl-mask-gradient-top grid w-full grid-cols-2 gap-2 sm:gap-[18px] md:grid-cols-3 lg:grid-cols-4">
+            {emptyCards}
           </div>
 
-          <div className="tl-container grid w-full grid-cols-4 gap-[18px]">
+          <div className="tl-container grid w-full grid-cols-2 gap-2 sm:gap-[18px] md:grid-cols-3 lg:grid-cols-4">
             {sports.map((sport, index) => (
               <SportsCard
                 onViewPredictions={() => onViewPredictions(sport)}
@@ -121,11 +131,8 @@ const SportsList = () => {
             ))}
           </div>
 
-          <div className="tl-container tl-mask-gradient-bottom grid w-full grid-cols-4 gap-[18px]">
-            <EmptyCard />
-            <EmptyCard />
-            <EmptyCard />
-            <EmptyCard />
+          <div className="tl-container tl-mask-gradient-bottom grid w-full grid-cols-2 gap-2 sm:gap-[18px] md:grid-cols-3 lg:grid-cols-4">
+            {emptyCards}
           </div>
         </div>
       </div>

@@ -42,7 +42,7 @@ const AuthorizedUser = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="gradient">
+        <Button size={'icon'} variant="gradient">
           <FaRegUser />
         </Button>
       </DropdownMenuTrigger>

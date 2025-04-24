@@ -34,9 +34,9 @@ export default function RootLayout({
       <AuthProvider>
         <TanstackQueryProvider>
           <body
-            className={`${geistSans.variable} ${geistMono.variable} relative antialiased`}
+            className={`${geistSans.variable} ${geistMono.variable} relative overflow-x-hidden antialiased`}
           >
-            <div className="fixed top-9 left-1/2 z-30 w-full max-w-[800px] -translate-x-1/2 transform">
+            <div className="tl-container fixed top-9 left-1/2 z-30 w-full max-w-[800px]! -translate-x-1/2 transform">
               <Header />
             </div>
 

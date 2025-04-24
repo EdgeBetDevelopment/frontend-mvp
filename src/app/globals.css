@@ -212,7 +212,7 @@
 }
 
 .tl-heading1 {
-  @apply font-medium text-6xl text-center align-bottom capitalize;
+  @apply font-medium text-[40px] md:text-6xl text-center align-bottom capitalize md:font-bold tracking-normal ;
 }
 
 .tl-heading2 {

@@ -86,16 +86,18 @@ const TABLE_DATA = [
 
 const EventsTableBlock = () => {
   return (
-    <div className="flex flex-col gap-9">
-      <div className="flex flex-col items-center gap-9">
-        <h3 className="tl-heading1">Upcoming Major Events</h3>
-        <p className="tl-paraghraph1 text-primary">
-          Track the biggest sports events and get expert predictions with latest
-          odds analysis.
-        </p>
-      </div>
+    <div className="">
+      <div className="flex flex-col gap-9">
+        <div className="flex flex-col items-center gap-9">
+          <h3 className="tl-heading1">Upcoming Major Events</h3>
+          <p className="tl-paraghraph1 text-primary">
+            Track the biggest sports events and get expert predictions with
+            latest odds analysis.
+          </p>
+        </div>
 
-      <EventsTable />
+        <EventsTable />
+      </div>
     </div>
   );
 };
@@ -105,7 +107,7 @@ export default EventsTableBlock;
 export const EventsTable = () => {
   return (
     <div className="flex w-full flex-col gap-6">
-      <div className="tl-flex-between">
+      <div className="tl-flex-between gap-4">
         <Select>
           <SelectTrigger className="w-[300px]">
             <SelectValue placeholder="Sport category" />

@@ -85,7 +85,7 @@ const Testimonials = () => {
           through AI-powered predictions and expert analysis."
       />
 
-      <div className="flex items-start gap-[18px]">
+      <div className="flex flex-col items-start gap-[18px] min-[800px]:flex-row">
         <div className="flex flex-col gap-[18px]">
           {TESTIMONIAL_DATA.map((testimonial) => (
             <TestimonialCard
@@ -108,7 +108,7 @@ const Testimonials = () => {
           ))}
         </div>
 
-        <div className="flex flex-col gap-[18px]">
+        <div className="hidden flex-col gap-[18px] xl:flex">
           {TESTIMONIAL_DATA.map((testimonial) => (
             <TestimonialCard
               key={testimonial.id}
@@ -136,15 +136,17 @@ interface ITestimonialCard {
 const TestimonialCard = ({ name, email, message }: ITestimonialCard) => {
   return (
     <div className="flex h-min flex-col gap-6 rounded-3xl border p-6">
-      <div className="flex items-center gap-5">
+      <div className="flex flex-col items-center gap-5 sm:flex-row">
         <Avatar className="h-[60px] w-[60px]">
           <AvatarImage src={AvatarPlaceholderImage.src} />
           <AvatarFallback>CN</AvatarFallback>
         </Avatar>
 
         <div className="flex flex-col gap-1">
-          <p className="text-2xl font-bold tracking-normal">{name}</p>
-          <p className="text-text-secondary text-xl leading-6 font-medium tracking-normal">
+          <p className="text-center text-xl font-bold tracking-normal sm:text-2xl">
+            {name}
+          </p>
+          <p className="text-text-secondary text-center text-base leading-6 font-normal tracking-normal sm:text-xl sm:font-medium">
             {email}
           </p>
         </div>

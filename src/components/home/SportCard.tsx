@@ -19,25 +19,31 @@ const SportsCard = ({ isActive, sport, onViewPredictions }: Props) => {
     : undefined;
 
   return (
-    <div className="relative">
+    <div className="relative h-[240px]">
       {isActive && (
         <div className="bg-primary-brand absolute top-0 left-1/2 -z-10 h-[8px] w-[80px] -translate-1/2 rounded-full" />
       )}
 
       <div
         style={style}
-        className="border-border relative z-10 flex flex-col gap-11 rounded-[24px] border p-5 backdrop-blur-md"
+        className="border-border relative z-10 flex h-full flex-col rounded-[24px] border p-3 backdrop-blur-md sm:p-5"
       >
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-1 flex-col gap-3">
           <div className="border-border tl-gradient flex h-12 w-12 items-center justify-center rounded-[10px] border">
             {sport.icon}
           </div>
 
           <div>
-            <div className="align-middle text-lg leading-6 font-semibold">
+            <div
+              title={sport.title}
+              className="line-clamp-1 align-middle text-lg leading-6 font-semibold"
+            >
               {sport.title}
             </div>
-            <div className="text-text-secondary tl-paraghraph3">
+            <div
+              title={sport.subtitle}
+              className="text-text-secondary tl-paraghraph3 line-clamp-2"
+            >
               {sport.subtitle}
             </div>
           </div>

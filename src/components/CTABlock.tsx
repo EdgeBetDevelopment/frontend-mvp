@@ -5,7 +5,6 @@ import Link from 'next/link';
 
 import { useAuth } from '@/context/AuthContext';
 import { ROUTES } from '@/routes';
-
 import { Button } from '../ui/button';
 
 import RightArrowIcon from '@/assets/icons/arrow-right.svg';
@@ -16,10 +15,10 @@ const CTABlock = () => {
   if (isAuthenticated) return null;
 
   return (
-    <div className="tl-container relative w-full overflow-hidden rounded-3xl bg-black p-9 py-20">
+    <div className="tl-container relative w-full overflow-hidden rounded-3xl bg-black p-5 sm:p-9 sm:py-20">
       <div className="relative z-10 flex w-full flex-col items-center justify-center gap-9">
         <div className="flex w-full max-w-[811px] flex-col items-center justify-center gap-4 text-center">
-          <h3 className="text-center align-bottom text-[40px] font-normal tracking-normal">
+          <h3 className="text-center align-bottom text-3xl font-normal tracking-normal md:text-[40px] md:font-bold">
             Get Exclusive Access to Expert Predictions{' '}
             <span className="text-primary-brand">Before Everyone Else</span>
           </h3>
@@ -32,8 +31,8 @@ const CTABlock = () => {
           </p>
         </div>
 
-        <Link href={ROUTES.AUTH.SIGN_UP}>
-          <Button>
+        <Link className="w-full sm:w-auto" href={ROUTES.AUTH.SIGN_UP}>
+          <Button className="w-full sm:w-auto">
             Sign Up <RightArrowIcon />
           </Button>
         </Link>

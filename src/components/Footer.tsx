@@ -3,9 +3,10 @@
 import React from 'react';
 import Link from 'next/link';
 
+import { Separator } from '../ui/separator';
+
 import { HEADER_PAGES } from './header';
 import Logo from './Logo';
-import { Separator } from '../ui/separator';
 
 import FacebookIcon from '@/assets/icons/facebook.svg';
 import InstagramIcon from '@/assets/icons/instagram.svg';
@@ -49,10 +50,12 @@ const Footer = () => {
 
         <Separator className="bg-border" />
 
-        <div className="tl-flex-between">
-          <p>Copyright © 2025. All rights reserved.</p>
+        <div className="lg:tl-flex-between flex flex-col items-center gap-6 lg:flex-row lg:items-center lg:justify-between">
+          <p className="order-1 text-center sm:text-left lg:order-0">
+            Copyright © 2025. All rights reserved.
+          </p>
 
-          <div className="flex items-center gap-6">
+          <div className="flex flex-wrap items-center justify-center gap-6">
             {HEADER_PAGES.map((item) => (
               <Link className="tl-link" key={item.name} href={item.link}>
                 {item.name}
