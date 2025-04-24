@@ -1,8 +1,6 @@
 import React from 'react';
 
-import { Input } from '../../ui/input';
-
-import SearchIcon from '@/assets/icons/search.svg';
+import Search from './Search';
 
 const HeroBlock = () => {
   return (
@@ -17,11 +15,7 @@ const HeroBlock = () => {
         </p>
       </div>
 
-      <Input
-        containerClassName="w-full max-w-[480px]"
-        icon={<SearchIcon />}
-        placeholder="Search sports..."
-      />
+      <Search />
     </div>
   );
 };

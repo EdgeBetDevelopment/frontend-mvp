@@ -5,9 +5,9 @@ import { Geist, Geist_Mono } from 'next/font/google';
 
 import Footer from '@/components/Footer';
 import Header from '@/components/header';
-import { Toaster } from '@/ui/sonner';
 import { AuthProvider } from '@/context/AuthContext';
 import TanstackQueryProvider from '@/providers/QueryProvider';
+import { Toaster } from '@/ui/sonner';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',

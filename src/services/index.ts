@@ -2,8 +2,6 @@ import { IAuthRepsonse, ILogin, ISignUp } from '@/types/auth';
 
 import { axiosInstance } from './client';
 
-const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-
 const apiService = {
   async getScoreboard(): Promise<any> {
     const response = await axiosInstance.get(`/api/v1/nba/get_scoreboard`);

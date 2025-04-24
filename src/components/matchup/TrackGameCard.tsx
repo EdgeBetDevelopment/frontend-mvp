@@ -4,9 +4,9 @@ import React from 'react';
 import dayjs from 'dayjs';
 import { NumericFormat } from 'react-number-format';
 
+import { IGame } from '@/types/game';
 import { Avatar, AvatarImage } from '@/ui/avatar';
 import { Button } from '@/ui/button';
-import { IGame } from '@/types/game';
 import CardContainer from '../../ui/containers/CardContainer';
 import { Input } from '../../ui/input';
 
@@ -113,7 +113,6 @@ const TrackGameCard = ({
           <NumericFormat
             value={12323}
             label="Bet amount"
-            disabled
             className="align-middle text-base font-normal tracking-normal"
             customInput={Input}
             thousandSeparator

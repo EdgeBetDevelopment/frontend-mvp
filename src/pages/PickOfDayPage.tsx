@@ -3,6 +3,7 @@
 import React, { createContext, useContext } from 'react';
 
 import GameAnalysisModal from '@/components/matchup/modals/GameAnalysisModal';
+import TrackBetsModal from '@/components/modals/TrackBetsModal';
 import useModalManager from '@/hooks/useModalManager';
 import { cn } from '@/lib/utils';
 import { useStore } from '@/store';
@@ -55,16 +56,36 @@ const PickOfDayPage = () => {
 export default PickOfDayPage;
 
 const FreePickOfDay = () => {
+  const { openModal, closeModal, isModalOpen } = useModalManager();
+  const { setTrackedGame } = useStore();
+
+  const onClickTrackBet = (game: IGame | null) => {
+    setTrackedGame(game);
+    openModal('track-bet');
+  };
+
+  const onClickClearTrackBet = () => {
+    setTrackedGame(null);
+    closeModal('track-bet');
+  };
+
   return (
-    <div className="flex flex-col items-center justify-center gap-10">
-      <div className="text-center align-bottom text-6xl font-medium capitalize">
-        today’s Free Pick
+    <>
+      <div className="flex flex-col items-center justify-center gap-10">
+        <div className="text-center align-bottom text-6xl font-medium capitalize">
+          today’s Free Pick
+        </div>
+
+        <CardSizeProvider size="single">
+          <PickCard onClickTrackBet={() => onClickTrackBet(null)} />
+        </CardSizeProvider>
       </div>
 
-      <CardSizeProvider size="single">
-        <PickCard />
-      </CardSizeProvider>
-    </div>
+      <TrackBetsModal
+        isOpen={isModalOpen('track-bet')}
+        onClose={onClickClearTrackBet}
+      />
+    </>
   );
 };
 
@@ -82,6 +103,16 @@ const PremiumPickOfDay = () => {
     setSelectedGame(null);
   };
 
+  const onClickTrackBet = (game: IGame | null) => {
+    setTrackedGame(game);
+    openModal('track-bet');
+  };
+
+  const onClickClearTrackBet = () => {
+    setTrackedGame(null);
+    closeModal('track-bet');
+  };
+
   return (
     <>
       <div className="flex flex-col items-center justify-center gap-10">
@@ -91,9 +122,18 @@ const PremiumPickOfDay = () => {
 
         <CardSizeProvider size={'multiple'}>
           <div className="flex items-center gap-8">
-            <PickCard onClickFullAnalysis={() => onClickFullAnalysis({})} />
-            <PickCard onClickFullAnalysis={() => onClickFullAnalysis({})} />
-            <PickCard onClickFullAnalysis={() => onClickFullAnalysis({})} />
+            <PickCard
+              onClickTrackBet={() => onClickTrackBet(null)}
+              onClickFullAnalysis={() => onClickFullAnalysis({} as IGame)}
+            />
+            <PickCard
+              onClickTrackBet={() => onClickTrackBet(null)}
+              onClickFullAnalysis={() => onClickFullAnalysis({} as IGame)}
+            />
+            <PickCard
+              onClickTrackBet={() => onClickTrackBet(null)}
+              onClickFullAnalysis={() => onClickFullAnalysis({} as IGame)}
+            />
           </div>
         </CardSizeProvider>
       </div>
@@ -102,15 +142,24 @@ const PremiumPickOfDay = () => {
         open={isModalOpen('gameAnalysis')}
         onClose={onClickCloseModal}
       />
+
+      <TrackBetsModal
+        isOpen={isModalOpen('track-bet')}
+        onClose={onClickClearTrackBet}
+      />
     </>
   );
 };
 
 interface IPickCard {
   onClickFullAnalysis?: () => void;
+  onClickTrackBet: () => void;
 }
 
-export const PickCard = ({ onClickFullAnalysis }: IPickCard) => {
+export const PickCard = ({
+  onClickFullAnalysis,
+  onClickTrackBet,
+}: IPickCard) => {
   const isSingle = useCardSize() === 'single';
 
   return (
@@ -175,7 +224,11 @@ export const PickCard = ({ onClickFullAnalysis }: IPickCard) => {
             </div>
           )}
 
-          <Button onClick={() => {}} variant="gradient" className="w-full">
+          <Button
+            onClick={onClickTrackBet}
+            variant="gradient"
+            className="w-full"
+          >
             Bet Now
           </Button>
         </div>
