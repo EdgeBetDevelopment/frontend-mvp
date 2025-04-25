@@ -1,5 +1,6 @@
 import './globals.css';
 
+import { Suspense } from 'react';
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 
@@ -31,22 +32,24 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="!scroll-smooth">
-      <AuthProvider>
+      <Suspense fallback={<div>Loading...</div>}>
         <TanstackQueryProvider>
-          <body
-            className={`${geistSans.variable} ${geistMono.variable} relative overflow-x-hidden antialiased`}
-          >
-            <div className="tl-container fixed top-9 left-1/2 z-30 w-full max-w-[800px]! -translate-x-1/2 transform">
-              <Header />
-            </div>
+          <AuthProvider>
+            <body
+              className={`${geistSans.variable} ${geistMono.variable} relative overflow-x-hidden antialiased`}
+            >
+              <div className="tl-container fixed top-9 left-1/2 z-30 w-full max-w-[800px]! -translate-x-1/2 transform">
+                <Header />
+              </div>
 
-            <div className="pt-[142px]">{children}</div>
+              <div className="pt-[142px]">{children}</div>
 
-            <Footer />
-            <Toaster />
-          </body>
+              <Footer />
+              <Toaster />
+            </body>
+          </AuthProvider>
         </TanstackQueryProvider>
-      </AuthProvider>
+      </Suspense>
     </html>
   );
 }

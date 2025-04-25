@@ -1,6 +1,6 @@
 import React from 'react';
 
-import PickOfDayPage from '@/pages/PickOfDayPage';
+import PickOfDayPage from '@/pages-components/PickOfDayPage';
 
 const PickOfDay = () => {
   return <PickOfDayPage />;
