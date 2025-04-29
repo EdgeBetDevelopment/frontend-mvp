@@ -7,12 +7,13 @@ import { z } from 'zod';
 
 import TrackGameCard from '@/components/matchup/TrackGameCard';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
+import apiService from '@/services';
 import { useStore } from '@/store';
 import { Button } from '@/ui/button';
 import { Form } from '../../ui/form';
 
 const formSchema = z.object({
-  bet: z.string().email(),
+  bet: z.string().optional(),
 });
 
 const TrackBetsModal = ({
@@ -22,7 +23,7 @@ const TrackBetsModal = ({
   isOpen: boolean;
   onClose: () => void;
 }) => {
-  const { trackedGame } = useStore();
+  const { trackedGame, betInfo } = useStore();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -31,12 +32,19 @@ const TrackBetsModal = ({
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    const body = {
-      bet: values.bet,
-    };
+  async function onSubmit() {
+    try {
+      const accessToken = localStorage.getItem('accessToken');
 
-    //something
+      if (!accessToken) {
+        throw new Error('No access token found');
+      }
+
+      await apiService.createBet(betInfo, accessToken);
+      console.log('Bet created successfully');
+    } catch (error) {
+      console.error('Error creating bet:', error);
+    }
   }
 
   return (
@@ -68,7 +76,7 @@ const TrackBetsModal = ({
                   />
                 </div>
 
-                <Button variant="gradient" size="lg">
+                <Button type="submit" variant="gradient" size="lg">
                   Track Bet
                 </Button>
               </form>

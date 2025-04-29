@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import dayjs from 'dayjs';
 import {
   ReadonlyURLSearchParams,
   usePathname,
@@ -9,6 +10,7 @@ import {
 } from 'next/navigation';
 
 import EmptyPlaceholder from '@/components/EmptyPlaceholder';
+import { useBetTracker } from '@/hooks/useBetTracker';
 import { Badge } from '@/ui/badge';
 import { Button } from '@/ui/button';
 import {
@@ -22,54 +24,6 @@ import {
 import { formUrlQuery } from '@/utils/url';
 import ListRenderer from '@/wrappers/ListRenderer';
 
-const TABLE_DATA = [
-  {
-    id: 1,
-    date: '13/12/2020',
-    event: 'Qorem ipsum dolor ',
-    description: 'Philadelphia Eagles to win with -3.5 point spread',
-    stake: '$100',
-    bet: '1.6',
-    status: 'low',
-  },
-  {
-    id: 2,
-    date: '13/12/2020',
-    event: 'Qorem ipsum dolor ',
-    description: 'Philadelphia Eagles to win with -3.5 point spread',
-    stake: '$100',
-    bet: '1.6',
-    status: 'medium',
-  },
-  {
-    id: 3,
-    date: '08/11/2020',
-    event: 'Qorem ipsum dolor ',
-    description: 'Philadelphia Eagles to win with -3.5 point spread',
-    stake: '$100',
-    bet: '1.6',
-    status: 'high',
-  },
-  {
-    id: 4,
-    date: '13/12/2020',
-    event: 'Qorem ipsum dolor ',
-    description: 'Philadelphia Eagles to win with -3.5 point spread',
-    stake: '$100',
-    bet: '1.6',
-    status: 'low',
-  },
-  {
-    id: 5,
-    date: '13/12/2020',
-    event: 'Qorem ipsum dolor ',
-    description: 'Philadelphia Eagles to win with -3.5 point spread',
-    stake: '$100',
-    bet: '1.6',
-    status: 'low',
-  },
-];
-
 const BET_TYPE_TABS = [
   { label: 'Active Bets', value: null },
   { label: 'Completed Bets', value: 'completed' },
@@ -77,9 +31,16 @@ const BET_TYPE_TABS = [
 ];
 
 const BetTrackerTable = () => {
+  const { data, error, isLoading } = useBetTracker();
+
   const pathname = usePathname();
   const params = useSearchParams() as ReadonlyURLSearchParams;
   const router = useRouter();
+
+  if (isLoading) return <p>Loading...</p>;
+  if (error) return <p>Error load a player</p>;
+  if (!data) return <p>Player not found</p>;
+
   const type = params.get('type');
 
   const onChangeType = (value: string | null) => {
@@ -122,7 +83,7 @@ const BetTrackerTable = () => {
       <div className="">
         <ListRenderer
           isLoading={false}
-          data={TABLE_DATA}
+          data={data}
           loadingComponent={<div>Loading...</div>}
           emptyComponent={
             <div>
@@ -146,7 +107,7 @@ const BetTrackerTable = () => {
           }
         >
           {(bets) => (
-            <Table className="">
+            <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>Date</TableHead>
@@ -158,20 +119,22 @@ const BetTrackerTable = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {bets.map((data) => (
+                {data.map((data) => (
                   <TableRow key={data.id}>
-                    <TableCell>{data.date}</TableCell>
-                    <TableCell>{data.event}</TableCell>
-                    <TableCell>{data.description}</TableCell>
-                    <TableCell>{data.stake}</TableCell>
-                    <TableCell>{data.bet}</TableCell>
+                    <TableCell>
+                      {dayjs(data.created_at).format('DD/MM/YYYY')}
+                    </TableCell>
+                    <TableCell>{data.name}</TableCell>
+                    <TableCell>{data.prediction}</TableCell>
+                    <TableCell>{data.amount}</TableCell>
+                    <TableCell>{data.odds_at_bet_time}</TableCell>
                     <TableCell>
                       <Badge
                         className="w-full max-w-[85px] py-2 capitalize"
                         variant={
-                          data.status === 'low'
+                          data.status === 'won'
                             ? 'green'
-                            : data.status === 'medium'
+                            : data.status === 'pending'
                               ? 'orange'
                               : 'red'
                         }
