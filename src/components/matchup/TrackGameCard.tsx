@@ -4,6 +4,7 @@ import React from 'react';
 import dayjs from 'dayjs';
 import { NumericFormat } from 'react-number-format';
 
+import { useStore } from '@/store';
 import { IGame } from '@/types/game';
 import { Avatar, AvatarImage } from '@/ui/avatar';
 import { Button } from '@/ui/button';
@@ -31,6 +32,9 @@ const TrackGameCard = ({
 }: ITrackGameCard) => {
   const formattedDate = dayjs(game.gameTimeUTC).format('MM/DD/YYYY');
   const formattedTime = dayjs(game.gameTimeUTC).format('HH:mm');
+
+  const betInfo = useStore((state) => state.betInfo);
+  const setBetInfoField = useStore((state) => state.setBetInfoField);
 
   return (
     <CardContainer className="tl-gradient-mistBlue border-border relative flex flex-col gap-3">
@@ -104,19 +108,25 @@ const TrackGameCard = ({
 
         <div className="flex flex-col items-center gap-4">
           <NumericFormat
-            value={12323}
+            value={betInfo.odds}
             label="Betting odds"
             className="align-middle text-base font-normal tracking-normal"
             customInput={Input}
             decimalSeparator="."
+            onValueChange={(values) => {
+              setBetInfoField('odds', parseFloat(values.value || '0'));
+            }}
           />
           <NumericFormat
-            value={12323}
+            value={betInfo.amount}
             label="Bet amount"
             className="align-middle text-base font-normal tracking-normal"
             customInput={Input}
             thousandSeparator
-            prefix={'$'}
+            prefix="$"
+            onValueChange={(values) => {
+              setBetInfoField('amount', parseFloat(values.value || '0'));
+            }}
           />
         </div>
       </div>

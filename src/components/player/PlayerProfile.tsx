@@ -17,9 +17,9 @@ const PlayerProfile = () => {
 
   const { data: player, error, isLoading } = usePlayer(playerId as string);
 
-  //   if (isLoading) return <p>Loading...</p>;
-  //   if (error) return <p>Error load a player</p>;
-  //   if (!player) return <p>Player not found</p>;
+  if (isLoading) return <p>Loading...</p>;
+  if (error) return <p>Error load a player</p>;
+  if (!player) return <p>Player not found</p>;
 
   return (
     <div className="flex w-full flex-col items-center">
@@ -74,7 +74,18 @@ const PlayerProfile = () => {
 
       {isLastGames && (
         <>
-          <p>Last 10 games perfomance</p>
+          <div className="mb-8 flex flex-col gap-[2px]">
+            <p className="text-[14px] opacity-60">Last 10 games performance</p>
+          </div>
+          <div className="flex w-full flex-row items-center justify-between px-15">
+            <div className="flex w-full max-w-[374px] flex-col gap-5">
+              <div className="bg-top-section flex flex-row gap-4 rounded-xl px-5 py-4"></div>
+              <div className="bg-graph-section min-h-[244px] min-w-[374px] rounded-xl"></div>
+            </div>
+            <div className="w-full max-w-[926px]">
+              <LeagueTable />
+            </div>
+          </div>
         </>
       )}
     </div>

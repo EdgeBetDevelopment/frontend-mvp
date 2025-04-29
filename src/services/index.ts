@@ -1,4 +1,5 @@
 import { IAuthRepsonse, ILogin, ISignUp } from '@/types/auth';
+import { IGameTracker } from '@/types/tracker';
 
 import { axiosInstance } from './client';
 
@@ -50,6 +51,23 @@ const apiService = {
   async signUp(data: ISignUp): Promise<IAuthRepsonse> {
     const response = await axiosInstance.post(`/api/v1/auth/register`, data);
 
+    return response.data;
+  },
+
+  async createBet(data: any): Promise<string> {
+    const response = await axiosInstance.post(`/api/v1/bet/create_bet`, data);
+
+    console.log(response);
+    return response.data;
+  },
+
+  async getBetList(): Promise<IGameTracker[]> {
+    const response = await axiosInstance.get(
+      `/api/v1/bet/bet_list
+`,
+    );
+
+    console.log(response);
     return response.data;
   },
 };
