@@ -1,8 +1,10 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import { useMutation } from '@tanstack/react-query';
+import { FormProvider, useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import { z } from 'zod';
 
 import TrackGameCard from '@/components/matchup/TrackGameCard';
@@ -13,7 +15,15 @@ import { Button } from '@/ui/button';
 import { Form } from '../../ui/form';
 
 const formSchema = z.object({
-  bet: z.string().optional(),
+  team: z.object(
+    {
+      teamId: z.number(),
+      teamName: z.string(),
+    },
+    { required_error: 'Please select a team' },
+  ),
+  odds: z.number().positive('Enter valid odds'),
+  amount: z.number().positive('Enter valid amount'),
 });
 
 const TrackBetsModal = ({
@@ -23,29 +33,53 @@ const TrackBetsModal = ({
   isOpen: boolean;
   onClose: () => void;
 }) => {
-  const { trackedGame, betInfo } = useStore();
+  const { trackedGame } = useStore();
+
+  const { mutate } = useMutation({
+    mutationFn: async (body: any) => apiService.createBet(body),
+    onSuccess: () => {
+      form.reset();
+      toast.success('Bet created successfully');
+      onClose();
+    },
+    onError: (error) => {
+      toast.success('Error creating bet');
+      console.error('Error creating bet:', error);
+    },
+  });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      bet: '',
+      team: undefined,
+      odds: 0,
+      amount: 0,
     },
+    mode: 'onChange',
   });
 
-  async function onSubmit() {
-    try {
-      const accessToken = localStorage.getItem('accessToken');
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    const body = {
+      selected_team_id: String(values.team.teamId),
+      selected_team_name: values.team.teamName,
+      game_id: 1,
+      nba_game_id: Number(trackedGame?.gameId),
+      odds: values.odds,
+      amount: values.amount,
+    };
 
-      if (!accessToken) {
-        throw new Error('No access token found');
-      }
-
-      await apiService.createBet(betInfo, accessToken);
-      console.log('Bet created successfully');
-    } catch (error) {
-      console.error('Error creating bet:', error);
-    }
+    mutate(body);
   }
+
+  useEffect(() => {
+    if (isOpen && trackedGame) {
+      form.reset({
+        team: undefined,
+        odds: 0,
+        amount: 0,
+      });
+    }
+  }, [isOpen, trackedGame]);
 
   return (
     <>
@@ -63,24 +97,26 @@ const TrackBetsModal = ({
               Select The Game
             </div>
           ) : (
-            <Form {...form}>
-              <form
-                className="flex h-full flex-col gap-3"
-                onSubmit={form.handleSubmit(onSubmit)}
-              >
-                <div className="flex-1">
-                  <TrackGameCard
-                    game={trackedGame}
-                    onClickFullAnalysis={() => {}}
-                    onClickClearTrackBet={() => {}}
-                  />
-                </div>
+            <FormProvider {...form}>
+              <Form {...form}>
+                <form
+                  className="flex h-full flex-col gap-3"
+                  onSubmit={form.handleSubmit(onSubmit)}
+                >
+                  <div className="flex-1">
+                    <TrackGameCard
+                      game={trackedGame}
+                      onClickFullAnalysis={() => {}}
+                      onClickClearTrackBet={() => {}}
+                    />
+                  </div>
 
-                <Button type="submit" variant="gradient" size="lg">
-                  Track Bet
-                </Button>
-              </form>
-            </Form>
+                  <Button type="submit" variant="gradient" size="lg">
+                    Track Bet
+                  </Button>
+                </form>
+              </Form>
+            </FormProvider>
           )}
         </SheetContent>
       </Sheet>

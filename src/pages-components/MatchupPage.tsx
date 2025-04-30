@@ -57,7 +57,7 @@ const MatchupPage = () => {
 
   return (
     <>
-      <div className="tl-container mb-[90px] flex h-[840px] items-stretch gap-10">
+      <div className="tl-container mb-[90px] h-[840px] gap-10">
         <div className="flex flex-col gap-4">
           <MatchupPageFilters />
 

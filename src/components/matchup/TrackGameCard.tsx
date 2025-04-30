@@ -2,9 +2,9 @@
 
 import React from 'react';
 import dayjs from 'dayjs';
+import { Controller, useFormContext } from 'react-hook-form';
 import { NumericFormat } from 'react-number-format';
 
-import { useStore } from '@/store';
 import { IGame } from '@/types/game';
 import { Avatar, AvatarImage } from '@/ui/avatar';
 import { Button } from '@/ui/button';
@@ -33,8 +33,19 @@ const TrackGameCard = ({
   const formattedDate = dayjs(game.gameTimeUTC).format('MM/DD/YYYY');
   const formattedTime = dayjs(game.gameTimeUTC).format('HH:mm');
 
-  const betInfo = useStore((state) => state.betInfo);
-  const setBetInfoField = useStore((state) => state.setBetInfoField);
+  const {
+    control,
+    setValue,
+    watch,
+    trigger,
+    formState: { errors },
+  } = useFormContext();
+  const selectedTeam = watch('team');
+
+  const handleTeamSelect = (team: any) => {
+    setValue('team', team, { shouldValidate: true });
+    trigger('team');
+  };
 
   return (
     <CardContainer className="tl-gradient-mistBlue border-border relative flex flex-col gap-3">
@@ -106,28 +117,110 @@ const TrackGameCard = ({
           </Button>
         </div>
 
+        {/* Team Selection */}
+        <div className="flex flex-col gap-3">
+          <p className="text-text-dark mb-3 block text-lg font-normal tracking-normal">
+            Choose a team to track:
+          </p>
+          <div className="flex justify-around gap-4">
+            <Button
+              type="button"
+              variant={
+                selectedTeam?.teamId === game.homeTeam.teamId
+                  ? 'mistBlue'
+                  : 'outline'
+              }
+              className="flex flex-1 items-center gap-2"
+              onClick={() => handleTeamSelect(game.homeTeam)}
+            >
+              <Avatar className="h-6 w-6">
+                <AvatarImage src={TeamLogo1Image.src} />
+              </Avatar>
+              {game.homeTeam.teamName}
+            </Button>
+
+            <Button
+              type="button"
+              variant={
+                selectedTeam?.teamId === game.awayTeam.teamId
+                  ? 'mistBlue'
+                  : 'outline'
+              }
+              className="flex flex-1 items-center gap-2"
+              onClick={() => handleTeamSelect(game.awayTeam)}
+            >
+              <Avatar className="h-6 w-6">
+                <AvatarImage src={TeamLogo2Image.src} />
+              </Avatar>
+              {game.awayTeam.teamName}
+            </Button>
+          </div>
+          {errors.team && (
+            <p className="text-destructive text-sm">
+              {errors.team.message as string}
+            </p>
+          )}
+        </div>
+
         <div className="flex flex-col items-center gap-4">
-          <NumericFormat
-            value={betInfo.odds}
-            label="Betting odds"
-            className="align-middle text-base font-normal tracking-normal"
-            customInput={Input}
-            decimalSeparator="."
-            onValueChange={(values) => {
-              setBetInfoField('odds', parseFloat(values.value || '0'));
-            }}
-          />
-          <NumericFormat
-            value={betInfo.amount}
-            label="Bet amount"
-            className="align-middle text-base font-normal tracking-normal"
-            customInput={Input}
-            thousandSeparator
-            prefix="$"
-            onValueChange={(values) => {
-              setBetInfoField('amount', parseFloat(values.value || '0'));
-            }}
-          />
+          <div className="w-full">
+            <Controller
+              name="odds"
+              control={control}
+              rules={{ required: true, min: 0.01 }}
+              render={({ field }) => (
+                <NumericFormat
+                  {...field}
+                  value={field.value || ''}
+                  onChange={(e) => field.onChange(Number(e.target.value))}
+                  label="Betting odds"
+                  className="align-middle text-base font-normal tracking-normal"
+                  customInput={Input}
+                  decimalSeparator="."
+                  placeholder="Your odds"
+                  allowNegative={false}
+                />
+              )}
+            />
+            {errors.odds && (
+              <p className="text-destructive mt-1 text-sm">
+                {errors.odds.message as string}
+              </p>
+            )}
+          </div>
+
+          <div className="w-full">
+            <Controller
+              name="amount"
+              control={control}
+              rules={{ required: true, min: 1 }}
+              render={({ field }) => (
+                <NumericFormat
+                  {...field}
+                  value={field.value || ''}
+                  onChange={(e) => {
+                    const rawValue = e.target.value;
+                    const parsedValue = Number(
+                      rawValue.replace(/[^0-9.]/g, ''),
+                    );
+                    field.onChange(parsedValue);
+                  }}
+                  label="Bet amount"
+                  className="align-middle text-base font-normal tracking-normal"
+                  customInput={Input}
+                  thousandSeparator
+                  prefix="$"
+                  placeholder="Your amount"
+                  allowNegative={false}
+                />
+              )}
+            />
+            {errors.amount && (
+              <p className="text-destructive mt-1 text-sm">
+                {errors.amount.message as string}
+              </p>
+            )}
+          </div>
         </div>
       </div>
     </CardContainer>

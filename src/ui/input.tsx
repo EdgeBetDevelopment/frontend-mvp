@@ -42,7 +42,7 @@ function Input({
   ...props
 }: IInput) {
   return (
-    <div className={containerClassName}>
+    <div className={cn('w-full', containerClassName)}>
       {label && (
         <label
           htmlFor={id}

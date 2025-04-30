@@ -25,6 +25,8 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
     return null;
   }
 
+  console.log('gameFULLLANALYSIS', game);
+
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent>
@@ -87,9 +89,11 @@ const AnalysisTeamCard = ({ team }: { team: ITeam }) => {
         <Badge size="md" variant="green">
           <span className="text-text-primary">Number of wins</span> {team?.wins}
         </Badge>
-        <Badge size="md" variant="orange">
-          <span className="text-text-primary">In draws</span> 20
-        </Badge>
+        {team?.draws && (
+          <Badge size="md" variant="orange">
+            <span className="text-text-primary">In draws</span> {team?.draws}
+          </Badge>
+        )}
         <Badge size="md" variant="red">
           <span className="text-text-primary">Losses</span> {team?.losses}
         </Badge>

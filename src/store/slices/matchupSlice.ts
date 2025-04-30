@@ -5,6 +5,7 @@ import { IGame } from '@/types/game';
 interface IMatchupState {
   trackedGame: null | IGame;
   selectedGame: null | IGame;
+
   betInfo: {
     game_id: number;
     nba_game_id: number;
@@ -22,14 +23,6 @@ interface IMatchupState {
 export const matchupSlice: StateCreator<IMatchupState> = (set) => ({
   trackedGame: null,
   selectedGame: null,
-  betInfo: {
-    game_id: 1,
-    nba_game_id: 1,
-    odds: 0,
-    amount: 0,
-    selected_team_id: '1610612739',
-    selected_team_name: 'Cavaliers',
-  },
 
   setTrackedGame: (trackedGame) => set({ trackedGame }),
   setSelectedGame: (selectedGame) => set({ selectedGame }),

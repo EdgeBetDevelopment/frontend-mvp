@@ -76,8 +76,8 @@ const GameCard = ({
         </div>
 
         <div className="tl-paraghraph2 text-text-primary">
-          Borem ipsum dolor sit amet, consectetur adipiscing elit. Nunc
-          vulputate libero et velit interdum, ac aliquet odio mattis.
+          {game.gameLabel}, {game.gameSubLabel}, {game.poRoundDesc},{' '}
+          {game.seriesText}
         </div>
 
         <div>

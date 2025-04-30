@@ -13,6 +13,7 @@ import EmptyPlaceholder from '@/components/EmptyPlaceholder';
 import { useBetTracker } from '@/hooks/useBetTracker';
 import { Badge } from '@/ui/badge';
 import { Button } from '@/ui/button';
+import Loader from '@/ui/loader';
 import {
   Table,
   TableBody,
@@ -31,15 +32,11 @@ const BET_TYPE_TABS = [
 ];
 
 const BetTrackerTable = () => {
-  const { data, error, isLoading } = useBetTracker();
+  const { data = [], error, isLoading } = useBetTracker();
 
   const pathname = usePathname();
   const params = useSearchParams() as ReadonlyURLSearchParams;
   const router = useRouter();
-
-  if (isLoading) return <p>Loading...</p>;
-  if (error) return <p>Error load a player</p>;
-  if (!data) return <p>Player not found</p>;
 
   const type = params.get('type');
 
@@ -82,9 +79,13 @@ const BetTrackerTable = () => {
 
       <div className="">
         <ListRenderer
-          isLoading={false}
+          isLoading={isLoading}
           data={data}
-          loadingComponent={<div>Loading...</div>}
+          isError={!!error}
+          errorComponent={<div>Error load a player</div>}
+          loadingComponent={
+            <Loader size="h-10 w-10" className="h-full w-full py-10" />
+          }
           emptyComponent={
             <div>
               <Table className="">
@@ -119,13 +120,16 @@ const BetTrackerTable = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {data.map((data) => (
+                {bets.map((data) => (
                   <TableRow key={data.id}>
                     <TableCell>
                       {dayjs(data.created_at).format('DD/MM/YYYY')}
                     </TableCell>
-                    <TableCell>{data.name}</TableCell>
-                    <TableCell>{data.prediction}</TableCell>
+                    <TableCell>
+                      You placed a bet of ${data.amount} on the{' '}
+                      {data.selected_team_name}
+                    </TableCell>
+                    <TableCell>Lorem lorem</TableCell>
                     <TableCell>{data.amount}</TableCell>
                     <TableCell>{data.odds_at_bet_time}</TableCell>
                     <TableCell>

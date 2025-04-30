@@ -8,5 +8,7 @@ export const useBetTracker = () => {
     queryFn: () => apiService.getBetList(),
     staleTime: 1000 * 60 * 5,
     retry: 2,
+    refetchOnMount: 'always',
+    refetchOnWindowFocus: true,
   });
 };
