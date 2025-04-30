@@ -9,10 +9,14 @@ import { z } from 'zod';
 
 import TrackGameCard from '@/components/matchup/TrackGameCard';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
+import { useAuth } from '@/context/AuthContext';
+import useModalManager from '@/hooks/useModalManager';
 import apiService from '@/services';
 import { useStore } from '@/store';
+import { IGame } from '@/types/game';
 import { Button } from '@/ui/button';
 import { Form } from '../../ui/form';
+import GameAnalysisModal from '../matchup/modals/GameAnalysisModal';
 
 const formSchema = z.object({
   team: z.object(
@@ -33,7 +37,9 @@ const TrackBetsModal = ({
   isOpen: boolean;
   onClose: () => void;
 }) => {
-  const { trackedGame } = useStore();
+  const { setTrackedGame, setSelectedGame, trackedGame } = useStore();
+  const { openModal, closeModal, isModalOpen } = useModalManager();
+  const { isAuthenticated } = useAuth();
 
   const { mutate } = useMutation({
     mutationFn: async (body: any) => apiService.createBet(body),
@@ -72,6 +78,10 @@ const TrackBetsModal = ({
   }
 
   useEffect(() => {
+    clearForm();
+  }, [isOpen, trackedGame]);
+
+  const clearForm = () => {
     if (isOpen && trackedGame) {
       form.reset({
         team: undefined,
@@ -79,7 +89,22 @@ const TrackBetsModal = ({
         amount: 0,
       });
     }
-  }, [isOpen, trackedGame]);
+  };
+
+  const onClickFullAnalysis = (game: IGame) => {
+    if (!isAuthenticated) {
+      openModal('auth');
+      return;
+    } else {
+      setSelectedGame(game);
+      openModal('game-analysis');
+    }
+  };
+
+  const onClickCloseModal = () => {
+    closeModal('game-analysis');
+    setSelectedGame(null);
+  };
 
   return (
     <>
@@ -106,7 +131,9 @@ const TrackBetsModal = ({
                   <div className="flex-1">
                     <TrackGameCard
                       game={trackedGame}
-                      onClickFullAnalysis={() => {}}
+                      onClickFullAnalysis={() =>
+                        onClickFullAnalysis(trackedGame)
+                      }
                       onClickClearTrackBet={() => {}}
                     />
                   </div>
@@ -120,6 +147,11 @@ const TrackBetsModal = ({
           )}
         </SheetContent>
       </Sheet>
+
+      <GameAnalysisModal
+        open={isModalOpen('game-analysis')}
+        onClose={onClickCloseModal}
+      />
     </>
   );
 };

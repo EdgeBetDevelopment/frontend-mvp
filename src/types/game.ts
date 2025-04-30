@@ -10,6 +10,7 @@ export interface ITeam {
   teamCity: string;
   teamTricode: string;
   wins: number;
+  draws?: number;
   losses: number;
   score: number;
   seed: number | null;

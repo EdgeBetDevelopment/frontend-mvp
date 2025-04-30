@@ -1,14 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import Image from 'next/image';
 import { useParams } from 'next/navigation';
+import { FaCircleUser } from 'react-icons/fa6';
 
 import { usePlayer } from '@/hooks/usePlayer';
+import Loader from '@/ui/loader';
 
 import LeagueTable from './LeagueTable';
-
-import player_logo from '@/assets/icons/player_logo.svg';
 
 const PlayerProfile = () => {
   const [isLastGames, setIsLastGames] = useState(false);
@@ -17,23 +16,25 @@ const PlayerProfile = () => {
 
   const { data: player, error, isLoading } = usePlayer(playerId as string);
 
-  if (isLoading) return <p>Loading...</p>;
+  if (isLoading)
+    return (
+      <Loader
+        size="h-14 w-14"
+        className="flex h-[70vh] w-screen items-center justify-center"
+      />
+    );
   if (error) return <p>Error load a player</p>;
   if (!player) return <p>Player not found</p>;
 
   return (
     <div className="flex w-full flex-col items-center">
-      <div className="flex flex-col gap-1.5">
-        <Image
-          width={48}
-          height={46}
-          src={player?.imageUrl || player_logo}
-          alt="Player icon"
-        />
+      <div className="flex flex-col items-center gap-1.5">
+        <FaCircleUser className="h-14 w-14" />
         <h3 className="mb-2 text-2xl font-bold">
-          {player?.name || 'Jayson Tatum'}
+          {player?.full_name || 'Jayson Tatum'}
         </h3>
       </div>
+
       {!isLastGames && (
         <>
           <div className="mb-8 flex flex-col gap-[2px]">
@@ -47,7 +48,7 @@ const PlayerProfile = () => {
             predictions. Specialized in championship and playoff game analysis
             with consistent accuracy in major event outcomes.
           </p>
-          <div className="flex w-full flex-row items-center justify-between px-15">
+          <div className="flex w-full flex-row items-stretch justify-between gap-10 px-15">
             <div className="flex w-full max-w-[374px] flex-col gap-5">
               <div className="bg-top-section flex flex-row gap-4 rounded-xl px-5 py-4">
                 <div className="flex w-full flex-col items-center gap-1 rounded-xl bg-[#34D4414D] py-1">
@@ -63,8 +64,9 @@ const PlayerProfile = () => {
                   <p className="text-xs font-normal text-[#EBEBEB]">Losses</p>
                 </div>
               </div>
-              <div className="bg-graph-section min-h-[244px] min-w-[374px] rounded-xl"></div>
+              <div className="bg-graph-section h-full min-h-[200px] min-w-[374px] rounded-xl"></div>
             </div>
+
             <div className="w-full max-w-[926px]">
               <LeagueTable />
             </div>

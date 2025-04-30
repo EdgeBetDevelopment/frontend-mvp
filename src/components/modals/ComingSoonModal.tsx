@@ -23,7 +23,11 @@ const ComingSoonModal: React.FC<ComingSoonModalProps> = ({
           </h3>
         </div>
 
-        <Button variant="gradient" onClick={onClose} className="px-8">
+        <Button
+          variant="gradient"
+          onClick={onClose}
+          className="w-full max-w-[120px] px-8"
+        >
           Got it
         </Button>
       </DialogContent>

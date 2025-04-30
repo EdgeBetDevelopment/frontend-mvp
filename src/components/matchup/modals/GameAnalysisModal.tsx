@@ -25,8 +25,6 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
     return null;
   }
 
-  console.log('gameFULLLANALYSIS', game);
-
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent>

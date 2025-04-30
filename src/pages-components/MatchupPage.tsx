@@ -11,7 +11,9 @@ import {
 
 import GameCard from '@/components/matchup/GameCard';
 import GameAnalysisModal from '@/components/matchup/modals/GameAnalysisModal';
+import AuthModal from '@/components/modals/AuthModal';
 import TrackBetsModal from '@/components/modals/TrackBetsModal';
+import { useAuth } from '@/context/AuthContext';
 import useModalManager from '@/hooks/useModalManager';
 import apiService from '@/services';
 import { useStore } from '@/store';
@@ -27,6 +29,7 @@ import FootbalIcon from '@/assets/icons/football.svg';
 import TennisIcon from '@/assets/icons/tenins.svg';
 
 const MatchupPage = () => {
+  const { isAuthenticated } = useAuth();
   const { openModal, closeModal, isModalOpen } = useModalManager();
   const { setTrackedGame, setSelectedGame } = useStore();
 
@@ -36,8 +39,13 @@ const MatchupPage = () => {
   });
 
   const onClickTrackBet = (game: IGame) => {
-    setTrackedGame(game);
-    openModal('track-bet');
+    if (!isAuthenticated) {
+      openModal('auth');
+      return;
+    } else {
+      setTrackedGame(game);
+      openModal('track-bet');
+    }
   };
 
   const onClickClearTrackBet = () => {
@@ -46,8 +54,13 @@ const MatchupPage = () => {
   };
 
   const onClickFullAnalysis = (game: IGame) => {
-    setSelectedGame(game);
-    openModal('game-analysis');
+    if (!isAuthenticated) {
+      openModal('auth');
+      return;
+    } else {
+      setSelectedGame(game);
+      openModal('game-analysis');
+    }
   };
 
   const onClickCloseModal = () => {
@@ -82,6 +95,11 @@ const MatchupPage = () => {
           </ScrollArea>
         </div>
       </div>
+
+      <AuthModal
+        isOpen={isModalOpen('auth')}
+        onClose={() => closeModal('auth')}
+      />
 
       <TrackBetsModal
         isOpen={isModalOpen('track-bet')}

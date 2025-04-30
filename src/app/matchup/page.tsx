@@ -9,7 +9,7 @@ const Matchup = () => {
   return (
     <TanstackQueryProvider>
       <Suspense fallback={<div>Loading...</div>}>
-        <MatchupPage />;
+        <MatchupPage />
       </Suspense>
     </TanstackQueryProvider>
   );

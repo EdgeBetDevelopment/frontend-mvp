@@ -33,7 +33,12 @@ const loginSchema = z.object({
 
 type LoginFormValues = z.infer<typeof loginSchema>;
 
-const LoginForm: React.FC = () => {
+interface ILoginForm {
+  title?: string;
+  onSuccessLogin?: () => void;
+}
+
+const LoginForm = ({ title = 'Welcome!', onSuccessLogin }: ILoginForm) => {
   const router = useRouter();
   const { setTokens } = useAuth();
 
@@ -44,12 +49,14 @@ const LoginForm: React.FC = () => {
   } = useMutation({
     mutationFn: apiService.login,
     onSuccess: (data) => {
-      console.log('data', data);
       setTokens({
         accessToken: data.access_token,
         refreshToken: data.refresh_token,
       });
-      router.push(ROUTES.HOME);
+
+      if (onSuccessLogin) {
+        onSuccessLogin();
+      }
     },
     onError: (error) => {
       console.error(error);
@@ -83,9 +90,9 @@ const LoginForm: React.FC = () => {
     <Form {...form}>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="auth-form mt-20 mb-40 flex w-full max-w-[800px] flex-col items-center justify-center gap-6 rounded-3xl px-40 py-14"
+        className="flex w-full flex-col items-center justify-center gap-6"
       >
-        <H2 text="Welcome!" />
+        <H2 text={title} />
 
         <AuthButton type="button">
           <GoogleIcon />
@@ -137,12 +144,14 @@ const LoginForm: React.FC = () => {
 
         <FormMessage error={loginError?.message} />
 
-        <Link
-          className="w-full max-w-[800px] text-end text-base text-[#84FDF7]"
-          href={ROUTES.AUTH.RESET_PASS}
-        >
-          Forgot Password?
-        </Link>
+        <div className="flex w-full justify-end">
+          <Link
+            className="text-base text-[#84FDF7]"
+            href={ROUTES.AUTH.RESET_PASS}
+          >
+            Forgot Password?
+          </Link>
+        </div>
 
         <AuthButton disabled={loginIsLoading} type="submit">
           {loginIsLoading ? (

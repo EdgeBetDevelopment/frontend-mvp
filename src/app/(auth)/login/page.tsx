@@ -1,11 +1,7 @@
-import LoginForm from '@/components/auth/LoginForm';
+import LoginPage from '@/pages-components/auth/LoginPage';
 
 const Login = () => {
-  return (
-    <div className="flex w-full flex-col items-center justify-center">
-      <LoginForm />
-    </div>
-  );
+  return <LoginPage />;
 };
 
 export default Login;
