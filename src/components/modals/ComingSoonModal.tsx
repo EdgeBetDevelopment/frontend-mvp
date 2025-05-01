@@ -2,11 +2,15 @@ import { Button } from '../../ui/button';
 import { Dialog, DialogContent } from '../../ui/dialog';
 
 interface ComingSoonModalProps {
+  title: string;
+  description?: string;
   isOpen: boolean;
   onClose: () => void;
 }
 
 const ComingSoonModal: React.FC<ComingSoonModalProps> = ({
+  title,
+  description,
   isOpen,
   onClose,
 }) => {
@@ -15,11 +19,12 @@ const ComingSoonModal: React.FC<ComingSoonModalProps> = ({
       <DialogContent className="flex w-full flex-col items-center gap-6 p-6 text-center sm:max-w-[500px]">
         <div className="flex flex-col gap-3">
           <div className="text-primary-brand text-xl font-medium tracking-widest uppercase">
-            Coming Soon
+            {title}
           </div>
 
           <h3 className="text-text-secondary text-xl font-semibold">
-            Predictions for this sport are not available yet
+            {description ||
+              'This feature is coming soon! Stay tuned for updates.'}
           </h3>
         </div>
 

@@ -5,7 +5,7 @@ import dayjs from 'dayjs';
 import { Controller, useFormContext } from 'react-hook-form';
 import { NumericFormat } from 'react-number-format';
 
-import { IGame } from '@/types/game';
+import { IGameWithAI } from '@/types/game';
 import { Avatar, AvatarImage } from '@/ui/avatar';
 import { Button } from '@/ui/button';
 import CardContainer from '../../ui/containers/CardContainer';
@@ -20,7 +20,7 @@ import TeamLogo1Image from '@/assets/teamLogo1.png';
 import TeamLogo2Image from '@/assets/teamLogo2.png';
 
 interface ITrackGameCard {
-  game: IGame;
+  game: IGameWithAI;
   onClickFullAnalysis: () => void;
   onClickClearTrackBet: () => void;
 }
@@ -30,8 +30,8 @@ const TrackGameCard = ({
   onClickFullAnalysis,
   onClickClearTrackBet,
 }: ITrackGameCard) => {
-  const formattedDate = dayjs(game.gameTimeUTC).format('MM/DD/YYYY');
-  const formattedTime = dayjs(game.gameTimeUTC).format('HH:mm');
+  const formattedDate = dayjs(game.game.start_time).format('MM/DD/YYYY');
+  const formattedTime = dayjs(game.game.start_time).format('HH:mm');
 
   const {
     control,
@@ -73,9 +73,9 @@ const TrackGameCard = ({
 
         <div>
           <div className="tl-paraghraph2 flex items-center gap-1">
-            <div className="text-text-primary">{game.homeTeam.teamName}</div>
+            <div className="text-text-primary">{game.game.home_team}</div>
             <div>vs</div>
-            <div className="text-text-primary">{game.awayTeam.teamName}</div>
+            <div className="text-text-primary">{game.game.away_team}</div>
           </div>
 
           <div className="tl-paraghraph3 flex items-center gap-4">

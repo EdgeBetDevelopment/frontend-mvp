@@ -24,6 +24,12 @@ interface ISport {
 
 export const sports: ISport[] = [
   {
+    title: 'NBA',
+    subtitle: 'US Basketball',
+    icon: <FootbalIcon />,
+    link: ROUTES.MATCHUP,
+  },
+  {
     title: 'NCAAF',
     subtitle: 'US College Football',
     icon: <AmericanFootballIcon />,
@@ -47,12 +53,6 @@ export const sports: ISport[] = [
     title: 'Basketball Euroleague',
     subtitle: 'Basketball Euroleague',
     icon: <FootbalIcon />,
-  },
-  {
-    title: 'NBA',
-    subtitle: 'US Basketball',
-    icon: <FootbalIcon />,
-    link: ROUTES.MATCHUP,
   },
   {
     title: 'NCAAB',
@@ -138,6 +138,8 @@ const SportsList = () => {
       </div>
 
       <ComingSoonModal
+        title="Coming Soon"
+        description="Predictions for this sport are not available yet"
         isOpen={isModalOpen('coming-soon')}
         onClose={() => closeModal('coming-soon')}
       />

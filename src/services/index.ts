@@ -1,9 +1,17 @@
 import { IAuthRepsonse, ILogin, ISignUp } from '@/types/auth';
+import { IGameWithAI } from '@/types/game';
+import { ITeam } from '@/types/team';
 import { IGameTracker } from '@/types/tracker';
 
 import { axiosInstance } from './client';
 
 const apiService = {
+  async getGames(): Promise<IGameWithAI[]> {
+    const response = await axiosInstance.get(`/api/v1/nba/games`);
+
+    return response.data;
+  },
+
   async getScoreboard(): Promise<any> {
     const response = await axiosInstance.get(`/api/v1/nba/get_scoreboard`);
 
@@ -29,7 +37,11 @@ const apiService = {
       `/api/v1/nba/get_player_by_id/${query}`,
     );
 
-    console.log(response);
+    return response.data;
+  },
+
+  async getTeamById(query: string): Promise<ITeam> {
+    const response = await axiosInstance.get(`/api/v1/nba/get_team/${query}`);
 
     return response.data;
   },

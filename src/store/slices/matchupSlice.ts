@@ -1,10 +1,10 @@
 import { StateCreator } from 'zustand';
 
-import { IGame } from '@/types/game';
+import { IGameWithAI } from '@/types/game';
 
 interface IMatchupState {
-  trackedGame: null | IGame;
-  selectedGame: null | IGame;
+  trackedGame: null | IGameWithAI;
+  selectedGame: null | IGameWithAI;
 
   betInfo: {
     game_id: number;
@@ -15,8 +15,8 @@ interface IMatchupState {
     selected_team_name: string;
   };
 
-  setTrackedGame: (trackedGame: null | IGame) => void;
-  setSelectedGame: (selectedGame: null | IGame) => void;
+  setTrackedGame: (trackedGame: null | IGameWithAI) => void;
+  setSelectedGame: (selectedGame: null | IGameWithAI) => void;
   setBetInfoField: (field: keyof IMatchupState['betInfo'], value: any) => void;
 }
 

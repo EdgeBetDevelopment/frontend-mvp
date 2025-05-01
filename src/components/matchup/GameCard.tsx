@@ -3,7 +3,7 @@
 import React from 'react';
 import dayjs from 'dayjs';
 
-import { IGame } from '@/types/game';
+import { IGameWithAI } from '@/types/game';
 import { Avatar, AvatarImage } from '@/ui/avatar';
 import { Badge } from '@/ui/badge';
 import { Button } from '@/ui/button';
@@ -17,7 +17,7 @@ import TeamLogo1Image from '@/assets/teamLogo1.png';
 import TeamLogo2Image from '@/assets/teamLogo2.png';
 
 interface IGameCard {
-  game: IGame;
+  game: IGameWithAI;
   onClickFullAnalysis: () => void;
   onClickTrackBet: () => void;
 }
@@ -27,8 +27,35 @@ const GameCard = ({
   onClickFullAnalysis,
   onClickTrackBet,
 }: IGameCard) => {
-  const formattedDate = dayjs(game.gameTimeUTC).format('MM/DD/YYYY');
-  const formattedTime = dayjs(game.gameTimeUTC).format('HH:mm');
+  const formattedDate = dayjs(game.game.start_time).format('MM/DD/YYYY');
+  const formattedTime = dayjs(game.game.start_time).format('HH:mm');
+
+  const isHomePredicted =
+    game.prediction.predicted_winner === game.game.home_team;
+
+  const recommendedBet = isHomePredicted
+    ? {
+        label: 'Recommended bet',
+        team: game.game.home_team,
+        odd: game.prediction.odds_home,
+      }
+    : {
+        label: 'Recommended bet',
+        team: game.game.away_team,
+        odd: game.prediction.odds_away,
+      };
+
+  const saferBet = !isHomePredicted
+    ? {
+        label: 'Safer bet',
+        team: game.game.home_team,
+        odd: game.prediction.odds_home,
+      }
+    : {
+        label: 'Safer bet',
+        team: game.game.away_team,
+        odd: game.prediction.odds_away,
+      };
 
   return (
     <CardContainer className="tl-gradient-mistBlue border-border flex flex-col gap-3">
@@ -47,9 +74,9 @@ const GameCard = ({
 
         <div>
           <div className="tl-paraghraph2 flex items-center gap-1">
-            <div className="text-text-primary">{game.homeTeam.teamName}</div>
+            <div className="text-text-primary">{game.game.home_team}</div>
             <div>vs</div>
-            <div className="text-text-primary">{game.awayTeam.teamName}</div>
+            <div className="text-text-primary">{game.game.away_team}</div>
           </div>
 
           <div className="tl-paraghraph3 flex items-center gap-4">
@@ -76,8 +103,8 @@ const GameCard = ({
         </div>
 
         <div className="tl-paraghraph2 text-text-primary">
-          {game.gameLabel}, {game.gameSubLabel}, {game.poRoundDesc},{' '}
-          {game.seriesText}
+          Lorem ipsum dolor sit amet consectetur, adipisicing elit. Praesentium,
+          similique.
         </div>
 
         <div>
@@ -88,7 +115,8 @@ const GameCard = ({
 
         <div className="flex flex-wrap items-center gap-2">
           <Badge size="md" variant="mistBlue">
-            Recommended bet <span className="text-text-primary">1.61</span>
+            {recommendedBet.label}:{' '}
+            <span className="text-text-primary">{recommendedBet.odd}</span>
           </Badge>
 
           <Badge size="md" variant="mistBlue">
@@ -96,7 +124,8 @@ const GameCard = ({
           </Badge>
 
           <Badge size="md" variant="mistBlue">
-            Safer bet <span className="text-text-primary">1.4</span>
+            {saferBet.label}:{' '}
+            <span className="text-text-primary">{saferBet.odd}</span>
           </Badge>
         </div>
 

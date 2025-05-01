@@ -42,27 +42,28 @@ interface IPOdds {
   suspended: number;
 }
 
+export interface IPrediction {
+  win_probability_home: number;
+  win_probability_away: number;
+  odds_home: number;
+  odds_away: number;
+  predicted_winner: string;
+  favorite_team: string;
+  analysis: string;
+}
+
 export interface IGame {
-  gameId: string;
-  gameCode: string;
-  gameStatus: number;
-  gameStatusText: string;
-  period: number;
-  gameClock: string;
-  gameTimeUTC: string;
-  gameEt: string;
-  regulationPeriods: number;
-  ifNecessary: boolean;
-  seriesGameNumber: string;
-  gameLabel: string;
-  gameSubLabel: string;
-  seriesText: string;
-  seriesConference: string;
-  poRoundDesc: string;
-  gameSubtype: string;
-  isNeutral: boolean;
-  homeTeam: ITeam;
-  awayTeam: ITeam;
-  gameLeaders: IGameLeaders;
-  pbOdds: IPOdds;
+  id: number;
+  nba_game_id: string;
+  home_team: string;
+  away_team: string;
+  start_time: string;
+  status: string;
+  final_score: string;
+}
+
+export interface IGameWithAI {
+  game: IGame;
+  prediction: IPrediction;
+  scoreboard: null;
 }

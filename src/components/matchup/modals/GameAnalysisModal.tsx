@@ -3,9 +3,7 @@
 import React from 'react';
 
 import { useStore } from '@/store';
-import { ITeam } from '@/types/game';
 import { Avatar, AvatarImage } from '@/ui/avatar';
-import { Badge } from '@/ui/badge';
 import CardContainer from '@/ui/containers/CardContainer';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/ui/dialog';
 
@@ -33,16 +31,47 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
         </DialogHeader>
 
         <div className="flex flex-col gap-3.5">
-          <div className="flex items-center gap-3.5">
-            <CardContainer className="tl-gradient-mistBlue flex max-w-[400px] flex-col gap-2 rounded-2xl">
+          <div className="flex items-stretch gap-3.5">
+            <CardContainer className="tl-gradient-mistBlue flex max-w-[400px] flex-1/3 flex-col gap-2 rounded-2xl">
               <div className="tl-flex-icon align-bottom text-sm font-medium tracking-normal">
                 <StatisticsIcon />
-                Player Performance Trends +0.4
+                Prediction
               </div>
 
               <CardContainer className="tl-paraghraph2 rounded-xl">
-                Qorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc
-                vulputate libero et velit interdum, ac aliquet odio mattis.
+                {game.prediction.analysis}
+              </CardContainer>
+            </CardContainer>
+
+            <CardContainer className="tl-gradient-mistBlue flex max-w-[400px] flex-1/3 flex-col gap-2 rounded-2xl">
+              <div className="tl-flex-icon align-bottom text-sm font-medium tracking-normal">
+                <StatisticsIcon />
+                Favorite Team
+              </div>
+
+              <CardContainer className="tl-paraghraph2 flex flex-1 items-center gap-2 rounded-xl">
+                <Avatar className="flex h-8 w-8 items-center justify-center rounded-full border bg-[#33758780]">
+                  <div>
+                    <AvatarImage src={NFLLogoImage.src} />
+                  </div>
+                </Avatar>
+                {game.prediction.favorite_team}
+              </CardContainer>
+            </CardContainer>
+
+            <CardContainer className="tl-gradient-mistBlue flex max-w-[400px] flex-1/3 flex-col gap-2 rounded-2xl">
+              <div className="tl-flex-icon align-bottom text-sm font-medium tracking-normal">
+                <StatisticsIcon />
+                Predicted Winner
+              </div>
+
+              <CardContainer className="tl-paraghraph2 flex flex-1 items-center gap-2 rounded-xl">
+                <Avatar className="flex h-8 w-8 items-center justify-center rounded-full border bg-[#33758780]">
+                  <div>
+                    <AvatarImage src={NFLLogoImage.src} />
+                  </div>
+                </Avatar>
+                {game.prediction.predicted_winner}
               </CardContainer>
             </CardContainer>
           </div>
@@ -53,8 +82,16 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
             </div>
 
             <div className="flex items-center gap-2.5">
-              <AnalysisTeamCard team={game?.homeTeam} />
-              <AnalysisTeamCard team={game?.awayTeam} />
+              <AnalysisTeamCard
+                name={game.game.home_team}
+                winProbability={game.prediction.win_probability_home}
+                odd={game.prediction.odds_home}
+              />
+              <AnalysisTeamCard
+                name={game.game.away_team}
+                winProbability={game.prediction.win_probability_away}
+                odd={game.prediction.odds_away}
+              />
             </div>
           </CardContainer>
         </div>
@@ -65,9 +102,17 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
 
 export default GameAnalysisModal;
 
-const AnalysisTeamCard = ({ team }: { team: ITeam }) => {
+const AnalysisTeamCard = ({
+  name,
+  winProbability,
+  odd,
+}: {
+  name: string;
+  winProbability: number;
+  odd: number;
+}) => {
   return (
-    <CardContainer className="flex flex-col gap-2 rounded-xl p-3">
+    <CardContainer className="flex w-full flex-col gap-2 rounded-xl p-3">
       <div className="tl-paraghraph2 flex items-center gap-2">
         <Avatar className="flex h-8 w-8 items-center justify-center rounded-full border bg-[#33758780]">
           <div>
@@ -75,15 +120,15 @@ const AnalysisTeamCard = ({ team }: { team: ITeam }) => {
           </div>
         </Avatar>
 
-        <div className="text-text-primary">{team?.teamName}</div>
+        <div className="text-text-primary">{name}</div>
       </div>
 
       <div className="tl-paraghraph3">
-        Qorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate
-        libero et velit interdum, ac aliquet odio mattis.
+        <p>Win Probability: {winProbability * 100}%</p>
+        <p>Odd: {odd}</p>
       </div>
 
-      <div className="flex flex-wrap items-center gap-2">
+      {/* <div className="flex flex-wrap items-center gap-2">
         <Badge size="md" variant="green">
           <span className="text-text-primary">Number of wins</span> {team?.wins}
         </Badge>
@@ -95,7 +140,7 @@ const AnalysisTeamCard = ({ team }: { team: ITeam }) => {
         <Badge size="md" variant="red">
           <span className="text-text-primary">Losses</span> {team?.losses}
         </Badge>
-      </div>
+      </div> */}
     </CardContainer>
   );
 };

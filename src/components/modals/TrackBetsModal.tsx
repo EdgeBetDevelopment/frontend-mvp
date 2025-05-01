@@ -13,7 +13,7 @@ import { useAuth } from '@/context/AuthContext';
 import useModalManager from '@/hooks/useModalManager';
 import apiService from '@/services';
 import { useStore } from '@/store';
-import { IGame } from '@/types/game';
+import { IGameWithAI } from '@/types/game';
 import { Button } from '@/ui/button';
 import { Form } from '../../ui/form';
 import GameAnalysisModal from '../matchup/modals/GameAnalysisModal';
@@ -69,7 +69,7 @@ const TrackBetsModal = ({
       selected_team_id: String(values.team.teamId),
       selected_team_name: values.team.teamName,
       game_id: 1,
-      nba_game_id: Number(trackedGame?.gameId),
+      nba_game_id: Number(trackedGame?.game.id),
       odds: values.odds,
       amount: values.amount,
     };
@@ -91,7 +91,7 @@ const TrackBetsModal = ({
     }
   };
 
-  const onClickFullAnalysis = (game: IGame) => {
+  const onClickFullAnalysis = (game: IGameWithAI) => {
     if (!isAuthenticated) {
       openModal('auth');
       return;

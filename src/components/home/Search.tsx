@@ -31,7 +31,7 @@ const SupportSearch = () => {
 
   const { data: questions = [], isPending: isLoading } = useQuery({
     queryKey: ['questions-search', debouncedSearch],
-    queryFn: () => apiService.searchPlayer(debouncedSearch),
+    queryFn: () => apiService.searchTeam(debouncedSearch),
     enabled: !!debouncedSearch,
   });
 
@@ -52,8 +52,8 @@ const SupportSearch = () => {
 
   const onSelectQuestion = (item: any) => {
     setShowDropdown(false);
-    router.push(ROUTES.PLAYER(item.id));
-    console.log('item', item);
+    // router.push(ROUTES.PLAYER(item.id));
+    router.push(ROUTES.TEAM(item.id));
     setSearchValue('');
   };
 

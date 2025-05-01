@@ -12,12 +12,12 @@ import {
 import GameCard from '@/components/matchup/GameCard';
 import GameAnalysisModal from '@/components/matchup/modals/GameAnalysisModal';
 import AuthModal from '@/components/modals/AuthModal';
-import TrackBetsModal from '@/components/modals/TrackBetsModal';
+import ComingSoonModal from '@/components/modals/ComingSoonModal';
 import { useAuth } from '@/context/AuthContext';
 import useModalManager from '@/hooks/useModalManager';
 import apiService from '@/services';
 import { useStore } from '@/store';
-import { IGame } from '@/types/game';
+import { IGameWithAI } from '@/types/game';
 import { Button } from '@/ui/button';
 import { ScrollArea } from '@/ui/scroll-area';
 import { Skeleton } from '@/ui/skeleton';
@@ -33,12 +33,12 @@ const MatchupPage = () => {
   const { openModal, closeModal, isModalOpen } = useModalManager();
   const { setTrackedGame, setSelectedGame } = useStore();
 
-  const { data = { games: [] }, isLoading } = useQuery<any>({
+  const { data = [], isLoading } = useQuery({
     queryKey: ['scrore-board'],
-    queryFn: () => apiService.getScoreboard(),
+    queryFn: () => apiService.getGames(),
   });
 
-  const onClickTrackBet = (game: IGame) => {
+  const onClickTrackBet = (game: IGameWithAI) => {
     if (!isAuthenticated) {
       openModal('auth');
       return;
@@ -53,7 +53,7 @@ const MatchupPage = () => {
     closeModal('track-bet');
   };
 
-  const onClickFullAnalysis = (game: IGame) => {
+  const onClickFullAnalysis = (game: IGameWithAI) => {
     if (!isAuthenticated) {
       openModal('auth');
       return;
@@ -83,9 +83,9 @@ const MatchupPage = () => {
                       className="h-[387px] w-[644px] rounded-3xl"
                     />
                   ))
-                : data.games.map((game: IGame) => (
+                : data.map((game: IGameWithAI) => (
                     <GameCard
-                      key={game.gameId}
+                      key={game.game.id}
                       game={game}
                       onClickTrackBet={() => onClickTrackBet(game)}
                       onClickFullAnalysis={() => onClickFullAnalysis(game)}
@@ -101,7 +101,14 @@ const MatchupPage = () => {
         onClose={() => closeModal('auth')}
       />
 
-      <TrackBetsModal
+      {/* <TrackBetsModal
+        isOpen={isModalOpen('track-bet')}
+        onClose={onClickClearTrackBet}
+      /> */}
+
+      <ComingSoonModal
+        title="Coming Soon"
+        description="Technical work on this functionality is ongoing"
         isOpen={isModalOpen('track-bet')}
         onClose={onClickClearTrackBet}
       />
