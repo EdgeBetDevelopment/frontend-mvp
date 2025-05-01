@@ -12,14 +12,14 @@ const TableBodyRow: React.FC<{
   };
 }> = ({ data }) => {
   return (
-    <TableRow className="bottom-line" key={data.id}>
+    <TableRow className="border-b" key={data.id}>
       <TableCell className="text-[14px]">{data.name}</TableCell>
       <TableCell className="text-[14px] text-[#34D399]">{data.wins}</TableCell>
       <TableCell className="text-[14px] text-[#FF8808]">{data.draws}</TableCell>
       <TableCell className="text-[14px] text-[#DC2626]">
         {data.losses}
       </TableCell>
-      <TableCell className="truncate-text h-[68px] min-h-[68px] py-0">
+      <TableCell className="h-[68px] min-h-[68px] max-w-[244px] overflow-hidden py-0 text-nowrap text-ellipsis">
         {data.description}
       </TableCell>
       <TableCell>

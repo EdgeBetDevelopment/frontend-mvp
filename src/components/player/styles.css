@@ -12,17 +12,6 @@
   backdrop-filter: blur(20px);
 }
 
-.truncate-text {
-  max-width: 244px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.bottom-line {
-  border-bottom: 1px solid var(--Border-primary, #484848);
-}
-
 .bg-top-section {
   background: linear-gradient(
     112.71deg,

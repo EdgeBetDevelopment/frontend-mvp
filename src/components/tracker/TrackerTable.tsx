@@ -4,6 +4,7 @@ import dayjs from 'dayjs';
 
 import { useBetTracker } from '@/hooks/useBetTracker';
 import { Badge } from '@/ui/badge';
+import Loader from '@/ui/loader';
 import {
   Table,
   TableBody,
@@ -12,13 +13,34 @@ import {
   TableHeader,
   TableRow,
 } from '@/ui/table';
+import EmptyPlaceholder from '../EmptyPlaceholder';
 
 export const TrackerTable = () => {
   const { data, error, isLoading } = useBetTracker();
 
-  if (isLoading) return <p>Loading...</p>;
-  if (error) return <p>Error load a player</p>;
-  if (!data) return <p>Player not found</p>;
+  if (isLoading)
+    return (
+      <Loader
+        size="h-14 w-14"
+        className="flex h-[70vh] w-full items-center justify-center"
+      />
+    );
+
+  if (!!error)
+    return (
+      <EmptyPlaceholder
+        title="Something went wrong"
+        subtitle="We couldn't load your bet history. Please try again later."
+      />
+    );
+
+  if (!data || data.length === 0)
+    return (
+      <EmptyPlaceholder
+        title="No tracked bets"
+        subtitle="You haven't tracked any bets yet."
+      />
+    );
 
   return (
     <div className="flex w-full flex-col gap-6">

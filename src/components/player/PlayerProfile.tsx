@@ -6,8 +6,10 @@ import { FaCircleUser } from 'react-icons/fa6';
 
 import { usePlayer } from '@/hooks/usePlayer';
 import Loader from '@/ui/loader';
+import EmptyPlaceholder from '../EmptyPlaceholder';
 
 import LeagueTable from './LeagueTable';
+import { PlayerStatsTable } from './PlayerSeasonStats';
 
 const PlayerProfile = () => {
   const [isLastGames, setIsLastGames] = useState(false);
@@ -20,11 +22,25 @@ const PlayerProfile = () => {
     return (
       <Loader
         size="h-14 w-14"
-        className="flex h-[70vh] w-screen items-center justify-center"
+        className="flex h-[70vh] w-full items-center justify-center"
       />
     );
-  if (error) return <p>Error load a player</p>;
-  if (!player) return <p>Player not found</p>;
+
+  if (error)
+    return (
+      <EmptyPlaceholder
+        title="Something went wrong"
+        subtitle="We couldn't load this player. Please try again later."
+      />
+    );
+
+  if (!player)
+    return (
+      <EmptyPlaceholder
+        title="Player not found"
+        subtitle="The player you're looking for doesn't exist."
+      />
+    );
 
   return (
     <div className="flex w-full flex-col items-center">
@@ -90,6 +106,10 @@ const PlayerProfile = () => {
           </div>
         </>
       )}
+
+      <div className="mt-10 w-full">
+        <PlayerStatsTable stats={player.player_stats} />
+      </div>
     </div>
   );
 };

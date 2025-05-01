@@ -2,6 +2,7 @@
 
 import React from 'react';
 import dayjs from 'dayjs';
+import Link from 'next/link';
 
 import { IGameWithAI } from '@/types/game';
 import { Avatar, AvatarImage } from '@/ui/avatar';
@@ -74,9 +75,13 @@ const GameCard = ({
 
         <div>
           <div className="tl-paraghraph2 flex items-center gap-1">
-            <div className="text-text-primary">{game.game.home_team}</div>
+            <Link href={'#'} className="text-text-primary">
+              {game.game.home_team}
+            </Link>
             <div>vs</div>
-            <div className="text-text-primary">{game.game.away_team}</div>
+            <Link href={'#'} className="text-text-primary">
+              {game.game.away_team}
+            </Link>
           </div>
 
           <div className="tl-paraghraph3 flex items-center gap-4">
