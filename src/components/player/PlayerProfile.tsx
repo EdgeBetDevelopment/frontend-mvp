@@ -10,6 +10,7 @@ import EmptyPlaceholder from '../EmptyPlaceholder';
 
 import LeagueTable from './LeagueTable';
 import { PlayerStatsTable } from './PlayerSeasonStats';
+import PlayerStatsChart from './PlayerStatsChart';
 
 const PlayerProfile = () => {
   const [isLastGames, setIsLastGames] = useState(false);
@@ -107,7 +108,11 @@ const PlayerProfile = () => {
         </>
       )}
 
-      <div className="mt-10 w-full">
+      <div className="my-10 min-h-[244px] w-full min-w-[374px]">
+        <PlayerStatsChart data={player.player_stats} />
+      </div>
+
+      <div className="w-full">
         <PlayerStatsTable stats={player.player_stats} />
       </div>
     </div>

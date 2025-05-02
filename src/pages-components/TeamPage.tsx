@@ -11,6 +11,7 @@ import { FaInstagram } from 'react-icons/fa6';
 import { IoPeopleCircle } from 'react-icons/io5';
 
 import EmptyPlaceholder from '@/components/EmptyPlaceholder';
+import TeamStatsChart from '@/components/team/TeamStatsChart';
 import { TeamStatsTable } from '@/components/team/TeamStatsTable';
 import { ROUTES } from '@/routes';
 import apiService from '@/services';
@@ -152,6 +153,10 @@ const TeamPage = () => {
             ))}
           </div>
         </div>
+      </div>
+
+      <div className="my-10 min-h-[244px] w-full min-w-[374px]">
+        <TeamStatsChart stats={team?.team_statistics} />
       </div>
 
       <div className="w-full">
