@@ -12,7 +12,7 @@ import {
 import GameCard from '@/components/matchup/GameCard';
 import GameAnalysisModal from '@/components/matchup/modals/GameAnalysisModal';
 import AuthModal from '@/components/modals/AuthModal';
-import ComingSoonModal from '@/components/modals/ComingSoonModal';
+import TrackBetsModal from '@/components/modals/TrackBetsModal';
 import { useAuth } from '@/context/AuthContext';
 import useModalManager from '@/hooks/useModalManager';
 import apiService from '@/services';
@@ -101,17 +101,17 @@ const MatchupPage = () => {
         onClose={() => closeModal('auth')}
       />
 
-      {/* <TrackBetsModal
+      <TrackBetsModal
         isOpen={isModalOpen('track-bet')}
         onClose={onClickClearTrackBet}
-      /> */}
+      />
 
-      <ComingSoonModal
+      {/* <ComingSoonModal
         title="Coming Soon"
         description="Technical work on this functionality is ongoing"
         isOpen={isModalOpen('track-bet')}
         onClose={onClickClearTrackBet}
-      />
+      /> */}
 
       <GameAnalysisModal
         open={isModalOpen('game-analysis')}

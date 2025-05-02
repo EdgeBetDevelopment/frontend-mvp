@@ -80,7 +80,7 @@ const BetTrackerTable = () => {
       <div className="">
         <ListRenderer
           isLoading={isLoading}
-          data={data}
+          data={data?.slice().reverse()}
           isError={!!error}
           errorComponent={<div>Error load a player</div>}
           loadingComponent={

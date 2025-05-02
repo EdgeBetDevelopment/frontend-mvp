@@ -126,33 +126,29 @@ const TrackGameCard = ({
             <Button
               type="button"
               variant={
-                selectedTeam?.teamId === game.homeTeam.teamId
-                  ? 'mistBlue'
-                  : 'outline'
+                selectedTeam === game.game.home_team ? 'mistBlue' : 'outline'
               }
               className="flex flex-1 items-center gap-2"
-              onClick={() => handleTeamSelect(game.homeTeam)}
+              onClick={() => handleTeamSelect(game.game.home_team)}
             >
               <Avatar className="h-6 w-6">
                 <AvatarImage src={TeamLogo1Image.src} />
               </Avatar>
-              {game.homeTeam.teamName}
+              {game.game.home_team}
             </Button>
 
             <Button
               type="button"
               variant={
-                selectedTeam?.teamId === game.awayTeam.teamId
-                  ? 'mistBlue'
-                  : 'outline'
+                selectedTeam === game.game.away_team ? 'mistBlue' : 'outline'
               }
               className="flex flex-1 items-center gap-2"
-              onClick={() => handleTeamSelect(game.awayTeam)}
+              onClick={() => handleTeamSelect(game.game.away_team)}
             >
               <Avatar className="h-6 w-6">
                 <AvatarImage src={TeamLogo2Image.src} />
               </Avatar>
-              {game.awayTeam.teamName}
+              {game.game.away_team}
             </Button>
           </div>
           {errors.team && (
