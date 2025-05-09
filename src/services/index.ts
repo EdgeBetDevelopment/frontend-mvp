@@ -8,7 +8,7 @@ import { axiosInstance } from './client';
 const apiService = {
   async getGames(): Promise<IGameWithAI[]> {
     const response = await axiosInstance.get(`/api/v1/nba/games`);
-
+    console.log(response.data);
     return response.data;
   },
 

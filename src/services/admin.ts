@@ -43,7 +43,8 @@ const customDataProvider: DataProvider = {
       };
     }
 
-    response = await axiosInstance.get(`/api/v1/${resource}`);
+    response = await axiosInstance.get(`/Prod/api/v1/${resource}`);
+    console.log(response);
     return {
       data: response.data,
       total: response.data.length,
@@ -69,7 +70,7 @@ const customDataProvider: DataProvider = {
   },
   create: async (resource, params) => {
     const { data } = await axiosInstance.post(
-      `/api/v1/${resource}`,
+      `/Prod/api/v1/${resource}`,
       params.data,
     );
     return { data };
