@@ -26,9 +26,9 @@ const loginSchema = z.object({
   email: z.string().email('Invalid email format'),
   password: z
     .string()
-    .min(8, 'Password must be at least 8 characters')
-    .regex(/\d/, 'Password must include at least one number')
-    .regex(/[a-zA-Z]/, 'Password must include at least one letter'),
+    // .min(8, 'Password must be at least 8 characters')
+    .regex(/\d/, 'Password must include at least one number'),
+  // .regex(/[a-zA-Z]/, 'Password must include at least one letter'),
 });
 
 type LoginFormValues = z.infer<typeof loginSchema>;

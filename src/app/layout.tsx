@@ -32,12 +32,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="!scroll-smooth">
-      <Suspense fallback={<div>Loading...</div>}>
-        <TanstackQueryProvider>
-          <AuthProvider>
-            <body
-              className={`${geistSans.variable} ${geistMono.variable} relative overflow-x-hidden antialiased`}
-            >
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} relative overflow-x-hidden antialiased`}
+      >
+        <Suspense fallback={<div>Loading...</div>}>
+          <TanstackQueryProvider>
+            <AuthProvider>
               <div className="tl-container fixed top-9 left-1/2 z-30 w-full max-w-[800px]! -translate-x-1/2 transform">
                 <Header />
               </div>
@@ -46,10 +46,10 @@ export default function RootLayout({
 
               <Footer />
               <Toaster />
-            </body>
-          </AuthProvider>
-        </TanstackQueryProvider>
-      </Suspense>
+            </AuthProvider>
+          </TanstackQueryProvider>
+        </Suspense>
+      </body>
     </html>
   );
 }
