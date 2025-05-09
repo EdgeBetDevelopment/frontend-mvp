@@ -12,12 +12,8 @@ import Profile from './Profile';
 
 export const HEADER_PAGES = [
   {
-    name: 'Testimonials',
-    link: ROUTES.TESTIMONIALS,
-  },
-  {
-    name: 'Methodology',
-    link: ROUTES.METHODOLOGY,
+    name: 'Matchup',
+    link: ROUTES.MATCHUP,
   },
   {
     name: 'Pricing',
@@ -28,8 +24,8 @@ export const HEADER_PAGES = [
     link: ROUTES.COMMUNITY,
   },
   {
-    name: 'Matchup',
-    link: ROUTES.MATCHUP,
+    name: 'Methodology',
+    link: ROUTES.METHODOLOGY,
   },
 ];
 

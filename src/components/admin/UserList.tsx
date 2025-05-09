@@ -1,10 +1,11 @@
-import { Datagrid, List, TextField } from 'react-admin';
+import { Datagrid, List, NumberField, TextField } from 'react-admin';
 
 export const UserList = () => (
   <List>
     <Datagrid>
       <TextField source="id" />
-      <TextField source="name" />
+      <TextField source="username" />
+      <NumberField source="phone_number" />
       <TextField source="email" />
     </Datagrid>
   </List>

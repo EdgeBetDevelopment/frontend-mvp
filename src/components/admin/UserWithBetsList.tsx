@@ -4,7 +4,8 @@ export const UserWithBetsList = () => (
   <List>
     <Datagrid>
       <TextField source="id" />
-      <TextField source="name" />
+      <TextField source="username" />
+      <NumberField source="phone_number" />
       <TextField source="email" />
       <NumberField source="totalBets" />
     </Datagrid>
