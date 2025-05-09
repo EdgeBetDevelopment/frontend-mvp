@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import {
   ReadonlyURLSearchParams,
@@ -32,11 +32,20 @@ const MatchupPage = () => {
   const { isAuthenticated } = useAuth();
   const { openModal, closeModal, isModalOpen } = useModalManager();
   const { setTrackedGame, setSelectedGame } = useStore();
+  const params = useSearchParams() as ReadonlyURLSearchParams;
+  const type = params.get('type');
+  const router = useRouter();
 
   const { data = [], isLoading } = useQuery({
     queryKey: ['scrore-board'],
     queryFn: () => apiService.getGames(),
   });
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      router.replace('/login');
+    }
+  }, [isAuthenticated, router]);
 
   const onClickTrackBet = (game: IGameWithAI) => {
     if (!isAuthenticated) {
@@ -86,6 +95,7 @@ const MatchupPage = () => {
                 : data.map((game: IGameWithAI) => (
                     <GameCard
                       key={game.game.id}
+                      type={type}
                       game={game}
                       onClickTrackBet={() => onClickTrackBet(game)}
                       onClickFullAnalysis={() => onClickFullAnalysis(game)}
@@ -125,13 +135,13 @@ export default MatchupPage;
 
 const SPORTS_TYPE = [
   { icon: <FootbalIcon />, label: 'Basketball', value: null },
-  { icon: <FootbalIcon />, label: 'NFL', value: 'nfl' },
-  { icon: <TennisIcon />, label: 'Tennis', value: 'tenis' },
-  { icon: <BaseballIcon />, label: 'AFL', value: 'afl' },
-  { icon: <BaseballIcon />, label: 'Rugby', value: 'rugby' },
+  { icon: <FootbalIcon />, label: 'Coming Soon.', value: 'nfl' },
+  { icon: <TennisIcon />, label: 'Coming Soon.', value: 'tenis' },
+  { icon: <BaseballIcon />, label: 'Coming Soon.', value: 'afl' },
+  { icon: <BaseballIcon />, label: 'Coming Soon.', value: 'rugby' },
   {
     icon: <AmericanFootballIcon />,
-    label: 'NCAAF',
+    label: 'Coming Soon.',
     value: 'ncaaf',
   },
 ];

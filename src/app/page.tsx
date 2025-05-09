@@ -5,6 +5,7 @@ import EventsTableBlock from '@/components/home/EventsTable';
 import HeroBlock from '@/components/home/HeroBlock';
 import SportsList from '@/components/home/SportsList';
 import StatisticsBlock from '@/components/home/StatisticsBlock';
+import { UserReviews } from '@/components/home/UserReviews';
 
 export default function Home() {
   return (
@@ -19,6 +20,8 @@ export default function Home() {
         <div className="tl-container w-full">
           <EventsTableBlock />
         </div>
+
+        <UserReviews />
 
         <div className="tl-container w-full">
           <CTABlock />

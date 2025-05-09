@@ -21,11 +21,13 @@ interface IGameCard {
   game: IGameWithAI;
   onClickFullAnalysis: () => void;
   onClickTrackBet: () => void;
+  type: string | null;
 }
 
 const GameCard = ({
   game,
   onClickFullAnalysis,
+  type,
   onClickTrackBet,
 }: IGameCard) => {
   const formattedDate = dayjs(game.game.start_time).format('MM/DD/YYYY');
@@ -102,7 +104,7 @@ const GameCard = ({
               <AvatarImage src={NFLLogoImage.src} />
             </div>
           </Avatar>
-          NFL
+          {type ? type.toUpperCase() : 'NBA'}
           <ChevronRightIcon className="text-text-secondary" />
           NFC North Wild Card Playoff Game
         </div>

@@ -1,8 +1,5 @@
-import React from 'react';
-
-import CTABlock from '@/components/CTABlock';
-import PageTitle from '@/components/PageTitle';
 import { Avatar, AvatarFallback, AvatarImage } from '@/ui/avatar';
+import PageTitle from '../PageTitle';
 
 import AvatarPlaceholderImage from '@/assets/avatar.png';
 
@@ -72,7 +69,13 @@ const TESTIMONIAL_DATA = [
   },
 ];
 
-const Testimonials = () => {
+interface ITestimonialCard {
+  name: string;
+  email: string;
+  message: string;
+}
+
+export const UserReviews = () => {
   const reversedTestimonials = TESTIMONIAL_DATA.slice().reverse();
 
   return (
@@ -80,9 +83,9 @@ const Testimonials = () => {
       <PageTitle
         title="user reviews"
         description="Discover what our community of successful bettors has to say about
-          their experience. Our platform has helped thousands of users transform
-          their approach to sports betting, delivering consistent results
-          through AI-powered predictions and expert analysis."
+            their experience. Our platform has helped thousands of users transform
+            their approach to sports betting, delivering consistent results
+            through AI-powered predictions and expert analysis."
       />
 
       <div className="flex flex-col items-start gap-[18px] min-[800px]:flex-row">
@@ -119,19 +122,9 @@ const Testimonials = () => {
           ))}
         </div>
       </div>
-
-      <CTABlock />
     </div>
   );
 };
-
-export default Testimonials;
-
-interface ITestimonialCard {
-  name: string;
-  email: string;
-  message: string;
-}
 
 const TestimonialCard = ({ name, email, message }: ITestimonialCard) => {
   return (
