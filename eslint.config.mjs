@@ -15,7 +15,7 @@ const compat = new FlatCompat({
 
 const prettierConfig = {
   bracketSpacing: true,
-  endOfLine: 'crlf',
+  endOfLine: 'lf',
   printWidth: 80,
   semi: true,
   singleQuote: true,

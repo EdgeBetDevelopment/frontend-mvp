@@ -254,3 +254,13 @@
   backdrop-filter: blur(10px);
   border: 1px solid var(--Border-primary, #484848);
 }
+
+
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
+}

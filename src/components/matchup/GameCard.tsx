@@ -120,20 +120,22 @@ const GameCard = ({
           </Button>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-col items-center gap-2">
           <Badge size="md" variant="mistBlue">
             {recommendedBet.label}:{' '}
             <span className="text-text-primary">{recommendedBet.odd}</span>
           </Badge>
 
-          <Badge size="md" variant="mistBlue">
-            Best value <span className="text-text-primary">2.29</span>
-          </Badge>
+          <div className="flex flex-wrap items-center gap-2">
+            <Badge size="md" variant="mistBlue">
+              Best value <span className="text-text-primary">2.29</span>
+            </Badge>
 
-          <Badge size="md" variant="mistBlue">
-            {saferBet.label}:{' '}
-            <span className="text-text-primary">{saferBet.odd}</span>
-          </Badge>
+            <Badge size="md" variant="mistBlue">
+              {saferBet.label}:{' '}
+              <span className="text-text-primary">{saferBet.odd}</span>
+            </Badge>
+          </div>
         </div>
 
         <Button onClick={onClickTrackBet} variant="gradient" className="w-full">

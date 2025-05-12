@@ -4,29 +4,23 @@ import React, { useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import {
   ReadonlyURLSearchParams,
-  usePathname,
   useRouter,
   useSearchParams,
 } from 'next/navigation';
 
+import MatchupPageFilters from '@/components/matchup/Filters';
 import GameCard from '@/components/matchup/GameCard';
 import GameAnalysisModal from '@/components/matchup/modals/GameAnalysisModal';
 import AuthModal from '@/components/modals/AuthModal';
 import TrackBetsModal from '@/components/modals/TrackBetsModal';
 import { useAuth } from '@/context/AuthContext';
 import useModalManager from '@/hooks/useModalManager';
+import { ROUTES } from '@/routes';
 import apiService from '@/services';
 import { useStore } from '@/store';
 import { IGameWithAI } from '@/types/game';
-import { Button } from '@/ui/button';
 import { ScrollArea } from '@/ui/scroll-area';
 import { Skeleton } from '@/ui/skeleton';
-import { formUrlQuery } from '@/utils/url';
-
-import AmericanFootballIcon from '@/assets/icons/american-football.svg';
-import BaseballIcon from '@/assets/icons/baseball.svg';
-import FootbalIcon from '@/assets/icons/football.svg';
-import TennisIcon from '@/assets/icons/tenins.svg';
 
 const MatchupPage = () => {
   const { isAuthenticated } = useAuth();
@@ -43,7 +37,7 @@ const MatchupPage = () => {
 
   useEffect(() => {
     if (!isAuthenticated) {
-      router.replace('/login');
+      router.replace(ROUTES.AUTH.LOGIN);
     }
   }, [isAuthenticated, router]);
 
@@ -116,13 +110,6 @@ const MatchupPage = () => {
         onClose={onClickClearTrackBet}
       />
 
-      {/* <ComingSoonModal
-        title="Coming Soon"
-        description="Technical work on this functionality is ongoing"
-        isOpen={isModalOpen('track-bet')}
-        onClose={onClickClearTrackBet}
-      /> */}
-
       <GameAnalysisModal
         open={isModalOpen('game-analysis')}
         onClose={onClickCloseModal}
@@ -132,60 +119,3 @@ const MatchupPage = () => {
 };
 
 export default MatchupPage;
-
-const SPORTS_TYPE = [
-  { icon: <FootbalIcon />, label: 'Basketball', value: null },
-  { icon: <FootbalIcon />, label: 'Coming Soon.', value: 'nfl' },
-  { icon: <TennisIcon />, label: 'Coming Soon.', value: 'tenis' },
-  { icon: <BaseballIcon />, label: 'Coming Soon.', value: 'afl' },
-  { icon: <BaseballIcon />, label: 'Coming Soon.', value: 'rugby' },
-  {
-    icon: <AmericanFootballIcon />,
-    label: 'Coming Soon.',
-    value: 'ncaaf',
-  },
-];
-
-const MatchupPageFilters = () => {
-  const pathname = usePathname();
-  const params = useSearchParams() as ReadonlyURLSearchParams;
-  const router = useRouter();
-  const type = params.get('type');
-
-  const onChangeType = (value: string | null) => {
-    if (value === type) return;
-
-    let url = pathname;
-
-    if (!value) {
-      url = formUrlQuery({
-        params: params.toString(),
-        keysToRemove: ['type'],
-      });
-    } else {
-      url = formUrlQuery({
-        params: params.toString(),
-        key: 'type',
-        value,
-      });
-    }
-
-    router.push(url);
-  };
-
-  return (
-    <div className="flex items-center gap-4">
-      {SPORTS_TYPE.map((tab) => (
-        <Button
-          key={tab.label}
-          className="flex-1"
-          variant={type === tab.value ? 'brand' : 'default'}
-          onClick={() => onChangeType(tab.value)}
-        >
-          {tab.icon && tab.icon}
-          {tab.label}
-        </Button>
-      ))}
-    </div>
-  );
-};
