@@ -2,9 +2,11 @@
 
 import React from 'react';
 import dayjs from 'dayjs';
+import Link from 'next/link';
 import { Controller, useFormContext } from 'react-hook-form';
 import { NumericFormat } from 'react-number-format';
 
+import { ROUTES } from '@/routes';
 import { IGameWithAI } from '@/types/game';
 import { Avatar, AvatarImage } from '@/ui/avatar';
 import { Button } from '@/ui/button';
@@ -16,8 +18,6 @@ import CancelIcon from '@/assets/icons/cancel.svg';
 import ChevronRightIcon from '@/assets/icons/chevron-right.svg';
 import ClockIcon from '@/assets/icons/clock.svg';
 import NFLLogoImage from '@/assets/nflLogo.png';
-import TeamLogo1Image from '@/assets/teamLogo1.png';
-import TeamLogo2Image from '@/assets/teamLogo2.png';
 
 interface ITrackGameCard {
   game: IGameWithAI;
@@ -61,21 +61,31 @@ const TrackGameCard = ({
       <div className="flex items-center">
         <div className="relative flex items-center">
           <Avatar className="border-border bg-surface-secondary h-11 w-11 rounded-full border p-1.5">
-            <AvatarImage src={TeamLogo1Image.src} />
+            <AvatarImage src={game.game.home_team_logo} />
           </Avatar>
 
           <div className="relative -left-3.5">
             <Avatar className="border-border bg-surface-secondary h-11 w-11 rounded-full border p-1.5">
-              <AvatarImage src={TeamLogo2Image.src} />
+              <AvatarImage src={game.game.away_team_logo} />
             </Avatar>
           </div>
         </div>
 
         <div>
           <div className="tl-paraghraph2 flex items-center gap-1">
-            <div className="text-text-primary">{game.game.home_team}</div>
+            <Link
+              href={ROUTES.TEAM(game.game.home_team_id)}
+              className="text-text-primary hover:underline"
+            >
+              {game.game.home_team}
+            </Link>
             <div>vs</div>
-            <div className="text-text-primary">{game.game.away_team}</div>
+            <Link
+              href={ROUTES.TEAM(game.game.away_team_id)}
+              className="text-text-primary hover:underline"
+            >
+              {game.game.away_team}
+            </Link>
           </div>
 
           <div className="tl-paraghraph3 flex items-center gap-4">
@@ -132,7 +142,7 @@ const TrackGameCard = ({
               onClick={() => handleTeamSelect(game.game.home_team)}
             >
               <Avatar className="h-6 w-6">
-                <AvatarImage src={TeamLogo1Image.src} />
+                <AvatarImage src={game.game.home_team_logo} />
               </Avatar>
               {game.game.home_team}
             </Button>
@@ -146,7 +156,7 @@ const TrackGameCard = ({
               onClick={() => handleTeamSelect(game.game.away_team)}
             >
               <Avatar className="h-6 w-6">
-                <AvatarImage src={TeamLogo2Image.src} />
+                <AvatarImage src={game.game.away_team_logo} />
               </Avatar>
               {game.game.away_team}
             </Button>

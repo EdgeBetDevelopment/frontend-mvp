@@ -67,6 +67,9 @@ const TeamPage = () => {
   return (
     <div className="flex w-full flex-col items-center">
       <div className="flex flex-col items-center gap-1.5">
+        {/* <Avatar className="border-border bg-surface-secondary h-11 w-11 rounded-full border p-1.5">
+          <AvatarImage src={team.} />
+        </Avatar> */}
         <IoPeopleCircle className="h-14 w-14" />
         <h1 className="text-3xl font-bold">{team.full_name}</h1>
         <p className="text-sm text-gray-400">

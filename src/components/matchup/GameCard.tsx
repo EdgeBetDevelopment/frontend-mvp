@@ -4,6 +4,7 @@ import React from 'react';
 import dayjs from 'dayjs';
 import Link from 'next/link';
 
+import { ROUTES } from '@/routes';
 import { IGameWithAI } from '@/types/game';
 import { Avatar, AvatarImage } from '@/ui/avatar';
 import { Badge } from '@/ui/badge';
@@ -14,8 +15,6 @@ import CalendarIcon from '@/assets/icons/calendar.svg';
 import ChevronRightIcon from '@/assets/icons/chevron-right.svg';
 import ClockIcon from '@/assets/icons/clock.svg';
 import NFLLogoImage from '@/assets/nflLogo.png';
-import TeamLogo1Image from '@/assets/teamLogo1.png';
-import TeamLogo2Image from '@/assets/teamLogo2.png';
 
 interface IGameCard {
   game: IGameWithAI;
@@ -65,23 +64,29 @@ const GameCard = ({
       <div className="flex items-center">
         <div className="relative flex items-center">
           <Avatar className="border-border bg-surface-secondary h-11 w-11 rounded-full border p-1.5">
-            <AvatarImage src={TeamLogo1Image.src} />
+            <AvatarImage src={game.game.home_team_logo} />
           </Avatar>
 
           <div className="relative -left-3.5">
             <Avatar className="border-border bg-surface-secondary h-11 w-11 rounded-full border p-1.5">
-              <AvatarImage src={TeamLogo2Image.src} />
+              <AvatarImage src={game.game.away_team_logo} />
             </Avatar>
           </div>
         </div>
 
         <div>
           <div className="tl-paraghraph2 flex items-center gap-1">
-            <Link href={'#'} className="text-text-primary">
+            <Link
+              href={ROUTES.TEAM(game.game.home_team_id)}
+              className="text-text-primary hover:underline"
+            >
               {game.game.home_team}
             </Link>
             <div>vs</div>
-            <Link href={'#'} className="text-text-primary">
+            <Link
+              href={ROUTES.TEAM(game.game.away_team_id)}
+              className="text-text-primary hover:underline"
+            >
               {game.game.away_team}
             </Link>
           </div>
@@ -121,17 +126,17 @@ const GameCard = ({
         </div>
 
         <div className="flex flex-col items-center gap-2">
-          <Badge size="md" variant="mistBlue">
+          <Badge className="w-full" size="md" variant="mistBlue">
             {recommendedBet.label}:{' '}
             <span className="text-text-primary">{recommendedBet.odd}</span>
           </Badge>
 
-          <div className="flex flex-wrap items-center gap-2">
-            <Badge size="md" variant="mistBlue">
+          <div className="flex w-full items-center gap-2">
+            <Badge className="flex-1" size="md" variant="mistBlue">
               Best value <span className="text-text-primary">2.29</span>
             </Badge>
 
-            <Badge size="md" variant="mistBlue">
+            <Badge className="flex-1" size="md" variant="mistBlue">
               {saferBet.label}:{' '}
               <span className="text-text-primary">{saferBet.odd}</span>
             </Badge>

@@ -1,15 +1,17 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 
+import { ROUTES } from '@/routes';
 import { useStore } from '@/store';
 import { Avatar, AvatarImage } from '@/ui/avatar';
 import CardContainer from '@/ui/containers/CardContainer';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/ui/dialog';
+import { getTeamInfoByName } from '@/utils/team';
 
 import ClockBackIcon from '@/assets/icons/clock-back.svg';
 import StatisticsIcon from '@/assets/icons/statistics.svg';
-import NFLLogoImage from '@/assets/nflLogo.png';
 
 interface IGameAnalysisModal {
   open: boolean;
@@ -22,6 +24,15 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
   if (!game) {
     return null;
   }
+
+  const predictedWinnerInfo = getTeamInfoByName(
+    game.prediction.predicted_winner,
+    game.game,
+  );
+  const favoriteTeamInfo = getTeamInfoByName(
+    game.prediction.favorite_team,
+    game.game,
+  );
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -52,10 +63,16 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
               <CardContainer className="tl-paraghraph2 flex flex-1 items-center gap-2 rounded-xl">
                 <Avatar className="flex h-8 w-8 items-center justify-center rounded-full border bg-[#33758780]">
                   <div>
-                    <AvatarImage src={NFLLogoImage.src} />
+                    <AvatarImage src={favoriteTeamInfo?.logo} />
                   </div>
                 </Avatar>
-                {game.prediction.favorite_team}
+
+                <Link
+                  href={ROUTES.TEAM(favoriteTeamInfo?.id)}
+                  className="text-text-primary hover:underline"
+                >
+                  {favoriteTeamInfo?.name}
+                </Link>
               </CardContainer>
             </CardContainer>
 
@@ -68,10 +85,15 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
               <CardContainer className="tl-paraghraph2 flex flex-1 items-center gap-2 rounded-xl">
                 <Avatar className="flex h-8 w-8 items-center justify-center rounded-full border bg-[#33758780]">
                   <div>
-                    <AvatarImage src={NFLLogoImage.src} />
+                    <AvatarImage src={predictedWinnerInfo?.logo} />
                   </div>
                 </Avatar>
-                {game.prediction.predicted_winner}
+                <Link
+                  href={ROUTES.TEAM(predictedWinnerInfo?.id)}
+                  className="text-text-primary hover:underline"
+                >
+                  {predictedWinnerInfo?.name}
+                </Link>
               </CardContainer>
             </CardContainer>
           </div>
@@ -83,12 +105,16 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
 
             <div className="flex items-center gap-2.5">
               <AnalysisTeamCard
+                id={game.game.home_team_id}
                 name={game.game.home_team}
+                logo={game.game.home_team_logo}
                 winProbability={game.prediction.win_probability_home}
                 odd={game.prediction.odds_home}
               />
               <AnalysisTeamCard
+                id={game.game.away_team_id}
                 name={game.game.away_team}
+                logo={game.game.away_team_logo}
                 winProbability={game.prediction.win_probability_away}
                 odd={game.prediction.odds_away}
               />
@@ -103,44 +129,39 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
 export default GameAnalysisModal;
 
 const AnalysisTeamCard = ({
+  id,
   name,
   winProbability,
   odd,
+  logo,
 }: {
+  id: string | number;
   name: string;
   winProbability: number;
   odd: number;
+  logo: string;
 }) => {
   return (
     <CardContainer className="flex w-full flex-col gap-2 rounded-xl p-3">
       <div className="tl-paraghraph2 flex items-center gap-2">
         <Avatar className="flex h-8 w-8 items-center justify-center rounded-full border bg-[#33758780]">
           <div>
-            <AvatarImage src={NFLLogoImage.src} />
+            <AvatarImage src={logo} />
           </div>
         </Avatar>
 
-        <div className="text-text-primary">{name}</div>
+        <Link
+          href={ROUTES.TEAM(id)}
+          className="text-text-primary hover:underline"
+        >
+          {name}
+        </Link>
       </div>
 
       <div className="tl-paraghraph3">
         <p>Win Probability: {winProbability * 100}%</p>
         <p>Odd: {odd}</p>
       </div>
-
-      {/* <div className="flex flex-wrap items-center gap-2">
-        <Badge size="md" variant="green">
-          <span className="text-text-primary">Number of wins</span> {team?.wins}
-        </Badge>
-        {team?.draws && (
-          <Badge size="md" variant="orange">
-            <span className="text-text-primary">In draws</span> {team?.draws}
-          </Badge>
-        )}
-        <Badge size="md" variant="red">
-          <span className="text-text-primary">Losses</span> {team?.losses}
-        </Badge>
-      </div> */}
     </CardContainer>
   );
 };

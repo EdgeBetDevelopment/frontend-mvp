@@ -56,7 +56,11 @@ export interface IGame {
   id: number;
   nba_game_id: string;
   home_team: string;
+  home_team_id: number;
+  home_team_logo: string;
   away_team: string;
+  away_team_id: number;
+  away_team_logo: string;
   start_time: string;
   status: string;
   final_score: string;
