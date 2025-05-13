@@ -11,7 +11,7 @@ import { z } from 'zod';
 
 import { useAuth } from '@/context/AuthContext';
 import { ROUTES } from '@/routes';
-import apiService from '@/services';
+import authService from '@/services/auth';
 import { Form, FormField } from '../../ui/form';
 import Loader from '../../ui/loader';
 
@@ -66,7 +66,7 @@ const SignUpForm: React.FC = () => {
   } = form;
 
   const { mutate: signUp, isPending } = useMutation({
-    mutationFn: apiService.signUp,
+    mutationFn: authService.signUp,
     onSuccess: (data) => {
       setTokens({
         accessToken: data.access_token,

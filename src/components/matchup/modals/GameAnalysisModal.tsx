@@ -26,11 +26,11 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
   }
 
   const predictedWinnerInfo = getTeamInfoByName(
-    game.prediction.predicted_winner,
+    game.prediction?.predicted_winner,
     game.game,
   );
   const favoriteTeamInfo = getTeamInfoByName(
-    game.prediction.favorite_team,
+    game.prediction?.favorite_team,
     game.game,
   );
 
@@ -41,20 +41,20 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
           <DialogTitle>Detailed write-ups for projections</DialogTitle>
         </DialogHeader>
 
-        <div className="flex flex-col gap-3.5">
-          <div className="flex items-stretch gap-3.5">
-            <CardContainer className="tl-gradient-mistBlue flex max-w-[400px] flex-1/3 flex-col gap-2 rounded-2xl">
-              <div className="tl-flex-icon align-bottom text-sm font-medium tracking-normal">
-                <StatisticsIcon />
-                Prediction
-              </div>
+        <div className="flex max-h-[70vh] flex-col gap-3.5 overflow-y-auto">
+          <CardContainer className="tl-gradient-mistBlue flex w-full flex-1/3 flex-col gap-2 rounded-2xl">
+            <div className="tl-flex-icon align-bottom text-sm font-medium tracking-normal">
+              <StatisticsIcon />
+              Prediction
+            </div>
 
-              <CardContainer className="tl-paraghraph2 rounded-xl">
-                {game.prediction.analysis}
-              </CardContainer>
+            <CardContainer className="tl-paraghraph2 h-52 overflow-y-auto rounded-xl">
+              {game.prediction?.analysis}
             </CardContainer>
+          </CardContainer>
 
-            <CardContainer className="tl-gradient-mistBlue flex max-w-[400px] flex-1/3 flex-col gap-2 rounded-2xl">
+          <div className="flex items-stretch gap-3.5">
+            <CardContainer className="tl-gradient-mistBlue flex flex-1/2 flex-col gap-2 rounded-2xl">
               <div className="tl-flex-icon align-bottom text-sm font-medium tracking-normal">
                 <StatisticsIcon />
                 Favorite Team
@@ -76,7 +76,7 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
               </CardContainer>
             </CardContainer>
 
-            <CardContainer className="tl-gradient-mistBlue flex max-w-[400px] flex-1/3 flex-col gap-2 rounded-2xl">
+            <CardContainer className="tl-gradient-mistBlue flex flex-1/2 flex-col gap-2 rounded-2xl">
               <div className="tl-flex-icon align-bottom text-sm font-medium tracking-normal">
                 <StatisticsIcon />
                 Predicted Winner
@@ -108,15 +108,15 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
                 id={game.game.home_team_id}
                 name={game.game.home_team}
                 logo={game.game.home_team_logo}
-                winProbability={game.prediction.win_probability_home}
-                odd={game.prediction.odds_home}
+                winProbability={game.prediction?.win_probability_home}
+                odd={game.prediction?.odds_home}
               />
               <AnalysisTeamCard
                 id={game.game.away_team_id}
                 name={game.game.away_team}
                 logo={game.game.away_team_logo}
-                winProbability={game.prediction.win_probability_away}
-                odd={game.prediction.odds_away}
+                winProbability={game.prediction?.win_probability_away}
+                odd={game.prediction?.odds_away}
               />
             </div>
           </CardContainer>

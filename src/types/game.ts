@@ -68,6 +68,6 @@ export interface IGame {
 
 export interface IGameWithAI {
   game: IGame;
-  prediction: IPrediction;
+  prediction: IPrediction | null;
   scoreboard: null;
 }
