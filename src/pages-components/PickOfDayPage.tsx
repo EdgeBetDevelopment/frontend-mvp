@@ -151,7 +151,32 @@ const PremiumPickOfDay = () => {
   }, []);
 
   const onClickFullAnalysis = (game: IGame) => {
-    setSelectedGame(game);
+    const simplifiedGame = {
+      id: game?.game_prediction.id,
+      game: {
+        ...game?.game_prediction.game,
+        home_team_id: game?.game_prediction.home_team_id,
+        home_team_logo: game?.game_prediction.home_team_logo,
+        away_team_logo: game?.game_prediction.away_team_logo,
+        away_team_id: game?.game_prediction.away_team_id,
+        home_team: game?.game_prediction.game.home_team,
+        away_team: game?.game_prediction.game.away_team,
+      },
+      prediction: {
+        win_probability_away: game?.game_prediction.win_probability_away,
+        win_probability_home: game?.game_prediction.win_probability_home,
+        odds_away: game?.game_prediction.odds_away,
+        odds_home: game?.game_prediction.odds_home,
+        favorite_team: game?.game_prediction.favorite_team,
+        predicted_winner: game?.game_prediction.predicted_winner,
+      },
+      nba_game_id: game?.game_prediction.game.nba_game_id,
+      start_time: game?.game_prediction.game.start_time,
+      status: game?.game_prediction.game.status,
+      final_score: game?.game_prediction.game.final_score,
+    };
+
+    setSelectedGame(simplifiedGame);
     openModal('gameAnalysis');
   };
 
@@ -161,7 +186,32 @@ const PremiumPickOfDay = () => {
   };
 
   const onClickTrackBet = (game: IGame | null) => {
-    setTrackedGame(game);
+    const simplifiedGame = {
+      id: game?.game_prediction.id,
+      game: {
+        ...game?.game_prediction.game,
+        home_team_id: game?.game_prediction.home_team_id,
+        home_team_logo: game?.game_prediction.home_team_logo,
+        away_team_logo: game?.game_prediction.away_team_logo,
+        away_team_id: game?.game_prediction.away_team_id,
+        home_team: game?.game_prediction.game.home_team,
+        away_team: game?.game_prediction.game.away_team,
+      },
+      prediction: {
+        win_probability_away: game?.game_prediction.win_probability_away,
+        win_probability_home: game?.game_prediction.win_probability_home,
+        odds_away: game?.game_prediction.odds_away,
+        odds_home: game?.game_prediction.odds_home,
+        favorite_team: game?.game_prediction.favorite_team,
+        predicted_winner: game?.game_prediction.predicted_winner,
+      },
+      nba_game_id: game?.game_prediction.game.nba_game_id,
+      start_time: game?.game_prediction.game.start_time,
+      status: game?.game_prediction.game.status,
+      final_score: game?.game_prediction.game.final_score,
+    };
+
+    setTrackedGame(simplifiedGame);
     openModal('track-bet');
   };
 

@@ -64,6 +64,7 @@ export interface IGame {
   start_time: string;
   status: string;
   final_score: string;
+  game_prediction: any;
 }
 
 export interface IGameWithAI {

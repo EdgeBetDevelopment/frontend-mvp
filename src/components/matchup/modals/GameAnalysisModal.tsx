@@ -20,7 +20,7 @@ interface IGameAnalysisModal {
 
 const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
   const { selectedGame: game } = useStore();
-
+  console.log(game);
   if (!game) {
     return null;
   }
