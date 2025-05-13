@@ -1,11 +1,12 @@
 'use client';
 
-import React, { createContext, useContext } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 
 import GameAnalysisModal from '@/components/matchup/modals/GameAnalysisModal';
 import TrackBetsModal from '@/components/modals/TrackBetsModal';
 import useModalManager from '@/hooks/useModalManager';
 import { cn } from '@/lib/utils';
+import apiService from '@/services';
 import { useStore } from '@/store';
 import { IGame } from '@/types/game';
 import { Avatar, AvatarImage } from '@/ui/avatar';
@@ -57,7 +58,32 @@ export default PickOfDayPage;
 
 const FreePickOfDay = () => {
   const { openModal, closeModal, isModalOpen } = useModalManager();
-  const { setTrackedGame } = useStore();
+  const { setTrackedGame, setSelectedGame } = useStore();
+  const [picks, setPicks] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchPicks = async () => {
+      try {
+        const data = await apiService.getPickOfTheDayList();
+        console.log('Free Picks:', data);
+        setPicks(data);
+      } catch (err) {
+        console.error('Failed to fetch free picks', err);
+      }
+    };
+
+    fetchPicks();
+  }, []);
+
+  const onClickFullAnalysis = (game: IGame) => {
+    setSelectedGame(game);
+    openModal('gameAnalysis');
+  };
+
+  const onClickCloseModal = () => {
+    closeModal('gameAnalysis');
+    setSelectedGame(null);
+  };
 
   const onClickTrackBet = (game: IGame | null) => {
     setTrackedGame(game);
@@ -76,10 +102,25 @@ const FreePickOfDay = () => {
           today’s Free Pick
         </div>
 
-        <CardSizeProvider size="single">
-          <PickCard onClickTrackBet={() => onClickTrackBet(null)} />
+        <CardSizeProvider size="multiple">
+          <div className="flex flex-wrap justify-center gap-8">
+            {picks.map((pick, index) => (
+              <PickCard
+                key={index}
+                data={pick}
+                onClickTrackBet={() => onClickTrackBet(null)}
+                onClickFullAnalysis={() => onClickFullAnalysis(pick)}
+              />
+            ))}
+          </div>
         </CardSizeProvider>
       </div>
+
+      <GameAnalysi
+        sModal
+        open={isModalOpen('gameAnalysis')}
+        onClose={onClickCloseModal}
+      />
 
       <TrackBetsModal
         isOpen={isModalOpen('track-bet')}
@@ -92,6 +133,22 @@ const FreePickOfDay = () => {
 const PremiumPickOfDay = () => {
   const { openModal, closeModal, isModalOpen } = useModalManager();
   const { setTrackedGame, setSelectedGame } = useStore();
+
+  const [picks, setPicks] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchPicks = async () => {
+      try {
+        const data = await apiService.getPickOfTheDayList();
+        console.log(data);
+        setPicks(data);
+      } catch (err) {
+        console.error('Failed to fetch picks', err);
+      }
+    };
+
+    fetchPicks();
+  }, []);
 
   const onClickFullAnalysis = (game: IGame) => {
     setSelectedGame(game);
@@ -121,19 +178,15 @@ const PremiumPickOfDay = () => {
         </div>
 
         <CardSizeProvider size={'multiple'}>
-          <div className="flex items-center gap-8">
-            <PickCard
-              onClickTrackBet={() => onClickTrackBet(null)}
-              onClickFullAnalysis={() => onClickFullAnalysis({} as IGame)}
-            />
-            <PickCard
-              onClickTrackBet={() => onClickTrackBet(null)}
-              onClickFullAnalysis={() => onClickFullAnalysis({} as IGame)}
-            />
-            <PickCard
-              onClickTrackBet={() => onClickTrackBet(null)}
-              onClickFullAnalysis={() => onClickFullAnalysis({} as IGame)}
-            />
+          <div className="flex flex-wrap justify-center gap-8">
+            {picks.map((pick, index) => (
+              <PickCard
+                key={index}
+                data={pick}
+                onClickTrackBet={() => onClickTrackBet(null)}
+                onClickFullAnalysis={() => onClickFullAnalysis(pick)}
+              />
+            ))}
           </div>
         </CardSizeProvider>
       </div>
@@ -152,15 +205,25 @@ const PremiumPickOfDay = () => {
 };
 
 interface IPickCard {
+  data: any;
   onClickFullAnalysis?: () => void;
   onClickTrackBet: () => void;
 }
 
 export const PickCard = ({
+  data,
   onClickFullAnalysis,
   onClickTrackBet,
 }: IPickCard) => {
   const isSingle = useCardSize() === 'single';
+
+  const homeTeam = data?.game_prediction?.game?.home_team || 'Team A';
+  const awayTeam = data?.game_prediction?.game?.away_team || 'Team B';
+  const oddsHome = data?.game_prediction?.odds_home ?? '-';
+  const oddsAway = data?.game_prediction?.odds_away ?? '-';
+  const matchDate = new Date(data?.game_prediction?.game?.start_time || '');
+  const formattedDate = matchDate.toLocaleDateString();
+  const formattedTime = matchDate.toLocaleTimeString();
 
   return (
     <div className="flex w-full max-w-[720px] flex-col items-center justify-center gap-4 overflow-hidden">
@@ -170,8 +233,7 @@ export const PickCard = ({
           !isSingle && 'tl-flex-between w-full',
         )}
       >
-        <TeamItem />
-
+        <TeamItem name={homeTeam} />
         <div
           className={`text-center align-bottom font-medium capitalize ${
             isSingle ? 'text-6xl' : 'text-4xl'
@@ -179,8 +241,7 @@ export const PickCard = ({
         >
           VS
         </div>
-
-        <TeamItem />
+        <TeamItem name={awayTeam} />
       </div>
 
       <CardContainer className="border-border relative z-10 flex w-full flex-col gap-3 overflow-hidden p-8">
@@ -194,7 +255,7 @@ export const PickCard = ({
             <div className={isSingle ? 'text-2xl' : 'text-xl'}>NFL</div>
             <ChevronRightIcon />
             <div className={isSingle ? 'text-2xl' : 'text-xl'}>
-              NFC North Wild Card Playoff Game
+              {data?.game_prediction?.game?.title || 'NFC Wild Card Game'}
             </div>
           </div>
 
@@ -204,25 +265,25 @@ export const PickCard = ({
             }`}
           >
             <div className="flex items-center gap-1">
-              <CalendarIcon /> formattedDate
+              <CalendarIcon /> {formattedDate}
             </div>
             <div className="flex items-center gap-1">
-              <ClockIcon /> formattedTime
+              <ClockIcon /> {formattedTime}
             </div>
           </div>
 
           <div className="flex flex-col gap-6">
-            <TeamOddItem />
-            <TeamOddItem />
+            <TeamOddItem name={homeTeam} odds={oddsHome} />
+            <TeamOddItem name={awayTeam} odds={oddsAway} />
           </div>
 
-          {!isSingle && (
+          {/* {!isSingle && onClickFullAnalysis && (
             <div>
               <Button onClick={onClickFullAnalysis} variant="clear">
                 Full analysis <ChevronRightIcon />
               </Button>
             </div>
-          )}
+          )} */}
 
           <Button
             onClick={onClickTrackBet}
@@ -237,7 +298,7 @@ export const PickCard = ({
   );
 };
 
-export const TeamItem = () => {
+const TeamItem = ({ name }: { name: string }) => {
   const isSingle = useCardSize() === 'single';
 
   return (
@@ -245,19 +306,24 @@ export const TeamItem = () => {
       <Avatar className="h-11 w-11 rounded-full p-1.5">
         <AvatarImage src={TeamLogo1Image.src} />
       </Avatar>
-
       <div
         className={`text-center align-bottom font-bold tracking-normal ${
           isSingle ? 'text-2xl' : 'text-base'
         }`}
       >
-        Phoenix
+        {name}
       </div>
     </div>
   );
 };
 
-export const TeamOddItem = () => {
+const TeamOddItem = ({
+  name,
+  odds,
+}: {
+  name: string;
+  odds: string | number;
+}) => {
   const isSingle = useCardSize() === 'single';
 
   return (
@@ -266,13 +332,12 @@ export const TeamOddItem = () => {
         <Avatar className="border-border bg-surface-secondary h-11 w-11 rounded-full border p-1.5">
           <AvatarImage src={TeamLogo1Image.src} />
         </Avatar>
-
         <div
           className={`text-center align-bottom font-bold tracking-normal ${
             isSingle ? 'text-2xl' : 'text-base'
           }`}
         >
-          Phoenix
+          {name}
         </div>
       </div>
 
@@ -281,7 +346,7 @@ export const TeamOddItem = () => {
           isSingle ? 'text-2xl' : 'text-base'
         }`}
       >
-        1.45
+        {odds}
       </div>
     </div>
   );

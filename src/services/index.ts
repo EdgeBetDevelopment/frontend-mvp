@@ -87,6 +87,11 @@ const apiService = {
 
     return response.data;
   },
+
+  async getPickOfTheDayList(): Promise<any[]> {
+    const response = await axiosInstance.get(`/api/v1/pick_of_the_day/`);
+    return response.data;
+  },
 };
 
 export default apiService;
