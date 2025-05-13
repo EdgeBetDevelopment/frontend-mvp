@@ -5,5 +5,5 @@ export default function AdminLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <div className="tl-container relative">{children}</div>;
+  return <div className="relative overflow-auto">{children}</div>;
 }
