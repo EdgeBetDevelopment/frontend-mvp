@@ -224,6 +224,10 @@ export const PickCard = ({
   const matchDate = new Date(data?.game_prediction?.game?.start_time || '');
   const formattedDate = matchDate.toLocaleDateString();
   const formattedTime = matchDate.toLocaleTimeString();
+  const homeTeamLogo =
+    data?.game_prediction?.home_team_logo || TeamLogo1Image.src;
+  const awayTeamLogo =
+    data?.game_prediction?.away_team_logo || TeamLogo1Image.src;
 
   return (
     <div className="flex w-full max-w-[720px] flex-col items-center justify-center gap-4 overflow-hidden">
@@ -233,7 +237,7 @@ export const PickCard = ({
           !isSingle && 'tl-flex-between w-full',
         )}
       >
-        <TeamItem name={homeTeam} />
+        <TeamItem name={homeTeam} logo={homeTeamLogo} />
         <div
           className={`text-center align-bottom font-medium capitalize ${
             isSingle ? 'text-6xl' : 'text-4xl'
@@ -241,7 +245,7 @@ export const PickCard = ({
         >
           VS
         </div>
-        <TeamItem name={awayTeam} />
+        <TeamItem name={awayTeam} logo={awayTeamLogo} />
       </div>
 
       <CardContainer className="border-border relative z-10 flex w-full flex-col gap-3 overflow-hidden p-8">
@@ -273,17 +277,17 @@ export const PickCard = ({
           </div>
 
           <div className="flex flex-col gap-6">
-            <TeamOddItem name={homeTeam} odds={oddsHome} />
-            <TeamOddItem name={awayTeam} odds={oddsAway} />
+            <TeamOddItem name={homeTeam} odds={oddsHome} logo={homeTeamLogo} />
+            <TeamOddItem name={awayTeam} odds={oddsAway} logo={awayTeamLogo} />
           </div>
 
-          {/* {!isSingle && onClickFullAnalysis && (
+          {!isSingle && onClickFullAnalysis && (
             <div>
               <Button onClick={onClickFullAnalysis} variant="clear">
                 Full analysis <ChevronRightIcon />
               </Button>
             </div>
-          )} */}
+          )}
 
           <Button
             onClick={onClickTrackBet}
@@ -298,13 +302,13 @@ export const PickCard = ({
   );
 };
 
-const TeamItem = ({ name }: { name: string }) => {
+const TeamItem = ({ name, logo }: { name: string; logo: string }) => {
   const isSingle = useCardSize() === 'single';
 
   return (
     <div className="border-border flex items-center gap-3 rounded-xl border bg-[#33758780] px-4 py-2">
       <Avatar className="h-11 w-11 rounded-full p-1.5">
-        <AvatarImage src={TeamLogo1Image.src} />
+        <AvatarImage src={logo} />
       </Avatar>
       <div
         className={`text-center align-bottom font-bold tracking-normal ${
@@ -320,9 +324,11 @@ const TeamItem = ({ name }: { name: string }) => {
 const TeamOddItem = ({
   name,
   odds,
+  logo,
 }: {
   name: string;
   odds: string | number;
+  logo: string;
 }) => {
   const isSingle = useCardSize() === 'single';
 
@@ -330,7 +336,7 @@ const TeamOddItem = ({
     <div className="tl-flex-between">
       <div className="flex items-center gap-3">
         <Avatar className="border-border bg-surface-secondary h-11 w-11 rounded-full border p-1.5">
-          <AvatarImage src={TeamLogo1Image.src} />
+          <AvatarImage src={logo} />
         </Avatar>
         <div
           className={`text-center align-bottom font-bold tracking-normal ${

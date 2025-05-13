@@ -1,6 +1,11 @@
 import { IGame } from '@/types/game';
 
-export const getTeamInfoByName = (teamName: string, game: IGame) => {
+export const getTeamInfoByName = (
+  teamName?: string | null,
+  game?: IGame | null,
+) => {
+  if (!teamName || !game) return null;
+
   const normalized = teamName.trim().toLowerCase();
 
   const homeTeam = {
@@ -15,8 +20,8 @@ export const getTeamInfoByName = (teamName: string, game: IGame) => {
     logo: game.away_team_logo,
   };
 
-  if (homeTeam.name.toLowerCase() === normalized) return homeTeam;
-  if (awayTeam.name.toLowerCase() === normalized) return awayTeam;
+  if (homeTeam.name?.toLowerCase() === normalized) return homeTeam;
+  if (awayTeam.name?.toLowerCase() === normalized) return awayTeam;
 
   return null;
 };
