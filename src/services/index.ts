@@ -1,4 +1,3 @@
-import { IAuthRepsonse, ILogin, ISignUp } from '@/types/auth';
 import { IGameWithAI } from '@/types/game';
 import { ITeam } from '@/types/team';
 import { IGameTracker } from '@/types/tracker';
@@ -54,32 +53,38 @@ const apiService = {
     return response.data;
   },
 
-  async login(data: ILogin): Promise<IAuthRepsonse> {
-    const response = await axiosInstance.post(`/api/v1/auth/login`, data);
+  async searchTeamsAndPlayers(query: string): Promise<any[]> {
+    const [teams, players] = await Promise.all([
+      apiService.searchTeam(query),
+      apiService.searchPlayer(query),
+    ]);
 
-    return response.data;
-  },
+    const normalizedTeams = teams.map((team: any) => ({
+      ...team,
+      type: 'team',
+      full_name: team.full_name,
+    }));
 
-  async signUp(data: ISignUp): Promise<IAuthRepsonse> {
-    const response = await axiosInstance.post(`/api/v1/auth/register`, data);
+    const normalizedPlayers = players.map((player: any) => ({
+      ...player,
+      type: 'player',
+      full_name: player.full_name,
+    }));
 
-    return response.data;
+    const mixed = [...normalizedTeams, ...normalizedPlayers];
+
+    return mixed.sort(() => Math.random() - 0.5);
   },
 
   async createBet(data: any): Promise<string> {
     const response = await axiosInstance.post(`/api/v1/bet/create_bet`, data);
 
-    console.log(response);
     return response.data;
   },
 
   async getBetList(): Promise<IGameTracker[]> {
-    const response = await axiosInstance.get(
-      `/api/v1/bet/bet_list
-`,
-    );
+    const response = await axiosInstance.get(`/api/v1/bet/bet_list`);
 
-    console.log(response);
     return response.data;
   },
 };

@@ -11,7 +11,7 @@ import { z } from 'zod';
 
 import { useAuth } from '@/context/AuthContext';
 import { ROUTES } from '@/routes';
-import apiService from '@/services';
+import authService from '@/services/auth';
 import { Form, FormField, FormMessage } from '../../ui/form';
 import Loader from '../../ui/loader';
 
@@ -47,7 +47,7 @@ const LoginForm = ({ title = 'Welcome!', onSuccessLogin }: ILoginForm) => {
     error: loginError,
     isPending: loginIsLoading,
   } = useMutation({
-    mutationFn: apiService.login,
+    mutationFn: authService.login,
     onSuccess: (data) => {
       setTokens({
         accessToken: data.access_token,

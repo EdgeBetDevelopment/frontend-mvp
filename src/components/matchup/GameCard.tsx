@@ -33,30 +33,30 @@ const GameCard = ({
   const formattedTime = dayjs(game.game.start_time).format('HH:mm');
 
   const isHomePredicted =
-    game.prediction.predicted_winner === game.game.home_team;
+    game.prediction?.predicted_winner === game.game.home_team;
 
   const recommendedBet = isHomePredicted
     ? {
         label: 'Recommended bet',
         team: game.game.home_team,
-        odd: game.prediction.odds_home,
+        odd: game.prediction?.odds_home,
       }
     : {
         label: 'Recommended bet',
         team: game.game.away_team,
-        odd: game.prediction.odds_away,
+        odd: game.prediction?.odds_away,
       };
 
   const saferBet = !isHomePredicted
     ? {
         label: 'Safer bet',
         team: game.game.home_team,
-        odd: game.prediction.odds_home,
+        odd: game.prediction?.odds_home,
       }
     : {
         label: 'Safer bet',
         team: game.game.away_team,
-        odd: game.prediction.odds_away,
+        odd: game.prediction?.odds_away,
       };
 
   return (
@@ -114,13 +114,16 @@ const GameCard = ({
           NFC North Wild Card Playoff Game
         </div>
 
-        <div className="tl-paraghraph2 text-text-primary">
-          Lorem ipsum dolor sit amet consectetur, adipisicing elit. Praesentium,
-          similique.
+        <div className="tl-paraghraph2 text-text-primary line-clamp-1">
+          {game.prediction?.analysis}
         </div>
 
         <div>
-          <Button onClick={onClickFullAnalysis} variant="clear">
+          <Button
+            className="pl-0!"
+            onClick={onClickFullAnalysis}
+            variant="clear"
+          >
             Full analysis <ChevronRightIcon />
           </Button>
         </div>
