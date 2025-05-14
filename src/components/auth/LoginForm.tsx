@@ -17,10 +17,10 @@ import { Form, FormField, FormMessage } from '../../ui/form';
 import Loader from '../../ui/loader';
 
 import AuthFormInput from './AuthFormInput';
+import GoogleLoginButton from './GoogleLoginButton';
 import H2 from './H2';
 
 import ArrowRight from '@/assets/icons/arrow-right.svg';
-import GoogleIcon from '@/assets/icons/google.svg';
 
 const loginSchema = z.object({
   email: z.string().email('Invalid email format'),
@@ -94,11 +94,7 @@ const LoginForm = ({ title = 'Welcome!', onSuccessLogin }: ILoginForm) => {
       >
         <H2 text={title} />
 
-        <Button type="button" className="auth-button w-full bg-[#282828]">
-          {' '}
-          <GoogleIcon />
-          <p>Sign in with Google</p>
-        </Button>
+        <GoogleLoginButton text="signin_with" />
 
         <p className="text-center text-base text-[#B3B3B3]">
           Or, Sign in with email

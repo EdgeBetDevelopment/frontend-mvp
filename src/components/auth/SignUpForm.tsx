@@ -17,10 +17,10 @@ import { Form, FormField } from '../../ui/form';
 import Loader from '../../ui/loader';
 
 import AuthFormInput from './AuthFormInput';
+import GoogleLoginButton from './GoogleLoginButton';
 import H2 from './H2';
 
 import ArrowRight from '@/assets/icons/arrow-right.svg';
-import GoogleIcon from '@/assets/icons/google.svg';
 
 const signUpSchema = z
   .object({
@@ -96,11 +96,7 @@ const SignUpForm: React.FC = () => {
       >
         <H2 text="Welcome!" />
 
-        <Button type="button" className="auth-button w-full bg-[#282828]">
-          {' '}
-          <GoogleIcon />
-          <p>Sign up with Google</p>
-        </Button>
+        <GoogleLoginButton text="signup_with" />
 
         <p className="text-center text-base text-[#B3B3B3]">
           Or, Sign up with email

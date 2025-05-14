@@ -44,8 +44,10 @@ const authService = {
     return response.data;
   },
 
-  async loginGoogle(): Promise<IAuthRepsonse> {
-    const response = await axiosInstance.get(`/api/v1/auth/google`);
+  async loginGoogle(body: { token: string }): Promise<IAuthRepsonse> {
+    const response = await axiosInstance.post(
+      `/api/v1/auth/google/token?token=${body.token}`,
+    );
 
     return response.data;
   },

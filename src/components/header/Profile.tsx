@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { FaRegUser } from 'react-icons/fa';
 
 import { useAuth } from '@/context/AuthContext';
@@ -34,9 +35,10 @@ const UnauthorizedUser = () => {
 
 const AuthorizedUser = () => {
   const { clearTokens } = useAuth();
-
+  const router = useRouter();
   const onLogOut = () => {
     clearTokens();
+    router.push(ROUTES.HOME);
   };
 
   return (
