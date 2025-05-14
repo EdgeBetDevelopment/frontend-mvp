@@ -128,6 +128,7 @@ const LoginForm = ({ title = 'Welcome!', onSuccessLogin }: ILoginForm) => {
             render={({ field }) => (
               <AuthFormInput
                 {...field}
+                passwordToggle
                 type="password"
                 placeholder="Enter Password"
                 value={field.value}

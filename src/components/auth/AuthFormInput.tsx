@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-
-import ShowIcon from '@/assets/icons/iconamoon_eye-light.svg';
+import { LuEye } from 'react-icons/lu';
+import { LuEyeClosed } from 'react-icons/lu';
 
 interface IAuthFormInputProps {
   placeholder: string;
-  type: 'text' | 'password' | 'email' | 'number';
+  type: 'text' | 'password' | 'email' | 'number' | 'tel';
   name?: string;
   value: string;
   handleChange: (value: string) => void;
@@ -49,11 +49,15 @@ const AuthFormInput: React.FC<IAuthFormInputProps> = ({
         />
 
         {passwordToggle && type === 'password' && (
-          <ShowIcon
-            className="absolute top-[50%] left-[94%] translate-[-50%] transform cursor-pointer"
+          <span
+            className="absolute top-1/2 left-[94%] -translate-x-1/2 -translate-y-1/2 transform cursor-pointer text-2xl text-[#B3B3B3]"
             onClick={() => setShowPassword((v) => !v)}
-            alt="show"
-          />
+            aria-label={showPassword ? 'Hide password' : 'Show password'}
+            role="button"
+            tabIndex={0}
+          >
+            {showPassword ? <LuEye /> : <LuEyeClosed />}
+          </span>
         )}
       </div>
 

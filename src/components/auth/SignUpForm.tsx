@@ -154,6 +154,7 @@ const SignUpForm: React.FC = () => {
             render={({ field }) => (
               <AuthFormInput
                 {...field}
+                passwordToggle
                 handleChange={field.onChange}
                 type="password"
                 placeholder="Enter Password"

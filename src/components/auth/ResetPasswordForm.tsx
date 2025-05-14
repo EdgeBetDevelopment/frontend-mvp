@@ -112,12 +112,11 @@ const ResetPasswordForm = () => {
             render={({ field }) => (
               <AuthFormInput
                 {...field}
+                passwordToggle
                 type="password"
                 placeholder="Enter Password"
                 value={field.value}
                 handleChange={field.onChange}
-                setShowPassword={setShowPassword}
-                showPassword={showPassword}
                 error={errors.password?.message}
                 disabled={isResetting}
               />
@@ -133,8 +132,7 @@ const ResetPasswordForm = () => {
                 placeholder="Confirm Password"
                 value={field.value}
                 handleChange={field.onChange}
-                setShowPassword={setShowConfirmPassword}
-                showPassword={showConfirmPassword}
+                passwordToggle
                 error={errors.confirmPassword?.message}
                 disabled={isResetting}
               />
