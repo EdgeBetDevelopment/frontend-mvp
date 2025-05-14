@@ -82,8 +82,10 @@ const apiService = {
     return response.data;
   },
 
-  async getBetList(): Promise<IGameTracker[]> {
-    const response = await axiosInstance.get(`/api/v1/bet/bet_list`);
+  async getBetList({ filter }: { filter: string }): Promise<IGameTracker[]> {
+    const response = await axiosInstance.get(
+      `/api/v1/bet/bet_list?filter=${filter}`,
+    );
 
     return response.data;
   },

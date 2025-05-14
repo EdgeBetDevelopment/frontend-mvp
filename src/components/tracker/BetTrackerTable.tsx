@@ -1,6 +1,7 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import {
   ReadonlyURLSearchParams,
@@ -10,7 +11,7 @@ import {
 } from 'next/navigation';
 
 import EmptyPlaceholder from '@/components/EmptyPlaceholder';
-import { useBetTracker } from '@/hooks/useBetTracker';
+import apiService from '@/services';
 import { Badge } from '@/ui/badge';
 import { Button } from '@/ui/button';
 import Loader from '@/ui/loader';
@@ -26,23 +27,36 @@ import { formUrlQuery } from '@/utils/url';
 import ListRenderer from '@/wrappers/ListRenderer';
 
 const BET_TYPE_TABS = [
-  { label: 'Active Bets', value: null },
+  { label: 'Active Bets', value: 'active' },
   { label: 'Completed Bets', value: 'completed' },
   { label: 'All Bets', value: 'all' },
 ];
 
 const BetTrackerTable = () => {
-  const { data = [], error, isLoading } = useBetTracker();
-
   const pathname = usePathname();
   const params = useSearchParams() as ReadonlyURLSearchParams;
   const router = useRouter();
+  const type = params.get('type') || 'active';
+  const [activeTab, setActiveTab] = useState(type);
 
-  const type = params.get('type');
+  const {
+    data = [],
+    error,
+    isLoading,
+  } = useQuery({
+    queryKey: ['betList', activeTab],
+    queryFn: () => apiService.getBetList({ filter: activeTab }),
+    staleTime: 1000 * 60 * 2,
+  });
 
-  const onChangeType = (value: string | null) => {
+  const onChangeType = (value: string) => {
     if (value === type) return;
 
+    setActiveTab(value);
+    changeTypeInUrl(value);
+  };
+
+  const changeTypeInUrl = (value: string) => {
     let url = pathname;
 
     if (!value) {
@@ -68,7 +82,7 @@ const BetTrackerTable = () => {
           {BET_TYPE_TABS.map((tab) => (
             <Button
               key={tab.label}
-              variant={type === tab.value ? 'brand' : 'default'}
+              variant={activeTab === tab.value ? 'brand' : 'default'}
               onClick={() => onChangeType(tab.value)}
             >
               {tab.label}
