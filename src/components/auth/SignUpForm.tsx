@@ -12,10 +12,10 @@ import { z } from 'zod';
 import { useAuth } from '@/context/AuthContext';
 import { ROUTES } from '@/routes';
 import authService from '@/services/auth';
+import { Button } from '@/ui/button';
 import { Form, FormField } from '../../ui/form';
 import Loader from '../../ui/loader';
 
-import AuthButton from './AuthButton';
 import AuthFormInput from './AuthFormInput';
 import H2 from './H2';
 
@@ -96,10 +96,11 @@ const SignUpForm: React.FC = () => {
       >
         <H2 text="Welcome!" />
 
-        <AuthButton type="button">
+        <Button type="button" className="auth-button w-full bg-[#282828]">
+          {' '}
           <GoogleIcon />
           <p>Sign up with Google</p>
-        </AuthButton>
+        </Button>
 
         <p className="text-center text-base text-[#B3B3B3]">
           Or, Sign up with email
@@ -182,7 +183,11 @@ const SignUpForm: React.FC = () => {
           />
         </div>
 
-        <AuthButton disabled={isPending} type="submit">
+        <Button
+          type="submit"
+          className="auth-button w-full bg-[#282828]"
+          disabled={isPending}
+        >
           {isPending ? (
             <Loader />
           ) : (
@@ -191,7 +196,7 @@ const SignUpForm: React.FC = () => {
               <ArrowRight />
             </>
           )}
-        </AuthButton>
+        </Button>
 
         <p className="text-center text-base text-[#B3B3B3]">
           Already have an account?{' '}

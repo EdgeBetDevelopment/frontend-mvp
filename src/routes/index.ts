@@ -17,6 +17,9 @@ export const ROUTES = {
   AUTH: {
     LOGIN: '/login',
     SIGN_UP: '/sign-up',
+    FORGOT_PASS: '/forgot-password',
+    VERIFY_CODE: '/verification-code',
     RESET_PASS: '/reset-password',
+    RESET_PASS_SUCCESS: '/reset-password/successfully',
   },
 };

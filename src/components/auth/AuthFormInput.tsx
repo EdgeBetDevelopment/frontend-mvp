@@ -12,6 +12,7 @@ interface IAuthFormInputProps {
   showPassword?: boolean;
   disabled?: boolean;
   error?: string;
+  maxLength?: number;
 }
 
 const AuthFormInput: React.FC<IAuthFormInputProps> = ({
@@ -23,15 +24,17 @@ const AuthFormInput: React.FC<IAuthFormInputProps> = ({
   setShowPassword,
   showPassword,
   error,
+  maxLength,
   disabled,
 }) => {
   return (
-    <div className="relative w-full max-w-[800px]">
+    <div className="relative w-full max-w-[800px] transition-all">
       <input
         disabled={disabled}
-        className="auth-input w-full rounded-2xl bg-[#282828] px-5 py-4 text-[18px] focus:outline-0"
+        className="auth-input w-full rounded-2xl bg-[#282828] px-5 py-4 text-[18px] transition-all focus:outline-0"
         type={showPassword ? 'text' : type}
         value={value}
+        maxLength={maxLength}
         name={name}
         onChange={(e) => handleChange(e.target.value)}
         placeholder={placeholder}

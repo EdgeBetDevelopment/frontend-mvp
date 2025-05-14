@@ -12,10 +12,10 @@ import { z } from 'zod';
 import { useAuth } from '@/context/AuthContext';
 import { ROUTES } from '@/routes';
 import authService from '@/services/auth';
+import { Button } from '@/ui/button';
 import { Form, FormField, FormMessage } from '../../ui/form';
 import Loader from '../../ui/loader';
 
-import AuthButton from './AuthButton';
 import AuthFormInput from './AuthFormInput';
 import H2 from './H2';
 
@@ -94,10 +94,11 @@ const LoginForm = ({ title = 'Welcome!', onSuccessLogin }: ILoginForm) => {
       >
         <H2 text={title} />
 
-        <AuthButton type="button">
+        <Button type="button" className="auth-button w-full bg-[#282828]">
+          {' '}
           <GoogleIcon />
           <p>Sign in with Google</p>
-        </AuthButton>
+        </Button>
 
         <p className="text-center text-base text-[#B3B3B3]">
           Or, Sign in with email
@@ -147,13 +148,17 @@ const LoginForm = ({ title = 'Welcome!', onSuccessLogin }: ILoginForm) => {
         <div className="flex w-full justify-end">
           <Link
             className="text-base text-[#84FDF7]"
-            href={ROUTES.AUTH.RESET_PASS}
+            href={ROUTES.AUTH.FORGOT_PASS}
           >
             Forgot Password?
           </Link>
         </div>
 
-        <AuthButton disabled={loginIsLoading} type="submit">
+        <Button
+          type="submit"
+          className="auth-button w-full bg-[#282828]"
+          disabled={loginIsLoading}
+        >
           {loginIsLoading ? (
             <Loader />
           ) : (
@@ -162,7 +167,7 @@ const LoginForm = ({ title = 'Welcome!', onSuccessLogin }: ILoginForm) => {
               <ArrowRight />
             </>
           )}
-        </AuthButton>
+        </Button>
 
         <p className="text-center text-base text-[#B3B3B3]">
           Don&apos;t have an account yet?{' '}

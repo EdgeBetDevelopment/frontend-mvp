@@ -23,6 +23,14 @@ interface IMatchupState {
 export const matchupSlice: StateCreator<IMatchupState> = (set) => ({
   trackedGame: null,
   selectedGame: null,
+  betInfo: {
+    game_id: 0,
+    nba_game_id: 0,
+    odds: 0,
+    amount: 0,
+    selected_team_id: '',
+    selected_team_name: '',
+  },
 
   setTrackedGame: (trackedGame) => set({ trackedGame }),
   setSelectedGame: (selectedGame) => set({ selectedGame }),
