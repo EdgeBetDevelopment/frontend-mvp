@@ -15,28 +15,21 @@ import apiService from '@/services';
 import { useStore } from '@/store';
 import { IGameWithAI } from '@/types/game';
 import { Button } from '@/ui/button';
+import Loader from '@/ui/loader';
 import { Form } from '../../ui/form';
 import GameAnalysisModal from '../matchup/modals/GameAnalysisModal';
 
 const formSchema = z.object({
   // team: z.object(
-
   //   {
-
   //     teamId: z.number(),
-
   //     teamName: z.string(),
-
   //   },
-
   //   { required_error: 'Please select a team' },
-
   // ),
 
   team: z.string().min(1, 'Please select a team'),
-
   odds: z.number().positive('Enter valid odds'),
-
   amount: z.number().positive('Enter valid amount'),
 });
 
@@ -50,19 +43,15 @@ const TrackBetsModal = ({
   onClose: () => void;
 }) => {
   const { setTrackedGame, setSelectedGame, trackedGame } = useStore();
-
   const { openModal, closeModal, isModalOpen } = useModalManager();
-
   const { isAuthenticated } = useAuth();
 
-  const { mutate } = useMutation({
+  const { mutate, isPending: isPendingCreateBet } = useMutation({
     mutationFn: async (body: any) => apiService.createBet(body),
 
     onSuccess: () => {
       form.reset();
-
       toast.success('Bet created successfully');
-
       onClose();
     },
 
@@ -73,24 +62,24 @@ const TrackBetsModal = ({
     },
   });
 
-  const { data, mutate: findTeam } = useMutation({
+  const {
+    data,
+    mutate: findTeam,
+    isPending: isPendingFindTeam,
+  } = useMutation({
     mutationFn: async (body: any) => apiService.findTeam(body),
 
     onError: (error) => {
       toast.success('Something went wrong, please try later');
-
       console.error('Error find team:', error);
     },
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-
     defaultValues: {
       team: '',
-
       odds: 0,
-
       amount: 0,
     },
 
@@ -100,59 +89,39 @@ const TrackBetsModal = ({
   async function onSubmit(values: z.infer<typeof formSchema>) {
     const body = {
       selected_team_id: String(1),
-
       selected_team_name: values.team,
-
       game_id: 1,
-
       nba_game_id: Number(trackedGame?.game.id),
-
       odds: values.odds,
-
       amount: values.amount,
     };
 
     try {
-      const result = await findTeam(values.team);
-
-      console.log('findTeam result:', result);
-
+      findTeam(values.team);
       mutate(body);
     } catch (error) {
       console.error('Failed to find team, not mutating');
     }
   }
 
+  const isLoading = isPendingCreateBet || isPendingFindTeam;
+
   // async function onSubmit(values: z.infer<typeof formSchema>) {
-
   //   const body = {
-
   //     // selected_team_id: String(values.team.teamId),
-
   //     selected_team_id: String(1),
-
   //     // selected_team_name: values.team.teamName,
-
   //     selected_team_name: values.team,
-
   //     game_id: 1,
-
   //     nba_game_id: Number(trackedGame?.game.id),
-
   //     odds: values.odds,
-
   //     amount: values.amount,
-
   //   };
 
   //   findTeam(values.team);
-
   //   console.log('data', data);
-
   //   console.log('body', body);
-
   //   mutate(body);
-
   // }
 
   useEffect(() => {
@@ -163,9 +132,7 @@ const TrackBetsModal = ({
     if (isOpen && trackedGame) {
       form.reset({
         team: '',
-
         odds: 0,
-
         amount: 0,
       });
     }
@@ -174,18 +141,15 @@ const TrackBetsModal = ({
   const onClickFullAnalysis = (game: IGameWithAI) => {
     if (!isAuthenticated) {
       openModal('auth');
-
       return;
     } else {
       setSelectedGame(game);
-
       openModal('game-analysis');
     }
   };
 
   const onClickCloseModal = () => {
     closeModal('game-analysis');
-
     setSelectedGame(null);
   };
 
@@ -221,8 +185,13 @@ const TrackBetsModal = ({
                     />
                   </div>
 
-                  <Button type="submit" variant="gradient" size="lg">
-                    Track Bet
+                  <Button
+                    disabled={isLoading}
+                    type="submit"
+                    variant="gradient"
+                    size="lg"
+                  >
+                    {isLoading ? <Loader /> : <>Track Bet</>}
                   </Button>
                 </form>
               </Form>

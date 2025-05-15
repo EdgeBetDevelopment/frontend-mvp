@@ -17,7 +17,7 @@ import CalendarIcon from '@/assets/icons/calendar.svg';
 import CancelIcon from '@/assets/icons/cancel.svg';
 import ChevronRightIcon from '@/assets/icons/chevron-right.svg';
 import ClockIcon from '@/assets/icons/clock.svg';
-import NFLLogoImage from '@/assets/nflLogo.png';
+import NBALogoIcon from '@/assets/nbaLogo.png';
 
 interface ITrackGameCard {
   game: IGameWithAI;
@@ -103,11 +103,11 @@ const TrackGameCard = ({
         <div className="tl-paraghraph2 flex items-center gap-2">
           <Avatar className="flex h-8 w-8 items-center justify-center rounded-full border bg-[#33758780]">
             <div>
-              <AvatarImage src={NFLLogoImage.src} />
+              <AvatarImage src={NBALogoIcon.src} />
             </div>
           </Avatar>
 
-          <div>NFL</div>
+          <div>NBA</div>
 
           <div>
             <ChevronRightIcon className="text-text-secondary h-[25px] w-[25px]" />

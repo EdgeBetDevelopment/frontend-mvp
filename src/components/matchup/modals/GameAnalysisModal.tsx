@@ -20,7 +20,6 @@ interface IGameAnalysisModal {
 
 const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
   const { selectedGame: game } = useStore();
-  console.log(game);
   if (!game) {
     return null;
   }
@@ -68,7 +67,7 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
                 </Avatar>
 
                 <Link
-                  href={ROUTES.TEAM(favoriteTeamInfo?.id)}
+                  href={ROUTES.TEAM(favoriteTeamInfo?.id || '')}
                   className="text-text-primary hover:underline"
                 >
                   {favoriteTeamInfo?.name}
@@ -89,7 +88,7 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
                   </div>
                 </Avatar>
                 <Link
-                  href={ROUTES.TEAM(predictedWinnerInfo?.id)}
+                  href={ROUTES.TEAM(predictedWinnerInfo?.id || '')}
                   className="text-text-primary hover:underline"
                 >
                   {predictedWinnerInfo?.name}
@@ -105,14 +104,14 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
 
             <div className="flex items-center gap-2.5">
               <AnalysisTeamCard
-                id={game.game.home_team_id}
+                id={game.game.home_team_id || ''}
                 name={game.game.home_team}
                 logo={game.game.home_team_logo}
                 winProbability={game.prediction?.win_probability_home}
                 odd={game.prediction?.odds_home}
               />
               <AnalysisTeamCard
-                id={game.game.away_team_id}
+                id={game.game.away_team_id || ''}
                 name={game.game.away_team}
                 logo={game.game.away_team_logo}
                 winProbability={game.prediction?.win_probability_away}
@@ -131,14 +130,14 @@ export default GameAnalysisModal;
 const AnalysisTeamCard = ({
   id,
   name,
-  winProbability,
-  odd,
+  winProbability = 0,
+  odd = 0,
   logo,
 }: {
   id: string | number;
   name: string;
-  winProbability: number;
-  odd: number;
+  winProbability?: number;
+  odd?: number;
   logo: string;
 }) => {
   return (
@@ -159,8 +158,8 @@ const AnalysisTeamCard = ({
       </div>
 
       <div className="tl-paraghraph3">
-        <p>Win Probability: {winProbability * 100}%</p>
-        <p>Odd: {odd}</p>
+        <p>Win Probability: {((winProbability || 0) * 100).toFixed(0)}%</p>
+        <p>Odd: {(odd || 0).toFixed(2)}</p>
       </div>
     </CardContainer>
   );

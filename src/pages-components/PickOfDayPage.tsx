@@ -17,9 +17,8 @@ import GridBgImage from '@/assets/gridBg.png';
 import CalendarIcon from '@/assets/icons/calendar.svg';
 import ChevronRightIcon from '@/assets/icons/chevron-right.svg';
 import ClockIcon from '@/assets/icons/clock.svg';
-import NFLLogoImage from '@/assets/nflLogo.png';
+import NBALogoIcon from '@/assets/nbaLogo.png';
 import TeamLogo1Image from '@/assets/teamLogo1.png';
-
 export type CardSize = 'single' | 'multiple';
 
 const CardSizeContext = createContext<CardSize>('multiple');
@@ -306,7 +305,7 @@ export const PickCard = ({
         <div className="flex flex-col gap-6">
           <div className="flex items-center gap-2">
             <Avatar className="flex h-8 w-8 items-center justify-center rounded-full border bg-[#33758780]">
-              <AvatarImage src={NFLLogoImage.src} />
+              <AvatarImage src={NBALogoIcon.src} />
             </Avatar>
             <div className={isSingle ? 'text-2xl' : 'text-xl'}>NFL</div>
             <ChevronRightIcon />

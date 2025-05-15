@@ -47,6 +47,7 @@ const BetTrackerTable = () => {
     queryKey: ['betList', activeTab],
     queryFn: () => apiService.getBetList({ filter: activeTab }),
     staleTime: 1000 * 60 * 2,
+    refetchOnMount: 'always',
   });
 
   const onChangeType = (value: string) => {
@@ -143,7 +144,10 @@ const BetTrackerTable = () => {
                       You placed a bet of ${data.amount} on the{' '}
                       {data.selected_team_name}
                     </TableCell>
-                    <TableCell>Lorem lorem</TableCell>
+                    <TableCell>
+                      You placed a bet of ${data.amount} on the{' '}
+                      {data.selected_team_name}
+                    </TableCell>
                     <TableCell>{data.amount}</TableCell>
                     <TableCell>{data.odds_at_bet_time}</TableCell>
                     <TableCell>
