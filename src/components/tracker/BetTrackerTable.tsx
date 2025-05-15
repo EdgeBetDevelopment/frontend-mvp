@@ -141,8 +141,7 @@ const BetTrackerTable = () => {
                       {dayjs(data.created_at).format('DD/MM/YYYY')}
                     </TableCell>
                     <TableCell>
-                      You placed a bet of ${data.amount} on the{' '}
-                      {data.selected_team_name}
+                      {data.game.home_team} vs {data.game.away_team}
                     </TableCell>
                     <TableCell>
                       You placed a bet of ${data.amount} on the{' '}
