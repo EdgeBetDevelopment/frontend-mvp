@@ -45,6 +45,7 @@ const TrackBetsModal = ({
   const { setTrackedGame, setSelectedGame, trackedGame } = useStore();
   const { openModal, closeModal, isModalOpen } = useModalManager();
   const { isAuthenticated } = useAuth();
+  console.log(trackedGame);
 
   const { mutate, isPending: isPendingCreateBet } = useMutation({
     mutationFn: async (body: any) => apiService.createBet(body),

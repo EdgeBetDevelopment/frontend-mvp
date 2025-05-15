@@ -115,8 +115,7 @@ const FreePickOfDay = () => {
         </CardSizeProvider>
       </div>
 
-      <GameAnalysi
-        sModal
+      <GameAnalysisModal
         open={isModalOpen('gameAnalysis')}
         onClose={onClickCloseModal}
       />
@@ -187,15 +186,19 @@ const PremiumPickOfDay = () => {
 
   const onClickTrackBet = (game: IGame | null) => {
     const simplifiedGame = {
-      id: game?.game_prediction.id,
       game: {
-        ...game?.game_prediction.game,
+        id: game?.game_prediction.game.id,
+        game_prediction: game?.game_prediction,
         home_team_id: game?.game_prediction.home_team_id,
         home_team_logo: game?.game_prediction.home_team_logo,
         away_team_logo: game?.game_prediction.away_team_logo,
         away_team_id: game?.game_prediction.away_team_id,
         home_team: game?.game_prediction.game.home_team,
         away_team: game?.game_prediction.game.away_team,
+        start_time: game?.game_prediction.game.start_time,
+        status: game?.game_prediction.game.status,
+        final_score: game?.game_prediction.game.final_score,
+        nba_game_id: game?.game_prediction.game.nba_game_id,
       },
       prediction: {
         win_probability_away: game?.game_prediction.win_probability_away,
@@ -206,12 +209,9 @@ const PremiumPickOfDay = () => {
         predicted_winner: game?.game_prediction.predicted_winner,
         analysis: game?.game_prediction.analysis,
       },
-      nba_game_id: game?.game_prediction.game.nba_game_id,
-      start_time: game?.game_prediction.game.start_time,
-      status: game?.game_prediction.game.status,
-      final_score: game?.game_prediction.game.final_score,
+      scoreboard: null,
     };
-
+    console.log(simplifiedGame);
     setTrackedGame(simplifiedGame);
     openModal('track-bet');
   };
@@ -234,7 +234,7 @@ const PremiumPickOfDay = () => {
               <PickCard
                 key={index}
                 data={pick}
-                onClickTrackBet={() => onClickTrackBet(null)}
+                onClickTrackBet={() => onClickTrackBet(pick)}
                 onClickFullAnalysis={() => onClickFullAnalysis(pick)}
               />
             ))}
