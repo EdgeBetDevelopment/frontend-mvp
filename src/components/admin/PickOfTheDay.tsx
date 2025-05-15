@@ -1,10 +1,8 @@
-import { Datagrid, DateField, List, TextField } from 'react-admin';
+import { DateField, Show, SimpleShowLayout, TextField } from 'react-admin';
 
-import { DeleteGamePredictionButton } from './DeteleGamePredictionButton';
-
-export const PickOfTheDayList = () => (
-  <List>
-    <Datagrid bulkActionButtons={false} rowClick="show">
+export const PickOfTheDay = (props: any) => (
+  <Show {...props}>
+    <SimpleShowLayout>
       <TextField source="id" />
       <TextField source="user_id" />
       <TextField source="game_prediction.game.home_team" label="Home Team" />
@@ -26,7 +24,6 @@ export const PickOfTheDayList = () => (
       />
       <TextField source="game_prediction.analysis" label="Analys" />
       <DateField source="updated_at" />
-      <DeleteGamePredictionButton />
-    </Datagrid>
-  </List>
+    </SimpleShowLayout>
+  </Show>
 );
