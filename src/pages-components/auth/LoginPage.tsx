@@ -1,6 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 
 import LoginForm from '@/components/auth/sign-in/LoginForm';
 import { ROUTES } from '@/routes';
@@ -10,6 +11,7 @@ const LoginPage = () => {
 
   const onSuccessLogin = () => {
     router.push(ROUTES.HOME);
+    toast.success('Login successful!');
   };
 
   return (

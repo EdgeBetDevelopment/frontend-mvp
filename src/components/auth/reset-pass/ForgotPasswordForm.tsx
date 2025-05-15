@@ -14,9 +14,8 @@ import { useRecoveryStore } from '@/store/slices/resetPassSlice';
 import { Button } from '@/ui/button';
 import { Form, FormField, FormMessage } from '@/ui/form';
 import Loader from '@/ui/loader';
-
-import AuthFormInput from './AuthFormInput';
-import H2 from './H2';
+import AuthFormInput from '../AuthFormInput';
+import H2 from '../H2';
 
 import ArrowRight from '@/assets/icons/arrow-right.svg';
 

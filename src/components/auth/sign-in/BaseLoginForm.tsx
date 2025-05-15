@@ -29,10 +29,6 @@ const BaseLoginForm = ({ onSuccessLogin }: IBaseLoginForm) => {
         onSubmit={handleSubmit(onSubmit)}
         className="flex w-full flex-col items-center justify-center gap-6"
       >
-        {errors.root && (
-          <p className="text-sm text-red-500">{errors.root.message}</p>
-        )}
-
         <div className="flex w-full max-w-[800px] flex-col gap-5">
           <FormField
             control={form.control}

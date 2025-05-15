@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
@@ -14,9 +14,8 @@ import { useRecoveryStore } from '@/store/slices/resetPassSlice';
 import { Button } from '@/ui/button';
 import { Form, FormField, FormMessage } from '@/ui/form';
 import Loader from '@/ui/loader';
-
-import AuthFormInput from './AuthFormInput';
-import H2 from './H2';
+import AuthFormInput from '../AuthFormInput';
+import H2 from '../H2';
 
 import ArrowRight from '@/assets/icons/arrow-right.svg';
 
@@ -39,15 +38,13 @@ type ResetPasswordValues = z.infer<typeof resetPasswordSchema>;
 const ResetPasswordForm = () => {
   const router = useRouter();
   const { clearAll, email, code } = useRecoveryStore();
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   useEffect(() => {
     if (!email || !code) {
       toast.error('Email and code are required');
       router.replace(ROUTES.AUTH.FORGOT_PASS);
     }
-  }, [email, code, router]);
+  }, []);
 
   const form = useForm<ResetPasswordValues>({
     resolver: zodResolver(resetPasswordSchema),
