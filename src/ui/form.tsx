@@ -140,7 +140,7 @@ function FormMessage({
   className,
   error: externalError,
   ...props
-}: React.ComponentProps<'p'> & { error?: string }) {
+}: React.ComponentProps<'p'> & { error?: string | null }) {
   const { error: formError, formMessageId } = useFormField();
   const body =
     externalError ||

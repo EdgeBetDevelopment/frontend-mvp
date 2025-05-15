@@ -1,4 +1,4 @@
-import SuccessfullyResetPassword from '@/components/auth/SuccessfullyResetPassword';
+import SuccessfullyResetPassword from '@/components/auth/reset-pass/SuccessfullyResetPassword';
 
 export default function SuccessfullyPage() {
   return (

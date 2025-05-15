@@ -5,13 +5,14 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
 import { useAuth } from '@/context/AuthContext';
-import { ROUTES } from '@/routes';
 import authService from '@/services/auth';
 
 const GoogleLoginButton = ({
   text,
+  onSuccess,
 }: {
   text?: 'signin_with' | 'signup_with' | 'continue_with' | 'signin';
+  onSuccess?: () => void;
 }) => {
   const router = useRouter();
   const { setTokens } = useAuth();
@@ -24,9 +25,11 @@ const GoogleLoginButton = ({
         refreshToken: data.refresh_token,
       });
 
+      if (onSuccess) {
+        onSuccess();
+      }
+
       toast.success('Logged in with Google!');
-      router.push(ROUTES.HOME);
-      console.log('Logged in with Google!');
     },
     onError: (error: any) => {
       toast.error(error?.response?.data?.message || 'Google login failed');

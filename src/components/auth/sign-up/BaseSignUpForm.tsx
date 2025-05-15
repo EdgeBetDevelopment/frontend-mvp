@@ -1,63 +1,21 @@
-'use client';
-
-import React from 'react';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation } from '@tanstack/react-query';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
-import { toast } from 'sonner';
-import { z } from 'zod';
 
-import { useAuth } from '@/context/AuthContext';
+import { useSignUpForm } from '@/hooks/auth/useSignUpForm';
 import { ROUTES } from '@/routes';
-import authService from '@/services/auth';
 import { Button } from '@/ui/button';
-import { Form, FormField } from '../../ui/form';
-import Loader from '../../ui/loader';
-
-import AuthFormInput from './AuthFormInput';
-import GoogleLoginButton from './GoogleLoginButton';
-import H2 from './H2';
+import { Form, FormField, FormMessage } from '../../../ui/form';
+import Loader from '../../../ui/loader';
+import AuthFormInput from '../AuthFormInput';
 
 import ArrowRight from '@/assets/icons/arrow-right.svg';
 
-const signUpSchema = z
-  .object({
-    name: z
-      .string()
-      .min(2, 'Name is too short')
-      .max(30, 'Name is too long')
-      .regex(/^[a-zA-Zа-яА-ЯёЁіІїЇєЄ\s-]+$/, 'Invalid characters in name'),
-    email: z.string().email('Invalid email format'),
-    phone: z.string().regex(/^\+?\d{10,15}$/, 'Invalid phone number'),
-    password: z
-      .string()
-      .min(8, 'Password must be at least 8 characters')
-      .regex(/\d/, 'Password must include at least one number')
-      .regex(/[a-zA-Z]/, 'Password must include at least one letter'),
-    confirmPassword: z.string(),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: 'Passwords do not match',
-    path: ['confirmPassword'],
-  });
+interface IBaseSignUpForm {
+  onSuccessSignUp?: () => void;
+}
 
-type SignUpFormValues = z.infer<typeof signUpSchema>;
-
-const SignUpForm: React.FC = () => {
-  const router = useRouter();
-  const { setTokens } = useAuth();
-
-  const form = useForm<SignUpFormValues>({
-    resolver: zodResolver(signUpSchema),
-    defaultValues: {
-      name: '',
-      email: '',
-      phone: '',
-      password: '',
-      confirmPassword: '',
-    },
+const BaseSignUpForm = ({ onSuccessSignUp }: IBaseSignUpForm) => {
+  const { form, isPending, onSubmit, error } = useSignUpForm({
+    onSuccessSignUp,
   });
 
   const {
@@ -65,43 +23,12 @@ const SignUpForm: React.FC = () => {
     formState: { errors },
   } = form;
 
-  const { mutate: signUp, isPending } = useMutation({
-    mutationFn: authService.signUp,
-    onSuccess: (data) => {
-      setTokens({
-        accessToken: data.access_token,
-        refreshToken: data.refresh_token,
-      });
-      router.push(ROUTES.HOME);
-    },
-    onError: () => {
-      toast.error('Sign up failed. Please check your data.');
-    },
-  });
-
-  const onSubmit = (values: SignUpFormValues) => {
-    signUp({
-      email: values.email,
-      password: values.password,
-      username: values.name,
-      phone_number: values.phone,
-    });
-  };
-
   return (
     <Form {...form}>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="auth-form mt-20 mb-40 flex w-full max-w-[800px] flex-col items-center justify-center gap-6 rounded-3xl px-40 py-14"
+        className="flex w-full flex-col items-center justify-center gap-6"
       >
-        <H2 text="Welcome!" />
-
-        <GoogleLoginButton text="signup_with" />
-
-        <p className="text-center text-base text-[#B3B3B3]">
-          Or, Sign up with email
-        </p>
-
         <div className="flex w-full max-w-[800px] flex-col gap-5">
           <FormField
             control={form.control}
@@ -180,6 +107,8 @@ const SignUpForm: React.FC = () => {
           />
         </div>
 
+        <FormMessage error={error} />
+
         <Button
           type="submit"
           className="auth-button w-full bg-[#282828]"
@@ -206,4 +135,4 @@ const SignUpForm: React.FC = () => {
   );
 };
 
-export default SignUpForm;
+export default BaseSignUpForm;

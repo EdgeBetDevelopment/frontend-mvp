@@ -1,75 +1,21 @@
-'use client';
-
-import React from 'react';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation } from '@tanstack/react-query';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
-import { toast } from 'sonner';
-import { z } from 'zod';
 
-import { useAuth } from '@/context/AuthContext';
+import { useLoginForm } from '@/hooks/auth/useLoginForm';
 import { ROUTES } from '@/routes';
-import authService from '@/services/auth';
 import { Button } from '@/ui/button';
-import { Form, FormField, FormMessage } from '../../ui/form';
-import Loader from '../../ui/loader';
-
-import AuthFormInput from './AuthFormInput';
-import GoogleLoginButton from './GoogleLoginButton';
-import H2 from './H2';
+import { Form, FormField, FormMessage } from '../../../ui/form';
+import Loader from '../../../ui/loader';
+import AuthFormInput from '../AuthFormInput';
 
 import ArrowRight from '@/assets/icons/arrow-right.svg';
 
-const loginSchema = z.object({
-  email: z.string().email('Invalid email format'),
-  password: z
-    .string()
-    // .min(8, 'Password must be at least 8 characters')
-    .regex(/\d/, 'Password must include at least one number'),
-  // .regex(/[a-zA-Z]/, 'Password must include at least one letter'),
-});
-
-type LoginFormValues = z.infer<typeof loginSchema>;
-
-interface ILoginForm {
-  title?: string;
+interface IBaseLoginForm {
   onSuccessLogin?: () => void;
 }
 
-const LoginForm = ({ title = 'Welcome!', onSuccessLogin }: ILoginForm) => {
-  const router = useRouter();
-  const { setTokens } = useAuth();
-
-  const {
-    mutate: login,
-    error: loginError,
-    isPending: loginIsLoading,
-  } = useMutation({
-    mutationFn: authService.login,
-    onSuccess: (data) => {
-      setTokens({
-        accessToken: data.access_token,
-        refreshToken: data.refresh_token,
-      });
-
-      if (onSuccessLogin) {
-        onSuccessLogin();
-      }
-    },
-    onError: (error) => {
-      console.error(error);
-      toast.error('Login failed. Please check your credentials.');
-    },
-  });
-
-  const form = useForm<LoginFormValues>({
-    resolver: zodResolver(loginSchema),
-    defaultValues: {
-      email: '',
-      password: '',
-    },
+const BaseLoginForm = ({ onSuccessLogin }: IBaseLoginForm) => {
+  const { form, error, loginIsLoading, onSubmit } = useLoginForm({
+    onSuccessLogin,
   });
 
   const {
@@ -77,29 +23,12 @@ const LoginForm = ({ title = 'Welcome!', onSuccessLogin }: ILoginForm) => {
     formState: { errors },
   } = form;
 
-  const onSubmit = async (values: LoginFormValues) => {
-    const body = {
-      email: values.email,
-      password: values.password,
-    };
-
-    login(body);
-  };
-
   return (
     <Form {...form}>
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="flex w-full flex-col items-center justify-center gap-6"
       >
-        <H2 text={title} />
-
-        <GoogleLoginButton text="signin_with" />
-
-        <p className="text-center text-base text-[#B3B3B3]">
-          Or, Sign in with email
-        </p>
-
         {errors.root && (
           <p className="text-sm text-red-500">{errors.root.message}</p>
         )}
@@ -140,7 +69,7 @@ const LoginForm = ({ title = 'Welcome!', onSuccessLogin }: ILoginForm) => {
           />
         </div>
 
-        <FormMessage error={loginError?.message} />
+        <FormMessage error={error} />
 
         <div className="flex w-full justify-end">
           <Link
@@ -177,4 +106,4 @@ const LoginForm = ({ title = 'Welcome!', onSuccessLogin }: ILoginForm) => {
   );
 };
 
-export default LoginForm;
+export default BaseLoginForm;

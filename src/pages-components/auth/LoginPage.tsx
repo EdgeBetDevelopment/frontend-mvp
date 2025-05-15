@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 
-import LoginForm from '@/components/auth/LoginForm';
+import LoginForm from '@/components/auth/sign-in/LoginForm';
 import { ROUTES } from '@/routes';
 
 const LoginPage = () => {

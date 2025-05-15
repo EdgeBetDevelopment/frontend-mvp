@@ -15,7 +15,7 @@ import { Button } from '@/ui/button';
 import { Form, FormMessage } from '@/ui/form';
 import Loader from '@/ui/loader';
 
-import H2 from './H2';
+import H2 from '../H2';
 import OtpCodeInput from './OtpCodeInput';
 
 import ArrowRight from '@/assets/icons/arrow-right.svg';

@@ -1,4 +1,4 @@
-import VerificationCodeForm from '@/components/auth/VerificationCodeForm';
+import VerificationCodeForm from '@/components/auth/reset-pass/VerificationCodeForm';
 
 const ResetPassword = () => {
   return (

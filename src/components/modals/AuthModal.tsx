@@ -1,7 +1,7 @@
 import { toast } from 'sonner';
 
 import { Dialog, DialogContent } from '../../ui/dialog';
-import LoginForm from '../auth/LoginForm';
+import LoginForm from '../auth/sign-in/LoginForm';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -9,9 +9,13 @@ interface AuthModalProps {
 }
 
 const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
-  const onSuccessLogin = () => {
+  const handleLoginSuccess = () => {
     onClose();
     toast.success('Login successful!');
+  };
+
+  const handleGoogleLoginSuccess = () => {
+    onClose();
   };
 
   return (
@@ -19,7 +23,8 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
       <DialogContent className="flex w-full flex-col items-center gap-6 p-6 text-center sm:max-w-[500px]">
         <LoginForm
           title="Create an account to get started"
-          onSuccessLogin={onSuccessLogin}
+          onSuccessLogin={handleLoginSuccess}
+          onGoogleLoginSuccess={handleGoogleLoginSuccess}
         />
       </DialogContent>
     </Dialog>
