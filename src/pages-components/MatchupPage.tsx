@@ -1,13 +1,10 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useQuery } from '@tanstack/react-query';
-import {
-  ReadonlyURLSearchParams,
-  useRouter,
-  useSearchParams,
-} from 'next/navigation';
+import { ReadonlyURLSearchParams, useSearchParams } from 'next/navigation';
 
+import EmptyPlaceholder from '@/components/EmptyPlaceholder';
 import MatchupPageFilters from '@/components/matchup/Filters';
 import GameCard from '@/components/matchup/GameCard';
 import GameAnalysisModal from '@/components/matchup/modals/GameAnalysisModal';
@@ -20,6 +17,7 @@ import { useStore } from '@/store';
 import { IGameWithAI } from '@/types/game';
 import { ScrollArea } from '@/ui/scroll-area';
 import { Skeleton } from '@/ui/skeleton';
+import ListRenderer from '@/wrappers/ListRenderer';
 
 const MatchupPage = () => {
   const { isAuthenticated } = useAuth();
@@ -27,18 +25,15 @@ const MatchupPage = () => {
   const { setTrackedGame, setSelectedGame } = useStore();
   const params = useSearchParams() as ReadonlyURLSearchParams;
   const type = params.get('type');
-  const router = useRouter();
 
-  const { data = [], isLoading } = useQuery({
+  const {
+    data = [],
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ['scrore-board'],
     queryFn: () => apiService.getGames(),
   });
-
-  useEffect(() => {
-    if (!isAuthenticated) {
-      // router.replace(ROUTES.AUTH.LOGIN);
-    }
-  }, [isAuthenticated, router]);
 
   const onClickTrackBet = (game: IGameWithAI) => {
     if (!isAuthenticated) {
@@ -76,91 +71,24 @@ const MatchupPage = () => {
         <div className="flex flex-col gap-4">
           <MatchupPageFilters />
 
-          {/* <ListRenderer
-          isLoading={isLoading}
-          data={data?.slice().reverse()}
-          isError={!!error}
-          errorComponent={<div>Error load a player</div>}
-          loadingComponent={
-            <Loader size="h-10 w-10" className="h-full w-full py-10" />
-          }
-          emptyComponent={
-            <div>
-              <Table className="">
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Event</TableHead>
-                    <TableHead>Description</TableHead>
-                    <TableHead>Stake</TableHead>
-                    <TableHead>Bet</TableHead>
-                    <TableHead>Status</TableHead>
-                  </TableRow>
-                </TableHeader>
-              </Table>
+          <ListRenderer
+            isLoading={isLoading}
+            data={data}
+            isError={!!error}
+            errorComponent={<div>Error load a player</div>}
+            loadingComponent={<GamesLoading />}
+            emptyComponent={
               <EmptyPlaceholder
-                title="No bets found"
-                subtitle="You don’t have any bets yet."
+                className="mt-30"
+                title="No games found"
+                subtitle="For now, there are no games available."
               />
-            </div>
-          }
-        >
-          {(bets) => (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Event</TableHead>
-                  <TableHead>Description</TableHead>
-                  <TableHead>Stake</TableHead>
-                  <TableHead>Bet</TableHead>
-                  <TableHead>Status</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {bets.map((data) => (
-                  <TableRow key={data.id}>
-                    <TableCell>
-                      {dayjs(data.created_at).format('DD/MM/YYYY')}
-                    </TableCell>
-                    <TableCell>
-                      You placed a bet of ${data.amount} on the{' '}
-                      {data.selected_team_name}
-                    </TableCell>
-                    <TableCell>Lorem lorem</TableCell>
-                    <TableCell>{data.amount}</TableCell>
-                    <TableCell>{data.odds_at_bet_time}</TableCell>
-                    <TableCell>
-                      <Badge
-                        className="w-full max-w-[85px] py-2 capitalize"
-                        variant={
-                          data.status === 'won'
-                            ? 'green'
-                            : data.status === 'pending'
-                              ? 'orange'
-                              : 'red'
-                        }
-                      >
-                        {data.status}
-                      </Badge>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          )}
-        </ListRenderer> */}
-
-          <ScrollArea className="pr-4">
-            <div className="grid w-full grid-cols-2 gap-4">
-              {isLoading
-                ? Array.from({ length: 4 }).map((_, index) => (
-                    <Skeleton
-                      key={index}
-                      className="h-[387px] w-[644px] rounded-3xl"
-                    />
-                  ))
-                : data.map((game: IGameWithAI) => (
+            }
+          >
+            {(games) => (
+              <ScrollArea className="pr-4">
+                <div className="grid w-full grid-cols-2 gap-4">
+                  {games.map((game: IGameWithAI) => (
                     <GameCard
                       key={game.game.id}
                       type={type}
@@ -169,8 +97,10 @@ const MatchupPage = () => {
                       onClickFullAnalysis={() => onClickFullAnalysis(game)}
                     />
                   ))}
-            </div>
-          </ScrollArea>
+                </div>
+              </ScrollArea>
+            )}
+          </ListRenderer>
         </div>
       </div>
 
@@ -193,3 +123,13 @@ const MatchupPage = () => {
 };
 
 export default MatchupPage;
+
+const GamesLoading = () => {
+  return (
+    <div className="grid w-full grid-cols-2 gap-4">
+      {Array.from({ length: 4 }).map((_, index) => (
+        <Skeleton key={index} className="h-[387px] w-full rounded-3xl" />
+      ))}
+    </div>
+  );
+};

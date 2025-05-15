@@ -14,7 +14,7 @@ import CardContainer from '../../ui/containers/CardContainer';
 import CalendarIcon from '@/assets/icons/calendar.svg';
 import ChevronRightIcon from '@/assets/icons/chevron-right.svg';
 import ClockIcon from '@/assets/icons/clock.svg';
-import NFLLogoImage from '@/assets/nflLogo.png';
+import NBALogoIcon from '@/assets/nbaLogo.png';
 
 interface IGameCard {
   game: IGameWithAI;
@@ -106,7 +106,7 @@ const GameCard = ({
         <div className="tl-paraghraph2 flex items-center gap-2">
           <Avatar className="flex h-8 w-8 items-center justify-center rounded-full border bg-[#33758780]">
             <div>
-              <AvatarImage src={NFLLogoImage.src} />
+              <AvatarImage src={NBALogoIcon.src} />
             </div>
           </Avatar>
           {type ? type.toUpperCase() : 'NBA'}
