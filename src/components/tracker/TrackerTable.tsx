@@ -1,7 +1,5 @@
 'use client';
 
-import dayjs from 'dayjs';
-
 import { useBetTracker } from '@/hooks/useBetTracker';
 import { Badge } from '@/ui/badge';
 import Loader from '@/ui/loader';
@@ -13,6 +11,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/ui/table';
+import { formatUtcToLocalDate } from '@/utils/time';
 import EmptyPlaceholder from '../EmptyPlaceholder';
 
 export const TrackerTable = () => {
@@ -59,7 +58,7 @@ export const TrackerTable = () => {
           {data.map((data) => (
             <TableRow key={data.id}>
               <TableCell>
-                {dayjs(data.created_at).format('DD/MM/YYYY')}
+                {formatUtcToLocalDate(data.created_at.toString())}
               </TableCell>
               <TableCell>{data.name}</TableCell>
               <TableCell>{data.prediction}</TableCell>

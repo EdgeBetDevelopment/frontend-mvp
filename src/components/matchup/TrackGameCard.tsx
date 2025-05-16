@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import dayjs from 'dayjs';
 import Link from 'next/link';
 import { Controller, useFormContext } from 'react-hook-form';
 import { NumericFormat } from 'react-number-format';
@@ -10,6 +9,7 @@ import { ROUTES } from '@/routes';
 import { IGameWithAI } from '@/types/game';
 import { Avatar, AvatarImage } from '@/ui/avatar';
 import { Button } from '@/ui/button';
+import { formatUtcToLocalDate, formatUtcToLocalTime } from '@/utils/time';
 import CardContainer from '../../ui/containers/CardContainer';
 import { Input } from '../../ui/input';
 
@@ -30,8 +30,8 @@ const TrackGameCard = ({
   onClickFullAnalysis,
   onClickClearTrackBet,
 }: ITrackGameCard) => {
-  const formattedDate = dayjs(game.game.start_time).format('MM/DD/YYYY');
-  const formattedTime = dayjs(game.game.start_time).format('HH:mm');
+  const formattedDate = formatUtcToLocalDate(game.game.start_time);
+  const formattedTime = formatUtcToLocalTime(game.game.start_time);
 
   const {
     control,

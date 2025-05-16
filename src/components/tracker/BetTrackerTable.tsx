@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import dayjs from 'dayjs';
 import {
   ReadonlyURLSearchParams,
   usePathname,
@@ -23,6 +22,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/ui/table';
+import { formatUtcToLocalDate } from '@/utils/time';
 import { formUrlQuery } from '@/utils/url';
 import ListRenderer from '@/wrappers/ListRenderer';
 
@@ -138,7 +138,7 @@ const BetTrackerTable = () => {
                 {bets.map((data) => (
                   <TableRow key={data.id}>
                     <TableCell>
-                      {dayjs(data.created_at).format('DD/MM/YYYY')}
+                      {formatUtcToLocalDate(data.created_at.toString())}
                     </TableCell>
                     <TableCell>
                       {data.game.home_team} vs {data.game.away_team}
