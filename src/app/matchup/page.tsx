@@ -2,7 +2,7 @@
 
 import React, { Suspense } from 'react';
 
-import MatchupPage from '@/pages/MatchupPage';
+import MatchupPage from '@/pages-components/MatchupPage';
 import TanstackQueryProvider from '@/providers/QueryProvider';
 
 const Matchup = () => {
