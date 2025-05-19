@@ -1,6 +1,6 @@
 import React from 'react';
 
-import TrackerPage from '@/pages-components/TrackerPage';
+import TrackerPage from '@/pages/TrackerPage';
 
 const Tracker = () => {
   return <TrackerPage />;

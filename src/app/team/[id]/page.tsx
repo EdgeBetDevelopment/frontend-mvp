@@ -1,4 +1,4 @@
-import TeamPage from '@/pages-components/TeamPage';
+import TeamPage from '@/pages/TeamPage';
 
 export default function Player() {
   return (

@@ -108,25 +108,46 @@ export const EventsTable = () => {
   return (
     <div className="flex w-full flex-col gap-6">
       <div className="tl-flex-between gap-4">
-        <Select>
+        <Select defaultValue="nba">
           <SelectTrigger className="w-[300px]">
             <SelectValue placeholder="Sport category" />
           </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="light">Light</SelectItem>
-            <SelectItem value="dark">Dark</SelectItem>
-            <SelectItem value="system">System</SelectItem>
-          </SelectContent>
-        </Select>
 
-        <Select>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Sort by" />
-          </SelectTrigger>
           <SelectContent>
-            <SelectItem value="light">Light</SelectItem>
-            <SelectItem value="dark">Dark</SelectItem>
-            <SelectItem value="system">System</SelectItem>
+            <SelectItem value="nba">NBA</SelectItem>
+            <SelectItem disabled value="ncaaf">
+              NCAAF
+            </SelectItem>
+            <SelectItem disabled value="ncaaf-championship-winner">
+              NCAAF Championship Winner
+            </SelectItem>
+            <SelectItem disabled value="nfl-super-bowl-winner">
+              NFL Super Bowl Winner
+            </SelectItem>
+            <SelectItem disabled value="nfl">
+              NFL
+            </SelectItem>
+            <SelectItem disabled value="basketball-euroleague">
+              Basketball Euroleague
+            </SelectItem>
+            <SelectItem disabled value="ncaab">
+              NCAAB
+            </SelectItem>
+            <SelectItem disabled value="ncaab-championship-winner">
+              NCAAB Championship Winner
+            </SelectItem>
+            <SelectItem disabled value="mlb-world-series-winner">
+              MLB World Series Winner
+            </SelectItem>
+            <SelectItem disabled value="mlb">
+              MLB
+            </SelectItem>
+            <SelectItem disabled value="tennis">
+              Tennis
+            </SelectItem>
+            <SelectItem disabled value="wta-tours">
+              WTA Tours
+            </SelectItem>
           </SelectContent>
         </Select>
       </div>
