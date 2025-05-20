@@ -10,6 +10,7 @@ import {
 } from 'next/navigation';
 
 import EmptyPlaceholder from '@/components/EmptyPlaceholder';
+import { useTableSort } from '@/hooks/useTableSort';
 import apiService from '@/services';
 import { Badge } from '@/ui/badge';
 import { Button } from '@/ui/button';
@@ -32,34 +33,45 @@ const BET_TYPE_TABS = [
   { label: 'All Bets', value: 'all' },
 ];
 
+const TABLE_FIELDS = [
+  { label: 'Date', field: 'created_at', sortable: true },
+  { label: 'Event', field: 'game.home_team', sortable: false },
+  { label: 'Description', field: 'description', sortable: false },
+  { label: 'Stake', field: 'amount', sortable: true },
+  { label: 'Bet', field: 'odds_at_bet_time', sortable: true },
+  { label: 'Status', field: 'status', sortable: false },
+];
+
 const BetTrackerTable = () => {
   const pathname = usePathname();
   const params = useSearchParams() as ReadonlyURLSearchParams;
   const router = useRouter();
   const type = params.get('type') || 'active';
+  const sortParam = params.get('sort') || '';
   const [activeTab, setActiveTab] = useState(type);
+  const { sortArray, currentSort, handleSort } = useTableSort();
 
   const {
     data = [],
     error,
     isLoading,
   } = useQuery({
-    queryKey: ['betList', activeTab],
-    queryFn: () => apiService.getBetList({ filter: activeTab }),
+    queryKey: ['betList', activeTab, sortParam],
+    queryFn: () =>
+      apiService.getBetList({ filter: activeTab, sort: sortArray } as any),
     staleTime: 1000 * 60 * 2,
     refetchOnMount: 'always',
+    placeholderData: (prevData) => prevData,
   });
 
   const onChangeType = (value: string) => {
     if (value === type) return;
-
     setActiveTab(value);
     changeTypeInUrl(value);
   };
 
   const changeTypeInUrl = (value: string) => {
     let url = pathname;
-
     if (!value) {
       url = formUrlQuery({
         params: params.toString(),
@@ -72,8 +84,7 @@ const BetTrackerTable = () => {
         value,
       });
     }
-
-    router.push(url);
+    router.replace(url);
   };
 
   return (
@@ -106,18 +117,23 @@ const BetTrackerTable = () => {
               <Table className="">
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Event</TableHead>
-                    <TableHead>Description</TableHead>
-                    <TableHead>Stake</TableHead>
-                    <TableHead>Bet</TableHead>
-                    <TableHead>Status</TableHead>
+                    {TABLE_FIELDS.map((col) => (
+                      <TableHead
+                        key={col.field}
+                        sortable={col.sortable}
+                        sortKey={col.field}
+                        currentSort={currentSort}
+                        onSort={handleSort}
+                      >
+                        {col.label}
+                      </TableHead>
+                    ))}
                   </TableRow>
                 </TableHeader>
               </Table>
               <EmptyPlaceholder
                 title="No bets found"
-                subtitle="You don’t have any bets yet."
+                subtitle="You don't have any bets yet."
               />
             </div>
           }
@@ -126,12 +142,17 @@ const BetTrackerTable = () => {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Event</TableHead>
-                  <TableHead>Description</TableHead>
-                  <TableHead>Stake</TableHead>
-                  <TableHead>Bet</TableHead>
-                  <TableHead>Status</TableHead>
+                  {TABLE_FIELDS.map((col) => (
+                    <TableHead
+                      key={col.field}
+                      sortable={col.sortable}
+                      sortKey={col.field}
+                      currentSort={currentSort}
+                      onSort={handleSort}
+                    >
+                      {col.label}
+                    </TableHead>
+                  ))}
                 </TableRow>
               </TableHeader>
               <TableBody>
