@@ -31,7 +31,7 @@ const SignUpForm = ({
   };
 
   return (
-    <div className="auth-form mt-20 mb-40 flex w-full max-w-[800px] flex-col items-center justify-center gap-6 rounded-3xl px-40 py-14">
+    <div className="flex w-full flex-col items-center gap-6">
       <H2 text={title} />
 
       <GoogleLoginButton

@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 
 import PageTitle from '@/components/PageTitle';
 import { Button } from '@/ui/button';
@@ -73,9 +74,14 @@ const PricingCard = () => {
         </li>
       </ul>
 
-      <Button variant="gradient">
-        Get Started <ArrowRightIcon />
-      </Button>
+      <Link
+        href={`${process.env.NEXT_PUBLIC_API_URL}/api/v1/stripe/`}
+        target="_blank"
+      >
+        <Button variant="gradient">
+          Get Started <ArrowRightIcon />
+        </Button>
+      </Link>
     </div>
   );
 };

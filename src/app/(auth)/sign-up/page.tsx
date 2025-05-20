@@ -1,11 +1,7 @@
-import SignUpForm from '@/components/auth/sign-up/SignUpForm';
+import SignUpPage from '@/pages-components/auth/SignUpPage';
 
 const SignUp = () => {
-  return (
-    <div className="flex w-full flex-col items-center justify-center">
-      <SignUpForm />
-    </div>
-  );
+  return <SignUpPage />;
 };
 
 export default SignUp;
