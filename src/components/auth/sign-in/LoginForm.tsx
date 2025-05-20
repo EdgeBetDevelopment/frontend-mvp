@@ -34,7 +34,10 @@ const LoginForm = ({
     <div className="flex w-full flex-col items-center gap-6">
       <H2 text={title} />
 
-      <GoogleLoginButton onSuccess={handleGoogleSuccess} text="signin_with" />
+      <GoogleLoginButton
+        onSuccess={handleGoogleSuccess}
+        text="Sign in with Google"
+      />
 
       <p className="text-center text-base text-[#B3B3B3]">
         Or, Sign in with email

@@ -233,11 +233,11 @@
 
 .auth-button {
   box-shadow: 0px 4.5px 4.5px 0px #0808080d;
-
   box-shadow: 0px 1.13px 1.13px 0px #ffffff33 inset;
-
   box-shadow: 0px 6.75px 13.5px 0px #ffffff1f inset;
 }
+
+
 
 .auth-form {
   border: 1px solid var(--Border-secondary, #323a3a);

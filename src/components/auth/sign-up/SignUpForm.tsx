@@ -34,7 +34,10 @@ const SignUpForm = ({
     <div className="auth-form mt-20 mb-40 flex w-full max-w-[800px] flex-col items-center justify-center gap-6 rounded-3xl px-40 py-14">
       <H2 text={title} />
 
-      <GoogleLoginButton onSuccess={handleGoogleSuccess} text="signup_with" />
+      <GoogleLoginButton
+        onSuccess={handleGoogleSuccess}
+        text="Sign up with Google"
+      />
 
       <p className="text-center text-base text-[#B3B3B3]">
         Or, Sign up with email
