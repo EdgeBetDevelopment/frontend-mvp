@@ -109,16 +109,12 @@ const TrackGameCard = ({
 
           <div>NBA</div>
 
-          <div>
-            <ChevronRightIcon className="text-text-secondary h-[25px] w-[25px]" />
-          </div>
-
-          <div
-            title="NFC North Wild Card Playoff Game"
-            className="line-clamp-1"
-          >
-            NFC North Wild Card Playoff Game
-          </div>
+          {game?.scoreboard?.label && (
+            <>
+              <ChevronRightIcon className="text-text-secondary" />
+              {game?.scoreboard?.label}
+            </>
+          )}
         </div>
 
         <div>

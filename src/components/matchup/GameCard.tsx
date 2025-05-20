@@ -110,8 +110,13 @@ const GameCard = ({
             </div>
           </Avatar>
           {type ? type.toUpperCase() : 'NBA'}
-          <ChevronRightIcon className="text-text-secondary" />
-          NFC North Wild Card Playoff Game
+
+          {game?.scoreboard?.label && (
+            <>
+              <ChevronRightIcon className="text-text-secondary" />
+              {game?.scoreboard?.label}
+            </>
+          )}
         </div>
 
         <div className="tl-paraghraph2 text-text-primary line-clamp-1">

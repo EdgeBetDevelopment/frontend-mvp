@@ -67,8 +67,12 @@ export interface IGame {
   game_prediction: any;
 }
 
+export interface IScoreboard {
+  label: string;
+}
+
 export interface IGameWithAI {
   game: IGame;
   prediction: IPrediction | null;
-  scoreboard: null;
+  scoreboard: IScoreboard | null;
 }
