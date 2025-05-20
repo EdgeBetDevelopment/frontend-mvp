@@ -1,6 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 
 import GameAnalysisModal from '@/components/matchup/modals/GameAnalysisModal';
 import TrackBetsModal from '@/components/modals/TrackBetsModal';
@@ -132,21 +133,14 @@ const PremiumPickOfDay = () => {
   const { openModal, closeModal, isModalOpen } = useModalManager();
   const { setTrackedGame, setSelectedGame } = useStore();
 
-  const [picks, setPicks] = useState<any[]>([]);
-
-  useEffect(() => {
-    const fetchPicks = async () => {
-      try {
-        const data = await apiService.getPickOfTheDayList();
-        console.log(data);
-        setPicks(data);
-      } catch (err) {
-        console.error('Failed to fetch picks', err);
-      }
-    };
-
-    fetchPicks();
-  }, []);
+  const {
+    data: picks = [],
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ['picks'],
+    queryFn: () => apiService.getPickOfTheDayList(),
+  });
 
   const onClickFullAnalysis = (game: IGame) => {
     const simplifiedGame = {
@@ -230,7 +224,7 @@ const PremiumPickOfDay = () => {
         </div>
 
         <CardSizeProvider size={'multiple'}>
-          <div className="flex flex-wrap justify-center gap-8">
+          <div className="grid w-full grid-cols-1 items-center justify-center gap-8 lg:grid-cols-2 xl:grid-cols-3">
             {picks.map((pick, index) => (
               <PickCard
                 key={index}
@@ -282,7 +276,7 @@ export const PickCard = ({
     data?.game_prediction?.away_team_logo || TeamLogo1Image.src;
 
   return (
-    <div className="flex w-full max-w-[720px] flex-col items-center justify-center gap-4 overflow-hidden">
+    <div className="flex w-full flex-col items-center justify-center gap-4 overflow-hidden lg:max-w-[720px]">
       <div
         className={cn(
           'flex items-center gap-6',

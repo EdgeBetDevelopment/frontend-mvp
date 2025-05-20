@@ -1,6 +1,8 @@
 'use client';
 
 import * as React from 'react';
+import { FaCaretDown } from 'react-icons/fa';
+import { FaCaretUp } from 'react-icons/fa';
 
 import { cn } from '@/lib/utils';
 
@@ -65,16 +67,62 @@ function TableRow({ className, ...props }: React.ComponentProps<'tr'>) {
   );
 }
 
-function TableHead({ className, ...props }: React.ComponentProps<'th'>) {
+type TableHeadProps = React.ComponentProps<'th'> & {
+  sortable?: boolean;
+  sortKey?: string;
+  currentSort?: { field: string; direction: string };
+  onSort?: (field: string) => void;
+  children: React.ReactNode;
+};
+
+function TableHead({
+  className,
+  sortable = false,
+  sortKey = '',
+  currentSort,
+  onSort,
+  children,
+  ...props
+}: TableHeadProps) {
+  const handleClick = () => {
+    if (sortable && onSort && sortKey) {
+      onSort(sortKey);
+    }
+  };
+
+  const isActive = currentSort && currentSort.field === sortKey;
+  const isAsc = isActive && currentSort.direction === 'asc';
+  const isDesc = isActive && currentSort.direction === 'desc';
+
   return (
     <th
       data-slot="table-head"
       className={cn(
         'bg-surface-primary text-text-primary h-10 px-2 py-[19px] text-left align-middle text-sm font-normal tracking-normal whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]',
+        sortable ? 'cursor-pointer select-none' : '',
         className,
       )}
+      onClick={handleClick}
       {...props}
-    />
+    >
+      {children}
+      {sortable && (
+        <span className="ml-1 inline-flex flex-col align-middle text-xs">
+          <FaCaretUp
+            className={
+              '-mb-1 h-5 w-5 transition ' +
+              (isAsc ? 'text-primary-brand' : 'text-gray-400 opacity-50')
+            }
+          />
+          <FaCaretDown
+            className={
+              '-mt-1 h-5 w-5 transition ' +
+              (isDesc ? 'text-primary-brand' : 'text-gray-400 opacity-50')
+            }
+          />
+        </span>
+      )}
+    </th>
   );
 }
 

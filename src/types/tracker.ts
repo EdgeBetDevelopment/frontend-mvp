@@ -1,3 +1,5 @@
+import { IGame } from './game';
+
 export interface IGameTracker {
   amount: number;
   selected_team_name: string;
@@ -5,4 +7,5 @@ export interface IGameTracker {
   status: string;
   created_at: Date;
   id: number;
+  game: IGame;
 }
