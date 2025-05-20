@@ -4,6 +4,7 @@ import { Admin, Resource } from 'react-admin';
 
 import customDataProvider from '@/services/admin';
 
+import { PickOfTheDay } from './PickOfTheDay';
 import { PickOfTheDayCreate } from './PickOfTheDayCreate';
 import { PickOfTheDayList } from './PickOfTheDayList';
 import { User } from './User';
@@ -43,6 +44,7 @@ const AdminApp = () => {
       <Resource
         create={PickOfTheDayCreate}
         name="pick_of_the_day"
+        // show={PickOfTheDay}
         list={PickOfTheDayList}
         options={{ label: 'Pick of the Days' }}
       />

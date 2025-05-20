@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import {
+  BooleanInput,
   Create,
   NumberInput,
   required,
@@ -20,7 +21,7 @@ const HiddenInput = ({ source, value }: { source: string; value: any }) => {
 
   useEffect(() => {
     onChange(value);
-  }, [value]);
+  }, [value, onChange]);
 
   return null;
 };
@@ -128,6 +129,7 @@ export const PickOfTheDayCreate = () => {
           </>
         )}
         <TextInput source="analysis" multiline validate={required()} />
+        <BooleanInput source="is_premium" label="Is Premium?" />
       </SimpleForm>
     </Create>
   );

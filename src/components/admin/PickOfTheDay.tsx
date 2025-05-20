@@ -1,4 +1,10 @@
-import { DateField, Show, SimpleShowLayout, TextField } from 'react-admin';
+import {
+  BooleanField,
+  DateField,
+  Show,
+  SimpleShowLayout,
+  TextField,
+} from 'react-admin';
 
 export const PickOfTheDay = (props: any) => (
   <Show {...props}>
@@ -23,6 +29,7 @@ export const PickOfTheDay = (props: any) => (
         label="Predicted winner"
       />
       <TextField source="game_prediction.analysis" label="Analys" />
+      <BooleanField source="is_premium" label="Premium" />
       <DateField source="updated_at" />
     </SimpleShowLayout>
   </Show>

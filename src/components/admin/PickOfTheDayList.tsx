@@ -1,4 +1,10 @@
-import { Datagrid, DateField, List, TextField } from 'react-admin';
+import {
+  BooleanField,
+  Datagrid,
+  DateField,
+  List,
+  TextField,
+} from 'react-admin';
 
 import { DeleteGamePredictionButton } from './DeteleGamePredictionButton';
 
@@ -25,6 +31,7 @@ export const PickOfTheDayList = () => (
         label="Predicted winner"
       />
       <TextField source="game_prediction.analysis" label="Analys" />
+      <BooleanField source="is_premium" label="Premium" />
       <DateField source="updated_at" />
       <DeleteGamePredictionButton />
     </Datagrid>

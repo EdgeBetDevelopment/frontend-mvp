@@ -167,6 +167,7 @@ const PremiumPickOfDay = () => {
       start_time: game?.game_prediction.game.start_time,
       status: game?.game_prediction.game.status,
       final_score: game?.game_prediction.game.final_score,
+      scoreboard: null,
     };
 
     setSelectedGame(simplifiedGame);
