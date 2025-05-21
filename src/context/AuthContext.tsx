@@ -17,11 +17,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [refreshToken, setRefreshToken] = useState<string | null>(null);
+  const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
       setAccessToken(localStorage.getItem('accessToken'));
       setRefreshToken(localStorage.getItem('refreshToken'));
+      setIsInitialized(true);
     }
   }, []);
 
@@ -33,22 +35,30 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     refreshToken?: string;
   }) => {
     setAccessToken(accessToken);
-    localStorage.setItem('accessToken', accessToken);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('accessToken', accessToken);
 
-    if (refreshToken) {
-      setRefreshToken(refreshToken);
-      localStorage.setItem('refreshToken', refreshToken);
+      if (refreshToken) {
+        setRefreshToken(refreshToken);
+        localStorage.setItem('refreshToken', refreshToken);
+      }
     }
   };
 
   const clearTokens = () => {
     setAccessToken(null);
     setRefreshToken(null);
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+    }
   };
 
   const isAuthenticated = useMemo(() => !!accessToken, [accessToken]);
+
+  if (!isInitialized) {
+    return null;
+  }
 
   return (
     <AuthContext.Provider

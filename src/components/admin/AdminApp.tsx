@@ -4,7 +4,6 @@ import { Admin, Resource } from 'react-admin';
 
 import customDataProvider from '@/services/admin';
 
-import { PickOfTheDay } from './PickOfTheDay';
 import { PickOfTheDayCreate } from './PickOfTheDayCreate';
 import { PickOfTheDayList } from './PickOfTheDayList';
 import { User } from './User';

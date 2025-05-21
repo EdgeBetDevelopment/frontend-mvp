@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 
 export const useBreakpoint = () => {
   const [breakpoint, setBreakpoint] = useState<'sm' | 'md' | 'lg'>('lg');
+  const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
     const update = () => {
@@ -19,9 +20,14 @@ export const useBreakpoint = () => {
     };
 
     update();
+    setIsInitialized(true);
     window.addEventListener('resize', update);
     return () => window.removeEventListener('resize', update);
   }, []);
+
+  if (!isInitialized) {
+    return 'lg'; // Default value during SSR
+  }
 
   return breakpoint;
 };

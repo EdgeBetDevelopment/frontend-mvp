@@ -32,7 +32,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="!scroll-smooth">
+    <html lang="en" className="!scroll-smooth" suppressHydrationWarning>
       <head>
         <Script
           src="https://accounts.google.com/gsi/client"
@@ -41,6 +41,7 @@ export default function RootLayout({
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} relative overflow-x-hidden antialiased`}
+        suppressHydrationWarning
       >
         <Suspense fallback={<div>Loading...</div>}>
           <TanstackQueryProvider>

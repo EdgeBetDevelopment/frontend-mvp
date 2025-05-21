@@ -70,10 +70,6 @@ const SupportSearch = () => {
     }
   };
 
-  console.log('searchResults', searchResults);
-
-  console.log('virtualizer.getVirtualItems()', virtualizer.getVirtualItems());
-
   return (
     <div className="relative mt-4 w-full max-w-xl" ref={wrapperRef}>
       <Command className="rounded-2xl bg-transparent">

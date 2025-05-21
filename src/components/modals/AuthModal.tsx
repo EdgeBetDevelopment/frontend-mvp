@@ -1,6 +1,7 @@
+import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import { toast } from 'sonner';
 
-import { Dialog, DialogContent } from '../../ui/dialog';
+import { Dialog, DialogContent, DialogTitle } from '../../ui/dialog';
 import LoginForm from '../auth/sign-in/LoginForm';
 
 interface AuthModalProps {
@@ -21,6 +22,10 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="flex w-full flex-col items-center gap-6 p-6 text-center sm:max-w-[500px]">
+        <VisuallyHidden>
+          <DialogTitle>Login Form</DialogTitle>
+        </VisuallyHidden>
+
         <LoginForm
           title="Create an account to get started"
           onSuccessLogin={handleLoginSuccess}

@@ -1,5 +1,7 @@
+import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
+
 import { Button } from '../../ui/button';
-import { Dialog, DialogContent } from '../../ui/dialog';
+import { Dialog, DialogContent, DialogTitle } from '../../ui/dialog';
 
 interface ComingSoonModalProps {
   title: string;
@@ -17,6 +19,10 @@ const ComingSoonModal: React.FC<ComingSoonModalProps> = ({
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="flex w-full flex-col items-center gap-6 p-6 text-center sm:max-w-[500px]">
+        <VisuallyHidden>
+          <DialogTitle>Coming Soon Sports Betting</DialogTitle>
+        </VisuallyHidden>
+
         <div className="flex flex-col gap-3">
           <div className="text-primary-brand text-xl font-medium tracking-widest uppercase">
             {title}
