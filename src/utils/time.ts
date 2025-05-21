@@ -17,3 +17,8 @@ export const formatUtcToLocalTime = (utcTime?: string) => {
   if (!utcTime) return dayjs().format('HH:mm');
   return dayjs.utc(utcTime).local().format('HH:mm');
 };
+
+export const isTimeInPast = (utcTime?: string) => {
+  if (!utcTime) return false;
+  return dayjs.utc(utcTime).isBefore(dayjs());
+};

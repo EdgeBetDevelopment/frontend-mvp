@@ -3,12 +3,18 @@
 import React from 'react';
 import Link from 'next/link';
 
+import { useAuth } from '@/context/AuthContext';
 import { ROUTES } from '@/routes';
 import { IGameWithAI } from '@/types/game';
 import { Avatar, AvatarImage } from '@/ui/avatar';
 import { Badge } from '@/ui/badge';
 import { Button } from '@/ui/button';
-import { formatUtcToLocalDate, formatUtcToLocalTime } from '@/utils/time';
+import { truncateText } from '@/utils/text';
+import {
+  formatUtcToLocalDate,
+  formatUtcToLocalTime,
+  isTimeInPast,
+} from '@/utils/time';
 import CardContainer from '../../ui/containers/CardContainer';
 
 import CalendarIcon from '@/assets/icons/calendar.svg';
@@ -29,8 +35,11 @@ const GameCard = ({
   type,
   onClickTrackBet,
 }: IGameCard) => {
+  const { isAuthenticated } = useAuth();
   const formattedDate = formatUtcToLocalDate(game.game.start_time);
   const formattedTime = formatUtcToLocalTime(game.game.start_time);
+
+  const isGameInPast = isTimeInPast(game.game.start_time);
 
   const isHomePredicted =
     game.prediction?.predicted_winner === game.game.home_team;
@@ -117,10 +126,16 @@ const GameCard = ({
               {game?.scoreboard?.label}
             </>
           )}
+
+          {isGameInPast && (
+            <Badge variant="secondary" className="ml-auto">
+              Past Game
+            </Badge>
+          )}
         </div>
 
         <div className="tl-paraghraph2 text-text-primary line-clamp-1">
-          {game.prediction?.analysis}
+          {truncateText(game.prediction?.analysis, 85)}
         </div>
 
         <div>
@@ -133,26 +148,33 @@ const GameCard = ({
           </Button>
         </div>
 
-        <div className="flex flex-col items-center gap-2">
-          <Badge className="w-full" size="md" variant="mistBlue">
-            {recommendedBet.label}:{' '}
-            <span className="text-text-primary">{recommendedBet.odd}</span>
-          </Badge>
-
-          <div className="flex w-full items-center gap-2">
-            <Badge className="flex-1" size="md" variant="mistBlue">
-              Best value <span className="text-text-primary">2.29</span>
+        {isAuthenticated && (
+          <div className="flex flex-col items-center gap-2">
+            <Badge className="w-full" size="md" variant="mistBlue">
+              {recommendedBet.label}:{' '}
+              <span className="text-text-primary">{recommendedBet.odd}</span>
             </Badge>
 
-            <Badge className="flex-1" size="md" variant="mistBlue">
-              {saferBet.label}:{' '}
-              <span className="text-text-primary">{saferBet.odd}</span>
-            </Badge>
+            <div className="flex w-full items-center gap-2">
+              <Badge className="flex-1" size="md" variant="mistBlue">
+                Best value <span className="text-text-primary">2.29</span>
+              </Badge>
+
+              <Badge className="flex-1" size="md" variant="mistBlue">
+                {saferBet.label}:{' '}
+                <span className="text-text-primary">{saferBet.odd}</span>
+              </Badge>
+            </div>
           </div>
-        </div>
+        )}
 
-        <Button onClick={onClickTrackBet} variant="gradient" className="w-full">
-          Track bet
+        <Button
+          onClick={onClickTrackBet}
+          variant="gradient"
+          className="w-full"
+          disabled={isGameInPast}
+        >
+          {isGameInPast ? 'Game Ended' : 'Track bet'}
         </Button>
       </div>
     </CardContainer>
