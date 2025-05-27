@@ -48,7 +48,7 @@ const TrackGameCard = ({
   };
 
   return (
-    <CardContainer className="tl-gradient-mistBlue border-border relative flex flex-col gap-3">
+    <CardContainer className="tl-gradient-mistBlue-opacity border-border relative flex flex-col gap-3">
       <Button
         className="absolute top-1 right-1"
         variant="clear"

@@ -35,7 +35,13 @@ function TableBody({ className, ...props }: React.ComponentProps<'tbody'>) {
   return (
     <tbody
       data-slot="table-body"
-      className={cn('[&_tr:last-child]:border-0', className)}
+      className={cn(
+        '[&_tr]:border-b',
+        '[&_tr:last-child]:border-0',
+        '[&>tr:last-child>td:first-child]:rounded-bl-lg',
+        '[&>tr:last-child>td:last-child]:rounded-br-lg',
+        className,
+      )}
       {...props}
     />
   );
@@ -60,6 +66,7 @@ function TableRow({ className, ...props }: React.ComponentProps<'tr'>) {
       data-slot="table-row"
       className={cn(
         'hover:bg-muted/50 data-[state=selected]:bg-muted border-b transition-colors',
+        'last:border-b-0',
         className,
       )}
       {...props}
@@ -99,6 +106,7 @@ function TableHead({
       data-slot="table-head"
       className={cn(
         'bg-surface-primary text-text-primary h-10 px-2 py-[19px] text-left align-middle text-sm font-normal tracking-normal whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]',
+        'first:rounded-tl-lg last:rounded-tr-lg',
         sortable ? 'cursor-pointer select-none' : '',
         className,
       )}
@@ -132,6 +140,7 @@ function TableCell({ className, ...props }: React.ComponentProps<'td'>) {
       data-slot="table-cell"
       className={cn(
         'text-text-primary p-2 py-[17px] align-middle text-sm font-normal tracking-normal whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]',
+        // '[&:first-child]:last:rounded-bl-lg [&:last-child]:last:rounded-br-lg',
         className,
       )}
       {...props}

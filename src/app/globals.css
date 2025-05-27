@@ -169,11 +169,21 @@
 .tl-gradient-mistBlue {
   background: linear-gradient(
     112.71deg,
+    rgb(19, 42, 49) 19.64%,
+    rgb(68, 96, 103) 55.1%,
+    rgb(19, 42, 49) 100%
+  );
+}
+
+.tl-gradient-mistBlue-opacity {
+  background: linear-gradient(
+    112.71deg,
     rgba(73, 160, 187, 0.4) 19.64%,
     rgba(168, 238, 255, 0.52) 55.1%,
     rgba(73, 160, 187, 0.2) 100%
   );
 }
+
 
 .tl-mask-gradient-top {
   -webkit-mask-image: linear-gradient(
@@ -256,6 +266,8 @@
 }
 
 
+/* Scrollbar */
+
 .no-scrollbar {
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
@@ -263,4 +275,24 @@
 
 .no-scrollbar::-webkit-scrollbar {
   display: none; /* Chrome, Safari */
+}
+
+
+.tl-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: var(--primary-brand) transparent;
+}
+
+.tl-scrollbar::-webkit-scrollbar {
+  height: 4px; /* for horizontal scrollbar */
+  width: 4px;  /* for vertical scrollbar */
+}
+
+.tl-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.tl-scrollbar::-webkit-scrollbar-thumb {
+  background-color: var(--primary-brand);
+  border-radius: 2px;
 }

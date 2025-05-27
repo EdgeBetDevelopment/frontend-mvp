@@ -17,7 +17,8 @@ import { IGameWithAI } from '@/types/game';
 import { Button } from '@/ui/button';
 import Loader from '@/ui/loader';
 import { Form } from '../../ui/form';
-import GameAnalysisModal from '../matchup/modals/GameAnalysisModal';
+
+import GameAnalysisModal from './game-analysis';
 
 const formSchema = z.object({
   // team: z.object(

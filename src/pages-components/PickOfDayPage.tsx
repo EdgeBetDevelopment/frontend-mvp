@@ -3,7 +3,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 
-import GameAnalysisModal from '@/components/matchup/modals/GameAnalysisModal';
+import GameAnalysisModal from '@/components/modals/game-analysis';
 import TrackBetsModal from '@/components/modals/TrackBetsModal';
 import useModalManager from '@/hooks/useModalManager';
 import { cn } from '@/lib/utils';

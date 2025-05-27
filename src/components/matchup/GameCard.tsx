@@ -36,8 +36,6 @@ const GameCard = ({
   onClickTrackBet,
 }: IGameCard) => {
   const { isAuthenticated } = useAuth();
-  const formattedDate = formatUtcToLocalDate(game.game.start_time);
-  const formattedTime = formatUtcToLocalTime(game.game.start_time);
 
   const isGameInPast = isTimeInPast(game.game.start_time);
 
@@ -69,47 +67,8 @@ const GameCard = ({
       };
 
   return (
-    <CardContainer className="tl-gradient-mistBlue border-border flex flex-col gap-3">
-      <div className="flex items-center">
-        <div className="relative flex items-center">
-          <Avatar className="border-border bg-surface-secondary h-11 w-11 rounded-full border p-1.5">
-            <AvatarImage src={game.game.home_team_logo} />
-          </Avatar>
-
-          <div className="relative -left-3.5">
-            <Avatar className="border-border bg-surface-secondary h-11 w-11 rounded-full border p-1.5">
-              <AvatarImage src={game.game.away_team_logo} />
-            </Avatar>
-          </div>
-        </div>
-
-        <div>
-          <div className="tl-paraghraph2 flex items-center gap-1">
-            <Link
-              href={ROUTES.TEAM(game.game.home_team_id)}
-              className="text-text-primary hover:underline"
-            >
-              {game.game.home_team}
-            </Link>
-            <div>vs</div>
-            <Link
-              href={ROUTES.TEAM(game.game.away_team_id)}
-              className="text-text-primary hover:underline"
-            >
-              {game.game.away_team}
-            </Link>
-          </div>
-
-          <div className="tl-paraghraph3 flex items-center gap-4">
-            <div className="flex items-center gap-1">
-              <CalendarIcon /> {formattedDate}
-            </div>
-            <div className="flex items-center gap-1">
-              <ClockIcon /> {formattedTime}
-            </div>
-          </div>
-        </div>
-      </div>
+    <CardContainer className="tl-gradient-mistBlue-opacity border-border flex flex-col gap-3">
+      <GameCardHeader game={game} />
 
       <div className="bg-surface-secondary border-border flex flex-col gap-4 rounded-3xl border p-3">
         <div className="tl-paraghraph2 flex items-center gap-2">
@@ -182,3 +141,51 @@ const GameCard = ({
 };
 
 export default GameCard;
+
+export const GameCardHeader = ({ game }: { game: IGameWithAI }) => {
+  const formattedDate = formatUtcToLocalDate(game.game.start_time);
+  const formattedTime = formatUtcToLocalTime(game.game.start_time);
+
+  return (
+    <div className="flex items-center">
+      <div className="relative flex items-center">
+        <Avatar className="border-border bg-surface-secondary h-11 w-11 rounded-full border p-1.5">
+          <AvatarImage src={game.game.home_team_logo} />
+        </Avatar>
+
+        <div className="relative -left-3.5">
+          <Avatar className="border-border bg-surface-secondary h-11 w-11 rounded-full border p-1.5">
+            <AvatarImage src={game.game.away_team_logo} />
+          </Avatar>
+        </div>
+      </div>
+
+      <div>
+        <div className="tl-paraghraph2 flex items-center gap-1">
+          <Link
+            href={ROUTES.TEAM(game.game.home_team_id)}
+            className="text-text-primary hover:underline"
+          >
+            {game.game.home_team}
+          </Link>
+          <div>vs</div>
+          <Link
+            href={ROUTES.TEAM(game.game.away_team_id)}
+            className="text-text-primary hover:underline"
+          >
+            {game.game.away_team}
+          </Link>
+        </div>
+
+        <div className="tl-paraghraph3 flex items-center gap-4">
+          <div className="flex items-center gap-1">
+            <CalendarIcon /> {formattedDate}
+          </div>
+          <div className="flex items-center gap-1">
+            <ClockIcon /> {formattedTime}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
