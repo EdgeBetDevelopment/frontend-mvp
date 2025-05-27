@@ -13,6 +13,7 @@ import { IGame } from '@/types/game';
 import { Avatar, AvatarImage } from '@/ui/avatar';
 import { Button } from '@/ui/button';
 import CardContainer from '@/ui/containers/CardContainer';
+import { formatUtcToLocalDate, formatUtcToLocalTimeAmPm } from '@/utils/time';
 
 import GridBgImage from '@/assets/gridBg.png';
 import CalendarIcon from '@/assets/icons/calendar.svg';
@@ -262,14 +263,18 @@ export const PickCard = ({
   onClickTrackBet,
 }: IPickCard) => {
   const isSingle = useCardSize() === 'single';
+  const formattedDate = formatUtcToLocalDate(
+    data?.game_prediction?.game?.start_time,
+  );
+  const formattedTime = formatUtcToLocalTimeAmPm(
+    data?.game_prediction?.game?.start_time,
+  );
 
   const homeTeam = data?.game_prediction?.game?.home_team || 'Team A';
   const awayTeam = data?.game_prediction?.game?.away_team || 'Team B';
   const oddsHome = data?.game_prediction?.odds_home ?? '-';
   const oddsAway = data?.game_prediction?.odds_away ?? '-';
-  const matchDate = new Date(data?.game_prediction?.game?.start_time || '');
-  const formattedDate = matchDate.toLocaleDateString();
-  const formattedTime = matchDate.toLocaleTimeString();
+
   const homeTeamLogo =
     data?.game_prediction?.home_team_logo || TeamLogo1Image.src;
   const awayTeamLogo =

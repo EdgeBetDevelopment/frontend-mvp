@@ -12,7 +12,7 @@ import { Button } from '@/ui/button';
 import { truncateText } from '@/utils/text';
 import {
   formatUtcToLocalDate,
-  formatUtcToLocalTime,
+  formatUtcToLocalTimeAmPm,
   isTimeInPast,
 } from '@/utils/time';
 import CardContainer from '../../ui/containers/CardContainer';
@@ -144,7 +144,7 @@ export default GameCard;
 
 export const GameCardHeader = ({ game }: { game: IGameWithAI }) => {
   const formattedDate = formatUtcToLocalDate(game.game.start_time);
-  const formattedTime = formatUtcToLocalTime(game.game.start_time);
+  const formattedTime = formatUtcToLocalTimeAmPm(game.game.start_time);
 
   return (
     <div className="flex items-center">

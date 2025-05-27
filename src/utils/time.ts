@@ -22,3 +22,13 @@ export const isTimeInPast = (utcTime?: string) => {
   if (!utcTime) return false;
   return dayjs.utc(utcTime).isBefore(dayjs());
 };
+
+export const formatUtcToLocalTimeAmPm = (utcTime?: string) => {
+  if (!utcTime) return dayjs().format('hh:mm A');
+  return dayjs.utc(utcTime).local().format('hh:mm A');
+};
+
+export const convertUTCToLocalWithAmPm = (utcTime?: string) => {
+  if (!utcTime) return dayjs().format('MM/DD/YYYY hh:mm A');
+  return dayjs.utc(utcTime).local().format('MM/DD/YYYY hh:mm A');
+};
