@@ -163,7 +163,21 @@ const TeamPage = () => {
       </div>
 
       <div className="w-full">
-        <TeamStatsTable stats={team.team_statistics} />
+        <div className="border-border rounded-lg border bg-[#1A1A1A] p-4">
+          <h3 className="mb-4 text-lg font-semibold text-white">
+            Overall Statistic
+          </h3>
+
+          <TeamStatsTable
+            stats={[
+              {
+                logo: team.logo,
+                name: team.nickname,
+                stats: team.team_statistics,
+              },
+            ]}
+          />
+        </div>
       </div>
     </div>
   );

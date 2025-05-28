@@ -1,5 +1,6 @@
 'use client';
 
+import { Avatar, AvatarImage } from '@/ui/avatar';
 import {
   Table,
   TableBody,
@@ -9,8 +10,15 @@ import {
   TableRow,
 } from '@/ui/table';
 
-interface TeamStatsTableProps {
+interface TeamStat {
+  name: string;
   stats: Record<string, any>;
+  logo?: string;
+}
+
+interface TeamStatsTableProps {
+  stats: TeamStat[];
+  tableRowClassName?: string;
 }
 
 const statOrder: string[] = [
@@ -37,39 +45,44 @@ const statOrder: string[] = [
   'PF',
 ];
 
-export const TeamStatsTable = ({ stats }: TeamStatsTableProps) => {
-  const gp = stats.GP || 1;
+export const TeamStatsTable = ({
+  tableRowClassName,
+  stats,
+}: TeamStatsTableProps) => {
+  const processStats = (stats: Record<string, any>) => {
+    const gp = stats?.GP || 1;
 
-  const calcPerGame = (val: number) => (gp ? (val / gp).toFixed(1) : '0.0');
-  const percent = (val: number) => (val ? (val * 100).toFixed(1) : '0.0');
+    const calcPerGame = (val: number) => (gp ? (val / gp).toFixed(1) : '0.0');
+    const percent = (val: number) => (val ? (val * 100).toFixed(1) : '0.0');
 
-  const ts =
-    stats.PTS && stats.FGA && stats.FTA
-      ? stats.PTS / (2 * (stats.FGA + 0.44 * stats.FTA))
-      : null;
+    const ts =
+      stats?.PTS && stats?.FGA && stats?.FTA
+        ? stats.PTS / (2 * (stats.FGA + 0.44 * stats.FTA))
+        : null;
 
-  const values: Record<string, string> = {
-    GP: stats.GP?.toString(),
-    MIN: calcPerGame(stats.MIN),
-    PTS: calcPerGame(stats.PTS ?? stats.FGM * 2 + stats.FG3M + stats.FTM), // fallback
-    REB: calcPerGame(stats.REB),
-    AST: calcPerGame(stats.AST),
-    STL: calcPerGame(stats.STL),
-    BLK: calcPerGame(stats.BLK),
-    FGM: calcPerGame(stats.FGM),
-    FGA: calcPerGame(stats.FGA),
-    FG_PCT: percent(stats.FG_PCT),
-    FG3M: calcPerGame(stats.FG3M),
-    FG3A: calcPerGame(stats.FG3A),
-    FG3_PCT: percent(stats.FG3_PCT),
-    FTM: calcPerGame(stats.FTM),
-    FTA: calcPerGame(stats.FTA),
-    FT_PCT: percent(stats.FT_PCT),
-    TS_PCT: ts ? percent(ts) : '-',
-    OREB: calcPerGame(stats.OREB),
-    DREB: calcPerGame(stats.DREB),
-    TOV: calcPerGame(stats.TOV),
-    PF: calcPerGame(stats.PF),
+    return {
+      GP: stats?.GP?.toString(),
+      MIN: calcPerGame(stats?.MIN),
+      PTS: calcPerGame(stats?.PTS ?? stats?.FGM * 2 + stats?.FG3M + stats?.FTM),
+      REB: calcPerGame(stats?.REB),
+      AST: calcPerGame(stats?.AST),
+      STL: calcPerGame(stats?.STL),
+      BLK: calcPerGame(stats?.BLK),
+      FGM: calcPerGame(stats?.FGM),
+      FGA: calcPerGame(stats?.FGA),
+      FG_PCT: percent(stats?.FG_PCT),
+      FG3M: calcPerGame(stats?.FG3M),
+      FG3A: calcPerGame(stats?.FG3A),
+      FG3_PCT: percent(stats?.FG3_PCT),
+      FTM: calcPerGame(stats?.FTM),
+      FTA: calcPerGame(stats?.FTA),
+      FT_PCT: percent(stats?.FT_PCT),
+      TS_PCT: ts ? percent(ts) : '-',
+      OREB: calcPerGame(stats?.OREB),
+      DREB: calcPerGame(stats?.DREB),
+      TOV: calcPerGame(stats?.TOV),
+      PF: calcPerGame(stats?.PF),
+    };
   };
 
   const labels: Record<string, string> = {
@@ -96,19 +109,22 @@ export const TeamStatsTable = ({ stats }: TeamStatsTableProps) => {
     PF: 'PF',
   };
 
+  const processedStats = stats.map((team) => ({
+    name: team.name,
+    logo: team.logo,
+    values: processStats(team.stats),
+  }));
+
   return (
-    <div className="border-border rounded-lg border bg-[#1A1A1A] p-4">
-      <h3 className="mb-4 text-lg font-semibold text-white">
-        Overall Statistic
-      </h3>
+    <div>
       <div className="w-full overflow-x-auto">
         <Table className="w-full">
           <TableHeader>
             <TableRow>
-              <TableHead className="text-white">Season</TableHead>
+              <TableHead className="text-white">Team</TableHead>
               {statOrder.map(
                 (key) =>
-                  key in values && (
+                  key in labels && (
                     <TableHead
                       key={key}
                       className="whitespace-nowrap text-white"
@@ -120,17 +136,28 @@ export const TeamStatsTable = ({ stats }: TeamStatsTableProps) => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            <TableRow>
-              <TableCell>{stats.GROUP_VALUE}</TableCell>
-              {statOrder.map(
-                (key) =>
-                  key in values && (
-                    <TableCell key={key} className="whitespace-nowrap">
-                      {values[key]}
-                    </TableCell>
-                  ),
-              )}
-            </TableRow>
+            {processedStats.map((team, index) => (
+              <TableRow key={index} className={tableRowClassName}>
+                <TableCell>
+                  <div className="flex items-center gap-2">
+                    {team.logo && (
+                      <Avatar className="h-8 w-8">
+                        <AvatarImage src={team.logo} />
+                      </Avatar>
+                    )}
+                    <span>{team.name}</span>
+                  </div>
+                </TableCell>
+                {statOrder.map(
+                  (key) =>
+                    key in team.values && (
+                      <TableCell key={key} className="whitespace-nowrap">
+                        {team.values[key as keyof typeof team.values]}
+                      </TableCell>
+                    ),
+                )}
+              </TableRow>
+            ))}
           </TableBody>
         </Table>
       </div>

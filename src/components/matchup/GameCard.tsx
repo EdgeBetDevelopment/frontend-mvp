@@ -193,7 +193,7 @@ const GameBetsItem = ({
   return (
     <Badge
       variant="mistBlue"
-      className="text-text-primary w-full rounded-lg px-3 py-1.5 text-center text-base font-semibold"
+      className="text-text-primary w-full rounded-[10px] bg-green-700 px-3 py-1.5 text-center text-base font-semibold"
     >
       {text}: {odd}
     </Badge>
