@@ -7,6 +7,7 @@ export interface ITeam {
   state: string;
   year_founded: number;
   arena: string;
+  logo: string;
   arena_capacity: string;
   owner: string;
   general_manager: string;

@@ -1,28 +1,106 @@
-import React from 'react';
+import React, { FC } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import Image from 'next/image';
 
+import apiService from '@/services';
 import { Avatar } from '@/ui/avatar';
 import { Card } from '.';
 
 import PlayerIcon from '@/assets/icons/player_logo.svg';
 
-const KeyPlayers = () => {
+interface IKeyPlayersProps {
+  homeTeamId?: number;
+  awayTeamId?: number;
+}
+
+const KeyPlayers: FC<IKeyPlayersProps> = ({ homeTeamId, awayTeamId }) => {
+  const {
+    data: homeTeam,
+    isLoading: isLoadingHome,
+    error: errorHome,
+  } = useQuery({
+    queryKey: ['team', homeTeamId],
+    queryFn: () =>
+      homeTeamId ? apiService.getTeamById(`${homeTeamId}`) : null,
+    enabled: !!homeTeamId,
+    staleTime: 1000 * 60 * 5,
+    retry: 2,
+  });
+  console.log(homeTeam);
+
+  const {
+    data: awayTeam,
+    isLoading: isLoadingAway,
+    error: errorAway,
+  } = useQuery({
+    queryKey: ['team', awayTeamId],
+    queryFn: () =>
+      awayTeamId ? apiService.getTeamById(`${awayTeamId}`) : null,
+    enabled: !!awayTeamId,
+    staleTime: 1000 * 60 * 5,
+    retry: 2,
+  });
+
+  if (isLoadingAway && isLoadingHome) return <></>;
+
   return (
-    <div className="flex gap-5">
+    <div className="flex gap-3.5">
       <Card
-        title="Key Players (Phoenix)"
-        icon={<PlayerIcon className="h-4 w-4" />}
+        className="max-w-[calc(50%_-_7px)]"
+        title={`Key Players ${homeTeam?.nickname}`}
+        icon={
+          homeTeam?.logo ? (
+            <Image
+              height={32}
+              width={32}
+              src={homeTeam.logo}
+              alt="Home Team Logo"
+              className="object-contain"
+            />
+          ) : null
+        }
       >
         <div className="flex gap-3 overflow-x-auto pb-2">
-          <KeyPlayerCard name="Kevin" position="Point Guard" score="2" />
+          {' '}
+          {homeTeam?.player_statistics.map((item) => {
+            return (
+              <KeyPlayerCard
+                key={item.PLAYER_ID}
+                name={item.PLAYER}
+                position={item.POSITION}
+                score="0"
+              />
+            );
+          })}
         </div>
       </Card>
 
       <Card
-        title="Key Players (Phoenix)"
-        icon={<PlayerIcon className="h-4 w-4" />}
+        className="max-w-[calc(50%_-_7px)]"
+        title={`Key Players ${awayTeam?.nickname}`}
+        icon={
+          awayTeam?.logo ? (
+            <Image
+              height={32}
+              width={32}
+              src={awayTeam.logo}
+              alt="Home Team Logo"
+              className="object-contain"
+            />
+          ) : null
+        }
       >
         <div className="flex gap-3 overflow-x-auto pb-2">
-          <KeyPlayerCard name="John" position="Point Guard" score="2" />
+          {awayTeam?.player_statistics.map((item) => {
+            return (
+              <KeyPlayerCard
+                key={item.PLAYER_ID}
+                name={item.PLAYER}
+                position={item.POSITION}
+                score="0"
+              />
+            );
+          })}
         </div>
       </Card>
     </div>

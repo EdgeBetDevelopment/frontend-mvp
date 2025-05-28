@@ -59,7 +59,10 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
             predictedWinnerInfo={predictedWinnerInfo}
           />
 
-          <KeyPlayers />
+          <KeyPlayers
+            homeTeamId={game?.game.home_team_id}
+            awayTeamId={game?.game.away_team_id}
+          />
 
           <InjuryTable />
 
