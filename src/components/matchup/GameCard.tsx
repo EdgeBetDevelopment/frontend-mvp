@@ -9,12 +9,8 @@ import { IGameWithAI } from '@/types/game';
 import { Avatar, AvatarImage } from '@/ui/avatar';
 import { Badge } from '@/ui/badge';
 import { Button } from '@/ui/button';
-import { truncateText } from '@/utils/text';
-import {
-  formatUtcToLocalDate,
-  formatUtcToLocalTimeAmPm,
-  isTimeInPast,
-} from '@/utils/time';
+import { Separator } from '@/ui/separator';
+import { formatUtcToLocalDate, formatUtcToLocalTimeAmPm } from '@/utils/time';
 import CardContainer from '../../ui/containers/CardContainer';
 
 import CalendarIcon from '@/assets/icons/calendar.svg';
@@ -37,40 +33,11 @@ const GameCard = ({
 }: IGameCard) => {
   const { isAuthenticated } = useAuth();
 
-  const isGameInPast = isTimeInPast(game.game.start_time);
-
-  const isHomePredicted =
-    game.prediction?.predicted_winner === game.game.home_team;
-
-  const recommendedBet = isHomePredicted
-    ? {
-        label: 'Recommended bet',
-        team: game.game.home_team,
-        odd: game.prediction?.odds_home,
-      }
-    : {
-        label: 'Recommended bet',
-        team: game.game.away_team,
-        odd: game.prediction?.odds_away,
-      };
-
-  const saferBet = !isHomePredicted
-    ? {
-        label: 'Safer bet',
-        team: game.game.home_team,
-        odd: game.prediction?.odds_home,
-      }
-    : {
-        label: 'Safer bet',
-        team: game.game.away_team,
-        odd: game.prediction?.odds_away,
-      };
-
   return (
     <CardContainer className="tl-gradient-mistBlue-opacity border-border flex flex-col gap-3">
       <GameCardHeader game={game} />
 
-      <div className="bg-surface-secondary border-border flex flex-col gap-4 rounded-3xl border p-3">
+      <div className="bg-surface-secondary border-border flex flex-col gap-2.5 rounded-3xl border p-3">
         <div className="tl-paraghraph2 flex items-center gap-2">
           <Avatar className="flex h-8 w-8 items-center justify-center rounded-full border bg-[#33758780]">
             <div>
@@ -85,16 +52,6 @@ const GameCard = ({
               {game?.scoreboard?.label}
             </>
           )}
-
-          {isGameInPast && (
-            <Badge variant="secondary" className="ml-auto">
-              Past Game
-            </Badge>
-          )}
-        </div>
-
-        <div className="tl-paraghraph2 text-text-primary line-clamp-1">
-          {truncateText(game.prediction?.analysis, 85)}
         </div>
 
         <div>
@@ -107,33 +64,12 @@ const GameCard = ({
           </Button>
         </div>
 
-        {isAuthenticated && (
-          <div className="flex flex-col items-center gap-2">
-            <Badge className="w-full" size="md" variant="mistBlue">
-              {recommendedBet.label}:{' '}
-              <span className="text-text-primary">{recommendedBet.odd}</span>
-            </Badge>
+        <Separator />
 
-            <div className="flex w-full items-center gap-2">
-              <Badge className="flex-1" size="md" variant="mistBlue">
-                Best value <span className="text-text-primary">2.29</span>
-              </Badge>
+        {isAuthenticated && <GameBets game={game} />}
 
-              <Badge className="flex-1" size="md" variant="mistBlue">
-                {saferBet.label}:{' '}
-                <span className="text-text-primary">{saferBet.odd}</span>
-              </Badge>
-            </div>
-          </div>
-        )}
-
-        <Button
-          onClick={onClickTrackBet}
-          variant="gradient"
-          className="w-full"
-          disabled={isGameInPast}
-        >
-          {isGameInPast ? 'Game Ended' : 'Track bet'}
+        <Button onClick={onClickTrackBet} variant="gradient" className="w-full">
+          Track bet
         </Button>
       </div>
     </CardContainer>
@@ -187,5 +123,79 @@ export const GameCardHeader = ({ game }: { game: IGameWithAI }) => {
         </div>
       </div>
     </div>
+  );
+};
+
+const GameBets = ({ game }: { game: IGameWithAI }) => {
+  const isHomePredicted =
+    game.prediction?.predicted_winner === game.game.home_team;
+
+  const recommendedBet = isHomePredicted
+    ? {
+        label: 'Recommended bet',
+        team: game.game.home_team,
+        odd: game.prediction?.odds_home,
+      }
+    : {
+        label: 'Recommended bet',
+        team: game.game.away_team,
+        odd: game.prediction?.odds_away,
+      };
+
+  const saferBet = !isHomePredicted
+    ? {
+        label: 'Safer bet',
+        team: game.game.home_team,
+        odd: game.prediction?.odds_home,
+      }
+    : {
+        label: 'Safer bet',
+        team: game.game.away_team,
+        odd: game.prediction?.odds_away,
+      };
+
+  return (
+    <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-1">
+        <p className="text-center text-lg font-semibold">
+          Top 3 Best Value Bets
+        </p>
+
+        <div className="flex flex-col gap-2">
+          <GameBetsItem text={saferBet.label} odd={saferBet.odd} />
+          <GameBetsItem text={recommendedBet.label} odd={recommendedBet.odd} />
+          <GameBetsItem text={saferBet.label} odd={saferBet.odd} />
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-1">
+        <p className="text-center text-lg font-semibold">
+          Top 3 Conservative Bets
+        </p>
+
+        <div className="flex flex-col gap-2">
+          <GameBetsItem text={recommendedBet.label} odd={recommendedBet.odd} />
+          <GameBetsItem text={saferBet.label} odd={saferBet.odd} />
+          <GameBetsItem text={recommendedBet.label} odd={recommendedBet.odd} />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const GameBetsItem = ({
+  text,
+  odd,
+}: {
+  text: string;
+  odd: number | undefined;
+}) => {
+  return (
+    <Badge
+      variant="mistBlue"
+      className="text-text-primary w-full rounded-lg px-3 py-1.5 text-center text-base font-semibold"
+    >
+      {text}: {odd}
+    </Badge>
   );
 };
