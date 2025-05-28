@@ -69,6 +69,8 @@ export interface IGame {
 
 export interface IScoreboard {
   label: string;
+  home_leaders: IGameLeader;
+  away_leaders: IGameLeader;
 }
 
 export interface IGameWithAI {

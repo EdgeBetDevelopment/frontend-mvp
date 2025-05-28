@@ -6,14 +6,31 @@ import apiService from '@/services';
 import { Avatar } from '@/ui/avatar';
 import { Card } from '.';
 
-import PlayerIcon from '@/assets/icons/player_logo.svg';
+interface GameLeader {
+  personId: number;
+  name: string;
+  jerseyNum: string;
+  position: string;
+  teamTricode: string;
+  playerSlug: string | null;
+  points: number;
+  rebounds: number;
+  assists: number;
+}
 
 interface IKeyPlayersProps {
   homeTeamId?: number;
   awayTeamId?: number;
+  homeLeader?: GameLeader;
+  awayLeader?: GameLeader;
 }
 
-const KeyPlayers: FC<IKeyPlayersProps> = ({ homeTeamId, awayTeamId }) => {
+const KeyPlayers: FC<IKeyPlayersProps> = ({
+  homeTeamId,
+  awayTeamId,
+  homeLeader,
+  awayLeader,
+}) => {
   const {
     data: homeTeam,
     isLoading: isLoadingHome,
@@ -26,7 +43,6 @@ const KeyPlayers: FC<IKeyPlayersProps> = ({ homeTeamId, awayTeamId }) => {
     staleTime: 1000 * 60 * 5,
     retry: 2,
   });
-  console.log(homeTeam);
 
   const {
     data: awayTeam,
@@ -42,6 +58,46 @@ const KeyPlayers: FC<IKeyPlayersProps> = ({ homeTeamId, awayTeamId }) => {
   });
 
   if (isLoadingAway && isLoadingHome) return <></>;
+
+  const processHomePlayers = () => {
+    if (!homeTeam?.player_statistics) return [];
+
+    const players = [...homeTeam.player_statistics];
+
+    // If there's a home leader, move them to the start of the list
+    if (homeLeader?.name) {
+      const leaderIndex = players.findIndex(
+        (p) => p.PLAYER === homeLeader.name,
+      );
+
+      if (leaderIndex !== -1) {
+        const leader = players.splice(leaderIndex, 1)[0];
+
+        players.unshift(leader);
+      }
+    }
+
+    return players;
+  };
+
+  const processAwayPlayers = () => {
+    if (!awayTeam?.player_statistics) return [];
+
+    const players = [...awayTeam.player_statistics];
+
+    // If there's an away leader, move them to the start of the list
+    if (awayLeader?.name) {
+      const leaderIndex = players.findIndex(
+        (p) => p.PLAYER === awayLeader.name,
+      );
+      if (leaderIndex !== -1) {
+        const leader = players.splice(leaderIndex, 1)[0];
+        players.unshift(leader);
+      }
+    }
+
+    return players;
+  };
 
   return (
     <div className="flex gap-3.5">
@@ -61,14 +117,18 @@ const KeyPlayers: FC<IKeyPlayersProps> = ({ homeTeamId, awayTeamId }) => {
         }
       >
         <div className="flex gap-3 overflow-x-auto pb-2">
-          {' '}
-          {homeTeam?.player_statistics.map((item) => {
+          {processHomePlayers().map((item) => {
+            console.log(item.PLAYER, homeLeader?.name);
             return (
               <KeyPlayerCard
                 key={item.PLAYER_ID}
                 name={item.PLAYER}
                 position={item.POSITION}
                 score="0"
+                isLeader={homeLeader?.name === item.PLAYER}
+                leaderStats={
+                  homeLeader?.name === item.PLAYER ? homeLeader : undefined
+                }
               />
             );
           })}
@@ -84,23 +144,25 @@ const KeyPlayers: FC<IKeyPlayersProps> = ({ homeTeamId, awayTeamId }) => {
               height={32}
               width={32}
               src={awayTeam.logo}
-              alt="Home Team Logo"
+              alt="Away Team Logo"
               className="object-contain"
             />
           ) : null
         }
       >
         <div className="flex gap-3 overflow-x-auto pb-2">
-          {awayTeam?.player_statistics.map((item) => {
-            return (
-              <KeyPlayerCard
-                key={item.PLAYER_ID}
-                name={item.PLAYER}
-                position={item.POSITION}
-                score="0"
-              />
-            );
-          })}
+          {processAwayPlayers().map((item) => (
+            <KeyPlayerCard
+              key={item.PLAYER_ID}
+              name={item.PLAYER}
+              position={item.POSITION}
+              score="0"
+              isLeader={awayLeader?.name === item.PLAYER}
+              leaderStats={
+                awayLeader?.name === item.PLAYER ? awayLeader : undefined
+              }
+            />
+          ))}
         </div>
       </Card>
     </div>
@@ -113,26 +175,45 @@ const KeyPlayerCard = ({
   name,
   position,
   score,
+  isLeader,
+  leaderStats,
 }: {
   name: string;
   position: string;
   score: string;
+  isLeader?: boolean;
+  leaderStats?: GameLeader;
 }) => {
+  console.log(name, isLeader, leaderStats);
+
   return (
     <div className="flex min-w-[120px] flex-col items-center gap-2 rounded-xl p-3">
-      <Avatar className="flex h-12 w-12 items-center justify-center rounded-full border bg-[#33758780]">
-        <div className="text-lg font-bold text-white">
-          {name
-            .split(' ')
-            .map((n) => n[0])
-            .join('')}
-        </div>
-      </Avatar>
+      <div className="relative">
+        {isLeader && (
+          <div className="text-primary-brand mb-1 text-xs">Key Player</div>
+        )}
+        <Avatar className="flex h-12 w-12 items-center justify-center rounded-full border bg-[#33758780]">
+          <div className="text-lg font-bold text-white">
+            {name
+              .split(' ')
+              .map((n) => n[0])
+              .join('')}
+          </div>
+        </Avatar>
+      </div>
 
       <div className="text-center">
         <p className="text-text-primary text-sm font-medium">{name}</p>
         <p className="text-xs text-gray-400">{position}</p>
-        <p className="text-sm font-bold text-white">{score}</p>
+        {isLeader && leaderStats ? (
+          <div className="mt-1 space-y-0.5 text-xs">
+            <p className="text-primary-brand">PTS: {leaderStats.points}</p>
+            <p className="text-primary-brand">REB: {leaderStats.rebounds}</p>
+            <p className="text-primary-brand">AST: {leaderStats.assists}</p>
+          </div>
+        ) : (
+          <p className="text-sm font-bold text-white">{score}</p>
+        )}
       </div>
     </div>
   );

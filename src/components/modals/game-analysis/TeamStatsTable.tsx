@@ -55,21 +55,23 @@ const TeamStatsTable = ({
       )}
 
       {canShowData && (
-        <TeamStatsTableComponent
-          tableRowClassName="bg-surface-secondary"
-          stats={[
-            {
-              name: homeTeam.nickname,
-              stats: homeTeam.team_statistics,
-              logo: homeTeam.logo,
-            },
-            {
-              name: awayTeam.nickname,
-              stats: awayTeam.team_statistics,
-              logo: awayTeam.logo,
-            },
-          ]}
-        />
+        <>
+          <TeamStatsTableComponent
+            tableRowClassName="bg-surface-secondary"
+            stats={[
+              {
+                name: homeTeam.nickname,
+                stats: homeTeam.team_statistics,
+                logo: homeTeam.logo,
+              },
+              {
+                name: awayTeam.nickname,
+                stats: awayTeam.team_statistics,
+                logo: awayTeam.logo,
+              },
+            ]}
+          />
+        </>
       )}
     </div>
   );
