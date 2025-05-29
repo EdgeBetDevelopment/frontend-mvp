@@ -86,6 +86,11 @@ const MatchupPage = () => {
   };
 
   useEffect(() => {
+    if (!isAuthenticated) {
+      openModal('auth');
+      return;
+    }
+
     autoOpenGameAnalysis();
   }, [params, data]);
 
