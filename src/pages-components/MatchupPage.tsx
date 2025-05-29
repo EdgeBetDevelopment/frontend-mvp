@@ -1,8 +1,12 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { ReadonlyURLSearchParams, useSearchParams } from 'next/navigation';
+import {
+  ReadonlyURLSearchParams,
+  useRouter,
+  useSearchParams,
+} from 'next/navigation';
 
 import EmptyPlaceholder from '@/components/EmptyPlaceholder';
 import MatchupPageFilters from '@/components/matchup/Filters';
@@ -17,6 +21,7 @@ import { useStore } from '@/store';
 import { IGameWithAI } from '@/types/game';
 import { ScrollArea } from '@/ui/scroll-area';
 import { Skeleton } from '@/ui/skeleton';
+import { formUrlQuery } from '@/utils/url';
 import ListRenderer from '@/wrappers/ListRenderer';
 
 const MatchupPage = () => {
@@ -25,6 +30,7 @@ const MatchupPage = () => {
   const { setTrackedGame, setSelectedGame } = useStore();
   const params = useSearchParams() as ReadonlyURLSearchParams;
   const type = params.get('type');
+  const router = useRouter();
 
   const {
     data = [],
@@ -57,12 +63,43 @@ const MatchupPage = () => {
     } else {
       setSelectedGame(game);
       openModal('game-analysis');
+      const url = formUrlQuery({
+        params: params.toString(),
+        key: 'game-analysis',
+        value: game.game.id.toString(),
+      });
+
+      router.push(url);
     }
   };
 
   const onClickCloseModal = () => {
     closeModal('game-analysis');
     setSelectedGame(null);
+
+    const url = formUrlQuery({
+      params: params.toString(),
+      keysToRemove: ['game-analysis'],
+    });
+
+    router.push(url);
+  };
+
+  useEffect(() => {
+    autoOpenGameAnalysis();
+  }, [params, data]);
+
+  const autoOpenGameAnalysis = () => {
+    const gameAnalysis = params.get('game-analysis');
+    if (gameAnalysis) {
+      const findGame =
+        data.find((game) => game.game.id === Number(gameAnalysis)) || null;
+
+      if (!findGame) return;
+
+      setSelectedGame(findGame);
+      openModal('game-analysis');
+    }
   };
 
   return (
