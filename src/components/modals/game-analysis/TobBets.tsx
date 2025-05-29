@@ -42,7 +42,7 @@ const TopBets = () => {
         </h3>
         {bestValueBets.map((bet, idx) => (
           <div key={idx} className="mb-4">
-            <div className="bg-primary-brand mb-2 rounded-lg px-4 py-2 text-center text-base font-semibold text-[#1A1A1A]">
+            <div className="mb-2 rounded-lg bg-green-700 px-4 py-2 text-center text-base font-semibold text-white">
               {bet.label}
             </div>
             <p className="text-sm text-white/80">{bet.description}</p>
@@ -56,7 +56,7 @@ const TopBets = () => {
         </h3>
         {conservativeBets.map((bet, idx) => (
           <div key={idx} className="mb-4">
-            <div className="bg-primary-brand mb-2 rounded-lg px-4 py-2 text-center text-base font-semibold text-[#1A1A1A]">
+            <div className="mb-2 rounded-lg bg-green-700 px-4 py-2 text-center text-base font-semibold text-white">
               {bet.label}
             </div>
             <p className="text-sm text-white/80">{bet.description}</p>

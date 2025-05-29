@@ -1,7 +1,9 @@
 import React, { FC } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import Image from 'next/image';
+import Link from 'next/link';
 
+import { ROUTES } from '@/routes';
 import apiService from '@/services';
 import { Avatar } from '@/ui/avatar';
 import { Card } from '.';
@@ -64,7 +66,6 @@ const KeyPlayers: FC<IKeyPlayersProps> = ({
 
     const players = [...homeTeam.player_statistics];
 
-    // If there's a home leader, move them to the start of the list
     if (homeLeader?.name) {
       const leaderIndex = players.findIndex(
         (p) => p.PLAYER === homeLeader.name,
@@ -85,7 +86,6 @@ const KeyPlayers: FC<IKeyPlayersProps> = ({
 
     const players = [...awayTeam.player_statistics];
 
-    // If there's an away leader, move them to the start of the list
     if (awayLeader?.name) {
       const leaderIndex = players.findIndex(
         (p) => p.PLAYER === awayLeader.name,
@@ -117,21 +117,19 @@ const KeyPlayers: FC<IKeyPlayersProps> = ({
         }
       >
         <div className="flex gap-3 overflow-x-auto pb-2">
-          {processHomePlayers().map((item) => {
-            console.log(item.PLAYER, homeLeader?.name);
-            return (
-              <KeyPlayerCard
-                key={item.PLAYER_ID}
-                name={item.PLAYER}
-                position={item.POSITION}
-                score="0"
-                isLeader={homeLeader?.name === item.PLAYER}
-                leaderStats={
-                  homeLeader?.name === item.PLAYER ? homeLeader : undefined
-                }
-              />
-            );
-          })}
+          {processHomePlayers().map((item) => (
+            <KeyPlayerCard
+              key={item.PLAYER_ID}
+              name={item.PLAYER}
+              playerId={item.PLAYER_ID}
+              position={item.POSITION}
+              score="0"
+              isLeader={homeLeader?.name === item.PLAYER}
+              leaderStats={
+                homeLeader?.name === item.PLAYER ? homeLeader : undefined
+              }
+            />
+          ))}
         </div>
       </Card>
 
@@ -155,6 +153,7 @@ const KeyPlayers: FC<IKeyPlayersProps> = ({
             <KeyPlayerCard
               key={item.PLAYER_ID}
               name={item.PLAYER}
+              playerId={item.PLAYER_ID}
               position={item.POSITION}
               score="0"
               isLeader={awayLeader?.name === item.PLAYER}
@@ -173,21 +172,24 @@ export default KeyPlayers;
 
 const KeyPlayerCard = ({
   name,
+  playerId,
   position,
   score,
   isLeader,
   leaderStats,
 }: {
   name: string;
+  playerId: number;
   position: string;
   score: string;
   isLeader?: boolean;
   leaderStats?: GameLeader;
 }) => {
-  console.log(name, isLeader, leaderStats);
-
   return (
-    <div className="flex min-w-[120px] flex-col items-center gap-2 rounded-xl p-3">
+    <Link
+      href={ROUTES.PLAYER(playerId.toString())}
+      className="border-border hover:border-primary-brand flex min-w-[120px] cursor-pointer flex-col items-center gap-2 rounded-xl border p-3 transition-all"
+    >
       <div className="relative">
         {isLeader && (
           <div className="text-primary-brand mb-1 text-xs">Key Player</div>
@@ -215,6 +217,6 @@ const KeyPlayerCard = ({
           <p className="text-sm font-bold text-white">{score}</p>
         )}
       </div>
-    </div>
+    </Link>
   );
 };
