@@ -67,10 +67,21 @@ export interface IGame {
   game_prediction: any;
 }
 
+export interface Injury {
+  team_name: string;
+  player: string;
+  position: string;
+  return_date: string;
+  status: string;
+  comment: string;
+}
+
 export interface IScoreboard {
   label: string;
   home_leaders: IGameLeader;
   away_leaders: IGameLeader;
+  home_team_injury: Injury[];
+  away_team_injury: Injury[];
 }
 
 export interface IGameWithAI {

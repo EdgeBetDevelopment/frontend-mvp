@@ -1,3 +1,13 @@
+import React from 'react';
+
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
+import { cn } from '@/lib/utils';
+import { Injury } from '@/types/game';
 import { Badge } from '@/ui/badge';
 import {
   Table,
@@ -8,7 +18,25 @@ import {
   TableRow,
 } from '@/ui/table';
 
-const InjuryTable = () => {
+interface InjuryTableProps {
+  homeInjuries?: Injury[];
+  awayInjuries?: Injury[];
+}
+
+const InjuryTable = ({
+  homeInjuries = [],
+  awayInjuries = [],
+}: InjuryTableProps) => {
+  const allInjuries = [...homeInjuries, ...awayInjuries];
+
+  const getStatusVariant = (status: string) => {
+    const statusLower = status.toLowerCase();
+    if (statusLower.includes('out')) return 'red';
+    if (statusLower.includes('day-to-day')) return 'orange';
+    if (statusLower.includes('probable')) return 'green';
+    return 'default';
+  };
+
   return (
     <div className="space-y-4">
       <h3 className="align-bottom text-lg font-semibold tracking-normal">
@@ -19,57 +47,51 @@ const InjuryTable = () => {
         <TableHeader>
           <TableRow>
             <TableHead>Player</TableHead>
+            <TableHead>Team</TableHead>
             <TableHead>Pos</TableHead>
-            <TableHead>Injury</TableHead>
             <TableHead>EST. Return Date</TableHead>
+            <TableHead>Comment</TableHead>
             <TableHead>Status</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          <TableRow className="bg-surface-secondary">
-            <TableCell>Deandre Ayton</TableCell>
-            <TableCell>C</TableCell>
-            <TableCell>Knee</TableCell>
-            <TableCell>May 28</TableCell>
-            <TableCell>
-              <Badge
-                className="w-full max-w-[85px] py-2 capitalize"
-                variant={'red'}
-              >
-                Out
-              </Badge>
-            </TableCell>
-          </TableRow>
+          {allInjuries.map((injury, index) => (
+            <TableRow key={index} className="bg-surface-secondary">
+              <TableCell className="font-medium">{injury.player}</TableCell>
+              <TableCell>{injury.team_name}</TableCell>
+              <TableCell>{injury.position}</TableCell>
+              <TableCell>{injury.return_date}</TableCell>
 
-          <TableRow className="bg-surface-secondary">
-            <TableCell>Clint Capela</TableCell>
-            <TableCell>C</TableCell>
-            <TableCell>Hand</TableCell>
-            <TableCell>May 29</TableCell>
-            <TableCell>
-              <Badge
-                className="w-full max-w-[85px] py-2 capitalize"
-                variant={'red'}
-              >
-                Out
-              </Badge>
-            </TableCell>
-          </TableRow>
+              <TableCell>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span className="cursor-help text-sm">
+                        {injury.comment.length > 30
+                          ? `${injury.comment.slice(0, 30)}...`
+                          : injury.comment}
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent className="max-w-[300px] p-3">
+                      <p className="text-sm">{injury.comment}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </TableCell>
 
-          <TableRow className="bg-surface-secondary">
-            <TableCell>Ulrich Chomche</TableCell>
-            <TableCell>C</TableCell>
-            <TableCell>Knee</TableCell>
-            <TableCell>July 28</TableCell>
-            <TableCell>
-              <Badge
-                className="w-full max-w-[85px] py-2 capitalize"
-                variant={'red'}
-              >
-                Out
-              </Badge>
-            </TableCell>
-          </TableRow>
+              <TableCell>
+                <Badge
+                  variant={getStatusVariant(injury.status)}
+                  className={cn(
+                    'w-full max-w-[85px] py-2 capitalize',
+                    getStatusVariant(injury.status),
+                  )}
+                >
+                  {injury.status}
+                </Badge>
+              </TableCell>
+            </TableRow>
+          ))}
         </TableBody>
       </Table>
     </div>
