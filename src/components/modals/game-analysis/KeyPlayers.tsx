@@ -123,7 +123,6 @@ const KeyPlayers: FC<IKeyPlayersProps> = ({
               name={item.PLAYER}
               playerId={item.PLAYER_ID}
               position={item.POSITION}
-              score="0"
               isLeader={homeLeader?.name === item.PLAYER}
               leaderStats={
                 homeLeader?.name === item.PLAYER ? homeLeader : undefined
@@ -155,7 +154,6 @@ const KeyPlayers: FC<IKeyPlayersProps> = ({
               name={item.PLAYER}
               playerId={item.PLAYER_ID}
               position={item.POSITION}
-              score="0"
               isLeader={awayLeader?.name === item.PLAYER}
               leaderStats={
                 awayLeader?.name === item.PLAYER ? awayLeader : undefined
@@ -174,14 +172,12 @@ const KeyPlayerCard = ({
   name,
   playerId,
   position,
-  score,
   isLeader,
   leaderStats,
 }: {
   name: string;
   playerId: number;
   position: string;
-  score: string;
   isLeader?: boolean;
   leaderStats?: GameLeader;
 }) => {
@@ -207,14 +203,12 @@ const KeyPlayerCard = ({
       <div className="text-center">
         <p className="text-text-primary text-sm font-medium">{name}</p>
         <p className="text-xs text-gray-400">{position}</p>
-        {isLeader && leaderStats ? (
+        {isLeader && leaderStats && (
           <div className="mt-1 space-y-0.5 text-xs">
             <p className="text-primary-brand">PTS: {leaderStats.points}</p>
             <p className="text-primary-brand">REB: {leaderStats.rebounds}</p>
             <p className="text-primary-brand">AST: {leaderStats.assists}</p>
           </div>
-        ) : (
-          <p className="text-sm font-bold text-white">{score}</p>
         )}
       </div>
     </Link>

@@ -57,7 +57,9 @@ const PlayerProfile = () => {
           <div className="mb-8 flex flex-col gap-[2px]">
             <p className="text-[14px] opacity-60">Total score</p>
             <h2 className="text-2xl font-bold text-[#84FDF7]">
-              {player?.score || '21.30'}
+              {(
+                player?.player_stats[0]?.PTS / player?.player_stats[0]?.GP
+              ).toFixed(1)}
             </h2>
           </div>
           <p className="mb-8 w-full max-w-[558px] text-center text-[#B3B3B3]">
