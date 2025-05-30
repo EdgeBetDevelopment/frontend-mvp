@@ -71,14 +71,17 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
             awayInjuries={game?.scoreboard?.away_team_injury}
           />
 
-          <MarketSummary />
+          <MarketSummary prediction={game.prediction} />
 
           <TeamStatsTable
             homeTeamId={game?.game.home_team_id}
             awayTeamId={game?.game.away_team_id}
           />
 
-          <TopBets />
+          <TopBets
+            valueBets={game?.prediction?.value_bets || []}
+            conservativeBets={game?.prediction?.conservative_bets || []}
+          />
         </DialogContentWrapper>
       </DialogContent>
     </Dialog>

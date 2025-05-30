@@ -50,6 +50,14 @@ export interface IPrediction {
   predicted_winner: string;
   favorite_team: string;
   analysis: string;
+  value_bets: string[];
+  conservative_bets: string[];
+  spread_home: string;
+  spread_away: string;
+  over_home: string;
+  over_away: string;
+  moneyline_home: string;
+  moneyline_away: string;
 }
 
 export interface IGame {

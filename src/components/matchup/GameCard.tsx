@@ -127,33 +127,6 @@ export const GameCardHeader = ({ game }: { game: IGameWithAI }) => {
 };
 
 const GameBets = ({ game }: { game: IGameWithAI }) => {
-  const isHomePredicted =
-    game.prediction?.predicted_winner === game.game.home_team;
-
-  const recommendedBet = isHomePredicted
-    ? {
-        label: 'Recommended bet',
-        team: game.game.home_team,
-        odd: game.prediction?.odds_home,
-      }
-    : {
-        label: 'Recommended bet',
-        team: game.game.away_team,
-        odd: game.prediction?.odds_away,
-      };
-
-  const saferBet = !isHomePredicted
-    ? {
-        label: 'Safer bet',
-        team: game.game.home_team,
-        odd: game.prediction?.odds_home,
-      }
-    : {
-        label: 'Safer bet',
-        team: game.game.away_team,
-        odd: game.prediction?.odds_away,
-      };
-
   return (
     <div className="flex flex-col gap-2">
       <div className="flex flex-col gap-1">
@@ -162,9 +135,9 @@ const GameBets = ({ game }: { game: IGameWithAI }) => {
         </p>
 
         <div className="flex flex-col gap-2">
-          <GameBetsItem text={saferBet.label} odd={saferBet.odd} />
-          <GameBetsItem text={recommendedBet.label} odd={recommendedBet.odd} />
-          <GameBetsItem text={saferBet.label} odd={saferBet.odd} />
+          {game.prediction?.value_bets?.map((bet, index) => (
+            <GameBetsItem key={index} text={bet} />
+          ))}
         </div>
       </div>
 
@@ -174,28 +147,22 @@ const GameBets = ({ game }: { game: IGameWithAI }) => {
         </p>
 
         <div className="flex flex-col gap-2">
-          <GameBetsItem text={recommendedBet.label} odd={recommendedBet.odd} />
-          <GameBetsItem text={saferBet.label} odd={saferBet.odd} />
-          <GameBetsItem text={recommendedBet.label} odd={recommendedBet.odd} />
+          {game.prediction?.conservative_bets?.map((bet, index) => (
+            <GameBetsItem key={index} text={bet} />
+          ))}
         </div>
       </div>
     </div>
   );
 };
 
-const GameBetsItem = ({
-  text,
-  odd,
-}: {
-  text: string;
-  odd: number | undefined;
-}) => {
+const GameBetsItem = ({ text }: { text: string }) => {
   return (
     <Badge
       variant="mistBlue"
       className="text-text-primary w-full rounded-[10px] bg-green-700 px-3 py-1.5 text-center text-base font-semibold"
     >
-      {text}: {odd}
+      {text}
     </Badge>
   );
 };
