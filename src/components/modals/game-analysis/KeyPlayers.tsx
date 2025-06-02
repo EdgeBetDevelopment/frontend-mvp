@@ -3,10 +3,13 @@ import { useQuery } from '@tanstack/react-query';
 import Image from 'next/image';
 import Link from 'next/link';
 
+import { cn } from '@/lib/utils';
 import { ROUTES } from '@/routes';
 import apiService from '@/services';
+import { Player } from '@/types/team';
 import { Avatar } from '@/ui/avatar';
-import { Card } from '.';
+import CardContainer from '@/ui/containers/CardContainer';
+import { Skeleton } from '@/ui/skeleton';
 
 interface GameLeader {
   personId: number;
@@ -59,8 +62,6 @@ const KeyPlayers: FC<IKeyPlayersProps> = ({
     retry: 2,
   });
 
-  if (isLoadingAway && isLoadingHome) return <></>;
-
   const processHomePlayers = () => {
     if (!homeTeam?.player_statistics) return [];
 
@@ -101,89 +102,116 @@ const KeyPlayers: FC<IKeyPlayersProps> = ({
 
   return (
     <div className="flex gap-3.5">
-      <Card
-        className="max-w-[calc(50%_-_7px)]"
-        title={`Key Players ${homeTeam?.nickname}`}
-        icon={
-          homeTeam?.logo ? (
-            <Image
-              height={32}
-              width={32}
-              src={homeTeam.logo}
-              alt="Home Team Logo"
-              className="object-contain"
-            />
-          ) : null
-        }
-      >
-        <div className="flex gap-3 overflow-x-auto pb-2">
-          {processHomePlayers().map((item) => (
-            <KeyPlayerCard
-              key={item.PLAYER_ID}
-              name={item.PLAYER}
-              playerId={item.PLAYER_ID}
-              position={item.POSITION}
-              isLeader={homeLeader?.name === item.PLAYER}
-              leaderStats={
-                homeLeader?.name === item.PLAYER ? homeLeader : undefined
-              }
-            />
-          ))}
-        </div>
-      </Card>
+      {isLoadingAway ? (
+        <CardSkeleton />
+      ) : (
+        <Card
+          className="max-w-[calc(50%_-_7px)]"
+          title={`Full roster ${homeTeam?.nickname}`}
+          icon={
+            homeTeam?.logo ? (
+              <Image
+                height={32}
+                width={32}
+                src={homeTeam.logo}
+                alt="Home Team Logo"
+                className="object-contain"
+              />
+            ) : null
+          }
+        >
+          <div className="flex gap-3 overflow-x-auto pb-2">
+            {processHomePlayers().map((item) => (
+              <KeyPlayerCard
+                key={item.PLAYER_ID}
+                player={item}
+                isLeader={homeLeader?.name === item.PLAYER}
+                leaderStats={
+                  homeLeader?.name === item.PLAYER ? homeLeader : undefined
+                }
+              />
+            ))}
+          </div>
+        </Card>
+      )}
 
-      <Card
-        className="max-w-[calc(50%_-_7px)]"
-        title={`Key Players ${awayTeam?.nickname}`}
-        icon={
-          awayTeam?.logo ? (
-            <Image
-              height={32}
-              width={32}
-              src={awayTeam.logo}
-              alt="Away Team Logo"
-              className="object-contain"
-            />
-          ) : null
-        }
-      >
-        <div className="flex gap-3 overflow-x-auto pb-2">
-          {processAwayPlayers().map((item) => (
-            <KeyPlayerCard
-              key={item.PLAYER_ID}
-              name={item.PLAYER}
-              playerId={item.PLAYER_ID}
-              position={item.POSITION}
-              isLeader={awayLeader?.name === item.PLAYER}
-              leaderStats={
-                awayLeader?.name === item.PLAYER ? awayLeader : undefined
-              }
-            />
-          ))}
-        </div>
-      </Card>
+      {isLoadingHome ? (
+        <CardSkeleton />
+      ) : (
+        <Card
+          className="max-w-[calc(50%_-_7px)]"
+          title={`Full roster ${awayTeam?.nickname}`}
+          icon={
+            awayTeam?.logo ? (
+              <Image
+                height={32}
+                width={32}
+                src={awayTeam.logo}
+                alt="Away Team Logo"
+                className="object-contain"
+              />
+            ) : null
+          }
+        >
+          <div className="flex gap-3 overflow-x-auto pb-2">
+            {processAwayPlayers().map((item) => (
+              <KeyPlayerCard
+                key={item.PLAYER_ID}
+                player={item}
+                isLeader={awayLeader?.name === item.PLAYER}
+                leaderStats={
+                  awayLeader?.name === item.PLAYER ? awayLeader : undefined
+                }
+              />
+            ))}
+          </div>
+        </Card>
+      )}
     </div>
   );
 };
 
 export default KeyPlayers;
 
+export const Card = ({
+  children,
+  className,
+  title,
+  icon,
+}: {
+  children: React.ReactNode;
+  className?: string;
+  title: string;
+  icon: React.ReactNode;
+}) => {
+  return (
+    <CardContainer
+      className={cn('flex flex-1/2 flex-col gap-2 rounded-lg', className)}
+    >
+      <div className="tl-flex-icon align-bottom text-sm font-medium tracking-normal">
+        {icon}
+        {title}
+      </div>
+
+      {children}
+    </CardContainer>
+  );
+};
+
 const KeyPlayerCard = ({
-  name,
-  playerId,
-  position,
+  player,
   isLeader,
   leaderStats,
 }: {
-  name: string;
-  playerId: number;
-  position: string;
+  player: Player;
   isLeader?: boolean;
   leaderStats?: GameLeader;
 }) => {
+  const { PLAYER, PLAYER_ID, POSITION } = player;
+
   return (
     <Link
-      href={ROUTES.PLAYER(playerId.toString())}
+      href={ROUTES.PLAYER(PLAYER_ID.toString())}
       className="border-border hover:border-primary-brand flex min-w-[120px] cursor-pointer flex-col items-center gap-2 rounded-xl border p-3 transition-all"
     >
       <div className="relative">
@@ -192,8 +220,7 @@ const KeyPlayerCard = ({
         )}
         <Avatar className="flex h-12 w-12 items-center justify-center rounded-full border bg-[#33758780]">
           <div className="text-lg font-bold text-white">
-            {name
-              .split(' ')
+            {PLAYER.split(' ')
               .map((n) => n[0])
               .join('')}
           </div>
@@ -201,8 +228,8 @@ const KeyPlayerCard = ({
       </div>
 
       <div className="text-center">
-        <p className="text-text-primary text-sm font-medium">{name}</p>
-        <p className="text-xs text-gray-400">{position}</p>
+        <p className="text-text-primary text-sm font-medium">{PLAYER}</p>
+        <p className="text-xs text-gray-400">{POSITION}</p>
         {isLeader && leaderStats && (
           <div className="mt-1 space-y-0.5 text-xs">
             <p className="text-primary-brand">PTS: {leaderStats.points}</p>
@@ -212,5 +239,11 @@ const KeyPlayerCard = ({
         )}
       </div>
     </Link>
+  );
+};
+
+const CardSkeleton = () => {
+  return (
+    <Skeleton className="flex h-[227px] flex-1/2 flex-col gap-2 rounded-lg" />
   );
 };
