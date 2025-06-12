@@ -135,9 +135,9 @@ const GameBets = ({ game }: { game: IGameWithAI }) => {
         </p>
 
         <div className="flex flex-col gap-2">
-          {game.prediction?.value_bets?.map((bet, index) => (
-            <GameBetsItem key={index} text={bet} />
-          ))}
+          {game.prediction?.value_bets
+            ?.slice(0, 3)
+            .map((bet, index) => <GameBetsItem key={index} text={bet} />)}
         </div>
       </div>
 
@@ -147,9 +147,9 @@ const GameBets = ({ game }: { game: IGameWithAI }) => {
         </p>
 
         <div className="flex flex-col gap-2">
-          {game.prediction?.conservative_bets?.map((bet, index) => (
-            <GameBetsItem key={index} text={bet} />
-          ))}
+          {game.prediction?.conservative_bets
+            ?.slice(0, 3)
+            .map((bet, index) => <GameBetsItem key={index} text={bet} />)}
         </div>
       </div>
     </div>
@@ -157,12 +157,14 @@ const GameBets = ({ game }: { game: IGameWithAI }) => {
 };
 
 const GameBetsItem = ({ text }: { text: string }) => {
+  const afterColon = text.match(/:(.*)/)?.[1]?.trim() || text;
+
   return (
     <Badge
       variant="mistBlue"
-      className="text-text-primary w-full rounded-[10px] bg-green-700 px-3 py-1.5 text-center text-base font-semibold"
+      className="text-text-primary w-full rounded-[10px] bg-green-700 px-3 py-1.5 text-center text-base font-semibold break-words whitespace-normal"
     >
-      {text}
+      {afterColon}
     </Badge>
   );
 };
