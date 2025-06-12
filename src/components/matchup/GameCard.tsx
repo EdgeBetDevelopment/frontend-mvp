@@ -157,14 +157,14 @@ const GameBets = ({ game }: { game: IGameWithAI }) => {
 };
 
 const GameBetsItem = ({ text }: { text: string }) => {
-  const afterColon = text.match(/:(.*)/)?.[1]?.trim() || text;
+  const beforeColon = text.split(':')[0]?.trim() || text;
 
   return (
     <Badge
       variant="mistBlue"
       className="text-text-primary w-full rounded-[10px] bg-green-700 px-3 py-1.5 text-center text-base font-semibold break-words whitespace-normal"
     >
-      {afterColon}
+      {beforeColon}
     </Badge>
   );
 };
