@@ -1,3 +1,5 @@
+import { ITeamPlayer } from './player';
+
 export interface ITeam {
   id: number;
   full_name: string;
@@ -84,7 +86,7 @@ export interface TeamStatistics {
   PLUS_MINUS_RANK: number;
 }
 
-export interface Player {
+export interface Player extends ITeamPlayer {
   TeamID: number;
   SEASON: string;
   LeagueID: string;

@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { ROUTES } from '@/routes';
 import apiService from '@/services';
+import { ITeamPlayer } from '@/types/player';
 import { Player } from '@/types/team';
 import { Avatar } from '@/ui/avatar';
 import CardContainer from '@/ui/containers/CardContainer';
@@ -28,6 +29,8 @@ interface IKeyPlayersProps {
   awayTeamId?: number;
   homeLeader?: GameLeader;
   awayLeader?: GameLeader;
+  playersHome?: ITeamPlayer[];
+  playersAway?: ITeamPlayer[];
 }
 
 const KeyPlayers: FC<IKeyPlayersProps> = ({
@@ -35,12 +38,10 @@ const KeyPlayers: FC<IKeyPlayersProps> = ({
   awayTeamId,
   homeLeader,
   awayLeader,
+  playersHome,
+  playersAway,
 }) => {
-  const {
-    data: homeTeam,
-    isLoading: isLoadingHome,
-    error: errorHome,
-  } = useQuery({
+  const { data: homeTeam, isLoading: isLoadingHome } = useQuery({
     queryKey: ['team', homeTeamId],
     queryFn: () =>
       homeTeamId ? apiService.getTeamById(`${homeTeamId}`) : null,
@@ -49,11 +50,7 @@ const KeyPlayers: FC<IKeyPlayersProps> = ({
     retry: 2,
   });
 
-  const {
-    data: awayTeam,
-    isLoading: isLoadingAway,
-    error: errorAway,
-  } = useQuery({
+  const { data: awayTeam, isLoading: isLoadingAway } = useQuery({
     queryKey: ['team', awayTeamId],
     queryFn: () =>
       awayTeamId ? apiService.getTeamById(`${awayTeamId}`) : null,
@@ -62,42 +59,32 @@ const KeyPlayers: FC<IKeyPlayersProps> = ({
     retry: 2,
   });
 
-  const processHomePlayers = () => {
-    if (!homeTeam?.player_statistics) return [];
+  const processPlayers = (
+    players: ITeamPlayer[] | undefined,
+    leader: GameLeader | undefined,
+  ) => {
+    if (!players) return [];
 
-    const players = [...homeTeam.player_statistics];
+    const enriched = players.map((player) => ({
+      player,
+      isKeyPlayer: leader?.personId === player.PLAYER_ID,
+      stats:
+        leader?.name === player.fullname
+          ? {
+              points: leader.points,
+              rebounds: leader.rebounds,
+              assists: leader.assists,
+            }
+          : {
+              points: player.PTS,
+              rebounds: player.REB,
+              assists: player.AST,
+            },
+    }));
 
-    if (homeLeader?.name) {
-      const leaderIndex = players.findIndex(
-        (p) => p.PLAYER === homeLeader.name,
-      );
+    enriched.sort((a, b) => (b.isKeyPlayer ? 1 : 0) - (a.isKeyPlayer ? 1 : 0));
 
-      if (leaderIndex !== -1) {
-        const leader = players.splice(leaderIndex, 1)[0];
-
-        players.unshift(leader);
-      }
-    }
-
-    return players;
-  };
-
-  const processAwayPlayers = () => {
-    if (!awayTeam?.player_statistics) return [];
-
-    const players = [...awayTeam.player_statistics];
-
-    if (awayLeader?.name) {
-      const leaderIndex = players.findIndex(
-        (p) => p.PLAYER === awayLeader.name,
-      );
-      if (leaderIndex !== -1) {
-        const leader = players.splice(leaderIndex, 1)[0];
-        players.unshift(leader);
-      }
-    }
-
-    return players;
+    return enriched;
   };
 
   return (
@@ -121,20 +108,19 @@ const KeyPlayers: FC<IKeyPlayersProps> = ({
           }
         >
           <div className="flex gap-3 overflow-x-auto pb-2">
-            {processHomePlayers().map((item) => (
-              <KeyPlayerCard
-                key={item.PLAYER_ID}
-                player={item}
-                isLeader={homeLeader?.name === item.PLAYER}
-                leaderStats={
-                  homeLeader?.name === item.PLAYER ? homeLeader : undefined
-                }
-              />
-            ))}
+            {processPlayers(playersHome, homeLeader).map(
+              ({ player, stats, isKeyPlayer }) => (
+                <KeyPlayerCard
+                  key={player.PLAYER_ID}
+                  player={player}
+                  stats={stats}
+                  isKeyPlayer={isKeyPlayer}
+                />
+              ),
+            )}
           </div>
         </Card>
       )}
-
       {isLoadingHome ? (
         <CardSkeleton />
       ) : (
@@ -154,16 +140,16 @@ const KeyPlayers: FC<IKeyPlayersProps> = ({
           }
         >
           <div className="flex gap-3 overflow-x-auto pb-2">
-            {processAwayPlayers().map((item) => (
-              <KeyPlayerCard
-                key={item.PLAYER_ID}
-                player={item}
-                isLeader={awayLeader?.name === item.PLAYER}
-                leaderStats={
-                  awayLeader?.name === item.PLAYER ? awayLeader : undefined
-                }
-              />
-            ))}
+            {processPlayers(playersAway, awayLeader).map(
+              ({ player, stats, isKeyPlayer }) => (
+                <KeyPlayerCard
+                  key={player.PLAYER_ID}
+                  player={player}
+                  stats={stats}
+                  isKeyPlayer={isKeyPlayer}
+                />
+              ),
+            )}
           </div>
         </Card>
       )}
@@ -200,27 +186,30 @@ export const Card = ({
 
 const KeyPlayerCard = ({
   player,
-  isLeader,
-  leaderStats,
+  stats,
+  isKeyPlayer,
 }: {
   player: Player;
-  isLeader?: boolean;
-  leaderStats?: GameLeader;
+  stats?: { points: number; rebounds: number; assists: number } | null;
+  isKeyPlayer?: boolean;
 }) => {
-  const { PLAYER, PLAYER_ID, POSITION } = player;
+  const { fullname, PLAYER_ID, POSITION } = player;
 
   return (
     <Link
       href={ROUTES.PLAYER(PLAYER_ID.toString())}
-      className="border-border hover:border-primary-brand flex min-w-[120px] cursor-pointer flex-col items-center gap-2 rounded-xl border p-3 transition-all"
+      className="border-border hover:border-primary-brand flex min-h-[200px] min-w-[120px] cursor-pointer flex-col items-center gap-2 rounded-xl border p-3 transition-all"
     >
       <div className="relative">
-        {isLeader && (
-          <div className="text-primary-brand mb-1 text-xs">Key Player</div>
+        {isKeyPlayer && (
+          <div className="text-primary-brand mb-1 text-xs font-semibold">
+            Key Player
+          </div>
         )}
         <Avatar className="flex h-12 w-12 items-center justify-center rounded-full border bg-[#33758780]">
           <div className="text-lg font-bold text-white">
-            {PLAYER.split(' ')
+            {fullname
+              .split(' ')
               .map((n) => n[0])
               .join('')}
           </div>
@@ -228,13 +217,13 @@ const KeyPlayerCard = ({
       </div>
 
       <div className="text-center">
-        <p className="text-text-primary text-sm font-medium">{PLAYER}</p>
+        <p className="text-text-primary text-sm font-medium">{fullname}</p>
         <p className="text-xs text-gray-400">{POSITION}</p>
-        {isLeader && leaderStats && (
+        {stats && (
           <div className="mt-1 space-y-0.5 text-xs">
-            <p className="text-primary-brand">PTS: {leaderStats.points}</p>
-            <p className="text-primary-brand">REB: {leaderStats.rebounds}</p>
-            <p className="text-primary-brand">AST: {leaderStats.assists}</p>
+            <p className="text-primary-brand">PTS: {stats.points}</p>
+            <p className="text-primary-brand">REB: {stats.rebounds}</p>
+            <p className="text-primary-brand">AST: {stats.assists}</p>
           </div>
         )}
       </div>

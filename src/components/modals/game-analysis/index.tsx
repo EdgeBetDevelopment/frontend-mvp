@@ -64,6 +64,8 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
             awayTeamId={game?.game.away_team_id}
             homeLeader={game.scoreboard?.home_leaders}
             awayLeader={game.scoreboard?.away_leaders}
+            playersHome={game.scoreboard?.home_team_players}
+            playersAway={game.scoreboard?.away_team_players}
           />
 
           <InjuryTable

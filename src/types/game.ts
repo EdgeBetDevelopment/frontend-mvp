@@ -1,3 +1,5 @@
+import { ITeamPlayer } from './player';
+
 interface IPeriod {
   period: number;
   periodType: 'REGULAR';
@@ -90,6 +92,8 @@ export interface IScoreboard {
   away_leaders: IGameLeader;
   home_team_injury: Injury[];
   away_team_injury: Injury[];
+  home_team_players: ITeamPlayer[];
+  away_team_players: ITeamPlayer[];
 }
 
 export interface IGameWithAI {

@@ -1,4 +1,10 @@
 export interface ITeamPlayer {
+  AST: number;
+  PTS: number;
+  REB: number;
+  SEASON_ID: string;
+  fullname: string;
+  position: string;
   TeamID: number;
   SEASON: string;
   LeagueID: string;
