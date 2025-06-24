@@ -23,6 +23,8 @@ import {
 import { Button } from '@/ui/button';
 import { formUrlQuery } from '@/utils/url';
 
+import { OddsTypeSwitcher } from './SwitchSelector';
+
 import AmericanFootballIcon from '@/assets/icons/american-football.svg';
 import BaseballIcon from '@/assets/icons/baseball.svg';
 import FootbalIcon from '@/assets/icons/football.svg';
@@ -112,6 +114,9 @@ const MatchupPageFilters = () => {
 
           <CarouselNext />
         </Carousel>
+        <div className="mt-4 flex">
+          <OddsTypeSwitcher />
+        </div>
       </div>
     </TooltipProvider>
   );
