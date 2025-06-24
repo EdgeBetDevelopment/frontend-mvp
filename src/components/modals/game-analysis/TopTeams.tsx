@@ -24,7 +24,7 @@ const TopTeams = ({
 }) => {
   return (
     <div className="flex items-stretch gap-3.5">
-      <Card
+      {/* <Card
         title="Favorite Team"
         icon={<StatisticsIcon />}
         className="flex-1/2"
@@ -43,7 +43,7 @@ const TopTeams = ({
             {favoriteTeamInfo?.name}
           </Link>
         </div>
-      </Card>
+      </Card> */}
 
       <Card
         title="Predicted Winner"
