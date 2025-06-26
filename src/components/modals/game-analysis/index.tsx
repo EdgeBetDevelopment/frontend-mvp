@@ -59,6 +59,11 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
             predictedWinnerInfo={predictedWinnerInfo}
           />
 
+          <TopBets
+            valueBets={game?.prediction?.value_bets || []}
+            conservativeBets={game?.prediction?.conservative_bets || []}
+          />
+
           <KeyPlayers
             homeTeamId={game?.game.home_team_id}
             awayTeamId={game?.game.away_team_id}
@@ -73,16 +78,11 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
             awayInjuries={game?.scoreboard?.away_team_injury}
           />
 
-          <MarketSummary prediction={game.prediction} />
+          <MarketSummary game={game} prediction={game.prediction} />
 
           <TeamStatsTable
             homeTeamId={game?.game.home_team_id}
             awayTeamId={game?.game.away_team_id}
-          />
-
-          <TopBets
-            valueBets={game?.prediction?.value_bets || []}
-            conservativeBets={game?.prediction?.conservative_bets || []}
           />
         </DialogContentWrapper>
       </DialogContent>

@@ -1,8 +1,20 @@
 import React from 'react';
 
+import { IGameWithAI, IPrediction } from '@/types/game';
 import CardContainer from '@/ui/containers/CardContainer';
 
-const MarketSummary = ({ prediction }: { prediction: any }) => {
+const MarketSummary = ({
+  game,
+  prediction,
+}: {
+  game: IGameWithAI;
+  prediction: IPrediction | null;
+}) => {
+  if (!prediction) return null;
+
+  const homeTeam = game.game.home_team;
+  const awayTeam = game.game.away_team;
+
   return (
     <div className="space-y-4">
       <h3 className="align-bottom text-lg font-semibold tracking-normal">
@@ -11,14 +23,14 @@ const MarketSummary = ({ prediction }: { prediction: any }) => {
 
       <CardContainer className="flex flex-col gap-3 rounded-lg">
         <MarketSummaryRow
-          teamName="Oklahoma City Thunder"
+          teamName={homeTeam}
           spread={prediction?.spread_home}
           total={prediction?.total_line}
           moneyline={prediction?.moneyline_home}
         />
 
         <MarketSummaryRow
-          teamName="Minnesota Timberwolves"
+          teamName={awayTeam}
           spread={prediction?.spread_away}
           total={prediction?.total_line}
           moneyline={prediction?.moneyline_away}

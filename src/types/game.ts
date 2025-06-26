@@ -60,6 +60,7 @@ export interface IPrediction {
   over_away: string;
   moneyline_home: string;
   moneyline_away: string;
+  total_line: string;
 }
 
 export interface IGame {
