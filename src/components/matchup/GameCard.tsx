@@ -5,11 +5,13 @@ import Link from 'next/link';
 
 import { useAuth } from '@/context/AuthContext';
 import { ROUTES } from '@/routes';
+import { useStore } from '@/store';
 import { IGameWithAI } from '@/types/game';
 import { Avatar, AvatarImage } from '@/ui/avatar';
 import { Badge } from '@/ui/badge';
 import { Button } from '@/ui/button';
 import { Separator } from '@/ui/separator';
+import { convertAmericanToDecimal } from '@/utils/convertAmericanToDecimal';
 import { formatUtcToLocalDate, formatUtcToLocalTimeAmPm } from '@/utils/time';
 import CardContainer from '../../ui/containers/CardContainer';
 
@@ -127,6 +129,8 @@ export const GameCardHeader = ({ game }: { game: IGameWithAI }) => {
 };
 
 const GameBets = ({ game }: { game: IGameWithAI }) => {
+  const isAmerican = useStore((state) => state.isAmerican);
+
   return (
     <div className="flex flex-col gap-2">
       <div className="flex flex-col gap-1">
@@ -137,7 +141,9 @@ const GameBets = ({ game }: { game: IGameWithAI }) => {
         <div className="flex flex-col gap-2">
           {game.prediction?.value_bets
             ?.slice(0, 3)
-            .map((bet, index) => <GameBetsItem key={index} text={bet} />)}
+            .map((bet, index) => (
+              <GameBetsItem isAmerican={isAmerican} key={index} text={bet} />
+            ))}
         </div>
       </div>
 
@@ -149,22 +155,39 @@ const GameBets = ({ game }: { game: IGameWithAI }) => {
         <div className="flex flex-col gap-2">
           {game.prediction?.conservative_bets
             ?.slice(0, 3)
-            .map((bet, index) => <GameBetsItem key={index} text={bet} />)}
+            .map((bet, index) => (
+              <GameBetsItem isAmerican={isAmerican} key={index} text={bet} />
+            ))}
         </div>
       </div>
     </div>
   );
 };
 
-const GameBetsItem = ({ text }: { text: string }) => {
-  const beforeColon = text.split(':')[0]?.trim() || text;
+const GameBetsItem = ({
+  text,
+  isAmerican,
+}: {
+  text: string;
+  isAmerican: boolean;
+}) => {
+  const oddsMatch = text.match(/\(([-+]?\d+)\)/);
+  const odds = oddsMatch ? parseInt(oddsMatch[1], 10) : null;
+
+  const displayedText =
+    odds !== null && !isAmerican
+      ? text.replace(
+          /\(([-+]?\d+)\)/,
+          `(${convertAmericanToDecimal(odds).toFixed(2)})`,
+        )
+      : text;
 
   return (
     <Badge
       variant="mistBlue"
       className="text-text-primary w-full rounded-[10px] bg-green-700 px-3 py-1.5 text-center text-base font-semibold break-words whitespace-normal"
     >
-      {beforeColon}
+      {displayedText}
     </Badge>
   );
 };

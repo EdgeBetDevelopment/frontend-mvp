@@ -1,3 +1,6 @@
+import { useStore } from '@/store';
+import { convertAmericanToDecimal } from '@/utils/convertAmericanToDecimal';
+
 const TopBets = ({
   valueBets,
   conservativeBets,
@@ -5,10 +8,22 @@ const TopBets = ({
   valueBets: string[];
   conservativeBets: string[];
 }) => {
-  const splitBetText = (text: string) => {
-    const [before, after] = text.split(':');
+  const isAmerican = useStore((state) => state.isAmerican);
+
+  const splitBetText = (text: string, isAmerican: boolean) => {
+    const [beforeRaw, after] = text.split(':');
+    let before = beforeRaw?.trim() || text;
+
+    const oddsMatch = before.match(/\(([-+]?\d+)\)/);
+    const odds = oddsMatch ? parseInt(oddsMatch[1], 10) : null;
+
+    if (odds !== null && !isAmerican) {
+      const decimalOdds = convertAmericanToDecimal(odds).toFixed(2);
+      before = before.replace(/\(([-+]?\d+)\)/, `(${decimalOdds})`);
+    }
+
     return {
-      before: before?.trim() || text,
+      before,
       after: after?.trim(),
     };
   };
@@ -20,7 +35,7 @@ const TopBets = ({
           Top 3 Best Value Bets
         </h3>
         {valueBets?.slice(0, 3).map((bet: string, idx: number) => {
-          const { before, after } = splitBetText(bet);
+          const { before, after } = splitBetText(bet, isAmerican);
           return (
             <div key={idx} className="mb-4">
               <div className="mb-2 rounded-lg bg-green-700 px-4 py-2 text-center text-base font-semibold text-white">
@@ -41,7 +56,7 @@ const TopBets = ({
           Top 3 Conservative Bets
         </h3>
         {conservativeBets?.slice(0, 3).map((bet: string, idx: number) => {
-          const { before, after } = splitBetText(bet);
+          const { before, after } = splitBetText(bet, isAmerican);
           return (
             <div key={idx} className="mb-4">
               <div className="mb-2 rounded-lg bg-green-700 px-4 py-2 text-center text-base font-semibold text-white">

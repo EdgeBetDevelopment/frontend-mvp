@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 import { cn } from '@/lib/utils';
+import { useStore } from '@/store';
 
 const ODDS_TYPE = [
   { label: 'American', value: 'american' },
@@ -21,6 +22,14 @@ export function OddsTypeSwitcher() {
   });
   const refs = useRef<Record<string, HTMLButtonElement | null>>({});
 
+  const setIsAmerican = useStore((state) => state.setIsAmerican);
+
+  const onChange = (val: string) => {
+    const newParams = new URLSearchParams(params.toString());
+    newParams.set('odds', val);
+    router.push(`?${newParams.toString()}`);
+  };
+
   useEffect(() => {
     const activeBtn = refs.current[current];
     if (activeBtn) {
@@ -29,14 +38,10 @@ export function OddsTypeSwitcher() {
         width: `${offsetWidth}px`,
         transform: `translate(${offsetLeft}px, -50%)`,
       });
-    }
-  }, [current]);
 
-  const onChange = (val: string) => {
-    const newParams = new URLSearchParams(params.toString());
-    newParams.set('odds', val);
-    router.push(`?${newParams.toString()}`);
-  };
+      setIsAmerican(current === 'american');
+    }
+  }, [current, setIsAmerican]);
 
   return (
     <div className="bg-primary-brand relative flex rounded-full p-2">

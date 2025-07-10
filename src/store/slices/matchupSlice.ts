@@ -5,6 +5,7 @@ import { IGameWithAI } from '@/types/game';
 interface IMatchupState {
   trackedGame: null | IGameWithAI;
   selectedGame: null | IGameWithAI;
+  isAmerican: boolean;
 
   betInfo: {
     game_id: number;
@@ -18,11 +19,13 @@ interface IMatchupState {
   setTrackedGame: (trackedGame: null | IGameWithAI) => void;
   setSelectedGame: (selectedGame: null | IGameWithAI) => void;
   setBetInfoField: (field: keyof IMatchupState['betInfo'], value: any) => void;
+  setIsAmerican: (val: boolean) => void;
 }
 
 export const matchupSlice: StateCreator<IMatchupState> = (set) => ({
   trackedGame: null,
   selectedGame: null,
+  isAmerican: true,
   betInfo: {
     game_id: 0,
     nba_game_id: 0,
@@ -34,6 +37,7 @@ export const matchupSlice: StateCreator<IMatchupState> = (set) => ({
 
   setTrackedGame: (trackedGame) => set({ trackedGame }),
   setSelectedGame: (selectedGame) => set({ selectedGame }),
+  setIsAmerican: (val) => set({ isAmerican: val }),
   setBetInfoField: (field, value) =>
     set((state) => ({
       betInfo: {
