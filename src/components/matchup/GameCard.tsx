@@ -176,11 +176,13 @@ const GameBetsItem = ({
 
   const displayedText =
     odds !== null && !isAmerican
-      ? text.replace(
-          /\(([-+]?\d+)\)/,
-          `(${convertAmericanToDecimal(odds).toFixed(2)})`,
-        )
-      : text;
+      ? text
+          .split(':')[0]
+          .replace(
+            /\(([-+]?\d+)\)/,
+            `(${convertAmericanToDecimal(odds).toFixed(2)})`,
+          )
+      : text.split(':')[0];
 
   return (
     <Badge
