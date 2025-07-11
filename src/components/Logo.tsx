@@ -9,7 +9,6 @@ const Logo = () => {
   return (
     <Link href={ROUTES.HOME} className="tl-link flex items-center gap-2">
       <LogoIcon />
-      Edgebet
     </Link>
   );
 };
