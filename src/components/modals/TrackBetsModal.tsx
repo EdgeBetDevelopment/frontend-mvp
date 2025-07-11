@@ -46,6 +46,7 @@ const TrackBetsModal = ({
 }) => {
   const {
     setTrackedGame,
+    description,
     setSelectedGame,
     trackedGame,
     prefillTeam,
@@ -123,7 +124,7 @@ const TrackBetsModal = ({
       odds: values.odds,
       amount: values.amount,
       sport: 'nba',
-      description: 'Test',
+      description,
     };
 
     try {

@@ -63,7 +63,7 @@ const BetTrackerTable = () => {
     refetchOnMount: 'always',
     placeholderData: (prevData) => prevData,
   });
-
+  console.log(data);
   const onChangeType = (value: string) => {
     if (value === type) return;
     setActiveTab(value);
@@ -166,10 +166,10 @@ const BetTrackerTable = () => {
                     </TableCell>
                     <TableCell>
                       You placed a bet of ${data.amount} on the{' '}
-                      {data.selected_team_name}
+                      {data?.payload.description}
                     </TableCell>
                     <TableCell>{data.amount}</TableCell>
-                    <TableCell>{data.odds_at_bet_time}</TableCell>
+                    <TableCell>{data?.payload.odds_at_bet_time}</TableCell>
                     <TableCell>
                       <Badge
                         className="w-full max-w-[85px] py-2 capitalize"

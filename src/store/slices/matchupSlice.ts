@@ -18,6 +18,7 @@ interface IMatchupState {
 
   prefillTeam: string;
   prefillOdds: number | null;
+  description: string;
 
   setTrackedGame: (trackedGame: null | IGameWithAI) => void;
   setSelectedGame: (selectedGame: null | IGameWithAI) => void;
@@ -26,6 +27,7 @@ interface IMatchupState {
   setPrefillTeam: (team: string) => void;
   setPrefillOdds: (odds: number) => void;
   clearPrefill: () => void;
+  setDescription: (descriptionText: string) => void;
 }
 
 export const matchupSlice: StateCreator<IMatchupState> = (set) => ({
@@ -42,6 +44,7 @@ export const matchupSlice: StateCreator<IMatchupState> = (set) => ({
   },
   prefillTeam: '',
   prefillOdds: null,
+  description: '',
 
   setTrackedGame: (trackedGame) => set({ trackedGame }),
   setSelectedGame: (selectedGame) => set({ selectedGame }),
@@ -54,6 +57,7 @@ export const matchupSlice: StateCreator<IMatchupState> = (set) => ({
       },
     })),
   setPrefillTeam: (team) => set({ prefillTeam: team }),
+  setDescription: (descriptionText) => set({ description: descriptionText }),
   setPrefillOdds: (odds) => set({ prefillOdds: odds }),
   clearPrefill: () => set({ prefillTeam: '', prefillOdds: null }),
 });
