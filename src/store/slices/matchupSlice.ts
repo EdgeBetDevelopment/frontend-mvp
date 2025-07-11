@@ -16,10 +16,16 @@ interface IMatchupState {
     selected_team_name: string;
   };
 
+  prefillTeam: string;
+  prefillOdds: number | null;
+
   setTrackedGame: (trackedGame: null | IGameWithAI) => void;
   setSelectedGame: (selectedGame: null | IGameWithAI) => void;
   setBetInfoField: (field: keyof IMatchupState['betInfo'], value: any) => void;
   setIsAmerican: (val: boolean) => void;
+  setPrefillTeam: (team: string) => void;
+  setPrefillOdds: (odds: number) => void;
+  clearPrefill: () => void;
 }
 
 export const matchupSlice: StateCreator<IMatchupState> = (set) => ({
@@ -34,6 +40,8 @@ export const matchupSlice: StateCreator<IMatchupState> = (set) => ({
     selected_team_id: '',
     selected_team_name: '',
   },
+  prefillTeam: '',
+  prefillOdds: null,
 
   setTrackedGame: (trackedGame) => set({ trackedGame }),
   setSelectedGame: (selectedGame) => set({ selectedGame }),
@@ -45,4 +53,7 @@ export const matchupSlice: StateCreator<IMatchupState> = (set) => ({
         [field]: value,
       },
     })),
+  setPrefillTeam: (team) => set({ prefillTeam: team }),
+  setPrefillOdds: (odds) => set({ prefillOdds: odds }),
+  clearPrefill: () => set({ prefillTeam: '', prefillOdds: null }),
 });

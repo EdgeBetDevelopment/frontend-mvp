@@ -68,11 +68,13 @@ const GameCard = ({
 
         <Separator />
 
-        {isAuthenticated && <GameBets game={game} />}
+        {isAuthenticated && (
+          <GameBets onClickTrackBet={onClickTrackBet} game={game} />
+        )}
 
-        <Button onClick={onClickTrackBet} variant="gradient" className="w-full">
+        {/* <Button onClick={onClickTrackBet} variant="gradient" className="w-full">
           Track bet
-        </Button>
+        </Button> */}
       </div>
     </CardContainer>
   );
@@ -128,7 +130,13 @@ export const GameCardHeader = ({ game }: { game: IGameWithAI }) => {
   );
 };
 
-const GameBets = ({ game }: { game: IGameWithAI }) => {
+const GameBets = ({
+  game,
+  onClickTrackBet,
+}: {
+  game: IGameWithAI;
+  onClickTrackBet: () => void;
+}) => {
   const isAmerican = useStore((state) => state.isAmerican);
 
   return (
@@ -142,7 +150,13 @@ const GameBets = ({ game }: { game: IGameWithAI }) => {
           {game.prediction?.value_bets
             ?.slice(0, 3)
             .map((bet, index) => (
-              <GameBetsItem isAmerican={isAmerican} key={index} text={bet} />
+              <GameBetsItem
+                onClickTrackBet={onClickTrackBet}
+                game={game}
+                isAmerican={isAmerican}
+                key={index}
+                text={bet}
+              />
             ))}
         </div>
       </div>
@@ -156,7 +170,13 @@ const GameBets = ({ game }: { game: IGameWithAI }) => {
           {game.prediction?.conservative_bets
             ?.slice(0, 3)
             .map((bet, index) => (
-              <GameBetsItem isAmerican={isAmerican} key={index} text={bet} />
+              <GameBetsItem
+                onClickTrackBet={onClickTrackBet}
+                game={game}
+                isAmerican={isAmerican}
+                key={index}
+                text={bet}
+              />
             ))}
         </div>
       </div>
@@ -167,27 +187,42 @@ const GameBets = ({ game }: { game: IGameWithAI }) => {
 const GameBetsItem = ({
   text,
   isAmerican,
+  game,
+  onClickTrackBet,
 }: {
   text: string;
   isAmerican: boolean;
+  game: IGameWithAI;
+  onClickTrackBet: () => void;
 }) => {
+  const { setTrackedGame, setPrefillTeam, setPrefillOdds } = useStore();
+
   const oddsMatch = text.match(/\(([-+]?\d+)\)/);
   const odds = oddsMatch ? parseInt(oddsMatch[1], 10) : null;
 
+  const teamMatch = text.match(/; ([^.;\n]+)/);
+  const team = teamMatch ? teamMatch[1].trim() : '';
+
+  const decimalOdds =
+    odds !== null ? convertAmericanToDecimal(odds).toFixed(2) : '';
+
   const displayedText =
     odds !== null && !isAmerican
-      ? text
-          .split(':')[0]
-          .replace(
-            /\(([-+]?\d+)\)/,
-            `(${convertAmericanToDecimal(odds).toFixed(2)})`,
-          )
+      ? text.split(':')[0].replace(/\(([-+]?\d+)\)/, `(${decimalOdds})`)
       : text.split(':')[0];
+
+  const handleClick = (team: string, odds: number) => {
+    setTrackedGame(game);
+    setPrefillTeam(team);
+    setPrefillOdds(odds);
+    onClickTrackBet();
+  };
 
   return (
     <Badge
       variant="mistBlue"
-      className="text-text-primary w-full rounded-[10px] bg-green-700 px-3 py-1.5 text-center text-base font-semibold break-words whitespace-normal"
+      className="text-text-primary w-full cursor-pointer rounded-[10px] bg-green-700 px-3 py-1.5 text-center text-base font-semibold break-words whitespace-normal"
+      onClick={() => handleClick(team, odds as number)}
     >
       {displayedText}
     </Badge>

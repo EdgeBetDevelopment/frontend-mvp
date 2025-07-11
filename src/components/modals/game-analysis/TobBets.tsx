@@ -11,7 +11,7 @@ const TopBets = ({
   const isAmerican = useStore((state) => state.isAmerican);
 
   const splitBetText = (text: string, isAmerican: boolean) => {
-    const [beforeRaw, after] = text.split(':');
+    const [beforeRaw, afterRaw] = text.split(':');
     let before = beforeRaw?.trim() || text;
 
     const oddsMatch = before.match(/\(([-+]?\d+)\)/);
@@ -22,9 +22,15 @@ const TopBets = ({
       before = before.replace(/\(([-+]?\d+)\)/, `(${decimalOdds})`);
     }
 
+    let after = afterRaw?.trim();
+
+    if (after?.includes(';')) {
+      after = after.split(';')[0].trim();
+    }
+
     return {
       before,
-      after: after?.trim(),
+      after,
     };
   };
 

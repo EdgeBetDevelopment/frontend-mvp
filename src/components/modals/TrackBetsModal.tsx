@@ -16,6 +16,7 @@ import { useStore } from '@/store';
 import { IGameWithAI } from '@/types/game';
 import { Button } from '@/ui/button';
 import Loader from '@/ui/loader';
+import { convertAmericanToDecimal } from '@/utils/convertAmericanToDecimal';
 import { Form } from '../../ui/form';
 
 import GameAnalysisModal from './game-analysis';
@@ -43,9 +44,18 @@ const TrackBetsModal = ({
 
   onClose: () => void;
 }) => {
-  const { setTrackedGame, setSelectedGame, trackedGame } = useStore();
+  const {
+    setTrackedGame,
+    setSelectedGame,
+    trackedGame,
+    prefillTeam,
+    prefillOdds,
+    clearPrefill,
+    isAmerican,
+  } = useStore();
   const { openModal, closeModal, isModalOpen } = useModalManager();
   const { isAuthenticated } = useAuth();
+
   console.log(trackedGame);
 
   const { mutate, isPending: isPendingCreateBet } = useMutation({
@@ -88,6 +98,22 @@ const TrackBetsModal = ({
     mode: 'onChange',
   });
 
+  useEffect(() => {
+    if (isOpen && prefillOdds !== null) {
+      const oddsToSet = Math.abs(
+        isAmerican
+          ? (prefillOdds ?? 0)
+          : convertAmericanToDecimal(prefillOdds ?? 0),
+      );
+
+      form.reset({
+        team: prefillTeam || '',
+        odds: oddsToSet,
+        amount: 0,
+      });
+    }
+  }, [isOpen, trackedGame, isAmerican, form, prefillTeam, prefillOdds]);
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
     const body = {
       selected_team_id: String(1),
@@ -96,6 +122,8 @@ const TrackBetsModal = ({
       nba_game_id: Number(trackedGame?.game.id),
       odds: values.odds,
       amount: values.amount,
+      sport: 'nba',
+      description: 'Test',
     };
 
     try {
@@ -126,19 +154,19 @@ const TrackBetsModal = ({
   //   mutate(body);
   // }
 
-  useEffect(() => {
-    clearForm();
-  }, [isOpen, trackedGame]);
+  // useEffect(() => {
+  //   clearForm();
+  // }, [isOpen, trackedGame]);
 
-  const clearForm = () => {
-    if (isOpen && trackedGame) {
-      form.reset({
-        team: '',
-        odds: 0,
-        amount: 0,
-      });
-    }
-  };
+  // const clearForm = () => {
+  //   if (isOpen && trackedGame) {
+  //     form.reset({
+  //       team: '',
+  //       odds: 0,
+  //       amount: 0,
+  //     });
+  //   }
+  // };
 
   const onClickFullAnalysis = (game: IGameWithAI) => {
     if (!isAuthenticated) {
