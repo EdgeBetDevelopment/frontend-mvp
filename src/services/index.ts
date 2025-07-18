@@ -35,7 +35,13 @@ const apiService = {
     const response = await axiosInstance.get(
       `/api/v1/nba/get_player_by_id/${query}`,
     );
+    return response.data;
+  },
 
+  async getPlayerByName(query: string): Promise<any> {
+    const response = await axiosInstance.get(
+      `/api/v1/nba/get_player_stats_by_name/${query}`,
+    );
     return response.data;
   },
 

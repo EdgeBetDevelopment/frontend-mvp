@@ -1,6 +1,8 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { FaCircleUser } from 'react-icons/fa6';
 
@@ -17,7 +19,16 @@ const PlayerProfile = () => {
   const params = useParams();
   const playerId = params?.id as string;
 
-  const { data: player, error, isLoading } = usePlayer(playerId as string);
+  const {
+    data: player,
+    playerNameData,
+    error,
+    isLoading,
+  } = usePlayer(playerId as string);
+
+  const { profile } = playerNameData || {};
+
+  console.log(player, playerNameData);
 
   if (isLoading)
     return (
@@ -45,49 +56,93 @@ const PlayerProfile = () => {
 
   return (
     <div className="flex w-full flex-col items-center">
-      <div className="flex flex-col items-center gap-1.5">
-        <FaCircleUser className="h-14 w-14" />
-        <h3 className="mb-2 text-2xl font-bold">
-          {player?.full_name || 'Jayson Tatum'}
-        </h3>
+      <div className="relative flex w-full flex-row justify-center">
+        <div className="flex flex-col items-center gap-1.5">
+          {playerNameData?.image_url ? (
+            <Image
+              src={`${playerNameData?.image_url}`}
+              height={56}
+              width={68}
+              className="h-14 w-17 rounded-full"
+              alt="Player Logo"
+            />
+          ) : (
+            <FaCircleUser className="h-14 w-14" />
+          )}
+          <h3 className="mb-2 text-2xl font-bold">
+            {player?.full_name || 'Jayson Tatum'}
+          </h3>
+        </div>
       </div>
 
       {!isLastGames && (
         <>
           <div className="mb-8 flex flex-col gap-[2px]">
-            <p className="text-[14px] opacity-60">Total score</p>
+            {/* <p className="text-[14px] opacity-60">Total score</p>
             <h2 className="text-2xl font-bold text-[#84FDF7]">
               {(
                 player?.player_stats[0]?.PTS / player?.player_stats[0]?.GP
               ).toFixed(1)}
-            </h2>
+            </h2> */}
+            <Link
+              className="mb-8 w-full max-w-[558px] text-center text-[#B3B3B3] hover:text-[#fff]"
+              href={`/team/${playerNameData?.team_details[0]?.id}`}
+            >
+              {playerNameData?.team_details[0]?.full_name}
+            </Link>
           </div>
-          <p className="mb-8 w-full max-w-[558px] text-center text-[#B3B3B3]">
+          {/* <p className="mb-8 w-full max-w-[558px] text-center text-[#B3B3B3]">
             Professional sports analyst with expertise in NFL, NCAAF, and AFL
             predictions. Specialized in championship and playoff game analysis
             with consistent accuracy in major event outcomes.
-          </p>
-          <div className="flex w-full flex-row items-stretch justify-between gap-10 px-15">
-            <div className="flex w-full max-w-[374px] flex-col gap-5">
-              <div className="bg-top-section flex flex-row gap-4 rounded-xl px-5 py-4">
-                <div className="flex w-full flex-col items-center gap-1 rounded-xl bg-[#34D4414D] py-1">
-                  <h3 className="text-2xl font-semibold text-[#34D399]">80</h3>
-                  <p className="text-xs font-normal text-[#EBEBEB]">Wins</p>
+          </p> */}
+          <div className="flex w-full flex-row items-stretch justify-center gap-10">
+            {/* <div className="flex w-full max-w-[400px] flex-col gap-5">
+              <div className="bg-graph-section h-full min-h-[200px] min-w-[374px] rounded-xl"></div>
+            </div> */}
+
+            <div className="flex w-full flex-row justify-between px-13">
+              <div className="flex flex-col gap-4">
+                <div className="bg-top-section flex flex-row gap-4 rounded-xl px-5 py-4">
+                  {profile &&
+                    Object.entries(profile)
+                      .slice(0, 3)
+                      .map(([label, value], idx) => {
+                        return (
+                          <div
+                            key={idx}
+                            className={`flex w-full flex-col items-center gap-1 rounded-xl bg-[#34a1d3] py-1`}
+                          >
+                            <h3 className="text-2xl font-semibold">
+                              {String(value ?? 'N/A')}
+                            </h3>
+                            <p className="text-xs font-normal text-[#EBEBEB]">
+                              {label}
+                            </p>
+                          </div>
+                        );
+                      })}
                 </div>
-                <div className="flex w-full flex-col items-center gap-1 rounded-xl bg-[#D877294D] py-1">
-                  <h3 className="text-2xl font-semibold text-[#FF9812]">70</h3>
-                  <p className="text-xs font-normal text-[#EBEBEB]">Draws</p>
-                </div>
-                <div className="flex w-full flex-col items-center gap-1 rounded-xl bg-[#DF303033] py-1">
-                  <h3 className="text-2xl font-semibold text-[#DC2626]">20</h3>
-                  <p className="text-xs font-normal text-[#EBEBEB]">Losses</p>
+                <div className="bg-top-section left-0 flex h-auto w-[434px] flex-row flex-wrap gap-4 rounded-xl px-5 py-4">
+                  {profile &&
+                    Object.entries(profile)
+                      .slice(3)
+                      .map(([label, value], idx) => (
+                        <div
+                          key={idx}
+                          className="flex h-[60px] w-full max-w-[120px] flex-col items-center gap-1 rounded-xl bg-[#34a1d3] py-1"
+                        >
+                          <h3 className="text-2xl font-semibold text-[#EBEBEB]">
+                            {String(value ?? 'N/A')}
+                          </h3>
+                          <p className="text-xs font-normal text-[#EBEBEB]">
+                            {label}
+                          </p>
+                        </div>
+                      ))}
                 </div>
               </div>
-              <div className="bg-graph-section h-full min-h-[200px] min-w-[374px] rounded-xl"></div>
-            </div>
-
-            <div className="w-full max-w-[926px]">
-              <LeagueTable />
+              <LeagueTable recentGames={playerNameData?.recent_games} />
             </div>
           </div>
         </>
@@ -103,9 +158,7 @@ const PlayerProfile = () => {
               <div className="bg-top-section flex flex-row gap-4 rounded-xl px-5 py-4"></div>
               <div className="bg-graph-section min-h-[244px] min-w-[374px] rounded-xl"></div>
             </div>
-            <div className="w-full max-w-[926px]">
-              <LeagueTable />
-            </div>
+            <div className="w-full max-w-[926px]">{/* <LeagueTable /> */}</div>
           </div>
         </>
       )}

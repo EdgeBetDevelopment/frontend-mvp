@@ -39,28 +39,15 @@ interface PlayerStatsTableProps {
 
 const statOrder: { key: keyof PlayerSeasonStats | 'TS_PCT'; label: string }[] =
   [
-    { key: 'SEASON_ID', label: 'Season' },
-    { key: 'GP', label: 'GP' },
-    { key: 'MIN', label: 'MIN' },
-    { key: 'PTS', label: 'PTS' },
-    { key: 'REB', label: 'REB' },
-    { key: 'AST', label: 'AST' },
-    { key: 'STL', label: 'STL' },
-    { key: 'BLK', label: 'BLK' },
-    { key: 'FGM', label: 'FGM' },
-    { key: 'FGA', label: 'FGA' },
+    { key: 'PTS', label: 'PPG' },
+    { key: 'REB', label: 'RPG' },
+    { key: 'AST', label: 'APG' },
+    { key: 'STL', label: 'SPG' },
+    { key: 'BLK', label: 'BPG' },
     { key: 'FG_PCT', label: 'FG%' },
-    { key: 'FG3M', label: '3PM' },
-    { key: 'FG3A', label: '3PA' },
-    { key: 'FG3_PCT', label: '3P%' },
-    { key: 'FTM', label: 'FTM' },
-    { key: 'FTA', label: 'FTA' },
     { key: 'FT_PCT', label: 'FT%' },
     { key: 'TS_PCT', label: 'TS%' },
-    { key: 'OREB', label: 'OREB' },
-    { key: 'DREB', label: 'DREB' },
-    { key: 'TOV', label: 'TOV' },
-    { key: 'PF', label: 'PF' },
+    { key: 'MIN', label: 'MPG' },
   ];
 
 export const PlayerStatsTable = ({ stats }: PlayerStatsTableProps) => {
@@ -69,10 +56,23 @@ export const PlayerStatsTable = ({ stats }: PlayerStatsTableProps) => {
   const percent = (value: number) =>
     Number.isFinite(value) ? (value * 100).toFixed(1) : '-';
 
+  const currentYear = new Date().getFullYear() - 1;
+  const seasonText = `${currentYear} - ${String(currentYear + 1).slice(2)}`;
+  const seasonId = `${currentYear}-${String(currentYear + 1).slice(2)}`;
+  const seasonStats = stats.find((s) => s.SEASON_ID === seasonId);
+
+  if (!seasonStats) return null;
+
+  const gp = seasonStats.GP || 1;
+  const ts =
+    seasonStats.PTS && seasonStats.FGA && seasonStats.FTA
+      ? seasonStats.PTS / (2 * (seasonStats.FGA + 0.44 * seasonStats.FTA))
+      : undefined;
+
   return (
     <div className="border-border rounded-lg border bg-[#1A1A1A] p-4">
       <h3 className="mb-4 text-lg font-semibold text-white">
-        Total Season Stats
+        {`Current Season Stats - (${seasonText})`}
       </h3>
       <div className="w-full overflow-x-auto">
         <Table>
@@ -89,42 +89,30 @@ export const PlayerStatsTable = ({ stats }: PlayerStatsTableProps) => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {stats.map((row) => {
-              const gp = row.GP || 1;
-              const ts =
-                row.PTS && row.FGA && row.FTA
-                  ? row.PTS / (2 * (row.FGA + 0.44 * row.FTA))
-                  : undefined;
+            <TableRow>
+              {statOrder.map(({ key }) => {
+                if (key === 'SEASON_ID')
+                  return (
+                    <TableCell key={key}>{seasonStats.SEASON_ID}</TableCell>
+                  );
+                if (key === 'GP')
+                  return <TableCell key={key}>{seasonStats.GP}</TableCell>;
+                if (key === 'TS_PCT')
+                  return <TableCell key={key}>{percent(ts ?? 0)}</TableCell>;
 
-              return (
-                <TableRow key={row.SEASON_ID}>
-                  {statOrder.map(({ key }) => {
-                    if (key === 'SEASON_ID')
-                      return <TableCell key={key}>{row.SEASON_ID}</TableCell>;
-                    if (key === 'GP')
-                      return <TableCell key={key}>{row.GP}</TableCell>;
-                    if (key === 'TS_PCT')
-                      return (
-                        <TableCell key={key}>{percent(ts ?? 0)}</TableCell>
-                      );
+                const value = seasonStats[key as keyof PlayerSeasonStats];
+                if (key.includes('PCT'))
+                  return (
+                    <TableCell key={key}>{percent(value as number)}</TableCell>
+                  );
 
-                    const value = row[key as keyof PlayerSeasonStats];
-                    if (key.includes('PCT'))
-                      return (
-                        <TableCell key={key}>
-                          {percent(value as number)}
-                        </TableCell>
-                      );
-
-                    return (
-                      <TableCell key={key}>
-                        {format((value as number) / gp)}
-                      </TableCell>
-                    );
-                  })}
-                </TableRow>
-              );
-            })}
+                return (
+                  <TableCell key={key}>
+                    {format((value as number) / gp)}
+                  </TableCell>
+                );
+              })}
+            </TableRow>
           </TableBody>
         </Table>
       </div>
