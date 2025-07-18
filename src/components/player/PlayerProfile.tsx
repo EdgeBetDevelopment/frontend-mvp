@@ -163,12 +163,12 @@ const PlayerProfile = () => {
         </>
       )}
 
-      <div className="my-10 min-h-[244px] w-full min-w-[374px]">
-        <PlayerStatsChart data={player.player_stats} />
+      <div className="mt-10 w-full">
+        <PlayerStatsTable stats={player.player_stats} />
       </div>
 
-      <div className="w-full">
-        <PlayerStatsTable stats={player.player_stats} />
+      <div className="my-10 min-h-[244px] w-full min-w-[374px]">
+        <PlayerStatsChart data={player.player_stats} />
       </div>
     </div>
   );
