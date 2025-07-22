@@ -124,45 +124,47 @@ const TrackGameCard = ({
         </div>
 
         {/* Team Selection */}
-        <div className="flex flex-col gap-3">
-          <p className="text-text-dark mb-3 block text-lg font-normal tracking-normal">
-            Choose a team to track:
-          </p>
-          <div className="flex justify-around gap-4">
-            <Button
-              type="button"
-              variant={
-                selectedTeam === game.game.home_team ? 'mistBlue' : 'outline'
-              }
-              className="flex flex-1 items-center gap-2"
-              onClick={() => handleTeamSelect(game.game.home_team)}
-            >
-              <Avatar className="h-6 w-6">
-                <AvatarImage src={game.game.home_team_logo} />
-              </Avatar>
-              {game.game.home_team}
-            </Button>
-
-            <Button
-              type="button"
-              variant={
-                selectedTeam === game.game.away_team ? 'mistBlue' : 'outline'
-              }
-              className="flex flex-1 items-center gap-2"
-              onClick={() => handleTeamSelect(game.game.away_team)}
-            >
-              <Avatar className="h-6 w-6">
-                <AvatarImage src={game.game.away_team_logo} />
-              </Avatar>
-              {game.game.away_team}
-            </Button>
-          </div>
-          {errors.team && (
-            <p className="text-destructive text-sm">
-              {errors.team.message as string}
+        {selectedTeam && (
+          <div className="flex flex-col gap-3">
+            <p className="text-text-dark mb-3 block text-lg font-normal tracking-normal">
+              Choose a team to track:
             </p>
-          )}
-        </div>
+            <div className="flex justify-around gap-4">
+              <Button
+                type="button"
+                variant={
+                  selectedTeam === game.game.home_team ? 'mistBlue' : 'outline'
+                }
+                className="flex flex-1 items-center gap-2"
+                onClick={() => handleTeamSelect(game.game.home_team)}
+              >
+                <Avatar className="h-6 w-6">
+                  <AvatarImage src={game.game.home_team_logo} />
+                </Avatar>
+                {game.game.home_team}
+              </Button>
+
+              <Button
+                type="button"
+                variant={
+                  selectedTeam === game.game.away_team ? 'mistBlue' : 'outline'
+                }
+                className="flex flex-1 items-center gap-2"
+                onClick={() => handleTeamSelect(game.game.away_team)}
+              >
+                <Avatar className="h-6 w-6">
+                  <AvatarImage src={game.game.away_team_logo} />
+                </Avatar>
+                {game.game.away_team}
+              </Button>
+            </div>
+            {errors.team && (
+              <p className="text-destructive text-sm">
+                {errors.team.message as string}
+              </p>
+            )}
+          </div>
+        )}
 
         <div className="flex flex-col items-center gap-4">
           <div className="w-full">
