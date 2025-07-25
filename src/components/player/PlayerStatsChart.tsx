@@ -49,7 +49,7 @@ const PlayerStatsChart: FC<PlayerStatsChartProps> = ({ data }) => {
     }));
 
   return (
-    <div className="bg-graph-section border-border w-full rounded-lg border p-4 pb-6">
+    <div className="bg-graph-section w-full rounded-lg p-4 pb-6">
       <h3 className="text-lg font-semibold text-white">Performance Trend</h3>
       <p className="mb-4 text-xs text-[#aaa]">Per-game averages per season</p>
 

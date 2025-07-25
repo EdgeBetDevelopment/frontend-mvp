@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { Outfit } from 'next/font/google';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
@@ -13,6 +14,12 @@ import EmptyPlaceholder from '../EmptyPlaceholder';
 import LeagueTable from './LeagueTable';
 import { PlayerStatsTable } from './PlayerSeasonStats';
 import PlayerStatsChart from './PlayerStatsChart';
+
+const outfit = Outfit({
+  subsets: ['latin'],
+  weight: ['400', '600', '700'],
+  display: 'swap',
+});
 
 const PlayerProfile = () => {
   const [isLastGames, setIsLastGames] = useState(false);
@@ -101,45 +108,30 @@ const PlayerProfile = () => {
               <div className="bg-graph-section h-full min-h-[200px] min-w-[374px] rounded-xl"></div>
             </div> */}
 
-            <div className="flex w-full flex-row justify-between px-13">
+            <div
+              className={`${outfit.className} flex w-full flex-row justify-between px-13`}
+            >
               <div className="flex flex-col gap-4">
-                <div className="bg-top-section flex flex-row gap-4 rounded-xl px-5 py-4">
+                <div
+                  style={{
+                    background: `linear-gradient(112.71deg, rgba(23, 23, 23, 0.6) 19.64%, rgba(105, 105, 105, 0.316464) 55.1%, rgba(125, 125, 125, 0.06) 92%)`,
+                  }}
+                  className="left-0 flex h-auto w-[434px] flex-row flex-wrap gap-4 rounded-xl px-5 py-4"
+                >
                   {profile &&
-                    Object.entries(profile)
-                      .slice(0, 3)
-                      .map(([label, value], idx) => {
-                        return (
-                          <div
-                            key={idx}
-                            className={`flex w-full flex-col items-center gap-1 rounded-xl bg-[#34a1d3] py-1`}
-                          >
-                            <h3 className="text-2xl font-semibold">
-                              {String(value ?? 'N/A')}
-                            </h3>
-                            <p className="text-xs font-normal text-[#EBEBEB]">
-                              {label}
-                            </p>
-                          </div>
-                        );
-                      })}
-                </div>
-                <div className="bg-top-section left-0 flex h-auto w-[434px] flex-row flex-wrap gap-4 rounded-xl px-5 py-4">
-                  {profile &&
-                    Object.entries(profile)
-                      .slice(3)
-                      .map(([label, value], idx) => (
-                        <div
-                          key={idx}
-                          className="flex h-[60px] w-full max-w-[120px] flex-col items-center gap-1 rounded-xl bg-[#34a1d3] py-1"
-                        >
-                          <h3 className="text-2xl font-semibold text-[#EBEBEB]">
-                            {String(value ?? 'N/A')}
-                          </h3>
-                          <p className="text-xs font-normal text-[#EBEBEB]">
-                            {label}
-                          </p>
-                        </div>
-                      ))}
+                    Object.entries(profile).map(([label, value], idx) => (
+                      <div
+                        key={idx}
+                        className="flex h-[60px] max-w-[120px] min-w-[100px] flex-1 flex-col items-center justify-center gap-1 rounded-xl bg-[#85FDF7] py-1"
+                      >
+                        <h3 className="text-2xl font-semibold text-black">
+                          {String(value ?? 'N/A')}
+                        </h3>
+                        <p className="text-xs font-normal text-black">
+                          {label}
+                        </p>
+                      </div>
+                    ))}
                 </div>
               </div>
               <LeagueTable recentGames={playerNameData?.recent_games} />

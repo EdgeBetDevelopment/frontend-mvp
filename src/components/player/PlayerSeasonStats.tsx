@@ -1,5 +1,6 @@
 'use client';
 
+import { cn } from '@/lib/utils';
 import {
   Table,
   TableBody,
@@ -70,18 +71,37 @@ export const PlayerStatsTable = ({ stats }: PlayerStatsTableProps) => {
       : undefined;
 
   return (
-    <div className="border-border rounded-lg border bg-[#1A1A1A] p-4">
+    <div
+      className="rounded-xl p-4 backdrop-blur-[20px] backdrop-saturate-150"
+      style={{
+        backgroundSize: 'cover',
+        background: `linear-gradient(109.21deg, rgba(23, 23, 23, 0.6) 20.66%, rgba(105, 105, 105, 0.316464) 61.53%, rgba(125, 125, 125, 0.06) 104.05%)`,
+      }}
+    >
       <h3 className="mb-4 text-lg font-semibold text-white">
         {`Current Season Stats - (${seasonText})`}
       </h3>
       <div className="w-full overflow-x-auto">
-        <Table>
+        <Table
+          style={{
+            borderCollapse: 'separate',
+            borderSpacing: '0',
+          }}
+        >
           <TableHeader>
             <TableRow>
-              {statOrder.map((stat) => (
+              {statOrder.map((stat, index) => (
                 <TableHead
                   key={stat.key}
-                  className="whitespace-nowrap text-white"
+                  style={{
+                    borderBottom: '1px solid var(--Border-primary, #484848)',
+                    borderCollapse: `separate`,
+                  }}
+                  className={cn(
+                    'whitespace-nowrap text-white',
+                    index === 0 && 'rounded-bl-[12px]',
+                    index === statOrder.length - 1 && 'rounded-br-[12px]',
+                  )}
                 >
                   {stat.label}
                 </TableHead>
