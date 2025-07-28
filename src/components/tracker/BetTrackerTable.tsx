@@ -142,7 +142,7 @@ const BetTrackerTable = () => {
             <Table>
               <TableHeader>
                 <TableRow>
-                  {TABLE_FIELDS.map((col) => (
+                  {TABLE_FIELDS?.map((col) => (
                     <TableHead
                       key={col.field}
                       sortable={col.sortable}
@@ -156,36 +156,41 @@ const BetTrackerTable = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {bets.map((data) => (
-                  <TableRow key={data.id}>
-                    <TableCell>
-                      {formatUtcToLocalDate(data.created_at.toString())}
-                    </TableCell>
-                    <TableCell>
-                      {data.game.home_team} vs {data.game.away_team}
-                    </TableCell>
-                    <TableCell>
-                      You placed a bet of ${data.amount} on the{' '}
-                      {data?.payload.description}
-                    </TableCell>
-                    <TableCell>{data.amount}</TableCell>
-                    <TableCell>{data?.payload.odds_at_bet_time}</TableCell>
-                    <TableCell>
-                      <Badge
-                        className="w-full max-w-[85px] py-2 capitalize"
-                        variant={
-                          data.status === 'won'
-                            ? 'green'
-                            : data.status === 'pending'
-                              ? 'orange'
-                              : 'red'
-                        }
-                      >
-                        {data.status}
-                      </Badge>
-                    </TableCell>
-                  </TableRow>
-                ))}
+                {bets.map((bet) =>
+                  bet?.selections?.map((selection, idx) => (
+                    <TableRow key={`${bet.id}-${idx}`}>
+                      <TableCell>
+                        {formatUtcToLocalDate(bet?.created_at?.toString())}
+                      </TableCell>
+                      <TableCell>
+                        {selection?.payload?.selected_team_name} vs{' '}
+                        {selection?.game?.away_team}
+                      </TableCell>
+                      <TableCell>
+                        You placed a bet of ${selection?.amount} on the{' '}
+                        {selection?.payload?.description}
+                      </TableCell>
+                      <TableCell>{selection?.amount}</TableCell>
+                      <TableCell>
+                        {selection?.payload?.odds_at_bet_time}
+                      </TableCell>
+                      <TableCell>
+                        <Badge
+                          className="w-full max-w-[85px] py-2 capitalize"
+                          variant={
+                            bet?.status === 'won'
+                              ? 'green'
+                              : bet?.status === 'pending'
+                                ? 'orange'
+                                : 'red'
+                          }
+                        >
+                          {bet.status}
+                        </Badge>
+                      </TableCell>
+                    </TableRow>
+                  )),
+                )}
               </TableBody>
             </Table>
           )}

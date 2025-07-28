@@ -195,28 +195,36 @@ const GameBetsItem = ({
   game: IGameWithAI;
   onClickTrackBet: () => void;
 }) => {
-  const { setTrackedGame, setPrefillTeam, setPrefillOdds, setDescription } =
-    useStore();
+  const { setTrackedGame, addOrUpdatePrefillBet } = useStore();
 
   const oddsMatch = text.match(/\(([-+]?\d+)\)/);
   const odds = oddsMatch ? parseInt(oddsMatch[1], 10) : null;
 
   const teamMatch = text.match(/; ([^.;\n]+)/);
   const team = teamMatch ? teamMatch[1].trim() : '';
-
   const decimalOdds =
     odds !== null ? convertAmericanToDecimal(odds).toFixed(2) : '';
-
+  console.log(team);
   const displayedText =
     odds !== null && !isAmerican
-      ? text.split(':')[0].replace(/\(([-+]?\d+)\)/, `(${decimalOdds})`)
-      : text.split(':')[0];
+      ? text
+          .split(':')[0]
+          .replace(/\(([-+]?\d+)\)/, `(${decimalOdds})`)
+          .replace(/\[.*?\]/g, '')
+          .trim()
+      : text
+          .split(':')[0]
+          .replace(/\[.*?\]/g, '')
+          .trim();
 
-  const handleClick = (team: string, odds: number, displayedText: string) => {
+  const handleClick = (team: string, odds: number) => {
     setTrackedGame(game);
-    setPrefillTeam(team);
-    setPrefillOdds(odds);
-    setDescription(displayedText);
+    addOrUpdatePrefillBet({
+      id: crypto.randomUUID(),
+      team,
+      odds,
+      description: text,
+    });
     onClickTrackBet();
   };
 
@@ -224,7 +232,7 @@ const GameBetsItem = ({
     <Badge
       variant="mistBlue"
       className="text-text-primary w-full cursor-pointer rounded-[10px] bg-green-700 px-3 py-1.5 text-center text-base font-semibold break-words whitespace-normal"
-      onClick={() => handleClick(team, odds as number, displayedText)}
+      onClick={() => handleClick(team, odds as number)}
     >
       {displayedText}
     </Badge>

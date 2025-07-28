@@ -1,9 +1,7 @@
 'use client';
 
-import React, { useEffect } from 'react';
-import { zodResolver } from '@hookform/resolvers/zod';
+import React from 'react';
 import { useMutation } from '@tanstack/react-query';
-import { FormProvider, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
@@ -16,8 +14,6 @@ import { useStore } from '@/store';
 import { IGameWithAI } from '@/types/game';
 import { Button } from '@/ui/button';
 import Loader from '@/ui/loader';
-import { convertAmericanToDecimal } from '@/utils/convertAmericanToDecimal';
-import { Form } from '../../ui/form';
 
 import GameAnalysisModal from './game-analysis';
 
@@ -46,24 +42,23 @@ const TrackBetsModal = ({
 }) => {
   const {
     setTrackedGame,
-    description,
+    prefillBets,
     setSelectedGame,
     trackedGame,
-    prefillTeam,
-    prefillOdds,
-    clearPrefill,
+    clearPrefillBets,
     isAmerican,
+    removePrefillBetById,
   } = useStore();
   const { openModal, closeModal, isModalOpen } = useModalManager();
   const { isAuthenticated } = useAuth();
 
-  console.log(trackedGame);
+  console.log(prefillBets);
 
   const { mutate, isPending: isPendingCreateBet } = useMutation({
     mutationFn: async (body: any) => apiService.createBet(body),
 
     onSuccess: () => {
-      form.reset();
+      clearPrefillBets();
       toast.success('Bet created successfully');
       onClose();
     },
@@ -88,52 +83,39 @@ const TrackBetsModal = ({
     },
   });
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      team: '',
-      odds: 0,
-      amount: 0,
-    },
-
-    mode: 'onChange',
-  });
-
-  useEffect(() => {
-    if (isOpen && prefillOdds !== null) {
-      const oddsToSet = Math.abs(
-        isAmerican
-          ? (prefillOdds ?? 0)
-          : convertAmericanToDecimal(prefillOdds ?? 0),
-      );
-
-      form.reset({
-        team: prefillTeam || '',
-        odds: oddsToSet,
-        amount: 0,
-      });
-    }
-  }, [isOpen, trackedGame, isAmerican, form, prefillTeam, prefillOdds]);
-
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    const body = {
-      selected_team_id: String(1),
-      selected_team_name: values.team,
-      game_id: 1,
-      nba_game_id: Number(trackedGame?.game.id),
-      odds: values.odds,
-      amount: values.amount,
-      sport: 'nba',
-      description,
-    };
+  const onSubmit = async () => {
+    if (!trackedGame) return;
 
     try {
-      findTeam(values.team);
+      const bets = prefillBets.map((bet) => {
+        if (!bet.team || bet.odds === null) throw new Error('Invalid bet');
+
+        findTeam(bet.team);
+
+        return {
+          selected_team_id: String(1),
+          selected_team_name: bet.team,
+          game_id: 1,
+          nba_game_id: Number(trackedGame.game.id),
+          odds: bet.odds,
+          amount: bet.amount,
+          sport: 'nba',
+          description: bet.description,
+        };
+      });
+
+      const totalAmount = bets.reduce((sum, bet) => sum + (bet.amount || 0), 0);
+
+      const body = {
+        amount: totalAmount,
+        bets,
+      };
+
       mutate(body);
     } catch (error) {
-      console.error('Failed to find team, not mutating');
+      console.error('Failed to prepare bet submission:', error);
     }
-  }
+  };
 
   const isLoading = isPendingCreateBet || isPendingFindTeam;
 
@@ -200,33 +182,28 @@ const TrackBetsModal = ({
               Select The Game
             </div>
           ) : (
-            <FormProvider {...form}>
-              <Form {...form}>
-                <form
-                  className="flex h-full flex-col gap-3"
-                  onSubmit={form.handleSubmit(onSubmit)}
-                >
-                  <div className="flex-1">
-                    <TrackGameCard
-                      game={trackedGame}
-                      onClickFullAnalysis={() =>
-                        onClickFullAnalysis(trackedGame)
-                      }
-                      onClickClearTrackBet={() => {}}
-                    />
-                  </div>
+            <div className="flex flex-1 flex-col gap-3 overflow-auto">
+              {prefillBets?.map((bet, index) => (
+                <TrackGameCard
+                  key={index}
+                  index={index}
+                  game={trackedGame}
+                  onClickFullAnalysis={() => onClickFullAnalysis(trackedGame)}
+                  onClickClearTrackBet={() => removePrefillBetById(bet.id)}
+                />
+              ))}
 
-                  <Button
-                    disabled={isLoading}
-                    type="submit"
-                    variant="gradient"
-                    size="lg"
-                  >
-                    {isLoading ? <Loader /> : <>Track Bet</>}
-                  </Button>
-                </form>
-              </Form>
-            </FormProvider>
+              {prefillBets.length > 0 && (
+                <Button
+                  disabled={isLoading}
+                  onClick={onSubmit}
+                  variant="gradient"
+                  size="lg"
+                >
+                  {isLoading ? <Loader /> : <>Track Bet</>}
+                </Button>
+              )}
+            </div>
           )}
         </SheetContent>
       </Sheet>

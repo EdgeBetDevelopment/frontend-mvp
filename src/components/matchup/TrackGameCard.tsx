@@ -2,10 +2,10 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Controller, useFormContext } from 'react-hook-form';
 import { NumericFormat } from 'react-number-format';
 
 import { ROUTES } from '@/routes';
+import { useStore } from '@/store';
 import { IGameWithAI } from '@/types/game';
 import { Avatar, AvatarImage } from '@/ui/avatar';
 import { Button } from '@/ui/button';
@@ -23,29 +23,24 @@ interface ITrackGameCard {
   game: IGameWithAI;
   onClickFullAnalysis: () => void;
   onClickClearTrackBet: () => void;
+  index: number;
 }
 
 const TrackGameCard = ({
   game,
   onClickFullAnalysis,
   onClickClearTrackBet,
+  index,
 }: ITrackGameCard) => {
   const formattedDate = formatUtcToLocalDate(game.game.start_time);
   const formattedTime = formatUtcToLocalTimeAmPm(game.game.start_time);
 
-  const {
-    control,
-    setValue,
-    watch,
-    trigger,
-    formState: { errors },
-  } = useFormContext();
-  const selectedTeam = watch('team');
+  const { prefillBets, setPrefillBetField } = useStore();
+  const bet = prefillBets[index];
 
-  const handleTeamSelect = (team: any) => {
-    setValue('team', team, { shouldValidate: true });
-    trigger('team');
-  };
+  const selectedTeam = bet.team;
+
+  console.log(bet);
 
   return (
     <CardContainer className="tl-gradient-mistBlue-opacity border-border relative flex flex-col gap-3">
@@ -133,10 +128,12 @@ const TrackGameCard = ({
               <Button
                 type="button"
                 variant={
-                  selectedTeam === game.game.home_team ? 'mistBlue' : 'outline'
+                  bet.team === game.game.home_team ? 'mistBlue' : 'outline'
                 }
                 className="flex flex-1 items-center gap-2"
-                onClick={() => handleTeamSelect(game.game.home_team)}
+                onClick={() =>
+                  setPrefillBetField(index, 'team', game.game.home_team)
+                }
               >
                 <Avatar className="h-6 w-6">
                   <AvatarImage src={game.game.home_team_logo} />
@@ -147,10 +144,12 @@ const TrackGameCard = ({
               <Button
                 type="button"
                 variant={
-                  selectedTeam === game.game.away_team ? 'mistBlue' : 'outline'
+                  bet.team === game.game.away_team ? 'mistBlue' : 'outline'
                 }
                 className="flex flex-1 items-center gap-2"
-                onClick={() => handleTeamSelect(game.game.away_team)}
+                onClick={() =>
+                  setPrefillBetField(index, 'team', game.game.away_team)
+                }
               >
                 <Avatar className="h-6 w-6">
                   <AvatarImage src={game.game.away_team_logo} />
@@ -158,9 +157,9 @@ const TrackGameCard = ({
                 {game.game.away_team}
               </Button>
             </div>
-            {errors.team && (
-              <p className="text-destructive text-sm">
-                {errors.team.message as string}
+            {!bet.team && (
+              <p className="text-destructive mt-1 text-sm">
+                Please select a team
               </p>
             )}
           </div>
@@ -168,60 +167,42 @@ const TrackGameCard = ({
 
         <div className="flex flex-col items-center gap-4">
           <div className="w-full">
-            <Controller
-              name="odds"
-              control={control}
-              rules={{ required: true, min: 0.01 }}
-              render={({ field }) => (
-                <NumericFormat
-                  {...field}
-                  value={field.value || ''}
-                  onChange={(e) => field.onChange(Number(e.target.value))}
-                  label="Betting odds"
-                  className="align-middle text-base font-normal tracking-normal"
-                  customInput={Input}
-                  decimalSeparator="."
-                  placeholder="Your odds"
-                  allowNegative={false}
-                />
-              )}
+            <NumericFormat
+              value={bet.odds ?? ''}
+              onValueChange={(values) => {
+                const value = parseFloat(values.value);
+                setPrefillBetField(index, 'odds', isNaN(value) ? 0 : value);
+              }}
+              label="Betting odds"
+              className="align-middle text-base font-normal tracking-normal"
+              customInput={Input}
+              decimalSeparator="."
+              placeholder="Your odds"
+              allowNegative={false}
             />
-            {errors.odds && (
-              <p className="text-destructive mt-1 text-sm">
-                {errors.odds.message as string}
-              </p>
+            {(bet.odds === undefined || bet.odds === 0) && (
+              <p className="text-destructive mt-1 text-sm">Enter valid odds</p>
             )}
           </div>
 
           <div className="w-full">
-            <Controller
-              name="amount"
-              control={control}
-              rules={{ required: true, min: 1 }}
-              render={({ field }) => (
-                <NumericFormat
-                  {...field}
-                  value={field.value || ''}
-                  onChange={(e) => {
-                    const rawValue = e.target.value;
-                    const parsedValue = Number(
-                      rawValue.replace(/[^0-9.]/g, ''),
-                    );
-                    field.onChange(parsedValue);
-                  }}
-                  label="Bet amount"
-                  className="align-middle text-base font-normal tracking-normal"
-                  customInput={Input}
-                  thousandSeparator
-                  prefix="$"
-                  placeholder="Your amount"
-                  allowNegative={false}
-                />
-              )}
+            <NumericFormat
+              value={bet.amount ?? ''}
+              onValueChange={(values) => {
+                const value = parseFloat(values.value);
+                setPrefillBetField(index, 'amount', isNaN(value) ? 0 : value);
+              }}
+              label="Bet amount"
+              className="align-middle text-base font-normal tracking-normal"
+              customInput={Input}
+              thousandSeparator
+              prefix="$"
+              placeholder="Your amount"
+              allowNegative={false}
             />
-            {errors.amount && (
+            {!bet.amount && (
               <p className="text-destructive mt-1 text-sm">
-                {errors.amount.message as string}
+                Enter valid amount
               </p>
             )}
           </div>

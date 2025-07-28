@@ -2,6 +2,14 @@ import { StateCreator } from 'zustand';
 
 import { IGameWithAI } from '@/types/game';
 
+interface IBetPrefill {
+  id: string;
+  team?: string;
+  odds?: number | null;
+  description?: string;
+  amount?: number;
+}
+
 interface IMatchupState {
   trackedGame: null | IGameWithAI;
   selectedGame: null | IGameWithAI;
@@ -16,18 +24,20 @@ interface IMatchupState {
     selected_team_name: string;
   };
 
-  prefillTeam: string;
-  prefillOdds: number | null;
-  description: string;
+  prefillBets: IBetPrefill[];
 
   setTrackedGame: (trackedGame: null | IGameWithAI) => void;
   setSelectedGame: (selectedGame: null | IGameWithAI) => void;
   setBetInfoField: (field: keyof IMatchupState['betInfo'], value: any) => void;
   setIsAmerican: (val: boolean) => void;
-  setPrefillTeam: (team: string) => void;
-  setPrefillOdds: (odds: number) => void;
-  clearPrefill: () => void;
-  setDescription: (descriptionText: string) => void;
+  setPrefillBetField: (
+    index: number,
+    field: keyof IBetPrefill,
+    value: any,
+  ) => void;
+  addOrUpdatePrefillBet: (bet: IBetPrefill, index?: number) => void;
+  clearPrefillBets: () => void;
+  removePrefillBetById: (id: string) => void;
 }
 
 export const matchupSlice: StateCreator<IMatchupState> = (set) => ({
@@ -42,9 +52,7 @@ export const matchupSlice: StateCreator<IMatchupState> = (set) => ({
     selected_team_id: '',
     selected_team_name: '',
   },
-  prefillTeam: '',
-  prefillOdds: null,
-  description: '',
+  prefillBets: [],
 
   setTrackedGame: (trackedGame) => set({ trackedGame }),
   setSelectedGame: (selectedGame) => set({ selectedGame }),
@@ -56,8 +64,48 @@ export const matchupSlice: StateCreator<IMatchupState> = (set) => ({
         [field]: value,
       },
     })),
-  setPrefillTeam: (team) => set({ prefillTeam: team }),
-  setDescription: (descriptionText) => set({ description: descriptionText }),
-  setPrefillOdds: (odds) => set({ prefillOdds: odds }),
-  clearPrefill: () => set({ prefillTeam: '', prefillOdds: null }),
+
+  addOrUpdatePrefillBet: (bet, index) =>
+    set((state) => {
+      const updated = [...state.prefillBets];
+
+      if (bet.id) {
+        const existingIndex = updated.findIndex((b) => b.id === bet.id);
+        if (existingIndex !== -1) {
+          updated[existingIndex] = { ...updated[existingIndex], ...bet };
+          return { prefillBets: updated };
+        }
+      }
+
+      if (updated.length >= 2) return state;
+
+      const newBet = {
+        ...bet,
+        id: crypto.randomUUID(),
+        amount: bet.amount ?? 0,
+      };
+
+      updated.push(newBet);
+      return { prefillBets: updated };
+    }),
+
+  setPrefillBetField: (index: number, field: keyof IBetPrefill, value: any) =>
+    set((state) => {
+      const updated = [...state.prefillBets];
+      if (!updated[index]) return state;
+
+      updated[index] = {
+        ...updated[index],
+        [field]: value,
+      };
+
+      return { prefillBets: updated };
+    }),
+
+  removePrefillBetById: (id: string) =>
+    set((state) => ({
+      prefillBets: state.prefillBets.filter((bet) => bet.id !== id),
+    })),
+
+  clearPrefillBets: () => set({ prefillBets: [] }),
 });
