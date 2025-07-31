@@ -6,6 +6,9 @@ import customDataProvider from '@/services/admin';
 
 import { PickOfTheDayCreate } from './PickOfTheDayCreate';
 import { PickOfTheDayList } from './PickOfTheDayList';
+import { ReviewCreate } from './ReviewCreate';
+import { ReviewEdit } from './ReviewEdit';
+import { ReviewList } from './ReviewList';
 import { User } from './User';
 import { UserWithBets } from './UserBet';
 import { UserList } from './UserList';
@@ -28,6 +31,13 @@ const AdminApp = () => {
 
   return (
     <Admin dataProvider={customDataProvider}>
+      <Resource
+        name="review"
+        list={ReviewList}
+        create={ReviewCreate}
+        edit={ReviewEdit}
+        options={{ label: 'Reviews' }}
+      />
       <Resource
         name="users"
         list={UserList}
