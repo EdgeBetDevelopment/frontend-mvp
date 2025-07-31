@@ -178,7 +178,7 @@ const BetTrackerTable = () => {
                         <Badge
                           className="w-full max-w-[85px] py-2 capitalize"
                           variant={
-                            bet?.status === 'won'
+                            bet?.status === 'win'
                               ? 'green'
                               : bet?.status === 'pending'
                                 ? 'orange'
