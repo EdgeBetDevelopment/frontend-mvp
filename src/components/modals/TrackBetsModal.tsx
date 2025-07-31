@@ -88,13 +88,13 @@ const TrackBetsModal = ({
 
     try {
       const bets = prefillBets.map((bet) => {
-        if (!bet.team || bet.odds === null) throw new Error('Invalid bet');
+        if (bet.odds === null) throw new Error('Invalid bet');
 
         findTeam(bet.team);
 
         return {
           selected_team_id: String(1),
-          selected_team_name: bet.team,
+          selected_team_name: bet?.team ? bet?.team : '',
           game_id: 1,
           nba_game_id: Number(trackedGame.game.id),
           odds: bet.odds,
