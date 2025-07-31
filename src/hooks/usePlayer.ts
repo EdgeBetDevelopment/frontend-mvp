@@ -10,8 +10,16 @@ export const usePlayer = (playerId: string) => {
     retry: 2,
   });
 
+  const playerSeasonQuery = useQuery({
+    queryKey: ['playerSeason', playerQuery?.data?.full_name],
+    queryFn: () =>
+      apiService.getPlayerSeasonByName(playerQuery.data!.full_name),
+    staleTime: 1000 * 60 * 5,
+    retry: 2,
+  });
+
   const playerNameQuery = useQuery({
-    queryKey: ['playerByName', playerQuery.data?.full_name],
+    queryKey: ['playerByName', playerQuery?.data?.full_name],
     queryFn: () => apiService.getPlayerByName(playerQuery.data!.full_name),
     enabled: !!playerQuery.data?.full_name,
     staleTime: 1000 * 60 * 5,
@@ -23,5 +31,6 @@ export const usePlayer = (playerId: string) => {
     playerNameData: playerNameQuery.data,
     isLoadingFull: playerQuery.isLoading || playerNameQuery.isLoading,
     isErrorFull: playerQuery.isError || playerNameQuery.isError,
+    playerSeason: playerSeasonQuery.data,
   };
 };

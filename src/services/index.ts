@@ -45,6 +45,13 @@ const apiService = {
     return response.data;
   },
 
+  async getPlayerSeasonByName(query: string): Promise<any> {
+    const response = await axiosInstance.get(
+      `/api/v1/nba/get_player_season_games_by_name/${query}`,
+    );
+    return response.data;
+  },
+
   async getTeamById(query: string): Promise<ITeam> {
     const response = await axiosInstance.get(`/api/v1/nba/get_team/${query}`);
 

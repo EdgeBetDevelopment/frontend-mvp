@@ -12,18 +12,14 @@ import {
   TableRow,
 } from '../../ui/table';
 
-interface GameStats {
-  PTS: string;
-  REB: string;
-  AST: string;
-  [key: string]: string;
-}
-
 interface Game {
   date: string;
   opponent: string;
   result: string;
-  stats: GameStats;
+  PTS: string;
+  REB: string;
+  AST: string;
+  [key: string]: string;
 }
 
 interface LeagueTableProps {
@@ -32,7 +28,7 @@ interface LeagueTableProps {
 
 const LeagueTable: React.FC<LeagueTableProps> = ({ recentGames }) => {
   const [showAllGames, setShowAllGames] = useState(false);
-
+  console.log(recentGames);
   const handleToggleGames = () => {
     setShowAllGames((prev) => !prev);
   };
@@ -146,31 +142,31 @@ const LeagueTable: React.FC<LeagueTableProps> = ({ recentGames }) => {
                 }}
               >
                 <TableCell className="!rounded-none border-b border-[#484848] px-4 py-5 text-[14px]">
-                  {game.date}
+                  {game?.date}
                 </TableCell>
                 <TableCell className="border-b border-[#484848] px-4 py-5 text-[14px]">
-                  {game.opponent}
+                  {game?.opponent}
                 </TableCell>
                 <TableCell
                   className={cn(
                     'border-b border-[#484848] px-4 py-5 text-[14px]',
-                    game.result.startsWith('W') && 'text-[#34D399]',
-                    game.result.startsWith('L') && 'text-[#DC2626]',
-                    !game.result.startsWith('W') &&
-                      !game.result.startsWith('L') &&
+                    game?.result?.startsWith('W') && 'text-[#34D399]',
+                    game?.result?.startsWith('L') && 'text-[#DC2626]',
+                    !game?.result?.startsWith('W') &&
+                      !game?.result?.startsWith('L') &&
                       'text-white',
                   )}
                 >
-                  {game.result}
+                  {game?.result}
                 </TableCell>
                 <TableCell className="border-b border-[#484848] px-4 py-5 text-[14px]">
-                  {game.stats.PTS}
+                  {game?.PTS}
                 </TableCell>
                 <TableCell className="border-b border-[#484848] px-4 py-5 text-[14px]">
-                  {game.stats.REB}
+                  {game.REB}
                 </TableCell>
                 <TableCell className="!rounded-none border-b border-[#484848] px-4 py-5 text-[14px]">
-                  {game.stats.AST}
+                  {game?.AST}
                 </TableCell>
               </TableRow>
             ))}

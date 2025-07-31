@@ -29,13 +29,12 @@ const PlayerProfile = () => {
   const {
     data: player,
     playerNameData,
+    playerSeason,
     error,
     isLoading,
   } = usePlayer(playerId as string);
 
   const { profile } = playerNameData || {};
-
-  console.log(player, playerNameData);
 
   if (isLoading)
     return (
@@ -134,7 +133,7 @@ const PlayerProfile = () => {
                     ))}
                 </div>
               </div>
-              <LeagueTable recentGames={playerNameData?.recent_games} />
+              <LeagueTable recentGames={playerSeason} />
             </div>
           </div>
         </>
