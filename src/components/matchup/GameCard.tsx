@@ -221,6 +221,7 @@ const GameBetsItem = ({
     setTrackedGame(game);
     addOrUpdatePrefillBet({
       id: crypto.randomUUID(),
+      game_id: game?.game?.id,
       team,
       odds,
       description: text,

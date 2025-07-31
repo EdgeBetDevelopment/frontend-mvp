@@ -4,6 +4,7 @@ import { IGameWithAI } from '@/types/game';
 
 interface IBetPrefill {
   id: string;
+  game_id?: number;
   team?: string;
   odds?: number | null;
   description?: string;
@@ -72,14 +73,17 @@ export const matchupSlice: StateCreator<IMatchupState> = (set) => ({
       if (bet.id) {
         const existingIndex = updated.findIndex((b) => b.id === bet.id);
         if (existingIndex !== -1) {
-          updated[existingIndex] = { ...updated[existingIndex], ...bet };
+          updated[existingIndex] = {
+            ...updated[existingIndex],
+            ...bet,
+          };
           return { prefillBets: updated };
         }
       }
 
       if (updated.length >= 2) return state;
 
-      const newBet = {
+      const newBet: IBetPrefill = {
         ...bet,
         id: crypto.randomUUID(),
         amount: bet.amount ?? 0,

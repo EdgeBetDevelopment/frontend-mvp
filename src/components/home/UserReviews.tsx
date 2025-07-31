@@ -1,3 +1,5 @@
+'use client';
+
 import {
   Carousel,
   CarouselContent,
@@ -5,6 +7,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from '@/components/ui/carousel';
+import { useReviews } from '@/hooks/useReviews';
 import { Avatar, AvatarFallback, AvatarImage } from '@/ui/avatar';
 import PageTitle from '../PageTitle';
 
@@ -78,11 +81,15 @@ const TESTIMONIAL_DATA = [
 
 interface ITestimonialCard {
   name: string;
-  email: string;
+  rating: number;
   message: string;
 }
 
 export const UserReviews = () => {
+  const { data, isLoading } = useReviews();
+
+  console.log(data);
+
   return (
     <div className="tl-container my-[90px] flex w-full flex-col items-center gap-[90px]">
       <PageTitle
@@ -107,15 +114,15 @@ export const UserReviews = () => {
             }}
           >
             <CarouselContent className="py-4">
-              {TESTIMONIAL_DATA.map((testimonial) => (
+              {data?.map((review) => (
                 <CarouselItem
-                  key={testimonial.id}
+                  key={review.id}
                   className="w-[calc(100%-16px)] max-w-full flex-none pl-4 sm:w-[calc(50%-16px)] lg:w-[calc(33.333%-16px)]"
                 >
                   <TestimonialCard
-                    name={testimonial.name}
-                    email={testimonial.email}
-                    message={testimonial.message}
+                    name={review?.name}
+                    rating={review?.rating}
+                    message={review?.text}
                   />
                 </CarouselItem>
               ))}
@@ -132,7 +139,7 @@ export const UserReviews = () => {
   );
 };
 
-const TestimonialCard = ({ name, email, message }: ITestimonialCard) => {
+const TestimonialCard = ({ name, rating, message }: ITestimonialCard) => {
   return (
     <div className="flex h-full flex-col gap-6 overflow-hidden rounded-3xl border p-4 sm:p-5 md:p-6">
       <div className="flex flex-col items-center gap-3 sm:flex-row sm:gap-4 md:gap-5">
@@ -146,7 +153,7 @@ const TestimonialCard = ({ name, email, message }: ITestimonialCard) => {
             {name}
           </p>
           <p className="text-text-secondary w-full truncate text-center text-sm leading-tight font-normal tracking-normal sm:text-base sm:font-medium md:text-xl">
-            {email}
+            {rating}
           </p>
         </div>
       </div>

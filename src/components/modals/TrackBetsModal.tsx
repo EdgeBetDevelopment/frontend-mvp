@@ -95,8 +95,8 @@ const TrackBetsModal = ({
         return {
           selected_team_id: String(1),
           selected_team_name: bet?.team ? bet?.team : '',
-          game_id: 1,
-          nba_game_id: Number(trackedGame.game.id),
+          game_id: bet?.game_id,
+          nba_game_id: Number(trackedGame?.game?.id),
           odds: bet.odds,
           amount: bet.amount,
           sport: 'nba',
