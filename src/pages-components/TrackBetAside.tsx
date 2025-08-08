@@ -11,6 +11,7 @@ import { useAuth } from '@/context/AuthContext';
 import useModalManager from '@/hooks/useModalManager';
 import apiService from '@/services';
 import { useStore } from '@/store';
+import { BetPick } from '@/store/slices/matchupSlice';
 import { IGameWithAI } from '@/types/game';
 import { Button } from '@/ui/button';
 import Loader from '@/ui/loader';
@@ -20,10 +21,8 @@ const TrackBetsAside = () => {
     isParlay,
     single,
     clearSingle,
-    removeSingle,
     parlay,
     clearParlay,
-    removeParlayPick,
     setSelectedGame,
     trackedGame,
   } = useStore();
@@ -34,7 +33,8 @@ const TrackBetsAside = () => {
   const { mutate, isPending: isPendingCreateBet } = useMutation({
     mutationFn: async (body: any) => {
       console.log(body);
-      apiService.createSingleBets(body);
+      if (!isParlay) apiService.createSingleBets(body);
+      if (isParlay) apiService.createBet(body);
     },
     onSuccess: () => {
       if (isParlay) clearParlay();
@@ -47,52 +47,30 @@ const TrackBetsAside = () => {
     },
   });
 
-  const buildBody = () => {
-    if (!trackedGame) return null;
-
-    if (isParlay) {
-      const bets = parlay.bets.map((b) => ({
-        selected_team_id: String(b.selected_team_id ?? ''),
-        selected_team_name: b.selected_team_name ?? '',
-        game_id: b.game_id,
-        nba_game_id: Number(trackedGame?.game?.id),
-        odds: b.odds,
-        amount: parlay.amount,
-        sport: b.sport ?? 'nba',
-        description: b.description ?? '',
-      }));
-
-      return {
-        amount: parlay.amount ?? 0,
-        bets,
-      };
-    }
-
-    const bets = single
-      .filter((t) => t.bets[0])
-      .map((t) => {
-        const b = t.bets[0];
-        return {
-          selected_team_id: String(b.selected_team_id ?? ''),
-          selected_team_name: b.selected_team_name ?? '',
-          game_id: b.game_id,
-          nba_game_id: Number(trackedGame?.game?.id),
-          odds: b.odds,
-          amount: t.amount ?? 0,
-          sport: b.sport ?? 'nba',
-          description: b.description ?? '',
-        };
-      });
-
-    const totalAmount = single.reduce((sum, t) => sum + (t.amount || 0), 0);
-
-    return {
-      amount: totalAmount,
-      bets,
-    };
-  };
+  const mapPick = (bet: BetPick) => ({
+    game_id: bet.game_id,
+    odds: bet.odds,
+    selected_team_id: bet.selected_team_id,
+    selected_team_name: bet.selected_team_name,
+    description: bet.description,
+    sport: bet.sport,
+  });
 
   const onSubmit = async () => {
+    if (isParlay) {
+      if (!parlay || parlay.bets.length === 0) return;
+
+      const payload = {
+        amount: parlay.amount ?? 0,
+        win_amount: parlay.win_amount ?? 0,
+        bets: parlay.bets.map(mapPick),
+      };
+
+      console.log('PARLAY payload', payload);
+      mutate(payload);
+      return;
+    }
+
     if (!single || single.length === 0) return;
 
     try {
@@ -100,18 +78,11 @@ const TrackBetsAside = () => {
         bets: single.map((ticket) => ({
           amount: ticket.amount ?? 0,
           win_amount: ticket.win_amount ?? 0,
-          bets: ticket.bets.map((bet) => ({
-            game_id: bet.game_id,
-            odds: bet.odds,
-            selected_team_id: bet.selected_team_id,
-            selected_team_name: bet.selected_team_name,
-            description: bet.description,
-            sport: bet.sport,
-          })),
+          bets: ticket.bets.map(mapPick),
         })),
       };
 
-      console.log(payload);
+      console.log('SINGLE payload', payload);
       mutate(payload);
     } catch (error) {
       console.error('Failed to prepare bet submission:', error);
@@ -150,25 +121,23 @@ const TrackBetsAside = () => {
           </div>
         ) : (
           <div className="flex flex-1 flex-col gap-3 overflow-auto">
-            {isParlay
-              ? parlay.bets.map((_, index) => (
-                  <TrackGameCard
-                    key={index}
-                    index={index}
-                    game={trackedGame}
-                    onClickFullAnalysis={() => onClickFullAnalysis(trackedGame)}
-                    onClickClearTrackBet={() => removeParlayPick(index)}
-                  />
-                ))
-              : single.map((_, index) => (
-                  <TrackGameCard
-                    key={index}
-                    index={index}
-                    game={trackedGame}
-                    onClickFullAnalysis={() => onClickFullAnalysis(trackedGame)}
-                    onClickClearTrackBet={() => removeSingle(index)}
-                  />
-                ))}
+            {isParlay ? (
+              <TrackGameCard
+                key="parlay"
+                index={0}
+                game={trackedGame}
+                onClickFullAnalysis={() => onClickFullAnalysis(trackedGame)}
+              />
+            ) : (
+              single.map((_, index) => (
+                <TrackGameCard
+                  key={index}
+                  index={index}
+                  game={trackedGame}
+                  onClickFullAnalysis={() => onClickFullAnalysis(trackedGame)}
+                />
+              ))
+            )}
 
             {hasItems && (
               <Button

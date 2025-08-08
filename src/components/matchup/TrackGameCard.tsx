@@ -9,6 +9,7 @@ import { useStore } from '@/store';
 import { IGameWithAI } from '@/types/game';
 import { Avatar, AvatarImage } from '@/ui/avatar';
 import { Button } from '@/ui/button';
+import { convertAmericanToDecimal } from '@/utils/convertAmericanToDecimal';
 import { formatUtcToLocalDate, formatUtcToLocalTimeAmPm } from '@/utils/time';
 import CardContainer from '../../ui/containers/CardContainer';
 import { Input } from '../../ui/input';
@@ -17,20 +18,16 @@ import CalendarIcon from '@/assets/icons/calendar.svg';
 import CancelIcon from '@/assets/icons/cancel.svg';
 import ChevronRightIcon from '@/assets/icons/chevron-right.svg';
 import ClockIcon from '@/assets/icons/clock.svg';
+import SmallCancelIcon from '@/assets/icons/small-cancel.svg';
 import NBALogoIcon from '@/assets/nbaLogo.png';
 
 interface ITrackGameCard {
   game: IGameWithAI;
   onClickFullAnalysis: () => void;
-  onClickClearTrackBet: () => void;
   index: number;
 }
 
-const TrackGameCard = ({
-  game,
-  onClickClearTrackBet,
-  index,
-}: ITrackGameCard) => {
+const TrackGameCard = ({ game, index }: ITrackGameCard) => {
   const formattedDate = formatUtcToLocalDate(game.game.start_time);
   const formattedTime = formatUtcToLocalTimeAmPm(game.game.start_time);
 
@@ -42,9 +39,13 @@ const TrackGameCard = ({
     setParlayWin,
     setParlayAmount,
     setSingleWin,
+    removeSingle,
+    clearParlay,
+    isAmerican,
   } = useStore();
 
   function formatDescription(desc: string) {
+    console.log(desc);
     return desc
       .replace(/\[.*?\]/g, '')
       .replace(/\(.*?\)/g, '')
@@ -55,98 +56,148 @@ const TrackGameCard = ({
   const currentTicket = isParlay ? parlay : single[index];
   const currentPick = isParlay ? parlay.bets[index] : single[index]?.bets?.[0];
 
+  const computeSingleWin = (amount: number, decimalOdds: number) =>
+    +(amount * (decimalOdds - 1)).toFixed(2);
+
+  const computeParlayWin = (amount: number, bets: { odds?: number }[] = []) => {
+    const product = bets.reduce((acc, b) => {
+      const decimal = convertAmericanToDecimal(Number(b?.odds) || 0);
+      return acc * decimal;
+    }, 1);
+    return +(amount * (product - 1)).toFixed(2);
+  };
+
   const handleSetAmount = (value: number) => {
     if (isParlay) {
       setParlayAmount(value);
-      setParlayWin(value);
+      setParlayWin(computeParlayWin(value, parlay?.bets));
     } else {
       setSingleAmount(index, value);
-      setSingleWin(index, value);
+      const decimalOdds = convertAmericanToDecimal(
+        Number(currentPick?.odds) || 0,
+      );
+      setSingleWin(index, computeSingleWin(value, decimalOdds));
+    }
+  };
+
+  const handleRemove = () => {
+    if (isParlay) {
+      clearParlay();
+    } else {
+      removeSingle(index);
     }
   };
 
   return (
     <CardContainer className="tl-gradient-mistBlue-opacity border-border relative flex flex-col gap-3">
       <Button
-        className="absolute top-1 right-1"
+        className={`absolute top-1 right-1 ${isParlay && 'top-4.5 right-5'}`}
         variant="clear"
         size="icon"
-        onClick={onClickClearTrackBet}
+        onClick={() => handleRemove()}
       >
         <CancelIcon />
       </Button>
 
       {/* Header */}
-      <div className="relative flex items-center gap-2">
-        <div className="relative flex w-[44px] items-center">
-          <Avatar className="border-border bg-surface-secondary h-8 w-8 rounded-full border p-1">
-            <AvatarImage src={game.game.home_team_logo} />
-          </Avatar>
-          <div className="absolute left-3.5">
+      {!isParlay && (
+        <div className="relative flex items-center gap-2">
+          <div className="relative flex w-[44px] items-center">
             <Avatar className="border-border bg-surface-secondary h-8 w-8 rounded-full border p-1">
-              <AvatarImage src={game.game.away_team_logo} />
+              <AvatarImage src={game.game.home_team_logo} />
             </Avatar>
-          </div>
-        </div>
-
-        <div>
-          <div className="tl-paraghraph2 flex items-center gap-1">
-            <Link
-              href={ROUTES.TEAM(game.game.home_team_id)}
-              className="text-text-primary hover:underline"
-            >
-              {game.game.home_team}
-            </Link>
-            <div>vs</div>
-            <Link
-              href={ROUTES.TEAM(game.game.away_team_id)}
-              className="text-text-primary hover:underline"
-            >
-              {game.game.away_team}
-            </Link>
-          </div>
-
-          <div className="tl-paraghraph3 flex items-center gap-4">
-            <div className="flex items-center gap-1">
-              <CalendarIcon /> {formattedDate}
-            </div>
-            <div className="flex items-center gap-1">
-              <ClockIcon /> {formattedTime}
+            <div className="absolute left-3.5">
+              <Avatar className="border-border bg-surface-secondary h-8 w-8 rounded-full border p-1">
+                <AvatarImage src={game.game.away_team_logo} />
+              </Avatar>
             </div>
           </div>
+
+          <div>
+            <div className="tl-paraghraph2 flex items-center gap-1">
+              <Link
+                href={ROUTES.TEAM(game.game.home_team_id)}
+                className="text-text-primary hover:underline"
+              >
+                {game.game.home_team}
+              </Link>
+              <div>vs</div>
+              <Link
+                href={ROUTES.TEAM(game.game.away_team_id)}
+                className="text-text-primary hover:underline"
+              >
+                {game.game.away_team}
+              </Link>
+            </div>
+
+            <div className="tl-paraghraph3 flex items-center gap-4">
+              <div className="flex items-center gap-1">
+                <CalendarIcon /> {formattedDate}
+              </div>
+              <div className="flex items-center gap-1">
+                <ClockIcon /> {formattedTime}
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
+      )}
 
       <div className="bg-surface-secondary border-border flex flex-col gap-4 rounded-3xl border p-3">
-        <div className="tl-paraghraph2 flex items-center gap-2">
-          <Avatar className="flex h-8 w-8 items-center justify-center rounded-full border bg-[#33758780]">
-            <div>
-              <AvatarImage src={NBALogoIcon.src} />
-            </div>
-          </Avatar>
-          <div>NBA</div>
-          {game?.scoreboard?.label && (
-            <>
-              <ChevronRightIcon className="text-text-secondary" />
-              {game?.scoreboard?.label}
-            </>
-          )}
-        </div>
+        {isParlay && <p className="text-[16px]">Parlay (3 picks)</p>}
+        {!isParlay && (
+          <div className="tl-paraghraph2 flex items-center gap-2">
+            <Avatar className="flex h-8 w-8 items-center justify-center rounded-full border bg-[#33758780]">
+              <div>
+                <AvatarImage src={NBALogoIcon.src} />
+              </div>
+            </Avatar>
+            <div>NBA</div>
+            {game?.scoreboard?.label && (
+              <>
+                <ChevronRightIcon className="text-text-secondary" />
+                {game?.scoreboard?.label}
+              </>
+            )}
+          </div>
+        )}
 
         <div className="flex flex-col gap-3">
           {isParlay ? (
-            parlay.bets.map((b, i) => (
-              <div
-                key={i}
-                className="rounded-md bg-black/20 px-3 py-1 text-sm font-medium"
-              >
-                {formatDescription(currentPick?.description ?? '')}
-              </div>
-            ))
+            parlay?.bets?.length ? (
+              parlay?.bets?.map((b, i) => (
+                <div
+                  key={i}
+                  className="flex w-full justify-between gap-2 rounded-md bg-[#33758780] p-2 text-sm font-medium text-[#B3B3B3]"
+                >
+                  <span>{formatDescription(b?.description ?? '')}</span>
+                  {typeof b?.odds === 'number' && (
+                    <div className="flex items-center gap-[10px]">
+                      <span className="font-semibold text-white">
+                        {!isAmerican
+                          ? convertAmericanToDecimal(b?.odds)
+                          : b?.odds}
+                      </span>
+                      <Button
+                        className="max-h-[7px] max-w-[7px]"
+                        variant="clear"
+                        size="icon"
+                        onClick={() => handleRemove()}
+                      >
+                        <SmallCancelIcon />
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              ))
+            ) : null
           ) : (
             <div className="flex w-fit flex-row gap-1 rounded-md bg-[#33758780] p-2 text-[12px] font-medium text-[#B3B3B3]">
               <p>{formatDescription(currentPick?.description ?? '')}</p>
-              <p className="font-semibold text-white">{currentPick?.odds}</p>
+              <p className="font-semibold text-white">
+                {!isAmerican
+                  ? convertAmericanToDecimal(currentPick?.odds)
+                  : currentPick?.odds}
+              </p>
             </div>
           )}
         </div>
