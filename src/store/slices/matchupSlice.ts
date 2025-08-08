@@ -82,7 +82,7 @@ export const matchupSlice: StateCreator<IMatchupState> = (set) => ({
         return { single: next };
       }
 
-      if (next.length >= 2) return state;
+      if (next.length >= 5) return state;
       next.push(ticketFromPick);
       return { single: next };
     }),
