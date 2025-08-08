@@ -9,7 +9,6 @@ import { useStore } from '@/store';
 import { IGameWithAI } from '@/types/game';
 import { Avatar, AvatarImage } from '@/ui/avatar';
 import { Button } from '@/ui/button';
-import { convertAmericanToDecimal } from '@/utils/convertAmericanToDecimal';
 import { formatUtcToLocalDate, formatUtcToLocalTimeAmPm } from '@/utils/time';
 import CardContainer from '../../ui/containers/CardContainer';
 import { Input } from '../../ui/input';
@@ -56,15 +55,20 @@ const TrackGameCard = ({ game, index }: ITrackGameCard) => {
   const currentTicket = isParlay ? parlay : single[index];
   const currentPick = isParlay ? parlay.bets[index] : single[index]?.bets?.[0];
 
+  const convertAmericanToDecimal = (odds: number) => {
+    if (!odds) return 1;
+    return odds > 0 ? odds / 100 + 1 : 100 / Math.abs(odds) + 1;
+  };
+
   const computeSingleWin = (amount: number, decimalOdds: number) =>
-    +(amount * (decimalOdds - 1)).toFixed(2);
+    +(amount * decimalOdds).toFixed(2);
 
   const computeParlayWin = (amount: number, bets: { odds?: number }[] = []) => {
     const product = bets.reduce((acc, b) => {
       const decimal = convertAmericanToDecimal(Number(b?.odds) || 0);
       return acc * decimal;
     }, 1);
-    return +(amount * (product - 1)).toFixed(2);
+    return +(amount * product).toFixed(2);
   };
 
   const handleSetAmount = (value: number) => {
