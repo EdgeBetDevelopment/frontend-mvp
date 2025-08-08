@@ -13,7 +13,6 @@ import MatchupPageFilters from '@/components/matchup/Filters';
 import GameCard from '@/components/matchup/GameCard';
 import AuthModal from '@/components/modals/AuthModal';
 import GameAnalysisModal from '@/components/modals/game-analysis';
-import TrackBetsModal from '@/components/modals/TrackBetsModal';
 import { useAuth } from '@/context/AuthContext';
 import useModalManager from '@/hooks/useModalManager';
 import apiService from '@/services';
@@ -23,6 +22,8 @@ import { ScrollArea } from '@/ui/scroll-area';
 import { Skeleton } from '@/ui/skeleton';
 import { formUrlQuery } from '@/utils/url';
 import ListRenderer from '@/wrappers/ListRenderer';
+
+import TrackBetsAside from './TrackBetAside';
 
 const MatchupPage = () => {
   const { isAuthenticated } = useAuth();
@@ -109,8 +110,8 @@ const MatchupPage = () => {
 
   return (
     <>
-      <div className="tl-container mb-[90px] h-[840px] gap-10">
-        <div className="flex flex-col gap-4">
+      <div className="tl-container mb-[90px] flex h-[840px] flex-row justify-center gap-14">
+        <div className="flex w-full max-w-[calc(100%-420px)] flex-col gap-4">
           <MatchupPageFilters />
 
           <ListRenderer
@@ -144,6 +145,7 @@ const MatchupPage = () => {
             )}
           </ListRenderer>
         </div>
+        <TrackBetsAside />
       </div>
 
       <AuthModal
@@ -151,10 +153,10 @@ const MatchupPage = () => {
         onClose={() => closeModal('auth')}
       />
 
-      <TrackBetsModal
+      {/* <TrackBetsModal
         isOpen={isModalOpen('track-bet')}
         onClose={onClickClearTrackBet}
-      />
+      /> */}
 
       <GameAnalysisModal
         open={isModalOpen('game-analysis')}

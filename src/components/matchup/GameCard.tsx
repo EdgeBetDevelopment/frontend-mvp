@@ -132,7 +132,6 @@ export const GameCardHeader = ({ game }: { game: IGameWithAI }) => {
 
 const GameBets = ({
   game,
-  onClickTrackBet,
 }: {
   game: IGameWithAI;
   onClickTrackBet: () => void;
@@ -151,7 +150,6 @@ const GameBets = ({
             ?.slice(0, 3)
             .map((bet, index) => (
               <GameBetsItem
-                onClickTrackBet={onClickTrackBet}
                 game={game}
                 isAmerican={isAmerican}
                 key={index}
@@ -171,7 +169,6 @@ const GameBets = ({
             ?.slice(0, 3)
             .map((bet, index) => (
               <GameBetsItem
-                onClickTrackBet={onClickTrackBet}
                 game={game}
                 isAmerican={isAmerican}
                 key={index}
@@ -188,14 +185,13 @@ const GameBetsItem = ({
   text,
   isAmerican,
   game,
-  onClickTrackBet,
 }: {
   text: string;
   isAmerican: boolean;
   game: IGameWithAI;
-  onClickTrackBet: () => void;
 }) => {
-  const { setTrackedGame, addOrUpdatePrefillBet } = useStore();
+  const { isParlay, setTrackedGame, upsertSingle, upsertParlayPick } =
+    useStore();
 
   const oddsMatch = text.match(/\(([-+]?\d+)\)/);
   const odds = oddsMatch ? parseInt(oddsMatch[1], 10) : null;
@@ -204,7 +200,27 @@ const GameBetsItem = ({
   const team = teamMatch ? teamMatch[1].trim() : '';
   const decimalOdds =
     odds !== null ? convertAmericanToDecimal(odds).toFixed(2) : '';
-  console.log(team);
+
+  const resolveTeam = (team: string) => {
+    if (team === game?.game?.home_team) {
+      return {
+        id: String(game?.game?.home_team_id),
+        name: game?.game?.home_team,
+      };
+    }
+
+    if (team === game?.game?.away_team) {
+      return {
+        id: String(game?.game?.away_team_id),
+        name: game?.game?.away_team,
+      };
+    }
+
+    return { id: '', name: team };
+  };
+
+  const { id: selected_team_id, name: selected_team_name } = resolveTeam(team);
+
   const displayedText =
     odds !== null && !isAmerican
       ? text
@@ -217,23 +233,32 @@ const GameBetsItem = ({
           .replace(/\[.*?\]/g, '')
           .trim();
 
-  const handleClick = (team: string, odds: number) => {
+  const handleClick = () => {
+    if (odds == null) return;
+
     setTrackedGame(game);
-    addOrUpdatePrefillBet({
-      id: crypto.randomUUID(),
-      game_id: game?.game?.id,
-      team,
+
+    const pick = {
+      game_id: game.game.id,
       odds,
+      selected_team_id,
+      selected_team_name,
       description: text,
-    });
-    onClickTrackBet();
+      sport: 'nba' as const,
+    };
+
+    if (isParlay) {
+      upsertParlayPick(pick);
+    } else {
+      upsertSingle(pick);
+    }
   };
 
   return (
     <Badge
       variant="mistBlue"
       className="text-text-primary w-full cursor-pointer rounded-[10px] bg-green-700 px-3 py-1.5 text-center text-base font-semibold break-words whitespace-normal"
-      onClick={() => handleClick(team, odds as number)}
+      onClick={() => handleClick()}
     >
       {displayedText}
     </Badge>

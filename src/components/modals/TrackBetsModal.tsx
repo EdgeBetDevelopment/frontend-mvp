@@ -55,7 +55,7 @@ const TrackBetsModal = ({
   console.log(prefillBets);
 
   const { mutate, isPending: isPendingCreateBet } = useMutation({
-    mutationFn: async (body: any) => apiService.createBet(body),
+    mutationFn: async (body: any) => apiService.createSingleBets(body),
 
     onSuccess: () => {
       clearPrefillBets();
@@ -168,7 +168,11 @@ const TrackBetsModal = ({
 
   return (
     <>
-      <Sheet open={isOpen} onOpenChange={(open) => !open && onClose()} modal>
+      <Sheet
+        open={true}
+        onOpenChange={(open) => !open && onClose()}
+        modal={false}
+      >
         <SheetContent
           className="bg-surface-secondary border-border flex h-full w-full max-w-[324px] flex-col gap-10 rounded-l-3xl border p-3"
           side="right"

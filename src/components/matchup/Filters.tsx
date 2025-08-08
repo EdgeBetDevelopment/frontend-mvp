@@ -76,7 +76,7 @@ const MatchupPageFilters = () => {
 
   return (
     <TooltipProvider>
-      <div className="relative">
+      <div className="relative ml-4">
         <Carousel opts={{ align: 'start' }} className="w-full">
           <CarouselPrevious />
           <CarouselContent className="">

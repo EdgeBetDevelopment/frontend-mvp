@@ -28,19 +28,42 @@ interface ITrackGameCard {
 
 const TrackGameCard = ({
   game,
-  onClickFullAnalysis,
   onClickClearTrackBet,
   index,
 }: ITrackGameCard) => {
   const formattedDate = formatUtcToLocalDate(game.game.start_time);
   const formattedTime = formatUtcToLocalTimeAmPm(game.game.start_time);
 
-  const { prefillBets, setPrefillBetField } = useStore();
-  const bet = prefillBets[index];
+  const {
+    isParlay,
+    single,
+    setSingleAmount,
+    parlay,
+    setParlayWin,
+    setParlayAmount,
+    setSingleWin,
+  } = useStore();
 
-  const selectedTeam = bet.team;
+  function formatDescription(desc: string) {
+    return desc
+      .replace(/\[.*?\]/g, '')
+      .replace(/\(.*?\)/g, '')
+      .split(':')[0]
+      .trim();
+  }
 
-  console.log(bet);
+  const currentTicket = isParlay ? parlay : single[index];
+  const currentPick = isParlay ? parlay.bets[index] : single[index]?.bets?.[0];
+
+  const handleSetAmount = (value: number) => {
+    if (isParlay) {
+      setParlayAmount(value);
+      setParlayWin(value);
+    } else {
+      setSingleAmount(index, value);
+      setSingleWin(index, value);
+    }
+  };
 
   return (
     <CardContainer className="tl-gradient-mistBlue-opacity border-border relative flex flex-col gap-3">
@@ -53,14 +76,14 @@ const TrackGameCard = ({
         <CancelIcon />
       </Button>
 
-      <div className="flex items-center">
-        <div className="relative flex items-center">
-          <Avatar className="border-border bg-surface-secondary h-11 w-11 rounded-full border p-1.5">
+      {/* Header */}
+      <div className="relative flex items-center gap-2">
+        <div className="relative flex w-[44px] items-center">
+          <Avatar className="border-border bg-surface-secondary h-8 w-8 rounded-full border p-1">
             <AvatarImage src={game.game.home_team_logo} />
           </Avatar>
-
-          <div className="relative -left-3.5">
-            <Avatar className="border-border bg-surface-secondary h-11 w-11 rounded-full border p-1.5">
+          <div className="absolute left-3.5">
+            <Avatar className="border-border bg-surface-secondary h-8 w-8 rounded-full border p-1">
               <AvatarImage src={game.game.away_team_logo} />
             </Avatar>
           </div>
@@ -101,9 +124,7 @@ const TrackGameCard = ({
               <AvatarImage src={NBALogoIcon.src} />
             </div>
           </Avatar>
-
           <div>NBA</div>
-
           {game?.scoreboard?.label && (
             <>
               <ChevronRightIcon className="text-text-secondary" />
@@ -112,100 +133,50 @@ const TrackGameCard = ({
           )}
         </div>
 
-        <div>
-          <Button onClick={onClickFullAnalysis} variant="clear">
-            Full analysis <ChevronRightIcon />
-          </Button>
+        <div className="flex flex-col gap-3">
+          {isParlay ? (
+            parlay.bets.map((b, i) => (
+              <div
+                key={i}
+                className="rounded-md bg-black/20 px-3 py-1 text-sm font-medium"
+              >
+                {formatDescription(currentPick?.description ?? '')}
+              </div>
+            ))
+          ) : (
+            <div className="flex w-fit flex-row gap-1 rounded-md bg-[#33758780] p-2 text-[12px] font-medium text-[#B3B3B3]">
+              <p>{formatDescription(currentPick?.description ?? '')}</p>
+              <p className="font-semibold text-white">{currentPick?.odds}</p>
+            </div>
+          )}
         </div>
 
-        {/* Team Selection */}
-        {selectedTeam && (
-          <div className="flex flex-col gap-3">
-            <p className="text-text-dark mb-3 block text-lg font-normal tracking-normal">
-              Choose a team to track:
-            </p>
-            <div className="flex justify-around gap-4">
-              <Button
-                type="button"
-                variant={
-                  bet.team === game.game.home_team ? 'mistBlue' : 'outline'
-                }
-                className="flex flex-1 items-center gap-2"
-                onClick={() =>
-                  setPrefillBetField(index, 'team', game.game.home_team)
-                }
-              >
-                <Avatar className="h-6 w-6">
-                  <AvatarImage src={game.game.home_team_logo} />
-                </Avatar>
-                {game.game.home_team}
-              </Button>
-
-              <Button
-                type="button"
-                variant={
-                  bet.team === game.game.away_team ? 'mistBlue' : 'outline'
-                }
-                className="flex flex-1 items-center gap-2"
-                onClick={() =>
-                  setPrefillBetField(index, 'team', game.game.away_team)
-                }
-              >
-                <Avatar className="h-6 w-6">
-                  <AvatarImage src={game.game.away_team_logo} />
-                </Avatar>
-                {game.game.away_team}
-              </Button>
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-1">
+            <label className="text-xs font-medium text-gray-400">
+              Risk Amount ($)
+            </label>
+            <div className="w-full">
+              <NumericFormat
+                value={currentTicket?.amount ?? ''}
+                onValueChange={(v) => {
+                  const val = parseFloat(v.value);
+                  handleSetAmount(Number.isNaN(val) ? 0 : val);
+                }}
+                className="w-full align-middle text-base font-normal tracking-normal"
+                customInput={Input}
+                thousandSeparator
+                placeholder="Your amount"
+                allowNegative={false}
+              />
+              {!currentTicket?.amount && (
+                <p className="text-destructive mt-1 text-sm">
+                  Enter valid amount
+                </p>
+              )}
             </div>
-            {!bet.team && (
-              <p className="text-destructive mt-1 text-sm">
-                Please select a team
-              </p>
-            )}
           </div>
-        )}
-
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-full">
-            <NumericFormat
-              value={bet.odds ?? ''}
-              onValueChange={(values) => {
-                const value = parseFloat(values.value);
-                setPrefillBetField(index, 'odds', isNaN(value) ? 0 : value);
-              }}
-              label="Betting odds"
-              className="align-middle text-base font-normal tracking-normal"
-              customInput={Input}
-              decimalSeparator="."
-              placeholder="Your odds"
-              allowNegative={false}
-            />
-            {(bet.odds === undefined || bet.odds === 0) && (
-              <p className="text-destructive mt-1 text-sm">Enter valid odds</p>
-            )}
-          </div>
-
-          <div className="w-full">
-            <NumericFormat
-              value={bet.amount ?? ''}
-              onValueChange={(values) => {
-                const value = parseFloat(values.value);
-                setPrefillBetField(index, 'amount', isNaN(value) ? 0 : value);
-              }}
-              label="Bet amount"
-              className="align-middle text-base font-normal tracking-normal"
-              customInput={Input}
-              thousandSeparator
-              prefix="$"
-              placeholder="Your amount"
-              allowNegative={false}
-            />
-            {!bet.amount && (
-              <p className="text-destructive mt-1 text-sm">
-                Enter valid amount
-              </p>
-            )}
-          </div>
+          <p>Win Amount ($): ${currentTicket?.win_amount}</p>
         </div>
       </div>
     </CardContainer>

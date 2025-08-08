@@ -95,6 +95,16 @@ const apiService = {
     return response.data;
   },
 
+  async createSingleBets(data: any): Promise<string> {
+    const response = await axiosInstance.post(
+      `/api/v1/bet/create_single_bets
+`,
+      data,
+    );
+
+    return response.data;
+  },
+
   async getBetList(body: {
     filter: string;
     sort: { field: string; direction: string }[];
