@@ -39,36 +39,36 @@ export const sports: ISport[] = [
     subtitle: 'US Football',
     icon: <AmericanFootballIcon />,
   },
-  {
-    title: 'NFL Super Bowl Winner',
-    subtitle: 'Super Bowl Winner 2024/2025',
-    icon: <AmericanFootballIcon />,
-  },
+  // {
+  //   title: 'NFL Super Bowl Winner',
+  //   subtitle: 'Super Bowl Winner 2024/2025',
+  //   icon: <AmericanFootballIcon />,
+  // },
   {
     title: 'NFL',
     subtitle: 'US Football',
     icon: <AmericanFootballIcon />,
   },
-  {
-    title: 'Basketball Euroleague',
-    subtitle: 'Basketball Euroleague',
-    icon: <FootbalIcon />,
-  },
+  // {
+  //   title: 'Basketball Euroleague',
+  //   subtitle: 'Basketball Euroleague',
+  //   icon: <FootbalIcon />,
+  // },
   {
     title: 'NCAAB',
     subtitle: 'US College Basketball',
     icon: <BaseballIcon />,
   },
-  {
-    title: 'NCAAB Championship Winner',
-    subtitle: 'US College Basketball Championship Winner',
-    icon: <AmericanFootballIcon />,
-  },
-  {
-    title: 'MLB World Series Winner',
-    subtitle: 'World Series Winner 2025',
-    icon: <BaseballIcon />,
-  },
+  // {
+  //   title: 'NCAAB Championship Winner',
+  //   subtitle: 'US College Basketball Championship Winner',
+  //   icon: <AmericanFootballIcon />,
+  // },
+  // {
+  //   title: 'MLB World Series Winner',
+  //   subtitle: 'World Series Winner 2025',
+  //   icon: <BaseballIcon />,
+  // },
   {
     title: 'MLB',
     subtitle: 'US College Football',
@@ -81,11 +81,11 @@ export const sports: ISport[] = [
     icon: <TennisIcon />,
   },
 
-  {
-    title: 'WTA Tours',
-    subtitle: 'Masters Tennis',
-    icon: <TennisIcon />,
-  },
+  // {
+  //   title: 'WTA Tours',
+  //   subtitle: 'Masters Tennis',
+  //   icon: <TennisIcon />,
+  // },
 ];
 
 const SportsList = () => {
