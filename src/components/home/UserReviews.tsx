@@ -1,5 +1,8 @@
 'use client';
 
+import { useRef } from 'react';
+import Autoplay from 'embla-carousel-autoplay';
+
 import {
   Carousel,
   CarouselContent,
@@ -88,6 +91,10 @@ interface ITestimonialCard {
 export const UserReviews = () => {
   const { data, isLoading } = useReviews();
 
+  const autoplayPlugin = useRef(
+    Autoplay({ delay: 3000, stopOnInteraction: false }),
+  );
+
   console.log(data);
 
   return (
@@ -107,6 +114,7 @@ export const UserReviews = () => {
 
           <Carousel
             className="w-full"
+            plugins={[autoplayPlugin.current]}
             opts={{
               align: 'center',
               loop: true,
