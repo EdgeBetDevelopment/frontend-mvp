@@ -82,7 +82,7 @@ export const matchupSlice: StateCreator<IMatchupState> = (set) => ({
         return { single: next };
       }
 
-      if (next.length >= 5) return state;
+      if (next.length >= 15) return state;
       next.push(ticketFromPick);
       return { single: next };
     }),
@@ -118,7 +118,7 @@ export const matchupSlice: StateCreator<IMatchupState> = (set) => ({
         return { parlay };
       }
 
-      if (parlay.bets.length >= 3) return state;
+      if (parlay.bets.length >= 15) return state;
       parlay.bets = [...parlay.bets, normalized];
       return { parlay };
     }),
