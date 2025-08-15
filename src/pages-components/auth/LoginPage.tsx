@@ -16,7 +16,7 @@ const LoginPage = () => {
 
   return (
     <div className="flex w-full flex-col items-center justify-center">
-      <div className="auth-form mt-20 mb-40 flex w-full max-w-[800px] flex-col items-center justify-center gap-6 rounded-3xl px-40 py-14">
+      <div className="auth-form mt-20 mb-40 flex w-full max-w-[800px] flex-col items-center justify-center gap-6 rounded-3xl px-5 py-14 sm:px-10 md:px-20 lg:px-40">
         <LoginForm onSuccessLogin={onSuccessLogin} />
       </div>
     </div>

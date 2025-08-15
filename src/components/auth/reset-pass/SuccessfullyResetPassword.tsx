@@ -12,7 +12,7 @@ export default function SuccessfullyResetPassword() {
   const router = useRouter();
 
   return (
-    <div className="auth-form mt-20 mb-40 flex w-full max-w-[600px] flex-col items-center justify-center gap-8 rounded-3xl bg-[#0B0B0B]/80 px-12 py-14 shadow-xl backdrop-blur">
+    <div className="auth-form mt-20 mb-40 flex w-full max-w-[600px] flex-col items-center justify-center gap-8 rounded-3xl bg-[#0B0B0B]/80 px-5 py-14 shadow-xl backdrop-blur sm:px-6 md:px-8 lg:px-12">
       <div>
         <H2 text="Successfully" />
         <p className="text-center text-base text-[#B3B3B3]">
