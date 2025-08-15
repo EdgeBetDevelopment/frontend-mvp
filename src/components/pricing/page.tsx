@@ -49,11 +49,11 @@ export default PricingBlock;
 
 const PricingCard = () => {
   return (
-    <div className="border-border flex w-full flex-col gap-[18px] rounded-3xl border bg-black/50 p-7">
+    <div className="border-border flex w-full flex-col gap-[18px] rounded-3xl border bg-black/50 p-5 sm:p-7">
       <div className="tl-flex-between">
-        <div className="tl-heading2">Subscription</div>
+        <div className="sm:tl-heading2 text-2xl sm:text-3xl">Subscription</div>
         <div className="tl-heading2 text-primary-brand flex items-center gap-1">
-          <div>$49.99</div>
+          <div className="sm:tl-heading2 text-2xl sm:text-3xl">$49.99</div>
           <span className="text-text-secondary text-xl leading-6 font-normal tracking-normal lowercase">
             / month
           </span>
@@ -62,7 +62,7 @@ const PricingCard = () => {
 
       <Separator />
 
-      <ul className="tl-paraghraph1 !text-text-primary flex flex-col gap-4">
+      <ul className="tl-paraghraph1 !text-text-primary flex flex-col gap-4 !text-start !text-[16px] sm:!text-lg">
         <li className="tl-flex-icon">
           <CheckIcon /> Projections for multiple sports
         </li>

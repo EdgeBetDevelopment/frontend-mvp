@@ -116,11 +116,11 @@ const SportsList = () => {
     <>
       <div>
         <div className="grid gap-[18px]">
-          <div className="tl-container tl-mask-gradient-top grid w-full grid-cols-2 gap-2 sm:gap-[18px] md:grid-cols-3 lg:grid-cols-4">
+          <div className="tl-container tl-mask-gradient-top grid w-full grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-[18px] md:grid-cols-3 lg:grid-cols-4">
             {emptyCards}
           </div>
 
-          <div className="tl-container grid w-full grid-cols-2 gap-2 sm:gap-[18px] md:grid-cols-3 lg:grid-cols-4">
+          <div className="tl-container grid w-full grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-[18px] md:grid-cols-3 lg:grid-cols-4">
             {sports.map((sport, index) => (
               <SportsCard
                 onViewPredictions={() => onViewPredictions(sport)}
@@ -131,7 +131,7 @@ const SportsList = () => {
             ))}
           </div>
 
-          <div className="tl-container tl-mask-gradient-bottom grid w-full grid-cols-2 gap-2 sm:gap-[18px] md:grid-cols-3 lg:grid-cols-4">
+          <div className="tl-container tl-mask-gradient-bottom grid w-full grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-[18px] md:grid-cols-3 lg:grid-cols-4">
             {emptyCards}
           </div>
         </div>
