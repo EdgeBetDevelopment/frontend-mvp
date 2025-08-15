@@ -77,7 +77,7 @@ export const sports: ISport[] = [
 
   {
     title: 'Tennis',
-    subtitle: 'Grand Slam Tournaments',
+    subtitle: 'WTA / ATP Events',
     icon: <TennisIcon />,
   },
 
