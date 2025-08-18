@@ -1,6 +1,7 @@
 import { StateCreator } from 'zustand';
 
 import { IGameWithAI } from '@/types/game';
+import { calcParlayOddsDecimal } from '@/utils/convertAmericanToDecimal';
 
 type Sport = 'nba';
 
@@ -26,6 +27,7 @@ interface IMatchupState {
   isParlay: boolean;
   isAmerican: boolean;
   single: Ticket[];
+  parlayOdds: number;
 
   parlay: Ticket;
   setIsAmerican: (val: boolean) => void;
@@ -60,6 +62,7 @@ export const matchupSlice: StateCreator<IMatchupState> = (set) => ({
   isParlay: false,
   single: [],
   parlay: emptyTicket(),
+  parlayOdds: 1,
 
   setTrackedGame: (trackedGame) => set({ trackedGame }),
   setSelectedGame: (selectedGame) => set({ selectedGame }),
@@ -120,7 +123,9 @@ export const matchupSlice: StateCreator<IMatchupState> = (set) => ({
 
       if (parlay.bets.length >= 15) return state;
       parlay.bets = [...parlay.bets, normalized];
-      return { parlay };
+      const odds = calcParlayOddsDecimal(parlay.bets);
+
+      return { parlay, parlayOdds: odds };
     }),
 
   removeParlayPick: (i) =>
@@ -129,12 +134,14 @@ export const matchupSlice: StateCreator<IMatchupState> = (set) => ({
         ...s.parlay,
         bets: s.parlay.bets.filter((_, idx) => idx !== i),
       };
-      return { parlay };
+      const odds = calcParlayOddsDecimal(parlay.bets);
+
+      return { parlay, parlayOdds: odds };
     }),
 
   setParlayAmount: (amount) =>
     set((s) => ({ parlay: { ...s.parlay, amount } })),
   setParlayWin: (win_amount) =>
     set((s) => ({ parlay: { ...s.parlay, win_amount } })),
-  clearParlay: () => set({ parlay: emptyTicket() }),
+  clearParlay: () => set({ parlay: emptyTicket(), parlayOdds: 1 }),
 });

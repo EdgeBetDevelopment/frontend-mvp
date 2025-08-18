@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { Outfit } from 'next/font/google';
-import Image from 'next/image';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { FaCircleUser } from 'react-icons/fa6';
@@ -36,6 +35,8 @@ const PlayerProfile = () => {
 
   const { profile } = playerNameData || {};
 
+  console.log(playerNameData);
+
   if (isLoading)
     return (
       <Loader
@@ -65,13 +66,14 @@ const PlayerProfile = () => {
       <div className="relative flex w-full flex-row justify-center">
         <div className="flex flex-col items-center gap-1.5">
           {playerNameData?.image_url ? (
-            <Image
-              src={`${playerNameData?.image_url}`}
-              height={56}
-              width={68}
-              className="h-14 w-17 rounded-full"
-              alt="Player Logo"
-            />
+            // <Image
+            //   src={`${playerNameData?.image_url}`}
+            //   height={56}
+            //   width={68}
+            //   className="h-14 w-17 rounded-full"
+            //   alt="Player Logo"
+            // />
+            <FaCircleUser className="h-14 w-14" />
           ) : (
             <FaCircleUser className="h-14 w-14" />
           )}
@@ -153,14 +155,16 @@ const PlayerProfile = () => {
           </div>
         </>
       )}
-
-      <div className="mt-10 w-full">
-        <PlayerStatsTable stats={player.player_stats} />
-      </div>
-
-      <div className="my-10 min-h-[244px] w-full min-w-[374px]">
-        <PlayerStatsChart data={player.player_stats} />
-      </div>
+      {playerNameData?.season_stats && (
+        <div className="mt-10 w-full">
+          <PlayerStatsTable stats={playerNameData?.season_stats} />
+        </div>
+      )}
+      {playerNameData?.season_stats && (
+        <div className="my-10 min-h-[244px] w-full min-w-[374px]">
+          <PlayerStatsChart data={playerNameData?.season_stats} />
+        </div>
+      )}
     </div>
   );
 };

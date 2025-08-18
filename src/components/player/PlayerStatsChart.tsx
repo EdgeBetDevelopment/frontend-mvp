@@ -12,18 +12,27 @@ import {
   YAxis,
 } from 'recharts';
 
+type SeasonEntry = {
+  SEASON_ID?: string | number;
+  GP?: number | string;
+  PTS?: number | string;
+  AST?: number | string;
+  REB?: number | string;
+  FG3M?: number | string;
+  MIN?: number | string;
+};
+
 interface PlayerStatsChartProps {
-  data: any[];
+  data: SeasonEntry[] | Record<string, any> | null | undefined;
 }
 
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (!active || !payload || !payload.length) return null;
-
   return (
     <div className="border-border rounded-md border bg-[#111] px-4 py-3 text-xs shadow-md">
       <p className="mb-2 font-semibold text-white">Season: {label}</p>
-      {payload.map((entry: any, index: number) => (
-        <p key={index} className="text-[#ccc]">
+      {payload.map((entry: any, i: number) => (
+        <p key={i} className="text-[#ccc]">
           <span
             className="mr-2 inline-block h-2 w-2 rounded-full"
             style={{ backgroundColor: entry.color }}
@@ -36,17 +45,52 @@ const CustomTooltip = ({ active, payload, label }: any) => {
   );
 };
 
+const toNum = (v: any) => (v == null || v === '' ? 0 : +v);
+
 const PlayerStatsChart: FC<PlayerStatsChartProps> = ({ data }) => {
-  const chartData = data
-    .filter((s) => s.SEASON_ID && s.GP > 0)
-    .map((s) => ({
-      season: s.SEASON_ID,
-      PTS: +(s.PTS / s.GP).toFixed(1),
-      AST: +(s.AST / s.GP).toFixed(1),
-      REB: +(s.REB / s.GP).toFixed(1),
-      FG3M: +(s.FG3M / s.GP).toFixed(1),
-      MIN: +(s.MIN / s.GP).toFixed(1),
-    }));
+  let chartData: Array<{
+    season: string;
+    PTS: number;
+    AST: number;
+    REB: number;
+    FG3M: number;
+    MIN: number;
+  }> = [];
+
+  if (Array.isArray(data)) {
+    chartData = data
+      .filter((s) => (s.SEASON_ID ?? s['season']) && toNum(s.GP) > 0)
+      .map((s) => {
+        const gp = Math.max(1, toNum(s.GP));
+        return {
+          season: String(s.SEASON_ID ?? s['season']),
+          PTS: +(toNum(s.PTS) / gp).toFixed(1),
+          AST: +(toNum(s.AST) / gp).toFixed(1),
+          REB: +(toNum(s.REB) / gp).toFixed(1),
+          FG3M: +(toNum(s.FG3M) / gp).toFixed(1),
+          MIN: +(toNum(s.MIN) / gp).toFixed(1),
+        };
+      });
+  } else if (data && typeof data === 'object') {
+    chartData = [
+      {
+        season: String((data as any).SEASON_ID ?? 'Current'),
+        PTS: toNum((data as any).PPG), // вже per-game
+        AST: toNum((data as any).APG),
+        REB: toNum((data as any).RPG),
+        FG3M: toNum((data as any).FG3M ?? (data as any)['3PM'] ?? 0),
+        MIN: toNum((data as any).MPG ?? (data as any).MIN ?? 0),
+      },
+    ];
+  }
+
+  if (!chartData.length) {
+    return (
+      <div className="bg-graph-section w-full rounded-lg p-4">
+        <p className="text-sm text-[#aaa]">No stats available.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-graph-section w-full rounded-lg p-4 pb-6">

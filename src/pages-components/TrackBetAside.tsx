@@ -25,7 +25,10 @@ const TrackBetsAside = () => {
     clearParlay,
     setSelectedGame,
     trackedGame,
+    parlayOdds,
   } = useStore();
+
+  console.log(parlayOdds);
 
   const { openModal, closeModal, isModalOpen } = useModalManager();
   const { isAuthenticated } = useAuth();
