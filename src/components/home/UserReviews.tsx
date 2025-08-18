@@ -2,6 +2,7 @@
 
 import { useRef } from 'react';
 import Autoplay from 'embla-carousel-autoplay';
+import { Star } from 'lucide-react';
 
 import {
   Carousel,
@@ -95,8 +96,6 @@ export const UserReviews = () => {
     Autoplay({ delay: 3000, stopOnInteraction: false }),
   );
 
-  console.log(data);
-
   return (
     <div className="tl-container my-[90px] flex w-full flex-col items-center gap-[90px]">
       <PageTitle
@@ -147,6 +146,31 @@ export const UserReviews = () => {
   );
 };
 
+const StarRating = ({ value = 0 }: { value?: number }) => {
+  const rating = Math.max(0, Math.min(5, Math.round(value)));
+
+  return (
+    <div
+      className="flex items-center justify-center gap-1"
+      aria-label={`Rating: ${rating} out of 5`}
+    >
+      {Array.from({ length: 5 }, (_, i) => {
+        const filled = i < rating;
+        return (
+          <Star
+            key={i}
+            className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6"
+            fill={filled ? 'currentColor' : 'none'}
+            strokeWidth={filled ? 1 : 2}
+            aria-hidden="true"
+          />
+        );
+      })}
+      <span className="sr-only">{rating}</span>
+    </div>
+  );
+};
+
 const TestimonialCard = ({ name, rating, message }: ITestimonialCard) => {
   return (
     <div className="flex h-full flex-col gap-6 overflow-hidden rounded-3xl border p-4 sm:p-5 md:p-6">
@@ -160,9 +184,7 @@ const TestimonialCard = ({ name, rating, message }: ITestimonialCard) => {
           <p className="w-full truncate text-center text-lg font-bold tracking-normal sm:text-xl md:text-2xl">
             {name}
           </p>
-          <p className="text-text-secondary w-full truncate text-center text-sm leading-tight font-normal tracking-normal sm:text-base sm:font-medium md:text-xl">
-            {rating}
-          </p>
+          <StarRating value={rating} />
         </div>
       </div>
 
