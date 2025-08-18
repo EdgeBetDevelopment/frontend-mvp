@@ -15,7 +15,7 @@ const DiscrodBlock = () => {
         background:
           'linear-gradient(90deg, rgba(12, 12, 12) 0%, rgba(233, 233, 233, 0.01) 50%, rgba(12, 12, 12) 100%)',
       }}
-      className="relative flex w-full flex-col items-center gap-9 overflow-hidden rounded-4xl bg-[#E9E9E90D] px-14 py-12 pb-64"
+      className="relative flex w-full flex-col items-center gap-9 overflow-hidden rounded-4xl bg-[#E9E9E90D] px-8 py-6 md:px-14 md:py-12"
     >
       <div
         style={{ backgroundImage: `url(${GridBgImage.src})` }}
@@ -43,13 +43,13 @@ const DiscrodBlock = () => {
       />
 
       <Button
-        className="text-center align-middle text-2xl font-bold tracking-normal"
+        className="w-full text-center align-middle text-base font-bold tracking-normal sm:w-auto sm:text-2xl"
         variant="gradient"
       >
         Join Our Discord Server <ArrowRightIcon />
       </Button>
 
-      <div className="absolute -bottom-20 h-[272px] w-[580px]">
+      <div className="h-auto w-full md:h-[272px] md:w-[580px]">
         <Image placeholder="blur" src={DiscordImage} alt={'Discord'} />
       </div>
     </div>

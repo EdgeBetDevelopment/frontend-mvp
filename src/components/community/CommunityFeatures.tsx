@@ -65,7 +65,7 @@ const CommunityFeatures = () => {
         }
       />
 
-      <ul className="grid grid-cols-3 gap-x-5 gap-y-12">
+      <ul className="grid gap-x-5 gap-y-12 sm:grid-cols-2 md:grid-cols-3">
         {COMMUNITY_FEATURES_DATA.map((feature, index) => (
           <FeatureCard key={feature.title} {...feature} num={index + 1} />
         ))}
