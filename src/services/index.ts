@@ -6,26 +6,28 @@ import { axiosInstance } from './client';
 
 const apiService = {
   async getGames(): Promise<IGameWithAI[]> {
-    const response = await axiosInstance.get(`/api/v1/nba/games`);
+    const response = await axiosInstance.get(`/nba/api/v1/nba/games`);
     console.log(response.data);
     return response.data;
   },
 
   async getScoreboard(): Promise<any> {
-    const response = await axiosInstance.get(`/api/v1/nba/get_scoreboard`);
+    const response = await axiosInstance.get(`/nba/api/v1/nba/get_scoreboard`);
 
     return response.data.scoreboard;
   },
 
   async findTeam(query: string): Promise<any> {
-    const response = await axiosInstance.get(`/api/v1/nba/find_team/${query}`);
+    const response = await axiosInstance.get(
+      `/nba/api/v1/nba/find_team/${query}`,
+    );
 
     return response.data;
   },
 
   async searchTeam(query: string): Promise<any> {
     const response = await axiosInstance.get(
-      `/api/v1/nba/search_team/${query}`,
+      `/nba/api/v1/nba/search_team/${query}`,
     );
 
     return response.data;
@@ -33,34 +35,36 @@ const apiService = {
 
   async getPlayerById(query: string): Promise<any> {
     const response = await axiosInstance.get(
-      `/api/v1/nba/get_player_by_id/${query}`,
+      `/nba/api/v1/nba/get_player_by_id/${query}`,
     );
     return response.data;
   },
 
   async getPlayerByName(query: string): Promise<any> {
     const response = await axiosInstance.get(
-      `/api/v1/nba/get_player_stats_by_name/${query}`,
+      `/nba/api/v1/nba/get_player_stats_by_name/${query}`,
     );
     return response.data;
   },
 
   async getPlayerSeasonByName(query: string): Promise<any> {
     const response = await axiosInstance.get(
-      `/api/v1/nba/get_player_season_games_by_name/${query}`,
+      `/nba/api/v1/nba/get_player_season_games_by_name/${query}`,
     );
     return response.data;
   },
 
   async getTeamById(query: string): Promise<ITeam> {
-    const response = await axiosInstance.get(`/api/v1/nba/get_team/${query}`);
+    const response = await axiosInstance.get(
+      `/nba/api/v1/nba/get_team/${query}`,
+    );
 
     return response.data;
   },
 
   async searchPlayer(query: string): Promise<any> {
     const response = await axiosInstance.get(
-      `/api/v1/nba/search_player/${query}`,
+      `/nba/api/v1/nba/search_player/${query}`,
     );
 
     return response.data;
@@ -89,6 +93,7 @@ const apiService = {
     return mixed.sort(() => Math.random() - 0.5);
   },
 
+  //NEED UPDATE
   async createBet(data: any): Promise<string> {
     const response = await axiosInstance.post(`/api/v1/bet/create_bet`, data);
 
@@ -115,7 +120,7 @@ const apiService = {
   },
 
   async getPickOfTheDayList(): Promise<any[]> {
-    const response = await axiosInstance.get(`/api/v1/pick_of_the_day/`);
+    const response = await axiosInstance.get(`/nba/api/v1/pick_of_the_day/`);
     return response.data;
   },
 };

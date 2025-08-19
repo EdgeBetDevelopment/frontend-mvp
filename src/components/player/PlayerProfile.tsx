@@ -35,7 +35,7 @@ const PlayerProfile = () => {
 
   const { profile } = playerNameData || {};
 
-  console.log(playerNameData);
+  console.log(player);
 
   if (isLoading)
     return (
@@ -162,7 +162,7 @@ const PlayerProfile = () => {
       )}
       {playerNameData?.season_stats && (
         <div className="my-10 min-h-[244px] w-full min-w-[374px]">
-          <PlayerStatsChart data={playerNameData?.season_stats} />
+          <PlayerStatsChart data={player?.player_stats} />
         </div>
       )}
     </div>

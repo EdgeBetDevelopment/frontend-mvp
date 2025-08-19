@@ -4,20 +4,24 @@ import { axiosInstance } from './client';
 
 const authService = {
   async login(data: ILogin): Promise<IAuthRepsonse> {
-    const response = await axiosInstance.post(`/api/v1/auth/login`, data);
+    const response = await axiosInstance.post(`/auth/api/v1/auth/login`, data);
 
     return response.data;
   },
 
   async signUp(data: ISignUp): Promise<IAuthRepsonse> {
-    const response = await axiosInstance.post(`/api/v1/auth/register`, data);
+    const response = await axiosInstance.post(
+      `/auth/api/v1/auth/register
+`,
+      data,
+    );
 
     return response.data;
   },
 
   async forgotPassword(email: string) {
     const response = await axiosInstance.post(
-      `/api/v1/auth/forgot/password?email=${email}`,
+      `/auth/api/v1/auth/forgot/password?email=${email}`,
     );
 
     return response.data;
@@ -25,7 +29,7 @@ const authService = {
 
   async verificationCode(body: { email: string; code: string | number }) {
     const response = await axiosInstance.post(
-      `/api/v1/auth/verify/code?email=${body.email}&code=${body.code}`,
+      `/auth/api/v1/auth/verify/code?email=${body.email}&code=${body.code}`,
     );
 
     return response.data;
@@ -37,7 +41,7 @@ const authService = {
     new_password_repeat: string;
   }) {
     const response = await axiosInstance.post(
-      `/api/v1/auth/change/password`,
+      `/auth/api/v1/auth/change/password`,
       body,
     );
 
@@ -46,7 +50,7 @@ const authService = {
 
   async loginGoogle(body: { token: string }): Promise<IAuthRepsonse> {
     const response = await axiosInstance.post(
-      `/api/v1/auth/google/token?token=${body.token}`,
+      `/auth/api/v1/auth/google/token?token=${body.token}`,
     );
 
     return response.data;
