@@ -49,7 +49,9 @@ const AuthorizedUser = () => {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="bg-background text-white">
-        <DropdownMenuLabel>My Account</DropdownMenuLabel>
+        <Link className="cursor-pointer" href={ROUTES.PROFILE.PROFILE}>
+          <DropdownMenuLabel>My Account</DropdownMenuLabel>
+        </Link>
 
         <DropdownMenuSeparator />
 

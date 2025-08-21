@@ -10,6 +10,7 @@ export const ROUTES = {
   TEAM: (id: string | number) => `/team/${id}`,
 
   PROFILE: {
+    PROFILE: '/profile',
     TRACKER: '/profile/tracker',
     PICK_OF_DAY: '/profile/pick-of-day',
   },

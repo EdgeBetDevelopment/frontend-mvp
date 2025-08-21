@@ -28,25 +28,34 @@ interface IInput extends React.ComponentProps<'input'> {
   label?: string;
   variant?: 'default' | 'clear';
   icon?: React.ReactNode;
+  labelClassName?: string;
   id?: string;
+  error?: string;
 }
 
 function Input({
   className,
   containerClassName,
+  labelClassName,
   icon,
   type,
   id,
   variant,
+  error,
   label,
   ...props
 }: IInput) {
+  const describedBy = error ? `${id}-error` : undefined;
+
   return (
     <div className={cn('w-full', containerClassName)}>
       {label && (
         <label
           htmlFor={id}
-          className="text-text-dark mb-3 block text-lg font-normal tracking-normal"
+          className={cn(
+            'text-text-dark mb-3 block text-lg font-normal tracking-normal',
+            labelClassName,
+          )}
         >
           {label}
         </label>
@@ -69,6 +78,12 @@ function Input({
           {...props}
         />
       </div>
+
+      {error && (
+        <p id={describedBy} className="mt-2 text-sm text-red-500">
+          {error}
+        </p>
+      )}
     </div>
   );
 }
