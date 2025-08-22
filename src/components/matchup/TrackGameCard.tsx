@@ -46,6 +46,7 @@ const TrackGameCard = ({ game, index }: ITrackGameCard) => {
     clearParlay,
     isAmerican,
     parlayOdds,
+    removeParlayPick,
   } = useStore();
 
   function formatDescription(desc: string) {
@@ -90,6 +91,10 @@ const TrackGameCard = ({ game, index }: ITrackGameCard) => {
     } else {
       removeSingle(index);
     }
+  };
+
+  const handleRemoveOneParlay = (pid: string) => {
+    removeParlayPick(pid);
   };
 
   return (
@@ -152,7 +157,11 @@ const TrackGameCard = ({ game, index }: ITrackGameCard) => {
             <p className="text-[16px]">Parlay (3 picks)</p>
             <p>
               {`Parlay Odds: `}
-              {isAmerican ? convertEuropeanToAmerican(parlayOdds) : parlayOdds}
+              {parlay.bets.length === 0
+                ? '-'
+                : isAmerican
+                  ? convertEuropeanToAmerican(parlayOdds)
+                  : parlayOdds}
             </p>
           </>
         )}
@@ -193,7 +202,7 @@ const TrackGameCard = ({ game, index }: ITrackGameCard) => {
                         className="max-h-[10px] max-w-[10px]"
                         variant="clear"
                         size="icon"
-                        onClick={() => handleRemove()}
+                        onClick={() => handleRemoveOneParlay(`${b?.pid}`)}
                       >
                         <SmallCancelIcon />
                       </Button>

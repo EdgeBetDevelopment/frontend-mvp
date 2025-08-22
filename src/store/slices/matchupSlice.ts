@@ -1,7 +1,10 @@
 import { StateCreator } from 'zustand';
 
 import { IGameWithAI } from '@/types/game';
-import { calcParlayOddsDecimal } from '@/utils/convertAmericanToDecimal';
+import {
+  calcParlayOddsDecimal,
+  makeId,
+} from '@/utils/convertAmericanToDecimal';
 
 type Sport = 'nba';
 
@@ -12,6 +15,7 @@ export interface BetPick {
   selected_team_name: string;
   description: string;
   sport: Sport;
+  pid?: string;
 }
 
 export interface Ticket {
@@ -43,7 +47,7 @@ interface IMatchupState {
   clearSingle: () => void;
 
   upsertParlayPick: (pick: BetPick, index?: number) => void;
-  removeParlayPick: (index: number) => void;
+  removeParlayPick: (key: number | string) => void;
   setParlayAmount: (amount: number) => void;
   setParlayWin: (win: number) => void;
   clearParlay: () => void;
@@ -114,27 +118,48 @@ export const matchupSlice: StateCreator<IMatchupState> = (set) => ({
   upsertParlayPick: (pick, index) =>
     set((state) => {
       const parlay = { ...state.parlay };
-      const normalized: BetPick = { sport: 'nba', ...pick };
+
+      const normalized: BetPick = {
+        sport: 'nba',
+        ...pick,
+        pid: pick.pid ?? makeId(),
+      };
+      const normDesc = (s?: string) => (s ?? '').trim().toLowerCase();
 
       if (typeof index === 'number' && parlay.bets[index]) {
         parlay.bets[index] = normalized;
-        return { parlay };
+      } else {
+        const j = pick.pid
+          ? parlay.bets.findIndex((b) => b.pid === pick.pid)
+          : -1;
+
+        if (j !== -1) {
+          parlay.bets[j] = { ...parlay.bets[j], ...normalized };
+        } else {
+          const exists = parlay.bets.some(
+            (b) => normDesc(b.description) === normDesc(normalized.description),
+          );
+          if (exists) {
+            return { parlay: state.parlay, parlayOdds: state.parlayOdds };
+          }
+          if (parlay.bets.length >= 15) return state;
+          parlay.bets = [...parlay.bets, normalized];
+        }
       }
 
-      if (parlay.bets.length >= 15) return state;
-      parlay.bets = [...parlay.bets, normalized];
-      const odds = calcParlayOddsDecimal(parlay.bets);
+      const odds = parlay.bets.length ? calcParlayOddsDecimal(parlay.bets) : 1;
       return { parlay, parlayOdds: odds };
     }),
 
-  removeParlayPick: (i) =>
+  removeParlayPick: (key: number | string) =>
     set((s) => {
-      const parlay = {
-        ...s.parlay,
-        bets: s.parlay.bets.filter((_, idx) => idx !== i),
-      };
-      const odds = calcParlayOddsDecimal(parlay.bets);
+      const bets =
+        typeof key === 'number'
+          ? s.parlay.bets.filter((_, idx) => idx !== key)
+          : s.parlay.bets.filter((b) => b.pid !== key);
 
+      const parlay = { ...s.parlay, bets };
+      const odds = bets.length ? calcParlayOddsDecimal(bets) : 1;
       return { parlay, parlayOdds: odds };
     }),
 
