@@ -128,6 +128,11 @@ export const GeneralInformation = () => {
           </Button>
         </div>
       </div>
+      <Button className="auth-button bg-surface-secondary w-full items-center justify-center gap-2 rounded-xl p-4 transition-all duration-200 hover:opacity-90">
+        <p className="text-center align-middle text-2xl font-bold tracking-normal">
+          Sign in with Whoop
+        </p>
+      </Button>
       <ModalProfile
         title="Delete Account"
         open={isDelete}
