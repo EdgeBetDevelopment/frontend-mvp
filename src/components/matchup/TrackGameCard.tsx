@@ -95,7 +95,7 @@ const TrackGameCard = ({ game, index }: ITrackGameCard) => {
   return (
     <CardContainer className="tl-gradient-mistBlue-opacity border-border relative flex flex-col gap-3">
       <Button
-        className={`absolute top-1 right-1 ${isParlay && 'top-4.5 right-5'}`}
+        className={`absolute top-1 right-1 z-10 ${isParlay && 'top-4.5 right-5'}`}
         variant="clear"
         size="icon"
         onClick={() => handleRemove()}
@@ -182,7 +182,7 @@ const TrackGameCard = ({ game, index }: ITrackGameCard) => {
                           : b?.odds}
                       </span>
                       <Button
-                        className="max-h-[7px] max-w-[7px]"
+                        className="max-h-[10px] max-w-[10px]"
                         variant="clear"
                         size="icon"
                         onClick={() => handleRemove()}
