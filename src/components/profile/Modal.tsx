@@ -110,7 +110,11 @@ export function ModalProfile({
           {secondOnClick && (
             <Button
               onClick={handleSecond}
-              sx={{ ...baseButtonStyles, color: '#EBEBEB' }}
+              className="border-none bg-none"
+              style={{
+                textTransform: 'none',
+              }}
+              sx={{ color: '#EBEBEB' }}
             >
               {secondText}
             </Button>

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -23,6 +24,10 @@ type FormData = z.infer<typeof Schema>;
 export const GeneralInformation = () => {
   const [isDelete, setIsDelete] = useState(false);
   const [isEmail, setIsEmail] = useState(false);
+  const [isEmailUpdated, setIsEmailUpdated] = useState(false);
+
+  const searchParams = useSearchParams();
+  const router = useRouter();
 
   const {
     register,
@@ -46,6 +51,14 @@ export const GeneralInformation = () => {
       }
     })();
   }, [setValue]);
+
+  useEffect(() => {
+    const confirmed = searchParams.get('confirmed');
+    if (confirmed === 'true') {
+      setIsEmailUpdated(true);
+      router.replace('/profile', { scroll: false });
+    }
+  }, [searchParams, router]);
 
   const handleUpdate = async (data: FormData) => {
     try {
@@ -124,13 +137,23 @@ export const GeneralInformation = () => {
         secondText="Cancel"
         desciption="This action will permanently delete your account and all associated data. This action cannot be undone."
         firstOnClick={handleDelete}
+        secondOnClick={() => setIsDelete(false)}
       />
       <ModalProfile
         title="Confirm Your New Email Address"
         firstColor="white"
         desciption={`We’ve sent a confirmation link to ${email}. Please click the link in the email to complete the update. Until confirmed, your current email will remain active.`}
         onClose={() => setIsEmail(false)}
+        firstOnClick={() => setIsEmail(false)}
         open={isEmail}
+      />
+      <ModalProfile
+        title="Email Updated"
+        firstColor="white"
+        desciption={`Your email address has been successfully updated to ${email}.`}
+        onClose={() => setIsEmailUpdated(false)}
+        firstOnClick={() => setIsEmailUpdated(false)}
+        open={isEmailUpdated}
       />
     </section>
   );
