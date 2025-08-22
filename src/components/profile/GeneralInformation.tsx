@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -8,6 +8,8 @@ import { z } from 'zod';
 import { userService } from '@/services/user';
 import { Button } from '@/ui/button';
 import { Input } from '@/ui/input';
+
+import { ModalProfile } from './Modal';
 
 import DeleteIcon from '@/assets/icons/delete-icon.svg';
 
@@ -19,12 +21,18 @@ const Schema = z.object({
 type FormData = z.infer<typeof Schema>;
 
 export const GeneralInformation = () => {
+  const [isDelete, setIsDelete] = useState(false);
+  const [isEmail, setIsEmail] = useState(false);
+
   const {
     register,
     handleSubmit,
     setValue,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm<FormData>({ resolver: zodResolver(Schema), mode: 'onBlur' });
+
+  const email = watch('email') ?? '';
 
   useEffect(() => {
     (async () => {
@@ -41,6 +49,7 @@ export const GeneralInformation = () => {
 
   const handleUpdate = async (data: FormData) => {
     try {
+      setIsEmail(true);
       const res = await userService.updateMe(data);
       console.log('updateMe:', res);
     } catch (e) {
@@ -66,7 +75,10 @@ export const GeneralInformation = () => {
       <div className="flex flex-col gap-5">
         <div className="flex flex-row justify-between">
           <h5 className="text-xl font-medium">General Information</h5>
-          <button className="hidden cursor-pointer flex-row gap-[6px] text-[#DC2626] sm:flex">
+          <button
+            onClick={() => setIsDelete(true)}
+            className="hidden cursor-pointer flex-row gap-[6px] text-[#DC2626] sm:flex"
+          >
             <DeleteIcon /> Delete Account
           </button>
         </div>
@@ -103,6 +115,23 @@ export const GeneralInformation = () => {
           </Button>
         </div>
       </div>
+      <ModalProfile
+        title="Delete Account"
+        open={isDelete}
+        onClose={() => setIsDelete(false)}
+        firstText="Delete Account"
+        firstColor="red"
+        secondText="Cancel"
+        desciption="This action will permanently delete your account and all associated data. This action cannot be undone."
+        firstOnClick={handleDelete}
+      />
+      <ModalProfile
+        title="Confirm Your New Email Address"
+        firstColor="white"
+        desciption={`We’ve sent a confirmation link to ${email}. Please click the link in the email to complete the update. Until confirmed, your current email will remain active.`}
+        onClose={() => setIsEmail(false)}
+        open={isEmail}
+      />
     </section>
   );
 };
