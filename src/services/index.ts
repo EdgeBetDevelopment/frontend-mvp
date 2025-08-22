@@ -92,17 +92,18 @@ const apiService = {
 
     return mixed.sort(() => Math.random() - 0.5);
   },
-
-  //NEED UPDATE
   async createBet(data: any): Promise<string> {
-    const response = await axiosInstance.post(`/api/v1/bet/create_bet`, data);
+    const response = await axiosInstance.post(
+      `/bet/api/v1/bet/create_bet`,
+      data,
+    );
 
     return response.data;
   },
 
   async createSingleBets(data: any): Promise<string> {
     const response = await axiosInstance.post(
-      `/api/v1/bet/create_single_bets
+      `/bet/api/v1/bet/create_single_bets
 `,
       data,
     );
@@ -114,7 +115,7 @@ const apiService = {
     filter: string;
     sort: { field: string; direction: string }[];
   }): Promise<IGameTracker[]> {
-    const response = await axiosInstance.post(`/api/v1/bet/bet_list`, body);
+    const response = await axiosInstance.post(`/bet/api/v1/bet/bet_list`, body);
 
     return response.data;
   },

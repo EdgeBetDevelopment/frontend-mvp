@@ -1,9 +1,11 @@
 'use client';
 
+import { useEffect } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
+import { userService } from '@/services/user';
 import { Button } from '@/ui/button';
 import { Input } from '@/ui/input';
 
@@ -20,11 +22,43 @@ export const GeneralInformation = () => {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<FormData>({ resolver: zodResolver(Schema), mode: 'onBlur' });
 
+  useEffect(() => {
+    (async () => {
+      try {
+        const me = await userService.getMe();
+        console.log('ME:', me);
+        setValue('username', me?.username ?? '');
+        setValue('email', me?.email ?? '');
+      } catch (e) {
+        console.error('getMe error:', e);
+      }
+    })();
+  }, [setValue]);
+
+  const handleUpdate = async (data: FormData) => {
+    try {
+      const res = await userService.updateMe(data);
+      console.log('updateMe:', res);
+    } catch (e) {
+      console.error('updateMe error:', e);
+    }
+  };
+
+  const handleDelete = async () => {
+    try {
+      const res = await userService.deleteMe();
+      console.log('deleteMe:', res);
+    } catch (e) {
+      console.error('deleteMe error:', e);
+    }
+  };
+
   const onSubmit = (data: FormData) => {
-    console.log(data);
+    handleUpdate(data);
   };
 
   return (
@@ -60,6 +94,7 @@ export const GeneralInformation = () => {
         </form>
         <div className="flex flex-col sm:flex-row">
           <Button
+            onClick={handleSubmit(onSubmit)}
             className="rounded-[10px] bg-[linear-gradient(180deg,_rgba(255,255,255,0.03)_0%,_rgba(255,255,255,0.1)_100%)] !px-[31px] py-3 text-[16px] font-semibold text-[#EBEBEB] shadow-[0_-1px_0_0_#00000033_inset,0_0_0_1px_#FFFFFF40,0_1px_0_0_#FFFFFF0D_inset]"
             disabled={isSubmitting}
             type="submit"

@@ -14,7 +14,7 @@ export const useReviews = () => {
     queryKey: ['reviews'],
     queryFn: async () => {
       const { data } = await axiosInstance.get(
-        '/api/v1/review/get_reviews?skip=0&limit=100',
+        '/review/api/v1/review/get_reviews?skip=0&limit=100',
         {
           headers: {
             'Content-Type': 'application/json',
