@@ -124,7 +124,6 @@ export const matchupSlice: StateCreator<IMatchupState> = (set) => ({
       if (parlay.bets.length >= 15) return state;
       parlay.bets = [...parlay.bets, normalized];
       const odds = calcParlayOddsDecimal(parlay.bets);
-
       return { parlay, parlayOdds: odds };
     }),
 

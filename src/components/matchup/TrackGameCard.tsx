@@ -9,6 +9,10 @@ import { useStore } from '@/store';
 import { IGameWithAI } from '@/types/game';
 import { Avatar, AvatarImage } from '@/ui/avatar';
 import { Button } from '@/ui/button';
+import {
+  convertAmericanToDecimal,
+  convertEuropeanToAmerican,
+} from '@/utils/convertAmericanToDecimal';
 import { formatUtcToLocalDate, formatUtcToLocalTimeAmPm } from '@/utils/time';
 import CardContainer from '../../ui/containers/CardContainer';
 import { Input } from '../../ui/input';
@@ -41,6 +45,7 @@ const TrackGameCard = ({ game, index }: ITrackGameCard) => {
     removeSingle,
     clearParlay,
     isAmerican,
+    parlayOdds,
   } = useStore();
 
   function formatDescription(desc: string) {
@@ -54,11 +59,6 @@ const TrackGameCard = ({ game, index }: ITrackGameCard) => {
 
   const currentTicket = isParlay ? parlay : single[index];
   const currentPick = isParlay ? parlay.bets[index] : single[index]?.bets?.[0];
-
-  const convertAmericanToDecimal = (odds: number) => {
-    if (!odds) return 1;
-    return odds > 0 ? odds / 100 + 1 : 100 / Math.abs(odds) + 1;
-  };
 
   const computeSingleWin = (amount: number, decimalOdds: number) =>
     +(amount * decimalOdds).toFixed(2);
@@ -147,7 +147,15 @@ const TrackGameCard = ({ game, index }: ITrackGameCard) => {
       )}
 
       <div className="bg-surface-secondary border-border flex flex-col gap-4 rounded-3xl border p-3">
-        {isParlay && <p className="text-[16px]">Parlay (3 picks)</p>}
+        {isParlay && (
+          <>
+            <p className="text-[16px]">Parlay (3 picks)</p>
+            <p>
+              {`Parlay Odds: `}
+              {isAmerican ? convertEuropeanToAmerican(parlayOdds) : parlayOdds}
+            </p>
+          </>
+        )}
         {!isParlay && (
           <div className="tl-paraghraph2 flex items-center gap-2">
             <Avatar className="flex h-8 w-8 items-center justify-center rounded-full border bg-[#33758780]">
