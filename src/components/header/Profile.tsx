@@ -12,7 +12,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '../../ui/dropdown-menu';
@@ -50,7 +49,7 @@ const AuthorizedUser = () => {
       </DropdownMenuTrigger>
       <DropdownMenuContent className="bg-background text-white">
         <Link className="cursor-pointer" href={ROUTES.PROFILE.PROFILE}>
-          <DropdownMenuLabel>My Account</DropdownMenuLabel>
+          <DropdownMenuItem>My Account</DropdownMenuItem>
         </Link>
 
         <DropdownMenuSeparator />
