@@ -37,8 +37,9 @@ const PricingBlock = () => {
           }
         />
 
-        <div className="w-full max-w-[720px]">
+        <div className="flex w-full flex-col gap-6 lg:flex-row">
           <PricingCard />
+          <PricingCard2 />
         </div>
       </div>
     </div>
@@ -48,6 +49,45 @@ const PricingBlock = () => {
 export default PricingBlock;
 
 const PricingCard = () => {
+  return (
+    <div className="border-border flex w-full flex-col gap-[18px] rounded-3xl border bg-black/50 p-5 sm:p-7">
+      <div className="tl-flex-between">
+        <div className="sm:tl-heading2 text-2xl sm:text-3xl">Subscription</div>
+        <div className="tl-heading2 text-primary-brand flex items-center gap-1">
+          <div className="sm:tl-heading2 text-2xl sm:text-3xl">$24.99</div>
+          <span className="text-text-secondary text-xl leading-6 font-normal tracking-normal lowercase">
+            / week
+          </span>
+        </div>
+      </div>
+
+      <Separator />
+
+      <ul className="tl-paraghraph1 !text-text-primary flex flex-col gap-4 !text-start !text-[16px] sm:!text-lg">
+        <li className="tl-flex-icon">
+          <CheckIcon /> Projections for multiple sports
+        </li>
+        <li className="tl-flex-icon">
+          <CheckIcon /> Access to a private Discord community with 24/7 support
+        </li>
+        <li className="tl-flex-icon">
+          <CheckIcon /> Premium picks
+        </li>
+      </ul>
+
+      <Link
+        href={`${process.env.NEXT_PUBLIC_API_URL}/api/v1/stripe/`}
+        target="_blank"
+      >
+        <Button variant="gradient">
+          Get Started <ArrowRightIcon />
+        </Button>
+      </Link>
+    </div>
+  );
+};
+
+const PricingCard2 = () => {
   return (
     <div className="border-border flex w-full flex-col gap-[18px] rounded-3xl border bg-black/50 p-5 sm:p-7">
       <div className="tl-flex-between">
