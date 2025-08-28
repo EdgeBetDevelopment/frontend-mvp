@@ -154,7 +154,7 @@ const TrackGameCard = ({ game, index }: ITrackGameCard) => {
       <div className="bg-surface-secondary border-border flex flex-col gap-4 rounded-3xl border p-3">
         {isParlay && (
           <>
-            <p className="text-[16px]">{`Parlay ${parlay.bets.length}`}</p>
+            <p className="text-[16px]">{`Parlay (${parlay.bets.length} bets)`}</p>
             <p>
               {`Parlay Odds: `}
               {parlay.bets.length === 0
