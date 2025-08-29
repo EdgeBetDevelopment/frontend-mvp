@@ -1,4 +1,4 @@
-import { GeneralInformation } from '@/components/profile/GeneralInformation';
+import { ProfileSection } from '@/components/profile/ProfileSection';
 
 import Ellipse from '@/assets/ellipse.png';
 import GridBgImage from '@/assets/gridBg.png';
@@ -20,7 +20,9 @@ export default function Profile() {
       <p className="px-4 text-center text-base font-normal sm:px-0">
         Manage your personal information and account settings in one place
       </p>
-      <GeneralInformation />
+      <div className="flex w-full flex-col items-center">
+        <ProfileSection />
+      </div>
     </main>
   );
 }

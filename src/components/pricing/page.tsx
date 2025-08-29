@@ -1,7 +1,9 @@
-import React from 'react';
-import Link from 'next/link';
+'use client';
+
+import React, { useEffect, useState } from 'react';
 
 import PageTitle from '@/components/PageTitle';
+import paymentService, { ISubscriptionType } from '@/services/payment';
 import { Button } from '@/ui/button';
 import { Separator } from '@/ui/separator';
 
@@ -10,6 +12,20 @@ import ArrowRightIcon from '@/assets/icons/arrow-right.svg';
 import CheckIcon from '@/assets/icons/check.svg';
 
 const PricingBlock = () => {
+  const [subscriptions, setSubscriptions] = useState<ISubscriptionType[]>([]);
+
+  useEffect(() => {
+    const fetchSubs = async () => {
+      try {
+        const data = await paymentService.getSubscriptionTypes();
+        setSubscriptions(data);
+      } catch (error) {
+        console.error('Error fetching subscription types', error);
+      }
+    };
+    fetchSubs();
+  }, []);
+
   return (
     <div className="relative h-full w-full overflow-hidden py-10">
       <div className="bg-primary-brand/60 absolute top-1/3 left-1/2 -z-10 h-[200px] w-1/3 -translate-x-1/2 rounded-full blur-[300px]" />
@@ -38,8 +54,9 @@ const PricingBlock = () => {
         />
 
         <div className="flex w-full flex-col gap-6 lg:flex-row">
-          <PricingCard />
-          <PricingCard2 />
+          {subscriptions.map((sub) => (
+            <PricingCard key={sub.id} sub={sub} />
+          ))}
         </div>
       </div>
     </div>
@@ -48,15 +65,31 @@ const PricingBlock = () => {
 
 export default PricingBlock;
 
-const PricingCard = () => {
+const PricingCard = ({ sub }: { sub: ISubscriptionType }) => {
+  const [loading, setLoading] = useState(false);
+
+  const handleCheckout = async () => {
+    try {
+      setLoading(true);
+      const url = await paymentService.subscribe(sub.id);
+      window.location.href = url;
+    } catch (error) {
+      console.error('Stripe checkout error:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  const period = sub.price < 30 ? 'week' : 'month';
   return (
     <div className="border-border flex w-full flex-col gap-[18px] rounded-3xl border bg-black/50 p-5 sm:p-7">
       <div className="tl-flex-between">
-        <div className="sm:tl-heading2 text-2xl sm:text-3xl">Subscription</div>
+        <div className="sm:tl-heading2 text-2xl sm:text-3xl">{sub.name}</div>
         <div className="tl-heading2 text-primary-brand flex items-center gap-1">
-          <div className="sm:tl-heading2 text-2xl sm:text-3xl">$24.99</div>
+          <div className="sm:tl-heading2 text-2xl sm:text-3xl">
+            ${sub.price}
+          </div>
           <span className="text-text-secondary text-xl leading-6 font-normal tracking-normal lowercase">
-            / week
+            / {period}
           </span>
         </div>
       </div>
@@ -74,54 +107,15 @@ const PricingCard = () => {
           <CheckIcon /> Premium picks
         </li>
       </ul>
-
-      <Link
-        href={`${process.env.NEXT_PUBLIC_API_URL}/api/v1/stripe/`}
-        target="_blank"
-      >
-        <Button variant="gradient">
-          Get Started <ArrowRightIcon />
-        </Button>
-      </Link>
-    </div>
-  );
-};
-
-const PricingCard2 = () => {
-  return (
-    <div className="border-border flex w-full flex-col gap-[18px] rounded-3xl border bg-black/50 p-5 sm:p-7">
-      <div className="tl-flex-between">
-        <div className="sm:tl-heading2 text-2xl sm:text-3xl">Subscription</div>
-        <div className="tl-heading2 text-primary-brand flex items-center gap-1">
-          <div className="sm:tl-heading2 text-2xl sm:text-3xl">$49.99</div>
-          <span className="text-text-secondary text-xl leading-6 font-normal tracking-normal lowercase">
-            / month
-          </span>
-        </div>
-      </div>
-
-      <Separator />
-
-      <ul className="tl-paraghraph1 !text-text-primary flex flex-col gap-4 !text-start !text-[16px] sm:!text-lg">
-        <li className="tl-flex-icon">
-          <CheckIcon /> Projections for multiple sports
-        </li>
-        <li className="tl-flex-icon">
-          <CheckIcon /> Access to a private Discord community with 24/7 support
-        </li>
-        <li className="tl-flex-icon">
-          <CheckIcon /> Premium picks
-        </li>
-      </ul>
-
-      <Link
-        href={`${process.env.NEXT_PUBLIC_API_URL}/api/v1/stripe/`}
-        target="_blank"
-      >
-        <Button variant="gradient">
-          Get Started <ArrowRightIcon />
-        </Button>
-      </Link>
+      <Button variant="gradient" onClick={handleCheckout} disabled={loading}>
+        {loading ? (
+          'Redirecting…'
+        ) : (
+          <>
+            Get Started <ArrowRightIcon />
+          </>
+        )}
+      </Button>
     </div>
   );
 };
