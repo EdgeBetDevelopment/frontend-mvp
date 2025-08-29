@@ -60,15 +60,6 @@ const GoogleLoginButton = ({
       return;
     }
 
-    initGoogle();
-  }, [loginGoogle]);
-
-  const initGoogle = () => {
-    if (!clientId) {
-      console.error('Google Client ID is not configured');
-      return;
-    }
-
     window.google.accounts.id.initialize({
       client_id: clientId,
       callback: (response: { credential: string }) => {
@@ -84,7 +75,7 @@ const GoogleLoginButton = ({
       use_fedcm_for_prompt: true,
       button_auto_select: true,
     });
-  };
+  }, [loginGoogle]);
 
   const handleGoogleLogin = () => {
     try {

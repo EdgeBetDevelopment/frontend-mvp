@@ -88,62 +88,60 @@ const MatchupPage = () => {
 
   useEffect(() => {
     if (!isAuthenticated) {
-      openModal('auth');
+      if (!isModalOpen('auth')) openModal('auth');
       return;
     }
+  }, [isAuthenticated, isModalOpen, openModal]);
 
-    autoOpenGameAnalysis();
-  }, [params, data]);
-
-  const autoOpenGameAnalysis = () => {
+  useEffect(() => {
+    if (!isAuthenticated) return;
     const gameAnalysis = params.get('game-analysis');
-    if (gameAnalysis) {
-      const findGame =
-        data.find((game) => game.game.id === Number(gameAnalysis)) || null;
+    if (!gameAnalysis) return;
 
-      if (!findGame) return;
+    const found = data.find((g) => g.game.id === Number(gameAnalysis));
+    if (!found) return;
 
-      setSelectedGame(findGame);
-      openModal('game-analysis');
-    }
-  };
+    setSelectedGame(found);
+    if (!isModalOpen('game-analysis')) openModal('game-analysis');
+  }, [isAuthenticated, params, data, isModalOpen, openModal, setSelectedGame]);
 
   return (
     <>
       <div className="tl-container mb-[90px] flex h-[840px] flex-row justify-center gap-14">
         <div className="flex w-full max-w-[calc(100%-420px)] flex-col gap-4">
           <MatchupPageFilters />
-
-          <ListRenderer
-            isLoading={isLoading}
-            data={data}
-            isError={!!error}
-            errorComponent={<div>Error load a player</div>}
-            loadingComponent={<GamesLoading />}
-            emptyComponent={
-              <EmptyPlaceholder
-                className="mt-30"
-                title="No games found"
-                subtitle="For now, there are no games available."
-              />
-            }
-          >
-            {(games) => (
-              <ScrollArea className="pr-4">
-                <div className="grid w-full grid-cols-2 gap-4">
-                  {games.map((game: IGameWithAI) => (
-                    <GameCard
-                      key={game.game.id}
-                      type={type}
-                      game={game}
-                      onClickTrackBet={() => onClickTrackBet(game)}
-                      onClickFullAnalysis={() => onClickFullAnalysis(game)}
-                    />
-                  ))}
-                </div>
-              </ScrollArea>
-            )}
-          </ListRenderer>
+          {isAuthenticated && data && (
+            <ListRenderer
+              isLoading={isLoading}
+              data={data}
+              isError={!!error}
+              errorComponent={<div>Error load a player</div>}
+              loadingComponent={<GamesLoading />}
+              emptyComponent={
+                <EmptyPlaceholder
+                  className="mt-30"
+                  title="No games found"
+                  subtitle="For now, there are no games available."
+                />
+              }
+            >
+              {(games) => (
+                <ScrollArea className="pr-4">
+                  <div className="grid w-full grid-cols-2 gap-4">
+                    {games.map((game: IGameWithAI) => (
+                      <GameCard
+                        key={game.game.id}
+                        type={type}
+                        game={game}
+                        onClickTrackBet={() => onClickTrackBet(game)}
+                        onClickFullAnalysis={() => onClickFullAnalysis(game)}
+                      />
+                    ))}
+                  </div>
+                </ScrollArea>
+              )}
+            </ListRenderer>
+          )}
         </div>
         <TrackBetsAside />
       </div>
@@ -157,11 +155,12 @@ const MatchupPage = () => {
         isOpen={isModalOpen('track-bet')}
         onClose={onClickClearTrackBet}
       /> */}
-
-      <GameAnalysisModal
-        open={isModalOpen('game-analysis')}
-        onClose={onClickCloseModal}
-      />
+      {isAuthenticated && data && (
+        <GameAnalysisModal
+          open={isModalOpen('game-analysis')}
+          onClose={onClickCloseModal}
+        />
+      )}
     </>
   );
 };

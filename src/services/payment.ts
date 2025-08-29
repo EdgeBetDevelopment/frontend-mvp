@@ -15,6 +15,10 @@ interface IUpdateSubscriptionPayload {
   type_id?: number;
 }
 
+const API_HEADERS = {
+  'x-api-key': 'dSdnXN4q0dW1c8WIlPgvqUNAAnvv7qWt5PEetPjnk4KI30eHWi',
+};
+
 const paymentService = {
   async getSubscriptionTypes(): Promise<ISubscriptionType[]> {
     const response = await axiosInstance.get(
@@ -34,6 +38,7 @@ const paymentService = {
     const res = await axiosInstance.patch(
       `/payment/api/v1/subscription/internal/update`,
       payload,
+      { headers: API_HEADERS },
     );
     return res.data;
   },
@@ -42,7 +47,6 @@ const paymentService = {
     return this.updateSubscription({
       subscription_id: subscriptionId,
       status: 'canceled',
-      type_id: typeId,
     });
   },
 };
