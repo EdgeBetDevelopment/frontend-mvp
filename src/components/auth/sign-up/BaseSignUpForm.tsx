@@ -38,7 +38,7 @@ const BaseSignUpForm = ({ onSuccessSignUp }: IBaseSignUpForm) => {
                 {...field}
                 handleChange={field.onChange}
                 type="text"
-                placeholder="Enter Your Name"
+                placeholder="Enter Your Username"
                 error={errors.name?.message}
                 disabled={isPending}
               />
