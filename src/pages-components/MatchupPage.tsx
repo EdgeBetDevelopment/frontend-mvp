@@ -114,9 +114,11 @@ const MatchupPage = () => {
 
   return (
     <>
-      <div className="tl-container mb-[90px] flex h-[840px] flex-row justify-center gap-14">
-        <div className="flex w-full max-w-[calc(100%-420px)] flex-col gap-4">
-          <MatchupPageFilters />
+      <div className="tl-container mb-[90px] flex h-auto flex-row justify-center lg:h-[840px] lg:max-w-[1352px] lg:gap-2 xl:gap-14">
+        <div className="xl flex w-full flex-col gap-4 lg:max-w-[calc(100%-420px)]">
+          <div>
+            <MatchupPageFilters />
+          </div>
           {isAuthenticated && data && (
             <ListRenderer
               isLoading={isLoading}
@@ -134,7 +136,7 @@ const MatchupPage = () => {
             >
               {(games) => (
                 <ScrollArea className="pr-4">
-                  <div className="grid w-full grid-cols-2 gap-4">
+                  <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-2">
                     {games.map((game: IGameWithAI) => (
                       <GameCard
                         key={game.game.id}

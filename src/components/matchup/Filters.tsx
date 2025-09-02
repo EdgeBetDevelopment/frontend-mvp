@@ -76,14 +76,17 @@ const MatchupPageFilters = () => {
 
   return (
     <TooltipProvider>
-      <div className="relative ml-4">
-        <Carousel opts={{ align: 'start' }} className="w-full">
+      <div className="relative pr-[110px]">
+        <Carousel
+          opts={{ align: 'start' }}
+          className="relative left-12 w-full lg:left-12"
+        >
           <CarouselPrevious />
           <CarouselContent className="">
             {SPORTS_TYPE.map((tab) => {
               const button = (
                 <Button
-                  className="w-full min-w-[120px] sm:min-w-[140px]"
+                  className="w-full min-w-[100px] sm:min-w-[140px]"
                   variant={type === tab.value ? 'brand' : 'default'}
                   onClick={() => onChangeType(tab.value, tab.disabled)}
                 >
@@ -95,7 +98,7 @@ const MatchupPageFilters = () => {
               return (
                 <CarouselItem
                   key={tab.label}
-                  className="xs:basis-[33%] basis-[40%] px-2 sm:basis-[25%] md:basis-[20%] lg:basis-auto"
+                  className="basis-[50%] px-2 sm:basis-[35%] md:basis-[30%] lg:basis-auto"
                 >
                   {tab.disabled ? (
                     <Tooltip>

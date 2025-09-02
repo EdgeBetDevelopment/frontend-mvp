@@ -109,7 +109,7 @@ const TrackBetsAside = () => {
 
   return (
     <>
-      <div className="bg-surface-secondary border-border flex h-full w-full max-w-[324px] min-w-[324px] flex-col gap-10 rounded-3xl border p-4">
+      <div className="bg-surface-secondary border-border hidden h-full w-full max-w-[324px] min-w-[324px] flex-col gap-10 rounded-3xl border p-4 lg:flex">
         <div className="flex flex-col gap-5 align-bottom text-2xl font-medium capitalize">
           <p>Track Bet</p>
           <BetModeSwitch />
