@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import {
   ReadonlyURLSearchParams,
@@ -32,6 +32,8 @@ const MatchupPage = () => {
   const params = useSearchParams() as ReadonlyURLSearchParams;
   const type = params.get('type');
   const router = useRouter();
+
+  const [authDismissed, setAuthDismissed] = useState(false);
 
   const {
     data = [],
@@ -87,11 +89,16 @@ const MatchupPage = () => {
   };
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      if (!isModalOpen('auth')) openModal('auth');
-      return;
+    if (!isAuthenticated && !authDismissed) {
+      openModal('auth');
     }
-  }, [isAuthenticated, isModalOpen, openModal]);
+    if (isAuthenticated && authDismissed) setAuthDismissed(false);
+  }, [isAuthenticated, authDismissed, openModal]);
+
+  const onCloseAuth = () => {
+    setAuthDismissed(true);
+    closeModal('auth');
+  };
 
   useEffect(() => {
     if (!isAuthenticated) return;
@@ -146,10 +153,7 @@ const MatchupPage = () => {
         <TrackBetsAside />
       </div>
 
-      <AuthModal
-        isOpen={isModalOpen('auth')}
-        onClose={() => closeModal('auth')}
-      />
+      <AuthModal isOpen={isModalOpen('auth')} onClose={onCloseAuth} />
 
       {/* <TrackBetsModal
         isOpen={isModalOpen('track-bet')}

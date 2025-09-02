@@ -11,9 +11,11 @@ import { useAuth } from '@/context/AuthContext';
 import useModalManager from '@/hooks/useModalManager';
 import apiService from '@/services';
 import { useStore } from '@/store';
+import { BetPick } from '@/store/slices/matchupSlice';
 import { IGameWithAI } from '@/types/game';
 import { Button } from '@/ui/button';
 import Loader from '@/ui/loader';
+import BetModeSwitch from '../matchup/BetModeSwitch';
 
 import GameAnalysisModal from './game-analysis';
 
@@ -41,83 +43,94 @@ const TrackBetsModal = ({
   onClose: () => void;
 }) => {
   const {
-    setTrackedGame,
-    prefillBets,
+    isParlay,
+    single,
+    clearSingle,
+    parlay,
+    clearParlay,
     setSelectedGame,
     trackedGame,
-    clearPrefillBets,
-    isAmerican,
-    removePrefillBetById,
   } = useStore();
+
   const { openModal, closeModal, isModalOpen } = useModalManager();
   const { isAuthenticated } = useAuth();
 
-  console.log(prefillBets);
-
   const { mutate, isPending: isPendingCreateBet } = useMutation({
-    mutationFn: async (body: any) => apiService.createSingleBets(body),
-
-    onSuccess: () => {
-      clearPrefillBets();
-      toast.success('Bet created successfully');
-      onClose();
+    mutationFn: async (body: any) => {
+      console.log(body);
+      if (!isParlay) apiService.createSingleBets(body);
+      if (isParlay) apiService.createBet(body);
     },
-
+    onSuccess: () => {
+      if (isParlay) clearParlay();
+      else clearSingle();
+      toast.success('Bet created successfully');
+    },
     onError: (error) => {
-      toast.success('Error creating bet');
-
+      toast.error('Error creating bet');
       console.error('Error creating bet:', error);
     },
   });
 
-  const {
-    data,
-    mutate: findTeam,
-    isPending: isPendingFindTeam,
-  } = useMutation({
-    mutationFn: async (body: any) => apiService.findTeam(body),
-
-    onError: (error) => {
-      toast.success('Something went wrong, please try later');
-      console.error('Error find team:', error);
-    },
+  const mapPick = (bet: BetPick) => ({
+    game_id: bet.game_id,
+    odds: bet.odds,
+    selected_team_id: bet.selected_team_id,
+    selected_team_name: bet.selected_team_name,
+    description: bet.description,
+    sport: bet.sport,
   });
 
   const onSubmit = async () => {
-    if (!trackedGame) return;
+    if (isParlay) {
+      if (!parlay || parlay.bets.length === 0) return;
 
-    try {
-      const bets = prefillBets.map((bet) => {
-        if (bet.odds === null) throw new Error('Invalid bet');
-
-        // findTeam(bet.team);
-
-        return {
-          selected_team_id: String(1),
-          selected_team_name: bet?.team ? bet?.team : '',
-          game_id: bet?.game_id,
-          nba_game_id: Number(trackedGame?.game?.id),
-          odds: bet.odds,
-          amount: bet.amount,
-          sport: 'nba',
-          description: bet.description,
-        };
-      });
-
-      const totalAmount = bets.reduce((sum, bet) => sum + (bet.amount || 0), 0);
-
-      const body = {
-        amount: totalAmount,
-        bets,
+      const payload = {
+        amount: parlay.amount ?? 0,
+        win_amount: parlay.win_amount ?? 0,
+        bets: parlay.bets.map(mapPick),
       };
 
-      mutate(body);
+      console.log('PARLAY payload', payload);
+      mutate(payload);
+      return;
+    }
+
+    if (!single || single.length === 0) return;
+
+    try {
+      const payload = {
+        bets: single.map((ticket) => ({
+          amount: ticket.amount ?? 0,
+          win_amount: ticket.win_amount ?? 0,
+          bets: ticket.bets.map(mapPick),
+        })),
+      };
+
+      console.log('SINGLE payload', payload);
+      mutate(payload);
     } catch (error) {
       console.error('Failed to prepare bet submission:', error);
     }
   };
 
-  const isLoading = isPendingCreateBet || isPendingFindTeam;
+  const isLoading = isPendingCreateBet;
+
+  const onClickFullAnalysis = (game: IGameWithAI) => {
+    if (!isAuthenticated) {
+      openModal('auth');
+      return;
+    }
+    setSelectedGame(game);
+    openModal('game-analysis');
+  };
+
+  const onClickCloseModal = () => {
+    closeModal('game-analysis');
+    setSelectedGame(null);
+  };
+
+  const hasItems = isParlay ? parlay.bets.length > 0 : single.length > 0;
 
   // async function onSubmit(values: z.infer<typeof formSchema>) {
   //   const body = {
@@ -151,25 +164,10 @@ const TrackBetsModal = ({
   //   }
   // };
 
-  const onClickFullAnalysis = (game: IGameWithAI) => {
-    if (!isAuthenticated) {
-      openModal('auth');
-      return;
-    } else {
-      setSelectedGame(game);
-      openModal('game-analysis');
-    }
-  };
-
-  const onClickCloseModal = () => {
-    closeModal('game-analysis');
-    setSelectedGame(null);
-  };
-
   return (
     <>
       <Sheet
-        open={true}
+        open={isOpen}
         onOpenChange={(open) => !open && onClose()}
         modal={false}
       >
@@ -177,8 +175,9 @@ const TrackBetsModal = ({
           className="bg-surface-secondary border-border flex h-full w-full max-w-[324px] flex-col gap-10 rounded-l-3xl border p-3"
           side="right"
         >
-          <div className="align-bottom text-2xl font-medium capitalize">
-            Track Bet
+          <div className="flex flex-col gap-5 align-bottom text-2xl font-medium capitalize">
+            <p>Track Bet</p>
+            <BetModeSwitch />
           </div>
 
           {!trackedGame ? (
@@ -187,17 +186,25 @@ const TrackBetsModal = ({
             </div>
           ) : (
             <div className="flex flex-1 flex-col gap-3 overflow-auto">
-              {prefillBets?.map((bet, index) => (
+              {isParlay ? (
                 <TrackGameCard
-                  key={index}
-                  index={index}
+                  key="parlay"
+                  index={0}
                   game={trackedGame}
                   onClickFullAnalysis={() => onClickFullAnalysis(trackedGame)}
-                  onClickClearTrackBet={() => removePrefillBetById(bet.id)}
                 />
-              ))}
+              ) : (
+                single.map((_, index) => (
+                  <TrackGameCard
+                    key={index}
+                    index={index}
+                    game={trackedGame}
+                    onClickFullAnalysis={() => onClickFullAnalysis(trackedGame)}
+                  />
+                ))
+              )}
 
-              {prefillBets.length > 0 && (
+              {hasItems && (
                 <Button
                   disabled={isLoading}
                   onClick={onSubmit}
