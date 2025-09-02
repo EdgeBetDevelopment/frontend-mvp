@@ -39,6 +39,7 @@ const TABLE_FIELDS = [
   { label: 'Description', field: 'description', sortable: false },
   { label: 'Stake', field: 'amount', sortable: true },
   { label: 'Bet', field: 'odds_at_bet_time', sortable: true },
+  { label: 'P/L', field: 'pl', sortable: false },
   { label: 'Status', field: 'status', sortable: false },
 ];
 
@@ -85,6 +86,25 @@ const BetTrackerTable = () => {
       });
     }
     router.replace(url);
+  };
+
+  const computePL = (bet: any, selection: any): number | null => {
+    const status = bet?.status;
+    const amount = Number(selection?.amount ?? 0);
+    const oddsRaw = selection?.payload?.odds_at_bet_time;
+    const odds =
+      typeof oddsRaw === 'string' ? Number(oddsRaw) : Number(oddsRaw);
+    const winAmount = selection?.win_amount ?? bet?.win_amount;
+
+    if (status === 'win') {
+      if (typeof winAmount === 'number' && !Number.isNaN(winAmount))
+        return winAmount;
+      if (!Number.isNaN(odds)) return +(amount * (odds - 1)).toFixed(2);
+      return null;
+    }
+    if (status === 'lose' || status === 'lost') return -amount;
+
+    return null;
   };
 
   return (
@@ -157,39 +177,57 @@ const BetTrackerTable = () => {
               </TableHeader>
               <TableBody>
                 {bets.map((bet) =>
-                  bet?.selections?.map((selection, idx) => (
-                    <TableRow key={`${bet.id}-${idx}`}>
-                      <TableCell>
-                        {formatUtcToLocalDate(bet?.created_at?.toString())}
-                      </TableCell>
-                      <TableCell>
-                        {selection?.payload?.selected_team_name} vs{' '}
-                        {selection?.game?.away_team}
-                      </TableCell>
-                      <TableCell>
-                        You placed a bet of ${selection?.amount} on the{' '}
-                        {selection?.payload?.description}
-                      </TableCell>
-                      <TableCell>{selection?.amount}</TableCell>
-                      <TableCell>
-                        {selection?.payload?.odds_at_bet_time}
-                      </TableCell>
-                      <TableCell>
-                        <Badge
-                          className="w-full max-w-[85px] py-2 capitalize"
-                          variant={
-                            bet?.status === 'win'
-                              ? 'green'
-                              : bet?.status === 'pending'
-                                ? 'orange'
-                                : 'red'
+                  bet?.selections?.map((selection, idx) => {
+                    const pl = computePL(bet, selection);
+
+                    console.log(pl);
+                    return (
+                      <TableRow key={`${bet.id}-${idx}`}>
+                        <TableCell>
+                          {formatUtcToLocalDate(bet?.created_at?.toString())}
+                        </TableCell>
+                        <TableCell>
+                          {selection?.game?.home_team} vs{' '}
+                          {selection?.game?.away_team}
+                        </TableCell>
+                        <TableCell>
+                          You placed a bet of ${selection?.amount} on the{' '}
+                          {selection?.payload?.description}
+                        </TableCell>
+                        <TableCell>{selection?.amount}</TableCell>
+                        <TableCell>
+                          {selection?.payload?.odds_at_bet_time}
+                        </TableCell>
+                        <TableCell
+                          className={
+                            pl == null
+                              ? ''
+                              : pl >= 0
+                                ? 'text-green-600'
+                                : 'text-red-600'
                           }
                         >
-                          {bet.status}
-                        </Badge>
-                      </TableCell>
-                    </TableRow>
-                  )),
+                          {pl == null
+                            ? '—'
+                            : `${pl > 0 ? '+' : ''}$${pl.toFixed(2)}`}
+                        </TableCell>
+                        <TableCell>
+                          <Badge
+                            className="w-full max-w-[85px] py-2 capitalize"
+                            variant={
+                              bet?.status === 'win'
+                                ? 'green'
+                                : bet?.status === 'pending'
+                                  ? 'orange'
+                                  : 'red'
+                            }
+                          >
+                            {bet.status}
+                          </Badge>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  }),
                 )}
               </TableBody>
             </Table>
