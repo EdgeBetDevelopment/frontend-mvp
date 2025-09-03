@@ -4,6 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 
 import { useAuth } from '@/context/AuthContext';
+import useModalManager from '@/hooks/useModalManager';
 import { ROUTES } from '@/routes';
 import { useStore } from '@/store';
 import { IGameWithAI } from '@/types/game';
@@ -23,16 +24,10 @@ import NBALogoIcon from '@/assets/nbaLogo.png';
 interface IGameCard {
   game: IGameWithAI;
   onClickFullAnalysis: () => void;
-  onClickTrackBet: () => void;
   type: string | null;
 }
 
-const GameCard = ({
-  game,
-  onClickFullAnalysis,
-  type,
-  onClickTrackBet,
-}: IGameCard) => {
+const GameCard = ({ game, onClickFullAnalysis, type }: IGameCard) => {
   const { isAuthenticated } = useAuth();
 
   return (
@@ -68,9 +63,7 @@ const GameCard = ({
 
         <Separator />
 
-        {isAuthenticated && (
-          <GameBets onClickTrackBet={onClickTrackBet} game={game} />
-        )}
+        {isAuthenticated && <GameBets game={game} />}
 
         {/* <Button onClick={onClickTrackBet} variant="gradient" className="w-full">
           Track bet
@@ -130,12 +123,7 @@ export const GameCardHeader = ({ game }: { game: IGameWithAI }) => {
   );
 };
 
-const GameBets = ({
-  game,
-}: {
-  game: IGameWithAI;
-  onClickTrackBet: () => void;
-}) => {
+const GameBets = ({ game }: { game: IGameWithAI }) => {
   const isAmerican = useStore((state) => state.isAmerican);
 
   return (
@@ -192,6 +180,7 @@ const GameBetsItem = ({
 }) => {
   const { isParlay, setTrackedGame, upsertSingle, upsertParlayPick } =
     useStore();
+  const { openModal } = useModalManager();
 
   const oddsMatch = text.match(/\(([-+]?\d+)\)/);
   const odds = oddsMatch ? parseInt(oddsMatch[1], 10) : null;
@@ -252,6 +241,7 @@ const GameBetsItem = ({
     } else {
       upsertSingle(pick);
     }
+    openModal('track-bet');
   };
 
   return (

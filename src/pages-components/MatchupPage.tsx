@@ -13,6 +13,7 @@ import MatchupPageFilters from '@/components/matchup/Filters';
 import GameCard from '@/components/matchup/GameCard';
 import AuthModal from '@/components/modals/AuthModal';
 import GameAnalysisModal from '@/components/modals/game-analysis';
+import TrackBetsModal from '@/components/modals/TrackBetsModal';
 import { useAuth } from '@/context/AuthContext';
 import useModalManager from '@/hooks/useModalManager';
 import apiService from '@/services';
@@ -76,6 +77,14 @@ const MatchupPage = () => {
     }
   };
 
+  const onOpenTrackBet = () => {
+    if (!isAuthenticated) {
+      openModal('auth');
+      return;
+    }
+    openModal('track-bet');
+  };
+
   const onClickCloseModal = () => {
     closeModal('game-analysis');
     setSelectedGame(null);
@@ -118,6 +127,14 @@ const MatchupPage = () => {
         <div className="xl flex w-full flex-col gap-4 lg:max-w-[calc(100%-420px)]">
           <div>
             <MatchupPageFilters />
+            <div className="block lg:hidden">
+              <button
+                className="bg-primary-brand mt-2 cursor-pointer rounded-2xl p-2 text-black"
+                onClick={onOpenTrackBet}
+              >
+                Track bet
+              </button>
+            </div>
           </div>
           {isAuthenticated && data && (
             <ListRenderer
@@ -142,7 +159,6 @@ const MatchupPage = () => {
                         key={game.game.id}
                         type={type}
                         game={game}
-                        onClickTrackBet={() => onClickTrackBet(game)}
                         onClickFullAnalysis={() => onClickFullAnalysis(game)}
                       />
                     ))}
@@ -157,10 +173,12 @@ const MatchupPage = () => {
 
       <AuthModal isOpen={isModalOpen('auth')} onClose={onCloseAuth} />
 
-      {/* <TrackBetsModal
-        isOpen={isModalOpen('track-bet')}
-        onClose={onClickClearTrackBet}
-      /> */}
+      <div className="block lg:hidden">
+        <TrackBetsModal
+          isOpen={isModalOpen('track-bet')}
+          onClose={onClickClearTrackBet}
+        />
+      </div>
       {isAuthenticated && data && (
         <GameAnalysisModal
           open={isModalOpen('game-analysis')}
