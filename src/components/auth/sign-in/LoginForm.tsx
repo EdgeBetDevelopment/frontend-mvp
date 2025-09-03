@@ -16,6 +16,8 @@ interface ILoginForm {
   onGoogleLoginSuccess?: () => void;
 }
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL!;
+
 const LoginForm = ({
   title = 'Welcome!',
   onSuccessLogin,
@@ -31,6 +33,10 @@ const LoginForm = ({
     }
   };
 
+  const startWhopLogin = () => {
+    window.location.href = `${API_URL}/auth/api/v1/auth/login_whop`;
+  };
+
   return (
     <div className="flex w-full flex-col items-center gap-6">
       <H2 text={title} />
@@ -39,9 +45,12 @@ const LoginForm = ({
         onSuccess={handleGoogleSuccess}
         text="Sign in with Google"
       />
-      <Button className="auth-button bg-surface-secondary w-full items-center justify-center gap-2 rounded-xl p-4 transition-all duration-200 hover:opacity-90">
+      <Button
+        onClick={startWhopLogin}
+        className="auth-button bg-surface-secondary w-full items-center justify-center gap-2 rounded-xl p-4 transition-all duration-200 hover:opacity-90"
+      >
         <p className="text-center align-middle text-2xl font-bold tracking-normal">
-          Sign in with Whoop
+          Sign in with Whop
         </p>
       </Button>
 

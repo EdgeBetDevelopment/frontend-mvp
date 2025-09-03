@@ -39,10 +39,7 @@ export function ProfileSection() {
   return (
     <>
       <GeneralInformation />
-      <Subscription
-        onRequestCancel={handleRequestCancel}
-        reloadKey={reloadKey}
-      />
+      <Subscription />
 
       <ModalProfile
         title="Cancel Subscription"

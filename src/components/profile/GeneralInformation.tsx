@@ -21,6 +21,8 @@ const Schema = z.object({
 
 type FormData = z.infer<typeof Schema>;
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL!;
+
 export const GeneralInformation = () => {
   const [isDelete, setIsDelete] = useState(false);
   const [isEmail, setIsEmail] = useState(false);
@@ -83,6 +85,10 @@ export const GeneralInformation = () => {
     handleUpdate(data);
   };
 
+  const startWhopLogin = () => {
+    window.location.href = `${API_URL}/auth/api/v1/auth/login_whop`;
+  };
+
   return (
     <section className="mb-[20px] flex w-[calc(100%_-_40px)] max-w-[720px] flex-col gap-5 rounded-xl bg-[linear-gradient(112.71deg,_rgba(23,23,23,0.6)_19.64%,_rgba(105,105,105,0.316464)_55.1%,_rgba(125,125,125,0.06)_92%)] p-6 backdrop-blur-[20px] md:mx-0 md:w-full">
       <div className="flex flex-col gap-5">
@@ -128,9 +134,12 @@ export const GeneralInformation = () => {
           </Button>
         </div>
       </div>
-      <Button className="auth-button bg-surface-secondary w-full items-center justify-center gap-2 rounded-xl p-4 transition-all duration-200 hover:opacity-90">
+      <Button
+        onClick={startWhopLogin}
+        className="auth-button bg-surface-secondary w-full items-center justify-center gap-2 rounded-xl p-4 transition-all duration-200 hover:opacity-90"
+      >
         <p className="text-center align-middle text-2xl font-bold tracking-normal">
-          Sign in with Whoop
+          Sign in with Whop
         </p>
       </Button>
       <ModalProfile
