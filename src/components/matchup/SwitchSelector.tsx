@@ -44,9 +44,9 @@ export function OddsTypeSwitcher() {
   }, [current, setIsAmerican]);
 
   return (
-    <div className="bg-primary-brand relative flex rounded-full p-2">
+    <div className="bg-surface-primary border-border relative flex w-full rounded-full border p-1.5">
       <span
-        className="bg-primary absolute top-[50%] left-0 h-[90%] rounded-full transition-all duration-300"
+        className="bg-surface-secondary absolute top-[50%] left-0 h-[80%] rounded-full transition-all duration-300"
         style={indicatorStyle}
       />
 
@@ -58,8 +58,8 @@ export function OddsTypeSwitcher() {
           }}
           onClick={() => onChange(option.value)}
           className={cn(
-            'relative z-10 rounded-full px-4 py-2 text-sm font-semibold transition-colors duration-300',
-            current === option.value ? 'text-primary-brand' : 'text-primary',
+            'relative z-10 w-full cursor-pointer rounded-full p-1.5 px-6 text-sm font-semibold transition-colors duration-300',
+            current === option.value ? 'text-white' : 'text-text-secondary',
           )}
         >
           {option.label}

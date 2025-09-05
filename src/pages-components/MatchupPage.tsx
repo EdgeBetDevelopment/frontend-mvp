@@ -19,6 +19,7 @@ import useModalManager from '@/hooks/useModalManager';
 import apiService from '@/services';
 import { useStore } from '@/store';
 import { IGameWithAI } from '@/types/game';
+import { Button } from '@/ui/button';
 import { ScrollArea } from '@/ui/scroll-area';
 import { Skeleton } from '@/ui/skeleton';
 import { formUrlQuery } from '@/utils/url';
@@ -127,13 +128,14 @@ const MatchupPage = () => {
         <div className="xl flex w-full flex-col gap-4 lg:max-w-[calc(100%-420px)]">
           <div>
             <MatchupPageFilters />
-            <div className="block lg:hidden">
-              <button
-                className="bg-primary-brand mt-2 cursor-pointer rounded-2xl p-2 text-black"
+            <div className="mt-4 block w-full md:max-w-[300px] lg:hidden">
+              <Button
+                variant="gradient"
+                className="w-full"
                 onClick={onOpenTrackBet}
               >
                 Track bet
-              </button>
+              </Button>
             </div>
           </div>
           {isAuthenticated && data && (

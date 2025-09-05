@@ -45,6 +45,8 @@ interface IMatchupState {
   setSingleWin: (index: number, win: number) => void;
   removeSingle: (index: number) => void;
   clearSingle: () => void;
+  removeSingleAndSyncParlay: (index: number) => void;
+  removeParlayAndSyncSingle: (key: number | string) => void;
 
   upsertParlayPick: (pick: BetPick, index?: number) => void;
   removeParlayPick: (key: number | string) => void;
@@ -112,7 +114,82 @@ export const matchupSlice: StateCreator<IMatchupState> = (set) => ({
 
   removeSingle: (i) =>
     set((s) => ({ single: s.single.filter((_, idx) => idx !== i) })),
+
+  removeSingleAll: () => set((_s) => ({ single: [] })),
+
   clearSingle: () => set({ single: [] }),
+
+  // Sync remove single and parlay (remove from parlay if no duplicates in single)
+  removeSingleAndSyncParlay: (index) =>
+    set((s) => {
+      const singleToRemove = s.single[index];
+      if (!singleToRemove) return s;
+
+      const pickToRemove = singleToRemove.bets[0];
+      if (!pickToRemove) return s;
+
+      const newSingle = s.single.filter((_, idx) => idx !== index);
+
+      const hasDuplicates = newSingle.some(
+        (ticket) =>
+          ticket.bets[0]?.description?.trim().toLowerCase() ===
+          pickToRemove.description?.trim().toLowerCase(),
+      );
+
+      let newParlay = s.parlay;
+      let newParlayOdds = s.parlayOdds;
+
+      if (!hasDuplicates) {
+        const newParlayBets = s.parlay.bets.filter(
+          (b) =>
+            b.description?.trim().toLowerCase() !==
+            pickToRemove.description?.trim().toLowerCase(),
+        );
+        newParlay = { ...s.parlay, bets: newParlayBets };
+        newParlayOdds = newParlayBets.length
+          ? calcParlayOddsDecimal(newParlayBets)
+          : 1;
+      }
+
+      return {
+        single: newSingle,
+        parlay: newParlay,
+        parlayOdds: newParlayOdds,
+      };
+    }),
+
+  // Sync remove parlay and single (remove all single picks if delete from parlay)
+  removeParlayAndSyncSingle: (key) =>
+    set((s) => {
+      const parlayToRemove =
+        typeof key === 'number'
+          ? s.parlay.bets[key]
+          : s.parlay.bets.find((b) => b.pid === key);
+
+      if (!parlayToRemove) return s;
+
+      const newParlayBets =
+        typeof key === 'number'
+          ? s.parlay.bets.filter((_, idx) => idx !== key)
+          : s.parlay.bets.filter((b) => b.pid !== key);
+
+      const newParlay = { ...s.parlay, bets: newParlayBets };
+      const newParlayOdds = newParlayBets.length
+        ? calcParlayOddsDecimal(newParlayBets)
+        : 1;
+
+      const newSingle = s.single.filter(
+        (ticket) =>
+          ticket.bets[0]?.description?.trim().toLowerCase() !==
+          parlayToRemove.description?.trim().toLowerCase(),
+      );
+
+      return {
+        single: newSingle,
+        parlay: newParlay,
+        parlayOdds: newParlayOdds,
+      };
+    }),
 
   /* PARLAY */
   upsertParlayPick: (pick, index) =>
@@ -120,8 +197,8 @@ export const matchupSlice: StateCreator<IMatchupState> = (set) => ({
       const parlay = { ...state.parlay };
 
       const normalized: BetPick = {
-        sport: 'nba',
         ...pick,
+        sport: 'nba',
         pid: pick.pid ?? makeId(),
       };
       const normDesc = (s?: string) => (s ?? '').trim().toLowerCase();

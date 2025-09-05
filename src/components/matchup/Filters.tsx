@@ -76,48 +76,48 @@ const MatchupPageFilters = () => {
 
   return (
     <TooltipProvider>
-      <div className="relative pr-[110px]">
-        <Carousel
-          opts={{ align: 'start' }}
-          className="relative left-12 w-full lg:left-12"
-        >
-          <CarouselPrevious />
-          <CarouselContent className="">
-            {SPORTS_TYPE.map((tab) => {
-              const button = (
-                <Button
-                  className="w-full min-w-[100px] sm:min-w-[140px]"
-                  variant={type === tab.value ? 'brand' : 'default'}
-                  onClick={() => onChangeType(tab.value, tab.disabled)}
-                >
-                  {tab.icon}
-                  <span className="">{tab.label}</span>
-                </Button>
-              );
+      <div className="">
+        <div className="relative px-12">
+          <Carousel opts={{ align: 'start' }} className="relative w-full">
+            <CarouselPrevious />
 
-              return (
-                <CarouselItem
-                  key={tab.label}
-                  className="basis-[50%] px-2 sm:basis-[35%] md:basis-[30%] lg:basis-auto"
-                >
-                  {tab.disabled ? (
-                    <Tooltip>
-                      <TooltipTrigger asChild>{button}</TooltipTrigger>
-                      <TooltipContent className="text-sm">
-                        Coming soon
-                      </TooltipContent>
-                    </Tooltip>
-                  ) : (
-                    button
-                  )}
-                </CarouselItem>
-              );
-            })}
-          </CarouselContent>
+            <CarouselContent className="">
+              {SPORTS_TYPE.map((tab) => {
+                const button = (
+                  <Button
+                    className="w-full min-w-[100px] sm:min-w-[140px]"
+                    variant={type === tab.value ? 'brand' : 'default'}
+                    onClick={() => onChangeType(tab.value, tab.disabled)}
+                  >
+                    {tab.icon}
+                    <span className="">{tab.label}</span>
+                  </Button>
+                );
 
-          <CarouselNext />
-        </Carousel>
-        <div className="mt-4 flex">
+                return (
+                  <CarouselItem
+                    key={tab.label}
+                    className="basis-[50%] px-2 sm:basis-[35%] md:basis-[30%] lg:basis-auto"
+                  >
+                    {tab.disabled ? (
+                      <Tooltip>
+                        <TooltipTrigger asChild>{button}</TooltipTrigger>
+                        <TooltipContent className="text-sm">
+                          Coming soon
+                        </TooltipContent>
+                      </Tooltip>
+                    ) : (
+                      button
+                    )}
+                  </CarouselItem>
+                );
+              })}
+            </CarouselContent>
+
+            <CarouselNext />
+          </Carousel>
+        </div>
+        <div className="mt-4 flex w-full md:max-w-[300px]">
           <OddsTypeSwitcher />
         </div>
       </div>

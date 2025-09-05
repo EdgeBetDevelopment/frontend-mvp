@@ -64,10 +64,6 @@ const GameCard = ({ game, onClickFullAnalysis, type }: IGameCard) => {
         <Separator />
 
         {isAuthenticated && <GameBets game={game} />}
-
-        {/* <Button onClick={onClickTrackBet} variant="gradient" className="w-full">
-          Track bet
-        </Button> */}
       </div>
     </CardContainer>
   );
@@ -178,8 +174,7 @@ const GameBetsItem = ({
   isAmerican: boolean;
   game: IGameWithAI;
 }) => {
-  const { isParlay, setTrackedGame, upsertSingle, upsertParlayPick } =
-    useStore();
+  const { setTrackedGame, upsertSingle, upsertParlayPick } = useStore();
   const { openModal } = useModalManager();
 
   const oddsMatch = text.match(/\(([-+]?\d+)\)/);
@@ -236,11 +231,8 @@ const GameBetsItem = ({
       sport: 'nba' as const,
     };
 
-    if (isParlay) {
-      upsertParlayPick(pick);
-    } else {
-      upsertSingle(pick);
-    }
+    upsertParlayPick(pick);
+    upsertSingle(pick);
     openModal('track-bet');
   };
 

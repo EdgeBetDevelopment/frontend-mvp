@@ -37,16 +37,17 @@ const TrackGameCard = ({ game, index }: ITrackGameCard) => {
   const {
     isParlay,
     single,
-    setSingleAmount,
     parlay,
     setParlayWin,
     setParlayAmount,
-    setSingleWin,
-    removeSingle,
     clearParlay,
+    setSingleAmount,
+    setSingleWin,
+    clearSingle,
+    removeSingleAndSyncParlay,
+    removeParlayAndSyncSingle,
     isAmerican,
     parlayOdds,
-    removeParlayPick,
   } = useStore();
 
   function formatDescription(desc: string) {
@@ -81,6 +82,7 @@ const TrackGameCard = ({ game, index }: ITrackGameCard) => {
       const decimalOdds = convertAmericanToDecimal(
         Number(currentPick?.odds) || 0,
       );
+
       setSingleWin(index, computeSingleWin(value, decimalOdds));
     }
   };
@@ -88,13 +90,14 @@ const TrackGameCard = ({ game, index }: ITrackGameCard) => {
   const handleRemove = () => {
     if (isParlay) {
       clearParlay();
+      clearSingle();
     } else {
-      removeSingle(index);
+      removeSingleAndSyncParlay(index);
     }
   };
 
   const handleRemoveOneParlay = (pid: string) => {
-    removeParlayPick(pid);
+    removeParlayAndSyncSingle(pid);
   };
 
   return (
