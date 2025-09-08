@@ -94,6 +94,45 @@ const SportsList = () => {
   const { isModalOpen, closeModal, openModal } = useModalManager();
   const router = useRouter();
 
+  const getCols = () => {
+    if (breakpoint === 'lg') return 4;
+    if (breakpoint === 'md') return 3;
+    if (breakpoint === 'sm') return 2;
+    return 1;
+  };
+
+  const sportsCards = sports.map((sport, index) => (
+    <SportsCard
+      onViewPredictions={() => onViewPredictions(sport)}
+      isActive={!!sport.link}
+      key={`sport-${index}`}
+      sport={sport}
+    />
+  ));
+
+  const cols = getCols();
+  let paddedSports = sportsCards;
+
+  if (cols > 1) {
+    const remainder = sportsCards.length % cols;
+    if (remainder !== 0) {
+      const startIndex = sportsCards.length - remainder;
+      const leftPad = Math.floor((cols - remainder) / 2);
+      const rightPad = cols - remainder - leftPad;
+
+      paddedSports = [
+        ...sportsCards.slice(0, startIndex),
+        ...Array.from({ length: leftPad }).map((_, i) => (
+          <EmptyCard key={`pad-left-${i}`} />
+        )),
+        ...sportsCards.slice(startIndex),
+        ...Array.from({ length: rightPad }).map((_, i) => (
+          <EmptyCard key={`pad-right-${i}`} />
+        )),
+      ];
+    }
+  }
+
   const onViewPredictions = (sport: ISport) => {
     if (!!sport.link) {
       router.push(sport.link);
@@ -121,14 +160,7 @@ const SportsList = () => {
           </div>
 
           <div className="tl-container grid w-full grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-[18px] md:grid-cols-3 lg:grid-cols-4">
-            {sports.map((sport, index) => (
-              <SportsCard
-                onViewPredictions={() => onViewPredictions(sport)}
-                isActive={!!sport.link}
-                key={index}
-                sport={sport}
-              />
-            ))}
+            {paddedSports}
           </div>
 
           <div className="tl-container tl-mask-gradient-bottom grid w-full grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-[18px] md:grid-cols-3 lg:grid-cols-4">
