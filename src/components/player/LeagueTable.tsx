@@ -15,17 +15,18 @@ import {
 import { LeagueModal } from './LeagueModal';
 
 interface Game {
-  date: string;
-  opponent: string;
-  result: string;
-  PTS: string;
-  REB: string;
-  AST: string;
-  [key: string]: string;
+  title?: string;
+  date?: string;
+  opponent?: string;
+  result?: string;
+  PTS?: string;
+  REB?: string;
+  AST?: string;
+  [key: string]: string | undefined;
 }
 
 interface LeagueTableProps {
-  recentGames: Game[];
+  recentGames?: Game[] | null;
 }
 
 type Group = { title: string; average?: Game; games: Game[] };
@@ -33,18 +34,26 @@ type Group = { title: string; average?: Game; games: Game[] };
 const LeagueTable: React.FC<LeagueTableProps> = ({ recentGames }) => {
   const [showModal, setShowModal] = useState(false);
 
-  const groupByTitle = (list: Game[]): Group[] => {
+  const safeGames: Game[] = Array.isArray(recentGames) ? recentGames : [];
+
+  const groupByTitle = (list: Game[] = []): Group[] => {
+    if (!Array.isArray(list) || list.length === 0) return [];
     const map = new Map<string, Group>();
     const order: string[] = [];
 
     for (const g of list) {
-      const key = g.title || 'Unknown';
+      if (!g || typeof g !== 'object') continue;
+
+      const key = (g.title && String(g.title)) || 'Unknown';
       if (!map.has(key)) {
         map.set(key, { title: key, games: [] });
         order.push(key);
       }
       const group = map.get(key)!;
-      const isAverage = (g.date || '').trim().toLowerCase() === 'average';
+
+      const dateStr = (g.date ?? '').toString().trim().toLowerCase();
+      const isAverage = dateStr === 'average';
+
       if (isAverage) group.average = g;
       else group.games.push(g);
     }
@@ -64,9 +73,9 @@ const LeagueTable: React.FC<LeagueTableProps> = ({ recentGames }) => {
         Average
       </TableCell>
       <TableCell className="border-b border-[#484848] px-4 py-5 text-[14px] font-semibold text-[#EBEBEB]">
-        {title}
+        {title || 'Unknown'}
       </TableCell>
-      <TableCell className="border-b border-[#484848] px-4 py-5 text-[14px] text-white"></TableCell>
+      <TableCell className="border-b border-[#484848] px-4 py-5 text-[14px] text-white" />
       <TableCell className="border-b border-[#484848] px-4 py-5 text-[14px] font-semibold">
         {avg?.PTS ?? '-'}
       </TableCell>
@@ -79,9 +88,7 @@ const LeagueTable: React.FC<LeagueTableProps> = ({ recentGames }) => {
     </TableRow>
   );
 
-  console.log(recentGames);
-
-  const renderTable = (games: Game[], limitGames?: number) => {
+  const renderTable = (games: Game[] = [], limitGames?: number) => {
     const groups = groupByTitle(games);
     let remaining = typeof limitGames === 'number' ? limitGames : Infinity;
 
@@ -114,21 +121,37 @@ const LeagueTable: React.FC<LeagueTableProps> = ({ recentGames }) => {
         </TableHeader>
 
         <TableBody>
-          {groups.map((group, gi) => {
-            const toShow = Math.min(group.games.length, remaining);
-            if (toShow <= 0) return null; // якщо ліміт вичерпано — не показуємо групу
+          {/* Порожній стан */}
+          {(!groups || groups.length === 0) && (
+            <TableRow>
+              <TableCell
+                colSpan={6}
+                className="px-4 py-6 text-center text-[14px] text-[#BDBDBD]"
+              >
+                No games to display yet.
+              </TableCell>
+            </TableRow>
+          )}
 
+          {groups.map((group, gi) => {
+            const total = group?.games?.length ?? 0;
+            const toShow = Math.min(total, remaining);
+
+            if (toShow <= 0) return null;
             remaining -= toShow;
-            const chunk = group.games.slice(0, toShow);
+
+            const chunk = (group.games || []).slice(0, toShow);
 
             return (
-              <React.Fragment key={`${group.title}-${gi}`}>
-                {/* Average завжди над іграми цього блоку */}
-                <AverageRow avg={group.average} title={group.title} />
+              <React.Fragment key={`${group.title || 'Unknown'}-${gi}`}>
+                <AverageRow
+                  avg={group.average}
+                  title={group.title || 'Unknown'}
+                />
 
                 {chunk.map((game, index) => (
                   <TableRow
-                    key={`${group.title}-${index}-${game.date}-${game.opponent}`}
+                    key={`${group.title || 'Unknown'}-${index}-${game?.date ?? index}-${game?.opponent ?? ''}`}
                     className="transition-shadow duration-200"
                     style={{ cursor: 'pointer' }}
                     onMouseEnter={(e) => {
@@ -149,31 +172,33 @@ const LeagueTable: React.FC<LeagueTableProps> = ({ recentGames }) => {
                     }}
                   >
                     <TableCell className="!rounded-none border-b border-[#484848] px-4 py-5 text-[14px]">
-                      {game?.date}
+                      {game?.date ?? '-'}
                     </TableCell>
                     <TableCell className="border-b border-[#484848] px-4 py-5 text-[14px]">
-                      {game?.opponent}
+                      {game?.opponent ?? '-'}
                     </TableCell>
                     <TableCell
                       className={cn(
                         'border-b border-[#484848] px-4 py-5 text-[14px]',
-                        game?.result?.startsWith('W') && 'text-[#34D399]',
-                        game?.result?.startsWith('L') && 'text-[#DC2626]',
-                        !game?.result?.startsWith('W') &&
-                          !game?.result?.startsWith('L') &&
+                        (game?.result ?? '').startsWith('W') &&
+                          'text-[#34D399]',
+                        (game?.result ?? '').startsWith('L') &&
+                          'text-[#DC2626]',
+                        !(game?.result ?? '').startsWith('W') &&
+                          !(game?.result ?? '').startsWith('L') &&
                           'text-white',
                       )}
                     >
-                      {game?.result}
+                      {game?.result ?? '-'}
                     </TableCell>
                     <TableCell className="border-b border-[#484848] px-4 py-5 text-[14px]">
-                      {game?.PTS}
+                      {game?.PTS ?? '-'}
                     </TableCell>
                     <TableCell className="border-b border-[#484848] px-4 py-5 text-[14px]">
-                      {game?.REB}
+                      {game?.REB ?? '-'}
                     </TableCell>
                     <TableCell className="!rounded-none border-b border-[#484848] px-4 py-5 text-[14px]">
-                      {game?.AST}
+                      {game?.AST ?? '-'}
                     </TableCell>
                   </TableRow>
                 ))}
@@ -188,7 +213,7 @@ const LeagueTable: React.FC<LeagueTableProps> = ({ recentGames }) => {
   return (
     <div className="w-full max-w-[766px]">
       <div className="table-background-gradient w-full overflow-hidden rounded-2xl p-3">
-        {renderTable(recentGames?.slice(0, 5))}
+        {renderTable(safeGames, 5)}
       </div>
 
       <div className="mt-4 text-center">
@@ -203,7 +228,7 @@ const LeagueTable: React.FC<LeagueTableProps> = ({ recentGames }) => {
       <LeagueModal isOpen={showModal} onClose={() => setShowModal(false)}>
         <h2 className="mb-4 text-xl font-semibold text-white">All Games</h2>
         <div className="max-h-[60vh] overflow-auto pr-2">
-          {renderTable(recentGames)}
+          {renderTable(safeGames)}
         </div>
       </LeagueModal>
     </div>
