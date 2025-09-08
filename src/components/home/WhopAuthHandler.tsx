@@ -29,8 +29,7 @@ export default function WhopAuthHandler() {
         )}`;
 
         const resp = await fetch(url, {
-          method: 'GET',
-          credentials: 'include',
+          method: 'POST',
           headers: { Accept: 'application/json' },
         });
 

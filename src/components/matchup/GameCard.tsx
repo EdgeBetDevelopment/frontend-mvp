@@ -2,8 +2,10 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { toast } from 'sonner';
 
 import { useAuth } from '@/context/AuthContext';
+import { useIsMobile } from '@/hooks/useIsMobile';
 import useModalManager from '@/hooks/useModalManager';
 import { ROUTES } from '@/routes';
 import { useStore } from '@/store';
@@ -179,6 +181,7 @@ const GameBetsItem = ({
 
   const oddsMatch = text.match(/\(([-+]?\d+)\)/);
   const odds = oddsMatch ? parseInt(oddsMatch[1], 10) : null;
+  const isMobile = useIsMobile();
 
   const teamMatch = text.match(/; ([^.;\n]+)/);
   const team = teamMatch ? teamMatch[1].trim() : '';
@@ -234,6 +237,10 @@ const GameBetsItem = ({
     upsertParlayPick(pick);
     upsertSingle(pick);
     openModal('track-bet');
+
+    if (isMobile) {
+      toast.success('Bet successfully recorded in the tracker');
+    }
   };
 
   return (
