@@ -9,7 +9,14 @@ import { Button } from '@/ui/button';
 
 import { ModalProfile } from './Modal';
 
-type Sub = { id: number; type_id: number; status: string; created_at: string };
+type Sub = {
+  id: number;
+  type_id: number;
+  type?: { name?: string };
+  status: string;
+
+  created_at: string;
+};
 
 export const Subscription = () => {
   const qc = useQueryClient();
@@ -91,9 +98,7 @@ export const Subscription = () => {
             <div key={sub.id} className="flex flex-col">
               <p>
                 <span className="font-semibold">Your Subscription: </span>
-                {sub.type_id === 1
-                  ? 'Lorem Ipsum dolor'
-                  : `Type ${sub.type_id}`}
+                {sub?.type?.name || `Type ${sub.type_id}`}
               </p>
               <p className="text-sm text-gray-400">
                 Status: {sub.status} | Started:{' '}
