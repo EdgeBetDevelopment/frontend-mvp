@@ -34,11 +34,11 @@ export const sports: ISport[] = [
     subtitle: 'US College Football',
     icon: <AmericanFootballIcon />,
   },
-  {
-    title: 'NCAAF Championship Winner',
-    subtitle: 'US Football',
-    icon: <AmericanFootballIcon />,
-  },
+  // {
+  //   title: 'NCAAF Championship Winner',
+  //   subtitle: 'US Football',
+  //   icon: <AmericanFootballIcon />,
+  // },
   // {
   //   title: 'NFL Super Bowl Winner',
   //   subtitle: 'Super Bowl Winner 2024/2025',
