@@ -110,14 +110,14 @@ const PlayerProfile = () => {
             </div> */}
 
             <div
-              className={`${outfit.className} flex w-full flex-row justify-between px-13`}
+              className={`${outfit.className} flex w-full flex-row items-center justify-between px-0 max-[1400px]:flex-col max-[1400px]:gap-5 md:px-13`}
             >
               <div className="flex flex-col gap-4">
                 <div
                   style={{
                     background: `linear-gradient(112.71deg, rgba(23, 23, 23, 0.6) 19.64%, rgba(105, 105, 105, 0.316464) 55.1%, rgba(125, 125, 125, 0.06) 92%)`,
                   }}
-                  className="left-0 flex h-auto w-[434px] flex-row flex-wrap gap-4 rounded-xl px-5 py-4"
+                  className="left-0 flex h-auto flex-row flex-wrap justify-center gap-4 rounded-xl px-5 py-4 min-[465px]:w-[434px]"
                 >
                   {profile &&
                     Object.entries(profile).map(([label, value], idx) => (
@@ -161,7 +161,7 @@ const PlayerProfile = () => {
         </div>
       )}
       {playerNameData?.season_stats && (
-        <div className="my-10 min-h-[244px] w-full min-w-[374px]">
+        <div className="my-10 min-h-[244px] w-full min-w-[324px]">
           <PlayerStatsChart data={player?.player_stats} />
         </div>
       )}
