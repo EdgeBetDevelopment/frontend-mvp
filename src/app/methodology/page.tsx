@@ -58,10 +58,16 @@ const SECTIONS_DATA = [
 
 const Methodology = () => {
   return (
-    <div className="mb-[90px] flex flex-col gap-[90px]">
-      <div className="relative flex items-start bg-[#1A1A1A] p-2">
-        <MethodologyNav />
-        <MethodologyContent />
+    <div className="mb-24 flex flex-col gap-24">
+      <div className="relative flex flex-col items-start bg-[#1A1A1A] p-4 sm:p-6 md:flex-row">
+        <MobileNav />
+        <div className="sticky top-0 hidden max-h-screen overflow-y-auto md:block md:w-80 md:flex-none md:p-10">
+          <MethodologyNav />
+        </div>
+
+        <div className="w-full md:flex-1">
+          <MethodologyContent />
+        </div>
       </div>
 
       <CTABlock />
@@ -76,8 +82,8 @@ const MethodologyNav = () => {
     useActiveSectionContext();
 
   return (
-    <div className="sticky top-0 w-[400px] flex-1/3 p-[60px]">
-      <div className="flex flex-col items-start gap-12">
+    <nav className="w-full">
+      <div className="flex flex-col items-start gap-8">
         {SECTIONS_DATA.map(({ id, title, hash }, index) => (
           <Link
             href={hash}
@@ -87,11 +93,40 @@ const MethodologyNav = () => {
               setTimeOfLastClick(Date.now());
             }}
             className={cn(
-              'border-l-[4px] border-l-[#1A1A1A] pl-2.5 align-middle text-2xl font-bold tracking-normal transition',
+              'w-full border-l-4 border-l-[#1A1A1A] pl-3 text-xl font-bold tracking-normal transition',
               { 'border-l-primary-brand': activeSection === id },
             )}
           >
-            <span>0{index + 1}</span> {title}
+            <span className="mr-2 tabular-nums">0{index + 1}</span>
+            {title}
+          </Link>
+        ))}
+      </div>
+    </nav>
+  );
+};
+
+const MobileNav = () => {
+  const { activeSection, setActiveSection, setTimeOfLastClick } =
+    useActiveSectionContext();
+
+  return (
+    <div className="w-full pb-4 md:hidden">
+      <div className="no-scrollbar flex gap-2 overflow-x-auto">
+        {SECTIONS_DATA.map(({ id, title, hash }) => (
+          <Link
+            key={id}
+            href={hash}
+            onClick={() => {
+              setActiveSection(id);
+              setTimeOfLastClick(Date.now());
+            }}
+            className={cn(
+              'rounded-full border px-4 py-2 text-sm font-medium whitespace-nowrap',
+              activeSection === id ? 'border-primary-brand' : 'border-white/10',
+            )}
+          >
+            {title}
           </Link>
         ))}
       </div>
@@ -113,26 +148,33 @@ const MethodologyContent = () => {
   };
 
   return (
-    <div className="flex w-full flex-2/3 flex-col gap-[92px] rounded-3xl bg-black p-[60px] pl-[100px]">
+    <div className="flex w-full flex-col gap-16 rounded-3xl bg-black p-6 sm:gap-20 sm:p-8 md:p-10 md:pl-20">
       {SECTIONS_DATA.map(({ id, title, subtitle, text }) => (
-        <div
+        <section
           ref={refs[id]}
           key={id}
           id={id}
-          className="flex scroll-mt-[142px] flex-col gap-9"
+          className="flex scroll-mt-24 flex-col gap-4 sm:gap-6 md:scroll-mt-[142px]"
         >
-          <h2 className="align-middle text-[40px] font-bold tracking-normal">
+          <h2 className="text-2xl font-bold tracking-normal sm:text-3xl md:text-[40px]">
             {title}
           </h2>
-          <div className="tl-paraghraph2 flex flex-col gap-4">
-            <p className="text-text-primary align-middle text-2xl font-medium tracking-normal">
+
+          <div className="tl-paraghraph2 flex flex-col gap-3 sm:gap-4">
+            <p className="text-text-primary text-base font-medium tracking-normal sm:text-lg md:text-2xl">
               {subtitle}
             </p>
+
             {text.map((paragraph, index) => (
-              <p key={`${title}-${index}`}>{paragraph}</p>
+              <p
+                key={`${title}-${index}`}
+                className="text-sm leading-relaxed sm:text-base"
+              >
+                {paragraph}
+              </p>
             ))}
           </div>
-        </div>
+        </section>
       ))}
     </div>
   );
