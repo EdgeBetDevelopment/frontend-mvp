@@ -15,6 +15,7 @@ import {
 import { getTeamInfoByName } from '@/utils/team';
 import { GameCardHeader } from '../../matchup/GameCard';
 
+import { Analysis } from './Analys';
 import InjuryTable from './InjuryTable';
 import KeyPlayers from './KeyPlayers';
 import MarketSummary from './MarketSummary';
@@ -52,7 +53,7 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
         <DialogContentWrapper className="flex flex-col gap-5">
           <GameCardHeader game={game} />
 
-          <p>{game.prediction?.analysis}</p>
+          <Analysis text={game.prediction?.analysis} />
 
           <TopTeams
             favoriteTeamInfo={favoriteTeamInfo}
