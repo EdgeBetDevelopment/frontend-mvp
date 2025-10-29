@@ -48,7 +48,8 @@ const GameCard = ({ game, onClickFullAnalysis, type }: IGameCard) => {
           {game?.scoreboard?.label && (
             <>
               <ChevronRightIcon className="text-text-secondary" />
-              {game?.scoreboard?.label}
+              {/* {game?.scoreboard?.label} */}
+              Regular Season Game
             </>
           )}
         </div>
