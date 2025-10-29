@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import {
   ReadonlyURLSearchParams,
   useRouter,
@@ -31,6 +31,7 @@ const MatchupPage = () => {
   const { isAuthenticated } = useAuth();
   const { openModal, closeModal, isModalOpen } = useModalManager();
   const { setTrackedGame, setSelectedGame } = useStore();
+
   const params = useSearchParams() as ReadonlyURLSearchParams;
   const type = params.get('type');
   const router = useRouter();
@@ -38,22 +39,67 @@ const MatchupPage = () => {
   const [authDismissed, setAuthDismissed] = useState(false);
 
   const {
-    data = [],
+    data,
     isLoading,
-    error,
-  } = useQuery({
-    queryKey: ['scrore-board'],
-    queryFn: () => apiService.getGames(),
+    isError,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery<IGameWithAI[], Error>({
+    queryKey: ['games-feed'],
+    queryFn: ({ pageParam }: any) => apiService.getGames(pageParam),
+    initialPageParam: undefined as number | undefined,
+    getNextPageParam: (lastPage) => {
+      if (!lastPage || lastPage.length === 0) {
+        return undefined;
+      }
+
+      const lastGame = lastPage[lastPage.length - 1];
+      const nextLastId = Number(lastGame.game.id);
+
+      return nextLastId;
+    },
+    retry: false,
   });
+
+  const flatGames: IGameWithAI[] = data
+    ? data.pages.flatMap((page) => page)
+    : [];
+
+  const loadMoreRef = useRef<HTMLDivElement | null>(null);
+
+  const handleIntersection = useCallback(
+    (entries: IntersectionObserverEntry[]) => {
+      const first = entries[0];
+      if (first.isIntersecting && hasNextPage && !isFetchingNextPage) {
+        fetchNextPage();
+      }
+    },
+    [fetchNextPage, hasNextPage, isFetchingNextPage],
+  );
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(handleIntersection, {
+      root: null,
+      rootMargin: '200px',
+      threshold: 0,
+    });
+
+    const current = loadMoreRef.current;
+    if (current) observer.observe(current);
+
+    return () => {
+      if (current) observer.unobserve(current);
+    };
+  }, [handleIntersection]);
 
   const onClickTrackBet = (game: IGameWithAI) => {
     if (!isAuthenticated) {
       openModal('auth');
       return;
-    } else {
-      setTrackedGame(game);
-      openModal('track-bet');
     }
+    setTrackedGame(game);
+    openModal('track-bet');
   };
 
   const onClickClearTrackBet = () => {
@@ -65,17 +111,17 @@ const MatchupPage = () => {
     if (!isAuthenticated) {
       openModal('auth');
       return;
-    } else {
-      setSelectedGame(game);
-      openModal('game-analysis');
-      const url = formUrlQuery({
-        params: params.toString(),
-        key: 'game-analysis',
-        value: game.game.id.toString(),
-      });
-
-      router.push(url);
     }
+    setSelectedGame(game);
+    openModal('game-analysis');
+
+    const url = formUrlQuery({
+      params: params.toString(),
+      key: 'game-analysis',
+      value: game.game.id.toString(),
+    });
+
+    router.push(url);
   };
 
   const onOpenTrackBet = () => {
@@ -115,12 +161,21 @@ const MatchupPage = () => {
     const gameAnalysis = params.get('game-analysis');
     if (!gameAnalysis) return;
 
-    const found = data.find((g) => g.game.id === Number(gameAnalysis));
+    const found = flatGames.find((g) => g.game.id === Number(gameAnalysis));
     if (!found) return;
 
     setSelectedGame(found);
-    if (!isModalOpen('game-analysis')) openModal('game-analysis');
-  }, [isAuthenticated, params, data, isModalOpen, openModal, setSelectedGame]);
+    if (!isModalOpen('game-analysis')) {
+      openModal('game-analysis');
+    }
+  }, [
+    isAuthenticated,
+    params,
+    flatGames,
+    isModalOpen,
+    openModal,
+    setSelectedGame,
+  ]);
 
   return (
     <>
@@ -138,12 +193,13 @@ const MatchupPage = () => {
               </Button>
             </div>
           </div>
-          {isAuthenticated && data && (
+
+          {isAuthenticated && (
             <ListRenderer
               isLoading={isLoading}
-              data={data}
-              isError={!!error}
-              errorComponent={<div>Error load a player</div>}
+              data={flatGames}
+              isError={isError}
+              errorComponent={<div>Error load games</div>}
               loadingComponent={<GamesLoading />}
               emptyComponent={
                 <EmptyPlaceholder
@@ -165,11 +221,26 @@ const MatchupPage = () => {
                       />
                     ))}
                   </div>
+
+                  <div className="flex w-full flex-col items-center py-4">
+                    <div ref={loadMoreRef} className="h-1 w-full" />
+                    {isFetchingNextPage && (
+                      <div className="text-text-secondary text-sm">
+                        Loading more...
+                      </div>
+                    )}
+                    {!hasNextPage && flatGames.length > 0 && (
+                      <div className="text-text-secondary text-sm">
+                        No more games
+                      </div>
+                    )}
+                  </div>
                 </ScrollArea>
               )}
             </ListRenderer>
           )}
         </div>
+
         <TrackBetsAside />
       </div>
 
@@ -181,7 +252,8 @@ const MatchupPage = () => {
           onClose={onClickClearTrackBet}
         />
       </div>
-      {isAuthenticated && data && (
+
+      {isAuthenticated && flatGames && (
         <GameAnalysisModal
           open={isModalOpen('game-analysis')}
           onClose={onClickCloseModal}

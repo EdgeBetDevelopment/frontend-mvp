@@ -5,9 +5,11 @@ import { IGameTracker } from '@/types/tracker';
 import { axiosInstance } from './client';
 
 const apiService = {
-  async getGames(): Promise<IGameWithAI[]> {
-    const response = await axiosInstance.get(`/nba/api/v1/nba/games`);
-    console.log(response.data);
+  async getGames(lastId?: number): Promise<IGameWithAI[]> {
+    const response = await axiosInstance.get(`/nba/api/v1/nba/games`, {
+      params: lastId ? { last_id: lastId } : {},
+    });
+
     return response.data;
   },
 
