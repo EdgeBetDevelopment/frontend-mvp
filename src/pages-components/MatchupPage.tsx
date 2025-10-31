@@ -212,28 +212,19 @@ const MatchupPage = () => {
               {(games) => (
                 <ScrollArea className="pr-4">
                   <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-2">
-                    {games.map((game: IGameWithAI) => (
-                      <GameCard
-                        key={game.game.id}
-                        type={type}
-                        game={game}
-                        onClickFullAnalysis={() => onClickFullAnalysis(game)}
-                      />
-                    ))}
-                  </div>
-
-                  <div className="flex w-full flex-col items-center py-4">
-                    <div ref={loadMoreRef} className="h-1 w-full" />
-                    {isFetchingNextPage && (
-                      <div className="text-text-secondary text-sm">
-                        Loading more...
-                      </div>
-                    )}
-                    {!hasNextPage && flatGames.length > 0 && (
-                      <div className="text-text-secondary text-sm">
-                        No more games
-                      </div>
-                    )}
+                    {games.map((game: IGameWithAI, idx: number) => {
+                      const key =
+                        game?.game?.id ??
+                        `${game?.game?.home_team}-${game?.game?.away_team}-${game?.game?.start_time}-${idx}`;
+                      return (
+                        <GameCard
+                          key={String(key)}
+                          type={type}
+                          game={game}
+                          onClickFullAnalysis={() => onClickFullAnalysis(game)}
+                        />
+                      );
+                    })}
                   </div>
                 </ScrollArea>
               )}
