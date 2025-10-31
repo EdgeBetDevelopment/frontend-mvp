@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { cn } from '@/lib/utils';
 import { useStore } from '@/store';
@@ -16,6 +16,7 @@ import { getTeamInfoByName } from '@/utils/team';
 import { GameCardHeader } from '../../matchup/GameCard';
 
 import { Analysis } from './Analys';
+import ErrorBoundary from './ErrorBoundary';
 import InjuryTable from './InjuryTable';
 import KeyPlayers from './KeyPlayers';
 import MarketSummary from './MarketSummary';
@@ -30,62 +31,91 @@ interface IGameAnalysisModal {
 
 const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
   const { selectedGame: game } = useStore();
-  if (!game) {
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  const predictedWinnerInfo = React.useMemo(() => {
+    if (!game?.prediction?.predicted_winner || !game?.game) return null;
+    try {
+      return getTeamInfoByName(game.prediction.predicted_winner, game.game);
+    } catch (error) {
+      console.error('Error getting predicted winner info:', error);
+      return null;
+    }
+  }, [game?.prediction?.predicted_winner, game?.game]);
+
+  const favoriteTeamInfo = React.useMemo(() => {
+    if (!game?.prediction?.favorite_team || !game?.game) return null;
+    try {
+      return getTeamInfoByName(game.prediction.favorite_team, game.game);
+    } catch (error) {
+      console.error('Error getting favorite team info:', error);
+      return null;
+    }
+  }, [game?.prediction?.favorite_team, game?.game]);
+
+  if (!isClient || !game) {
     return null;
   }
 
-  const predictedWinnerInfo = getTeamInfoByName(
-    game.prediction?.predicted_winner,
-    game.game,
-  );
-  const favoriteTeamInfo = getTeamInfoByName(
-    game.prediction?.favorite_team,
-    game.game,
-  );
-
   return (
-    <Dialog open={open} onOpenChange={onClose}>
+    <Dialog key={game.game.id} open={open} onOpenChange={onClose}>
       <DialogContent className="tl-gradient-mistBlue">
         <DialogHeader className="flex flex-col gap-5">
           <DialogTitle>Full Analysis</DialogTitle>
         </DialogHeader>
 
-        <DialogContentWrapper className="flex flex-col gap-5">
-          <GameCardHeader game={game} />
+        <ErrorBoundary>
+          <DialogContentWrapper className="flex flex-col gap-5">
+            {game && (
+              <>
+                <GameCardHeader game={game} />
 
-          <Analysis text={game.prediction?.analysis} />
+                <Analysis text={game.prediction?.analysis} />
 
-          <TopTeams
-            favoriteTeamInfo={favoriteTeamInfo}
-            predictedWinnerInfo={predictedWinnerInfo}
-          />
+                <TopTeams
+                  favoriteTeamInfo={favoriteTeamInfo}
+                  predictedWinnerInfo={predictedWinnerInfo}
+                />
 
-          <TopBets
-            valueBets={game?.prediction?.value_bets || []}
-            conservativeBets={game?.prediction?.conservative_bets || []}
-          />
+                <TopBets
+                  valueBets={game?.prediction?.value_bets || []}
+                  conservativeBets={game?.prediction?.conservative_bets || []}
+                />
 
-          <KeyPlayers
-            homeTeamId={game?.game.home_team_id}
-            awayTeamId={game?.game.away_team_id}
-            homeLeader={game.scoreboard?.home_leaders}
-            awayLeader={game.scoreboard?.away_leaders}
-            playersHome={game.scoreboard?.home_team_players}
-            playersAway={game.scoreboard?.away_team_players}
-          />
+                {game.game && (
+                  <KeyPlayers
+                    homeTeamId={game.game.home_team_id}
+                    awayTeamId={game.game.away_team_id}
+                    homeLeader={game.scoreboard?.home_leaders}
+                    awayLeader={game.scoreboard?.away_leaders}
+                    playersHome={game.scoreboard?.home_team_players}
+                    playersAway={game.scoreboard?.away_team_players}
+                  />
+                )}
 
-          <InjuryTable
-            homeInjuries={game?.scoreboard?.home_team_injury}
-            awayInjuries={game?.scoreboard?.away_team_injury}
-          />
+                <InjuryTable
+                  homeInjuries={game?.scoreboard?.home_team_injury}
+                  awayInjuries={game?.scoreboard?.away_team_injury}
+                />
 
-          <MarketSummary game={game} prediction={game.prediction} />
+                {game.prediction && (
+                  <MarketSummary game={game} prediction={game.prediction} />
+                )}
 
-          <TeamStatsTable
-            homeTeamId={game?.game.home_team_id}
-            awayTeamId={game?.game.away_team_id}
-          />
-        </DialogContentWrapper>
+                {game.game && (
+                  <TeamStatsTable
+                    homeTeamId={game.game.home_team_id}
+                    awayTeamId={game.game.away_team_id}
+                  />
+                )}
+              </>
+            )}
+          </DialogContentWrapper>
+        </ErrorBoundary>
       </DialogContent>
     </Dialog>
   );

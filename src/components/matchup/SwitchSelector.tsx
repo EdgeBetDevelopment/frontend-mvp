@@ -34,9 +34,19 @@ export function OddsTypeSwitcher() {
     const activeBtn = refs.current[current];
     if (activeBtn) {
       const { offsetLeft, offsetWidth } = activeBtn;
-      setIndicatorStyle({
-        width: `${offsetWidth}px`,
-        transform: `translate(${offsetLeft}px, -50%)`,
+      setIndicatorStyle((prev) => {
+        const newStyle = {
+          width: `${offsetWidth}px`,
+          transform: `translate(${offsetLeft}px, -50%)`,
+        };
+
+        if (
+          prev.width !== newStyle.width ||
+          prev.transform !== newStyle.transform
+        ) {
+          return newStyle;
+        }
+        return prev;
       });
 
       setIsAmerican(current === 'american');

@@ -1,6 +1,12 @@
 'use client';
 
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import {
   ReadonlyURLSearchParams,
@@ -29,8 +35,19 @@ import TrackBetsAside from './TrackBetAside';
 
 const MatchupPage = () => {
   const { isAuthenticated } = useAuth();
-  const { openModal, closeModal, isModalOpen } = useModalManager();
-  const { setTrackedGame, setSelectedGame } = useStore();
+  const modalManager = useModalManager();
+  const storeManager = useStore();
+
+  const modalManagerRef = useRef(modalManager);
+  const storeManagerRef = useRef(storeManager);
+
+  useEffect(() => {
+    modalManagerRef.current = modalManager;
+    storeManagerRef.current = storeManager;
+  });
+
+  const { openModal, closeModal, isModalOpen } = modalManager;
+  const { setTrackedGame, setSelectedGame } = storeManager;
 
   const params = useSearchParams() as ReadonlyURLSearchParams;
   const type = params.get('type');
@@ -47,7 +64,8 @@ const MatchupPage = () => {
     isFetchingNextPage,
   } = useInfiniteQuery<IGameWithAI[], Error>({
     queryKey: ['games-feed'],
-    queryFn: ({ pageParam }: any) => apiService.getGames(pageParam),
+    queryFn: ({ pageParam }) =>
+      apiService.getGames(pageParam as number | undefined),
     initialPageParam: undefined as number | undefined,
     getNextPageParam: (lastPage) => {
       if (!lastPage || lastPage.length === 0) {
@@ -62,9 +80,9 @@ const MatchupPage = () => {
     retry: false,
   });
 
-  const flatGames: IGameWithAI[] = data
-    ? data.pages.flatMap((page) => page)
-    : [];
+  const flatGames: IGameWithAI[] = useMemo(() => {
+    return data ? data.pages.flatMap((page) => page) : [];
+  }, [data]);
 
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
 
@@ -107,23 +125,27 @@ const MatchupPage = () => {
     closeModal('track-bet');
   };
 
-  const onClickFullAnalysis = (game: IGameWithAI) => {
-    if (!isAuthenticated) {
-      openModal('auth');
-      return;
-    }
-    setSelectedGame(game);
-    openModal('game-analysis');
+  const onClickFullAnalysis = useCallback(
+    (game: IGameWithAI) => {
+      if (!isAuthenticated) {
+        openModal('auth');
+        return;
+      }
 
-    const url = formUrlQuery({
-      params: params.toString(),
-      key: 'game-analysis',
-      value: game.game.id.toString(),
-    });
+      setSelectedGame(game);
+      openModal('game-analysis');
 
-    router.push(url);
-  };
-
+      setTimeout(() => {
+        const url = formUrlQuery({
+          params: params.toString(),
+          key: 'game-analysis',
+          value: game.game.id.toString(),
+        });
+        router.push(url);
+      }, 100);
+    },
+    [isAuthenticated, openModal, setSelectedGame, params, router],
+  );
   const onOpenTrackBet = () => {
     if (!isAuthenticated) {
       openModal('auth');
@@ -132,17 +154,19 @@ const MatchupPage = () => {
     openModal('track-bet');
   };
 
-  const onClickCloseModal = () => {
+  const onClickCloseModal = useCallback(() => {
     closeModal('game-analysis');
-    setSelectedGame(null);
 
-    const url = formUrlQuery({
-      params: params.toString(),
-      keysToRemove: ['game-analysis'],
-    });
+    setTimeout(() => {
+      setSelectedGame(null);
 
-    router.push(url);
-  };
+      const url = formUrlQuery({
+        params: params.toString(),
+        keysToRemove: ['game-analysis'],
+      });
+      router.push(url);
+    }, 150);
+  }, [closeModal, setSelectedGame, params, router]);
 
   useEffect(() => {
     if (!isAuthenticated && !authDismissed) {
@@ -158,24 +182,34 @@ const MatchupPage = () => {
 
   useEffect(() => {
     if (!isAuthenticated) return;
-    const gameAnalysis = params.get('game-analysis');
-    if (!gameAnalysis) return;
 
-    const found = flatGames.find((g) => g.game.id === Number(gameAnalysis));
-    if (!found) return;
+    const gameAnalysisParam = params.get('game-analysis');
+    const { openModal, closeModal, isModalOpen } = modalManagerRef.current;
+    const { setSelectedGame } = storeManagerRef.current;
 
-    setSelectedGame(found);
-    if (!isModalOpen('game-analysis')) {
-      openModal('game-analysis');
+    if (!gameAnalysisParam) {
+      const modalOpen = isModalOpen('game-analysis');
+      if (modalOpen) {
+        closeModal('game-analysis');
+        setTimeout(() => setSelectedGame(null), 100);
+      }
+      return;
     }
-  }, [
-    isAuthenticated,
-    params,
-    flatGames,
-    isModalOpen,
-    openModal,
-    setSelectedGame,
-  ]);
+
+    const gameId = Number(gameAnalysisParam);
+    const found = flatGames.find((g) => g.game.id === gameId);
+
+    if (found) {
+      const currentGame = useStore.getState().selectedGame;
+      if (!currentGame || currentGame.game.id !== found.game.id) {
+        setSelectedGame(found);
+      }
+
+      if (!isModalOpen('game-analysis')) {
+        openModal('game-analysis');
+      }
+    }
+  }, [isAuthenticated, params, flatGames]);
 
   return (
     <>
@@ -244,7 +278,7 @@ const MatchupPage = () => {
         />
       </div>
 
-      {isAuthenticated && flatGames && (
+      {isAuthenticated && flatGames.length > 0 && (
         <GameAnalysisModal
           open={isModalOpen('game-analysis')}
           onClose={onClickCloseModal}
