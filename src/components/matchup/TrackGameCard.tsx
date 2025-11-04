@@ -13,6 +13,7 @@ import {
   convertAmericanToDecimal,
   convertEuropeanToAmerican,
 } from '@/utils/convertAmericanToDecimal';
+import { formatOddsWithSign } from '@/utils/formatOdds';
 import { formatUtcToLocalDate, formatUtcToLocalTimeAmPm } from '@/utils/time';
 import CardContainer from '../../ui/containers/CardContainer';
 import { Input } from '../../ui/input';
@@ -52,11 +53,24 @@ const TrackGameCard = ({ game, index }: ITrackGameCard) => {
 
   function formatDescription(desc: string) {
     console.log(desc);
-    return desc
+    let formatted = desc
       .replace(/\[.*?\]/g, '')
       .replace(/\(.*?\)/g, '')
       .split(':')[0]
       .trim();
+
+    formatted = formatted.replace(
+      /(\s)([\d.]+)(\s|$)/g,
+      (match, space1, num, space2) => {
+        const number = parseFloat(num);
+        if (!isNaN(number) && number > 0) {
+          return `${space1}+${num}${space2}`;
+        }
+        return match;
+      },
+    );
+
+    return formatted;
   }
 
   const currentTicket = isParlay ? parlay : single[index];
@@ -163,7 +177,10 @@ const TrackGameCard = ({ game, index }: ITrackGameCard) => {
               {parlay.bets.length === 0
                 ? '-'
                 : isAmerican
-                  ? convertEuropeanToAmerican(parlayOdds)
+                  ? formatOddsWithSign(
+                      convertEuropeanToAmerican(parlayOdds),
+                      true,
+                    )
                   : parlayOdds}
             </p>
           </>
@@ -199,7 +216,7 @@ const TrackGameCard = ({ game, index }: ITrackGameCard) => {
                       <span className="font-semibold text-white">
                         {!isAmerican
                           ? convertAmericanToDecimal(b?.odds)
-                          : b?.odds}
+                          : formatOddsWithSign(b?.odds, true)}
                       </span>
                       <Button
                         className="max-h-[10px] max-w-[10px]"
@@ -220,7 +237,7 @@ const TrackGameCard = ({ game, index }: ITrackGameCard) => {
               <p className="font-semibold text-white">
                 {!isAmerican
                   ? convertAmericanToDecimal(currentPick?.odds)
-                  : currentPick?.odds}
+                  : formatOddsWithSign(currentPick?.odds, true)}
               </p>
             </div>
           )}

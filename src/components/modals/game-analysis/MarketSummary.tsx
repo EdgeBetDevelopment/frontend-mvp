@@ -1,7 +1,10 @@
 import React from 'react';
 
+import { useStore } from '@/store';
 import { IGameWithAI, IPrediction } from '@/types/game';
 import CardContainer from '@/ui/containers/CardContainer';
+import { convertAmericanToDecimal } from '@/utils/convertAmericanToDecimal';
+import { formatOddsWithSign, formatSpread } from '@/utils/formatOdds';
 
 const MarketSummary = ({
   game,
@@ -53,6 +56,16 @@ const MarketSummaryRow = ({
   total: string;
   moneyline: string;
 }) => {
+  const isAmerican = useStore((state) => state.isAmerican);
+
+  const formattedSpread = formatSpread(spread);
+
+  const formattedTotal = total ? `+${total}` : '-';
+
+  const formattedMoneyline = isAmerican
+    ? formatOddsWithSign(moneyline, true)
+    : convertAmericanToDecimal(Number(moneyline)).toFixed(2);
+
   return (
     <div className="flex items-center justify-between">
       <div className="flex-1">
@@ -63,21 +76,27 @@ const MarketSummaryRow = ({
         <div className="flex flex-col items-center">
           <p className="mb-1 text-xs text-gray-400">Spread</p>
           <div className="flex min-w-[60px] flex-1 flex-col items-center gap-1 rounded-lg border border-gray-600 bg-gray-800/50 px-3 py-2">
-            <span className="text-sm font-medium text-white">{spread}</span>
+            <span className="text-sm font-medium text-white">
+              {formattedSpread}
+            </span>
           </div>
         </div>
 
         <div className="flex flex-col items-center">
           <p className="mb-1 text-xs text-gray-400">Total</p>
           <div className="flex min-w-[60px] flex-1 flex-col items-center gap-1 rounded-lg border border-gray-600 bg-gray-800/50 px-3 py-2">
-            <span className="text-sm font-medium text-white">{total}</span>
+            <span className="text-sm font-medium text-white">
+              {formattedTotal}
+            </span>
           </div>
         </div>
 
         <div className="flex flex-col items-center">
           <p className="mb-1 text-xs text-gray-400">ML</p>
           <div className="flex min-w-[60px] flex-1 items-center justify-center rounded-lg border border-gray-600 bg-gray-800/50 px-3 py-2">
-            <span className="text-sm font-medium text-white">{moneyline}</span>
+            <span className="text-sm font-medium text-white">
+              {formattedMoneyline}
+            </span>
           </div>
         </div>
       </div>

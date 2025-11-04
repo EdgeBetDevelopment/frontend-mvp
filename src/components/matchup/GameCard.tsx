@@ -15,6 +15,7 @@ import { Badge } from '@/ui/badge';
 import { Button } from '@/ui/button';
 import { Separator } from '@/ui/separator';
 import { convertAmericanToDecimal } from '@/utils/convertAmericanToDecimal';
+import { formatOddsWithSign } from '@/utils/formatOdds';
 import { formatUtcToLocalDate, formatUtcToLocalTimeAmPm } from '@/utils/time';
 import CardContainer from '../../ui/containers/CardContainer';
 
@@ -218,6 +219,10 @@ const GameBetsItem = ({
           .trim()
       : text
           .split(':')[0]
+          .replace(/\(([-+]?\d+)\)/, (match, oddsValue) => {
+            const formatted = formatOddsWithSign(parseInt(oddsValue, 10), true);
+            return `(${formatted})`;
+          })
           .replace(/\[.*?\]/g, '')
           .trim();
 
