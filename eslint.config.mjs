@@ -1,87 +1,29 @@
-import { dirname } from 'path';
-import { fileURLToPath } from 'url';
-import { FlatCompat } from '@eslint/eslintrc';
-import unusedImports from 'eslint-plugin-unused-imports';
-import eslintPluginPrettierRecommended from 'eslint-plugin-prettier';
-import jsonPlugin from '@eslint/json';
-import simpleImportSort from 'eslint-plugin-simple-import-sort';
+import js from '@eslint/js';
+import globals from 'globals';
+import reactHooks from 'eslint-plugin-react-hooks';
+import reactRefresh from 'eslint-plugin-react-refresh';
+import tseslint from 'typescript-eslint';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-});
-
-const prettierConfig = {
-  bracketSpacing: true,
-  endOfLine: 'lf',
-  printWidth: 80,
-  semi: true,
-  singleQuote: true,
-  tabWidth: 2,
-  trailingComma: 'all',
-  plugins: ['prettier-plugin-tailwindcss'],
-};
-
-const eslintConfig = [
-  ...compat.extends(
-    'next/core-web-vitals',
-    'next/typescript',
-    'next',
-    'prettier',
-  ),
-
+export default tseslint.config(
+  { ignores: ['dist'] },
   {
-    files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx', '**/*.json'],
+    extends: [js.configs.recommended, ...tseslint.configs.recommended],
+    files: ['**/*.{ts,tsx}'],
+    languageOptions: {
+      ecmaVersion: 2020,
+      globals: globals.browser,
+    },
     plugins: {
-      'unused-imports': unusedImports,
-      'simple-import-sort': simpleImportSort,
-      json: jsonPlugin,
-      prettier: eslintPluginPrettierRecommended,
+      'react-hooks': reactHooks,
+      'react-refresh': reactRefresh,
     },
-
     rules: {
-      'prettier/prettier': ['error', prettierConfig],
-
-      'simple-import-sort/imports': [
-        'error',
-        {
-          groups: [
-            // 1. Side effect imports at the start.
-            ['^\\u0000'],
-            // 2. `react` and packages: Things that start with a letter (or digit or underscore), or `@` followed by a letter.
-            ['^react$', '^@?\\w'],
-            // 3. Absolute imports and other imports.
-            // Anything not matched in another group.
-            ['^@', '^'],
-            // 4. relative imports from same folder "./"
-            ['^\\./'],
-            // 5. style module imports always come last
-            ['^.+\\.(module.css|module.scss)$'],
-            // 6. media imports
-            ['^.+\\.(gif|png|svg|jpg)$'],
-          ],
-        },
-      ],
-
-      '@typescript-eslint/no-unused-vars': 'off',
-      'unused-imports/no-unused-imports': ['warn'],
-      'unused-imports/no-unused-vars': [
+      ...reactHooks.configs.recommended.rules,
+      'react-refresh/only-export-components': [
         'warn',
-        {
-          vars: 'all',
-          varsIgnorePattern: '^_',
-          args: 'after-used',
-          argsIgnorePattern: '^_',
-        },
+        { allowConstantExport: true },
       ],
-
-      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-unused-vars': 'off',
     },
-
-    ignores: ['node_modules/', '.next/', 'build/'],
   },
-];
-
-export default eslintConfig;
+);

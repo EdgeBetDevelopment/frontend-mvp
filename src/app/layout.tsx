@@ -1,12 +1,10 @@
-import './globals.css';
+import './index.css';
 
 import { Suspense } from 'react';
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import Script from 'next/script';
 
-import Footer from '@/components/Footer';
-import Header from '@/components/header';
 import { AuthProvider } from '@/context/AuthContext';
 import TanstackQueryProvider from '@/providers/QueryProvider';
 import { Toaster } from '@/ui/sonner';
@@ -46,13 +44,7 @@ export default function RootLayout({
         <Suspense fallback={<div>Loading...</div>}>
           <TanstackQueryProvider>
             <AuthProvider>
-              <div className="tl-container fixed top-9 left-1/2 z-30 w-full max-w-[800px]! -translate-x-1/2 transform">
-                <Header />
-              </div>
-
-              <div className="pt-[142px]">{children}</div>
-
-              <Footer />
+              <div>{children}</div>
               <Toaster />
             </AuthProvider>
           </TanstackQueryProvider>
