@@ -3,7 +3,7 @@ import { axiosInstance } from './client';
 export interface ISubscriptionType {
   id: number;
   name: string;
-  description: string;
+  description: string[];
   price: number;
 }
 
