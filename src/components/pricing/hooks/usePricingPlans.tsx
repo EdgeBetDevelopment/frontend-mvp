@@ -13,19 +13,26 @@ interface UiConfig {
 
 const getUiConfig = (name: string): UiConfig => {
     const configs: Record<string, UiConfig> = {
-        'EdgeBet Weekly': {
+        'Starter': {
             displayName: 'Starter',
             period: 'week',
             uiDescription: '3-day free trial included',
             highlight: 'Try risk-free',
             popular: false,
         },
-        'EdgeBet Monthly': {
+        'Pro': {
             displayName: 'Pro',
             period: 'month',
             uiDescription: 'Most popular choice',
             highlight: 'Best value',
             popular: true,
+        },
+        'Premium': {
+            displayName: 'Premium',
+            period: 'month',
+            uiDescription: 'Everything you need',
+            highlight: 'Full access',
+            popular: false,
         },
     };
 
