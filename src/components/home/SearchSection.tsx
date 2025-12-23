@@ -63,13 +63,10 @@ export const SearchSection = ({
 
   return (
     <div className="mx-auto mb-12 max-w-4xl animate-fade-in text-center">
-      <Image
-        src={edgebetLogo}
+      <img
+        src={edgebetLogo.src}
         alt="EdgeBet - Predict. Bet. Win."
-        width={320}
-        height={160}
         className="mx-auto mb-8 h-24 w-auto md:h-32 lg:h-40"
-        priority
       />
 
       <div className="group relative mx-auto max-w-2xl" ref={wrapperRef}>
