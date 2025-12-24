@@ -25,6 +25,7 @@ const sports = [
     color: 'nfl',
     matches: 1,
     description: 'US Football',
+    comingSoon: true,
   },
   {
     id: 'ncaaf',
@@ -51,6 +52,7 @@ const sports = [
     color: 'mlb',
     matches: 0,
     description: 'US Baseball',
+    comingSoon: true,
   },
   {
     id: 'tennis',
@@ -59,6 +61,7 @@ const sports = [
     color: 'tennis',
     matches: 0,
     description: 'WTA / ATP Events',
+    comingSoon: true,
   },
 ];
 
