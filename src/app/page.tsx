@@ -8,6 +8,7 @@ import SportCardRedesigned from '@/components/home/SportCardRedesigned';
 import { Reviews } from '@/components/home/Reviews';
 import { CTA } from '@/components/home/CTA';
 import { SearchSection } from '@/components/home/SearchSection';
+import WhopAuthHandler from '@/components/home/WhopAuthHandler';
 
 const sports = [
   {
@@ -90,7 +91,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
-
+      <WhopAuthHandler />
       <section className="container mx-auto px-6 py-16 md:py-24">
         <SearchSection
           searchQuery={searchQuery}
