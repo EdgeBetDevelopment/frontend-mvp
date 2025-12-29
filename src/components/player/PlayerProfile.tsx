@@ -163,10 +163,6 @@ const PlayerProfile = () => {
 
   const { profile } = playerNameData || {};
 
-  console.log(player);
-  console.log(playerNameData);
-  console.log(playerSeason);
-
   const router = useRouter();
   const [timelineFilter, setTimelineFilter] =
     useState<TimelineFilter>('season');
@@ -340,19 +336,29 @@ const PlayerProfile = () => {
 
   if (error) {
     return (
-      <EmptyPlaceholder
-        title="Something went wrong"
-        subtitle="We couldn't load this player. Please try again later."
-      />
+      <>
+        <Navigation />
+        <EmptyPlaceholder
+          title="Something went wrong"
+          subtitle="We couldn't load this player. Please try again later."
+        />
+        <Footer />
+      </>
     );
   }
 
   if (!player || !playerNameData) {
     return (
-      <EmptyPlaceholder
-        title="Player not found"
-        subtitle="The player you're looking for doesn't exist."
-      />
+      <div className="min-h-screen bg-background">
+        <Navigation />
+        <div className="container mx-auto px-6 py-24 text-center">
+          <h1 className="mb-4 text-2xl font-bold">Player not found</h1>
+          <Button onClick={() => router.back()}>
+            <ArrowLeft className="mr-2 h-4 w-4" /> Go Back
+          </Button>
+        </div>
+        <Footer />
+      </div>
     );
   }
 

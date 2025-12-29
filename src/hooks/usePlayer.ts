@@ -29,7 +29,10 @@ export const usePlayer = (playerId: string) => {
   return {
     ...playerQuery,
     playerNameData: playerNameQuery.data,
-    isLoadingFull: playerQuery.isLoading || playerNameQuery.isLoading,
+    isLoadingFull:
+      playerQuery.isLoading ||
+      playerNameQuery.isLoading ||
+      playerSeasonQuery.isLoading,
     isErrorFull: playerQuery.isError || playerNameQuery.isError,
     playerSeason: playerSeasonQuery.data,
   };

@@ -6,8 +6,12 @@ export interface ITeam {
   abbreviation: string;
   nickname: string;
   city: string;
+  conference: string;
+  division: string;
   state: string;
   year_founded: number;
+  colors: { primary: string; secondary: string };
+  record: { wins: number; losses: number };
   arena: string;
   logo: string;
   arena_capacity: string;
@@ -18,6 +22,7 @@ export interface ITeam {
   social_media: SocialMedia;
   team_statistics: TeamStatistics;
   player_statistics: Player[];
+  overall_stats: TeamStatistics;
 }
 
 export interface SocialMedia {
@@ -31,6 +36,7 @@ export interface TeamStatistics {
   TEAM_ID: number;
   TEAM_NAME: string;
   GROUP_VALUE: string;
+  SEASON_YEAR: string;
   GP: number;
   W: number;
   L: number;
@@ -103,4 +109,5 @@ export interface Player extends ITeamPlayer {
   SCHOOL: string;
   PLAYER_ID: number;
   HOW_ACQUIRED: string;
+  status: string;
 }
