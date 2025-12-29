@@ -51,7 +51,7 @@ const Navigation = ({
             Sports
           </Link>
           <Link
-            href="/pick-of-the-day"
+            href="/profile/pick-of-the-day"
             className="text-muted-foreground transition-colors hover:text-foreground"
           >
             Pick of the Day
