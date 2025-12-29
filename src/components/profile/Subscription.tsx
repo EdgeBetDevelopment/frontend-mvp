@@ -2,10 +2,20 @@
 
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { CreditCard, Calendar, Loader2 } from 'lucide-react';
 
 import paymentService from '@/services/payment';
 import { userService } from '@/services/user';
 import { Button } from '@/ui/button';
+import { Separator } from '@/ui/separator';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/ui/card';
+import { Badge } from '@/ui/badge';
 
 import { ModalProfile } from './Modal';
 
@@ -14,7 +24,6 @@ type Sub = {
   type_id: number;
   type?: { name?: string };
   status: string;
-
   created_at: string;
 };
 
@@ -68,59 +77,134 @@ export const Subscription = () => {
 
   if (isLoading) {
     return (
-      <div className="mb-[90px] flex w-[calc(100%_-_40px)] max-w-[720px] flex-col gap-5 rounded-xl bg-[linear-gradient(112.71deg,_rgba(23,23,23,0.6)_19.64%,_rgba(105,105,105,0.316464)_55.1%,_rgba(125,125,125,0.06)_92%)] p-6 backdrop-blur-[20px] md:mx-0 md:w-full">
-        <h5 className="text-xl font-medium">Subscription</h5>
-        <p className="mt-2 text-sm text-gray-400">Loading…</p>
-      </div>
+      <Card className="border-border bg-card">
+        <CardHeader>
+          <div className="flex items-center gap-3">
+            <div className="rounded-lg bg-primary/10 p-2">
+              <CreditCard className="h-5 w-5 text-primary" />
+            </div>
+            <div>
+              <CardTitle className="text-xl">Subscription</CardTitle>
+              <CardDescription>
+                Your current plan and billing details
+              </CardDescription>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-center py-8">
+            <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+          </div>
+        </CardContent>
+      </Card>
     );
   }
 
   if (isError || !subscriptions?.length) {
     return (
-      <div className="mb-[90px] flex w-[calc(100%_-_40px)] max-w-[720px] flex-col gap-3 rounded-xl bg-[linear-gradient(112.71deg,_rgba(23,23,23,0.6)_19.64%,_rgba(105,105,105,0.316464)_55.1%,_rgba(125,125,125,0.06)_92%)] p-6 backdrop-blur-[20px] md:mx-0 md:w-full">
-        <h5 className="text-xl font-medium">Subscription</h5>
-        <div className="flex items-center gap-3">
-          <p className="text-sm text-gray-400">No active subscriptions</p>
-          <Button variant="outline" onClick={() => refetch()}>
+      <Card className="border-border bg-card">
+        <CardHeader>
+          <div className="flex items-center gap-3">
+            <div className="rounded-lg bg-primary/10 p-2">
+              <CreditCard className="h-5 w-5 text-primary" />
+            </div>
+            <div>
+              <CardTitle className="text-xl">Subscription</CardTitle>
+              <CardDescription>
+                Your current plan and billing details
+              </CardDescription>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <p className="text-sm text-muted-foreground">
+            No active subscriptions
+          </p>
+          <Button
+            variant="outline"
+            onClick={() => refetch()}
+            className="border-border"
+          >
             Refresh
           </Button>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     );
   }
 
   return (
     <>
-      <div className="mb-[90px] flex w-[calc(100%_-_40px)] max-w-[720px] flex-col gap-5 rounded-xl bg-[linear-gradient(112.71deg,_rgba(23,23,23,0.6)_19.64%,_rgba(105,105,105,0.316464)_55.1%,_rgba(125,125,125,0.06)_92%)] p-6 backdrop-blur-[20px] md:mx-0 md:w-full">
-        <h5 className="text-xl font-medium">Subscription</h5>
-        <div className="flex flex-col gap-3">
-          {subscriptions.map((sub) => (
-            <div key={sub.id} className="flex flex-col">
-              <p>
-                <span className="font-semibold">Your Subscription: </span>
-                {sub?.type?.name || `Type ${sub.type_id}`}
-              </p>
-              <p className="text-sm text-gray-400">
-                Status: {sub.status} | Started:{' '}
-                {new Date(sub.created_at).toLocaleDateString()}
-              </p>
-              <Button
-                variant="outline"
-                className="mt-6 w-fit bg-[linear-gradient(180deg,_rgba(255,255,255,0.03)_0%,_rgba(255,255,255,0.1)_100%)] shadow-[0_-1px_0_0_#00000033_inset,0_0_0_1px_#FFFFFF40,0_1px_0_0_#FFFFFF0D_inset]"
-                onClick={() => onAskCancel(sub.id, sub.type_id)}
-              >
-                Cancel Subscription
-              </Button>
+      <Card className="border-border bg-card">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="rounded-lg bg-primary/10 p-2">
+                <CreditCard className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <CardTitle className="text-xl">Subscription</CardTitle>
+                <CardDescription>
+                  Your current plan and billing details
+                </CardDescription>
+              </div>
             </div>
-          ))}
-        </div>
-      </div>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {subscriptions.map((sub) => {
+            const startDate = new Date(sub.created_at);
+            const nextBillingDate = new Date(startDate);
+            nextBillingDate.setMonth(nextBillingDate.getMonth() + 1);
+
+            return (
+              <div key={sub.id} className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <Badge className="bg-primary text-primary-foreground">
+                    {sub?.type?.name || `Plan Type ${sub.type_id}`}
+                  </Badge>
+                </div>
+
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                  <div className="rounded-lg bg-secondary/50 p-4">
+                    <div className="mb-1 flex items-center gap-2 text-muted-foreground">
+                      <Calendar className="h-4 w-4" />
+                      <span className="text-sm">Billing Cycle</span>
+                    </div>
+                    <p className="font-semibold">Monthly</p>
+                  </div>
+                  <div className="rounded-lg bg-secondary/50 p-4">
+                    <div className="mb-1 flex items-center gap-2 text-muted-foreground">
+                      <Calendar className="h-4 w-4" />
+                      <span className="text-sm">Next Billing Date</span>
+                    </div>
+                    <p className="font-semibold">
+                      {nextBillingDate.toLocaleDateString()}
+                    </p>
+                  </div>
+                </div>
+
+                <Separator className="bg-border" />
+
+                <div>
+                  <Button
+                    variant="ghost"
+                    onClick={() => onAskCancel(sub.id, sub.type_id)}
+                    className="text-destructive hover:bg-destructive/10 hover:text-destructive"
+                  >
+                    Cancel Subscription
+                  </Button>
+                </div>
+              </div>
+            );
+          })}
+        </CardContent>
+      </Card>
 
       <ModalProfile
         title="Cancel Subscription"
         firstColor="white"
         desciption={`Are you sure you want to cancel your subscription?
-You’ll keep access to premium features until it ends, after which your account will switch to the free plan.`}
+You'll keep access to premium features until it ends, after which your account will switch to the free plan.`}
         open={open}
         firstText={
           cancelMutation.isPending ? 'Cancelling…' : 'Cancel Subscription'

@@ -5,14 +5,21 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { Mail, Trash2, User } from 'lucide-react';
 
 import { userService } from '@/services/user';
-import { Button } from '@/ui/button';
-import { Input } from '@/ui/input';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 
 import { ModalProfile } from './Modal';
-
-import DeleteIcon from '@/assets/icons/delete-icon.svg';
 
 const Schema = z.object({
   username: z.string().min(2, 'Must be at least 2 characters'),
@@ -90,58 +97,86 @@ export const GeneralInformation = () => {
   };
 
   return (
-    <section className="mb-[20px] flex w-[calc(100%_-_40px)] max-w-[720px] flex-col gap-5 rounded-xl bg-[linear-gradient(112.71deg,_rgba(23,23,23,0.6)_19.64%,_rgba(105,105,105,0.316464)_55.1%,_rgba(125,125,125,0.06)_92%)] p-6 backdrop-blur-[20px] md:mx-0 md:w-full">
-      <div className="flex flex-col gap-5">
-        <div className="flex flex-row justify-between">
-          <h5 className="text-xl font-medium">General Information</h5>
-          <button
-            onClick={() => setIsDelete(true)}
-            className="hidden cursor-pointer flex-row gap-[6px] text-[#DC2626] sm:flex"
-          >
-            <DeleteIcon /> Delete Account
-          </button>
-        </div>
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="flex flex-col gap-6 sm:flex-row"
-        >
-          <Input
-            label="Username"
-            id="username"
-            labelClassName="text-[#EBEBEB] text-base"
-            {...register('username')}
-            error={errors.username?.message}
-          />
-          <Input
-            label="Email"
-            id="email"
-            labelClassName="text-[#EBEBEB] text-base"
-            {...register('email')}
-            error={errors.email?.message}
-          />
-          <button className="flex cursor-pointer flex-row gap-[6px] text-[#DC2626] sm:hidden">
-            <DeleteIcon /> Delete Account
-          </button>
-        </form>
-        <div className="flex flex-col sm:flex-row">
+    <>
+      <Card className="border-border bg-card">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="rounded-lg bg-primary/10 p-2">
+                <Mail className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <CardTitle className="text-xl">Email Address</CardTitle>
+                <CardDescription>
+                  Update your email for account communications
+                </CardDescription>
+              </div>
+            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsDelete(true)}
+              className="hidden gap-2 text-destructive hover:bg-destructive/10 hover:text-destructive sm:flex"
+            >
+              <Trash2 className="h-4 w-4" />
+              Delete Account
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="username">Username</Label>
+            <Input
+              id="username"
+              {...register('username')}
+              className="border-border bg-secondary/50"
+            />
+            {errors.username && (
+              <p className="text-sm text-destructive">
+                {errors.username.message}
+              </p>
+            )}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              type="email"
+              {...register('email')}
+              className="border-border bg-secondary/50"
+            />
+            {errors.email && (
+              <p className="text-sm text-destructive">{errors.email.message}</p>
+            )}
+          </div>
+
           <Button
-            onClick={handleSubmit(onSubmit)}
-            className="rounded-[10px] bg-[linear-gradient(180deg,_rgba(255,255,255,0.03)_0%,_rgba(255,255,255,0.1)_100%)] !px-[31px] py-3 text-[16px] font-semibold text-[#EBEBEB] shadow-[0_-1px_0_0_#00000033_inset,0_0_0_1px_#FFFFFF40,0_1px_0_0_#FFFFFF0D_inset]"
-            disabled={isSubmitting}
-            type="submit"
+            variant="ghost"
+            size="sm"
+            onClick={() => setIsDelete(true)}
+            className="flex gap-2 text-destructive hover:bg-destructive/10 hover:text-destructive sm:hidden"
+            type="button"
           >
-            Save
+            <Trash2 className="h-4 w-4" />
+            Delete Account
           </Button>
-        </div>
-      </div>
-      <Button
-        onClick={startWhopLogin}
-        className="auth-button bg-surface-secondary w-full items-center justify-center gap-2 rounded-xl p-4 transition-all duration-200 hover:opacity-90"
-      >
-        <p className="text-center align-middle text-2xl font-bold tracking-normal">
-          Sign in with Whop
-        </p>
-      </Button>
+
+          <Button onClick={handleSubmit(onSubmit)} disabled={isSubmitting}>
+            {isSubmitting ? 'Updating...' : 'Update'}
+          </Button>
+
+          <div className="border-t border-border pt-6">
+            <Button
+              onClick={startWhopLogin}
+              className="w-full items-center justify-center gap-2 rounded-xl border border-border bg-secondary p-4 text-xl font-bold text-foreground hover:bg-secondary/80"
+            >
+              Sign in with Whop
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
       <ModalProfile
         title="Delete Account"
         open={isDelete}
@@ -156,7 +191,7 @@ export const GeneralInformation = () => {
       <ModalProfile
         title="Confirm Your New Email Address"
         firstColor="white"
-        desciption={`We’ve sent a confirmation link to ${email}. Please click the link in the email to complete the update. Until confirmed, your current email will remain active.`}
+        desciption={`We've sent a confirmation link to ${email}. Please click the link in the email to complete the update. Until confirmed, your current email will remain active.`}
         onClose={() => setIsEmail(false)}
         firstOnClick={() => setIsEmail(false)}
         open={isEmail}
@@ -169,6 +204,6 @@ export const GeneralInformation = () => {
         firstOnClick={() => setIsEmailUpdated(false)}
         open={isEmailUpdated}
       />
-    </section>
+    </>
   );
 };
