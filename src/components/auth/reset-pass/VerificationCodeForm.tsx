@@ -91,12 +91,12 @@ const VerifyCodeForm = () => {
     <Form {...form}>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="auth-form mt-20 mb-40 flex w-full max-w-[600px] flex-col items-center justify-center gap-6 rounded-3xl bg-[#0B0B0B]/80 px-5 py-14 shadow-xl backdrop-blur sm:px-5 md:px-6 lg:px-12"
+        className="flex w-full max-w-[520px] flex-col items-center justify-center gap-6"
       >
         <div>
           <H2 text="Verification Code" />
 
-          <p className="text-center text-base text-[#B3B3B3]">
+          <p className="text-center text-sm text-muted-foreground">
             Enter 6-Digit Code to Retrieve password
           </p>
         </div>
@@ -110,14 +110,14 @@ const VerifyCodeForm = () => {
         <div className="flex w-full flex-col gap-2.5">
           <Button
             type="submit"
-            className="auth-button bg-[#282828]"
+            className="flex w-full items-center justify-center gap-2 rounded-xl border border-border bg-secondary p-4 text-xl font-semibold text-foreground transition-all duration-200 hover:bg-secondary/80"
             disabled={isVerifying}
           >
             {isVerifying ? (
               <Loader />
             ) : (
               <>
-                <p>Verify</p>
+                <span>Verify</span>
                 <ArrowRight />
               </>
             )}
@@ -128,12 +128,13 @@ const VerifyCodeForm = () => {
             type="button"
             onClick={() => router.back()}
             disabled={isVerifying}
+            className="border-border"
           >
             Back
           </Button>
         </div>
 
-        <p className="text-sm text-[#B3B3B3]">
+        <p className="text-sm text-muted-foreground">
           If you didn&apos;t receive any code. <ResendButton />
         </p>
       </form>

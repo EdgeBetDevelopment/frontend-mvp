@@ -39,7 +39,7 @@ const AuthFormInput: React.FC<IAuthFormInputProps> = ({
       <div className="relative">
         <input
           disabled={disabled}
-          className="auth-input w-full rounded-2xl bg-[#282828] px-5 py-4 text-[18px] transition-all focus:outline-0"
+          className="w-full rounded-xl border border-border bg-secondary px-5 py-4 text-base transition-all placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
           type={inputType}
           value={value}
           maxLength={maxLength}
@@ -50,7 +50,7 @@ const AuthFormInput: React.FC<IAuthFormInputProps> = ({
 
         {passwordToggle && type === 'password' && (
           <span
-            className="absolute top-1/2 left-[94%] -translate-x-1/2 -translate-y-1/2 transform cursor-pointer text-2xl text-[#B3B3B3]"
+            className="absolute left-[94%] top-1/2 -translate-x-1/2 -translate-y-1/2 transform cursor-pointer text-2xl text-[#B3B3B3]"
             onClick={() => setShowPassword((v) => !v)}
             aria-label={showPassword ? 'Hide password' : 'Show password'}
             role="button"
@@ -61,7 +61,7 @@ const AuthFormInput: React.FC<IAuthFormInputProps> = ({
         )}
       </div>
 
-      {error && <p className="text-destructive mt-1 text-sm">{error}</p>}
+      {error && <p className="mt-1 text-sm text-destructive">{error}</p>}
     </div>
   );
 };

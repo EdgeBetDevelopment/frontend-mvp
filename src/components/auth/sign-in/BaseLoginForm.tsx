@@ -69,7 +69,7 @@ const BaseLoginForm = ({ onSuccessLogin }: IBaseLoginForm) => {
 
         <div className="flex w-full justify-end">
           <Link
-            className="text-base text-[#84FDF7]"
+            className="text-sm text-primary transition-colors hover:text-primary/80"
             href={ROUTES.AUTH.FORGOT_PASS}
           >
             Forgot Password?
@@ -78,22 +78,25 @@ const BaseLoginForm = ({ onSuccessLogin }: IBaseLoginForm) => {
 
         <Button
           type="submit"
-          className="auth-button w-full bg-[#282828]"
+          className="flex w-full items-center justify-center gap-2 rounded-xl border border-border bg-secondary p-4 text-xl font-semibold text-foreground transition-all duration-200 hover:bg-secondary/80"
           disabled={loginIsLoading}
         >
           {loginIsLoading ? (
             <Loader />
           ) : (
             <>
-              <p>Sign In</p>
+              <span>Sign In</span>
               <ArrowRight />
             </>
           )}
         </Button>
 
-        <p className="text-center text-base text-[#B3B3B3]">
+        <p className="text-center text-sm text-muted-foreground">
           Don&apos;t have an account yet?{' '}
-          <Link className="text-[#84FDF7]" href={ROUTES.AUTH.SIGN_UP}>
+          <Link
+            className="text-primary transition-colors hover:text-primary/80"
+            href={ROUTES.AUTH.SIGN_UP}
+          >
             Create Account
           </Link>
         </p>

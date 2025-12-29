@@ -50,6 +50,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     setRefreshToken(null);
     if (typeof window !== 'undefined') {
       localStorage.removeItem('accessToken');
+      localStorage.removeItem('token');
+      localStorage.removeItem('userId');
       localStorage.removeItem('refreshToken');
     }
   };

@@ -1,9 +1,15 @@
 import ForgotPassword from '@/components/auth/reset-pass/ForgotPasswordForm';
+import Navigation from '@/components/Navigation';
+import Footer from '@/components/Footer';
 
 const ResetPassword = () => {
   return (
-    <div className="flex w-full flex-col items-center justify-center">
-      <ForgotPassword />
+    <div className="min-h-screen bg-background">
+      <Navigation />
+      <div className="flex min-h-[calc(100vh-200px)] w-full flex-col items-center justify-center px-4 py-24">
+        <ForgotPassword />
+      </div>
+      <Footer />
     </div>
   );
 };

@@ -39,13 +39,11 @@ const SignUpForm = ({
         onSuccess={handleGoogleSuccess}
         text="Sign up with Google"
       />
-      <Button className="auth-button bg-surface-secondary w-full items-center justify-center gap-2 rounded-xl p-4 transition-all duration-200 hover:opacity-90">
-        <p className="text-center align-middle text-2xl font-bold tracking-normal">
-          Sign in with Whoop
-        </p>
+      <Button className="w-full items-center justify-center gap-2 rounded-xl border border-border bg-secondary p-4 text-xl font-bold tracking-normal text-foreground transition-all duration-200 hover:bg-secondary/80">
+        Sign up with Whop
       </Button>
 
-      <p className="text-center text-base text-[#B3B3B3]">
+      <p className="text-center text-sm text-muted-foreground">
         Or, Sign up with email
       </p>
 

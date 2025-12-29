@@ -111,22 +111,25 @@ const BaseSignUpForm = ({ onSuccessSignUp }: IBaseSignUpForm) => {
 
         <Button
           type="submit"
-          className="auth-button w-full bg-[#282828]"
+          className="flex w-full items-center justify-center gap-2 rounded-xl border border-border bg-secondary p-4 text-xl font-semibold text-foreground transition-all duration-200 hover:bg-secondary/80"
           disabled={isPending}
         >
           {isPending ? (
             <Loader />
           ) : (
             <>
-              <p>Create Account</p>
+              <span>Create Account</span>
               <ArrowRight />
             </>
           )}
         </Button>
 
-        <p className="text-center text-base text-[#B3B3B3]">
+        <p className="text-center text-sm text-muted-foreground">
           Already have an account?{' '}
-          <Link className="text-[#84FDF7]" href={ROUTES.AUTH.LOGIN}>
+          <Link
+            className="text-primary transition-colors hover:text-primary/80"
+            href={ROUTES.AUTH.LOGIN}
+          >
             Log in
           </Link>
         </p>

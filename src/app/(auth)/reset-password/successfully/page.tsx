@@ -1,9 +1,15 @@
 import SuccessfullyResetPassword from '@/components/auth/reset-pass/SuccessfullyResetPassword';
+import Navigation from '@/components/Navigation';
+import Footer from '@/components/Footer';
 
 export default function SuccessfullyPage() {
   return (
-    <div className="flex w-full flex-col items-center justify-center">
-      <SuccessfullyResetPassword />
+    <div className="min-h-screen bg-background">
+      <Navigation />
+      <div className="flex min-h-[calc(100vh-200px)] w-full flex-col items-center justify-center px-4 py-24">
+        <SuccessfullyResetPassword />
+      </div>
+      <Footer />
     </div>
   );
 }

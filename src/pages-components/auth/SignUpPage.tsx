@@ -4,6 +4,8 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
 import SignUpForm from '@/components/auth/sign-up/SignUpForm';
+import Navigation from '@/components/Navigation';
+import Footer from '@/components/Footer';
 import { ROUTES } from '@/routes';
 
 const SignUpPage = () => {
@@ -15,10 +17,14 @@ const SignUpPage = () => {
   };
 
   return (
-    <div className="flex w-full flex-col items-center justify-center">
-      <div className="auth-form mt-20 mb-40 flex w-full max-w-[800px] flex-col items-center justify-center gap-6 rounded-3xl px-6 py-14 sm:px-10 md:px-20 lg:px-40">
-        <SignUpForm onSuccessSignUp={onSuccessSignUp} />
+    <div className="min-h-screen bg-background">
+      <Navigation />
+      <div className="flex min-h-[calc(100vh-200px)] w-full flex-col items-center justify-center px-4 py-24">
+        <div className="w-full max-w-[520px] space-y-6">
+          <SignUpForm onSuccessSignUp={onSuccessSignUp} />
+        </div>
       </div>
+      <Footer />
     </div>
   );
 };
