@@ -8,24 +8,79 @@ import {
   useRouter,
   useSearchParams,
 } from 'next/navigation';
+import {
+  Calendar,
+  Clock,
+  DollarSign,
+  Loader2,
+  TrendingDown,
+  TrendingUp,
+} from 'lucide-react';
 
-import EmptyPlaceholder from '@/components/EmptyPlaceholder';
 import { useTableSort } from '@/hooks/useTableSort';
 import apiService from '@/services';
 import { Badge } from '@/ui/badge';
-import { Button } from '@/ui/button';
-import Loader from '@/ui/loader';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/ui/table';
+import { Card } from '@/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/ui/tabs';
 import { formatUtcToLocalDate } from '@/utils/time';
 import { formUrlQuery } from '@/utils/url';
-import ListRenderer from '@/wrappers/ListRenderer';
+import Footer from '../Footer';
+import Navigation from '../Navigation';
+
+type BetStatus = 'pending' | 'won' | 'lost';
+
+interface BetLeg {
+  id: number;
+  sport: string;
+  homeTeam: string;
+  awayTeam: string;
+  description: string;
+  odds: string;
+  date: string;
+  time: string;
+  status: BetStatus;
+  amount: number;
+}
+
+interface TrackedBet {
+  id: number;
+  type: 'single' | 'parlay';
+  status: BetStatus;
+  createdAt: string;
+  riskAmount: number;
+  potentialPayout: number;
+  actualPayout?: number;
+  legs: BetLeg[];
+}
+
+const statusConfig: Record<
+  BetStatus,
+  {
+    label: string;
+    variant: 'default' | 'secondary' | 'destructive' | 'outline';
+    icon: React.ElementType;
+    colorClass: string;
+  }
+> = {
+  pending: {
+    label: 'Pending',
+    variant: 'secondary',
+    icon: Loader2,
+    colorClass: 'text-yellow-500',
+  },
+  won: {
+    label: 'Won',
+    variant: 'default',
+    icon: TrendingUp,
+    colorClass: 'text-green-500',
+  },
+  lost: {
+    label: 'Lost',
+    variant: 'destructive',
+    icon: TrendingDown,
+    colorClass: 'text-red-500',
+  },
+};
 
 const BET_TYPE_TABS = [
   { label: 'Active Bets', value: 'active' },
@@ -52,6 +107,10 @@ const BetTrackerTable = () => {
   const [activeTab, setActiveTab] = useState(type);
   const { sortArray, currentSort, handleSort } = useTableSort();
 
+  React.useEffect(() => {
+    setActiveTab(type);
+  }, [type]);
+
   const {
     data = [],
     error,
@@ -64,9 +123,14 @@ const BetTrackerTable = () => {
     refetchOnMount: 'always',
     placeholderData: (prevData) => prevData,
   });
-  console.log(data);
+  const { data: allBetsData = [] } = useQuery({
+    queryKey: ['betList', 'all'],
+    queryFn: () => apiService.getBetList({ filter: 'all', sort: [] } as any),
+    staleTime: 1000 * 60 * 2,
+  });
+
   const onChangeType = (value: string) => {
-    if (value === type) return;
+    if (value === activeTab) return;
     setActiveTab(value);
     changeTypeInUrl(value);
   };
@@ -88,6 +152,19 @@ const BetTrackerTable = () => {
     router.replace(url);
   };
 
+  const mapBetStatus = (status: string): BetStatus => {
+    const lowerStatus = status?.toLowerCase();
+    if (lowerStatus === 'win' || lowerStatus === 'won') return 'won';
+    if (lowerStatus === 'loss' || lowerStatus === 'lost') return 'lost';
+    if (
+      lowerStatus === 'pending' ||
+      lowerStatus === 'open' ||
+      lowerStatus === 'active'
+    )
+      return 'pending';
+    return 'pending';
+  };
+
   const computePL = (bet: any, selection: any): number | null => {
     const status = bet?.status;
     const amount = Number(selection?.amount ?? 0);
@@ -98,7 +175,7 @@ const BetTrackerTable = () => {
 
     if (status === 'win') {
       if (typeof winAmount === 'number' && !Number.isNaN(winAmount))
-        return winAmount;
+        return winAmount - amount;
       if (!Number.isNaN(odds)) return +(amount * (odds - 1)).toFixed(2);
       return null;
     }
@@ -107,134 +184,297 @@ const BetTrackerTable = () => {
     return null;
   };
 
+  const transformBetsToTrackedBets = (bets: any[]): TrackedBet[] => {
+    return bets.map((bet) => {
+      const selections = bet?.selections || [];
+      const isParlay = selections.length > 1;
+      const betStatus = mapBetStatus(bet.status);
+
+      const legs: BetLeg[] = selections.map((selection: any, idx: number) => {
+        const game = selection?.game || {};
+        const payload = selection?.payload || {};
+
+        return {
+          id: selection.id || idx,
+          sport: game.sport || 'nba',
+          homeTeam: game.home_team || '',
+          awayTeam: game.away_team || '',
+          description: payload.description || '',
+          odds: payload.odds_at_bet_time || '-',
+          date: game.start_time ? formatUtcToLocalDate(game.start_time) : '-',
+          time: game.start_time
+            ? new Date(game.start_time).toLocaleTimeString('en-US', {
+                hour: 'numeric',
+                minute: '2-digit',
+              })
+            : '-',
+          status: mapBetStatus(selection.status || bet.status),
+          amount: Number(selection.amount || 0),
+        };
+      });
+
+      const riskAmount = Number(
+        bet.total_amount || legs.reduce((sum, leg) => sum + leg.amount, 0),
+      );
+      const potentialPayout = Number(bet.win_amount || 0);
+      const actualPayout =
+        betStatus === 'won'
+          ? potentialPayout
+          : betStatus === 'lost'
+            ? 0
+            : undefined;
+
+      return {
+        id: bet.id,
+        type: isParlay ? 'parlay' : 'single',
+        status: betStatus,
+        createdAt: bet.created_at || new Date().toISOString(),
+        riskAmount,
+        potentialPayout,
+        actualPayout,
+        legs,
+      };
+    });
+  };
+
+  const trackedBets = transformBetsToTrackedBets(data);
+  const allTrackedBets = transformBetsToTrackedBets(allBetsData);
+
+  const activeBets = allTrackedBets.filter((bet) => bet.status === 'pending');
+  const completedBets = allTrackedBets.filter(
+    (bet) => bet.status !== 'pending',
+  );
+
+  const getBetsForTab = () => {
+    return trackedBets;
+  };
+
+  const calculateStats = () => {
+    const won = allTrackedBets.filter((b) => b.status === 'won');
+    const lost = allTrackedBets.filter((b) => b.status === 'lost');
+    const totalWon = won.reduce((acc, b) => acc + (b.actualPayout || 0), 0);
+    const totalLost = lost.reduce((acc, b) => acc + b.riskAmount, 0);
+    const totalRisked = [...won, ...lost].reduce(
+      (acc, b) => acc + b.riskAmount,
+      0,
+    );
+    const netProfit = totalWon - totalRisked;
+
+    return {
+      record: `${won.length}-${lost.length}`,
+      netProfit,
+      winRate:
+        won.length + lost.length > 0
+          ? ((won.length / (won.length + lost.length)) * 100).toFixed(1)
+          : '0.0',
+    };
+  };
+
+  const stats = calculateStats();
+  const betsToShow = getBetsForTab();
+
   return (
-    <div className="tl-container flex w-full flex-col gap-6">
-      <div className="tl-flex-between">
-        <div className="flex items-center gap-4">
-          {BET_TYPE_TABS.map((tab) => (
-            <Button
-              key={tab.label}
-              variant={activeTab === tab.value ? 'brand' : 'default'}
-              onClick={() => onChangeType(tab.value)}
+    <div className="min-h-screen bg-background">
+      <Navigation />
+
+      <main className="container mx-auto px-4 py-8">
+        <div className="mb-8">
+          <h1 className="mb-2 font-display text-3xl font-bold text-foreground">
+            Bet Tracker
+          </h1>
+          <p className="text-muted-foreground">
+            Track and manage all your bets in one place
+          </p>
+        </div>
+        <div className="mb-8 grid grid-cols-3 gap-4">
+          <Card className="border-border bg-card p-4 text-center">
+            <p className="mb-1 text-sm text-muted-foreground">Record</p>
+            <p className="text-2xl font-bold text-foreground">{stats.record}</p>
+          </Card>
+          <Card className="border-border bg-card p-4 text-center">
+            <p className="mb-1 text-sm text-muted-foreground">Win Rate</p>
+            <p className="text-2xl font-bold text-foreground">
+              {stats.winRate}%
+            </p>
+          </Card>
+          <Card className="border-border bg-card p-4 text-center">
+            <p className="mb-1 text-sm text-muted-foreground">Net Profit</p>
+            <p
+              className={`text-2xl font-bold ${stats.netProfit >= 0 ? 'text-green-500' : 'text-red-500'}`}
             >
-              {tab.label}
-            </Button>
-          ))}
+              {stats.netProfit >= 0 ? '+' : ''}${stats.netProfit.toFixed(2)}
+            </p>
+          </Card>
+        </div>
+
+        {/* Tabs */}
+        <Tabs value={activeTab} onValueChange={onChangeType} className="w-full">
+          <TabsList className="mb-6">
+            <TabsTrigger value="active" className="px-6">
+              Active Bets ({activeBets.length})
+            </TabsTrigger>
+            <TabsTrigger value="completed" className="px-6">
+              Completed Bets ({completedBets.length})
+            </TabsTrigger>
+            <TabsTrigger value="all" className="px-6">
+              All Bets ({allTrackedBets.length})
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value={activeTab} className="mt-0">
+            {isLoading ? (
+              <Card className="border-border bg-card p-12 text-center">
+                <Loader2 className="mx-auto h-10 w-10 animate-spin text-primary" />
+              </Card>
+            ) : betsToShow.length > 0 ? (
+              <div className="grid gap-4">
+                {betsToShow.map((bet) => (
+                  <BetSlip key={bet.id} bet={bet} />
+                ))}
+              </div>
+            ) : (
+              <Card className="border-border bg-card p-12 text-center">
+                <p className="font-display text-xl text-muted-foreground">
+                  No{' '}
+                  {activeTab === 'active'
+                    ? 'active'
+                    : activeTab === 'completed'
+                      ? 'completed'
+                      : ''}{' '}
+                  bets yet
+                </p>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  Head to the Matchup page to place your first bet
+                </p>
+              </Card>
+            )}
+          </TabsContent>
+        </Tabs>
+      </main>
+      <Footer />
+    </div>
+  );
+};
+
+const BetSlip = ({ bet }: { bet: TrackedBet }) => {
+  const config = statusConfig[bet.status];
+  const StatusIcon = config.icon;
+  const isParlay = bet.type === 'parlay';
+
+  return (
+    <Card className="border-border bg-card p-5 transition-colors hover:border-primary/30">
+      <div className="mb-4 flex items-start justify-between">
+        <div className="flex items-center gap-3">
+          <div
+            className={`flex h-10 w-10 items-center justify-center rounded-full ${
+              bet.status === 'won'
+                ? 'bg-green-500/20'
+                : bet.status === 'lost'
+                  ? 'bg-red-500/20'
+                  : 'bg-yellow-500/20'
+            }`}
+          >
+            <StatusIcon
+              className={`h-5 w-5 ${config.colorClass} ${bet.status === 'pending' ? 'animate-spin' : ''}`}
+            />
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <Badge
+                variant={isParlay ? 'default' : 'outline'}
+                className="text-xs"
+              >
+                {isParlay ? `Parlay (${bet.legs.length} legs)` : 'Single'}
+              </Badge>
+              <Badge variant={config.variant} className="text-xs">
+                {config.label}
+              </Badge>
+            </div>
+            <p className="mt-1 text-xs text-muted-foreground">
+              {new Date(bet.createdAt).toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                hour: 'numeric',
+                minute: '2-digit',
+              })}
+            </p>
+          </div>
+        </div>
+        <div className="text-right">
+          <p className="text-sm text-muted-foreground">Risk</p>
+          <p className="font-bold text-foreground">
+            ${bet.riskAmount.toFixed(2)}
+          </p>
         </div>
       </div>
 
-      <div className="">
-        <ListRenderer
-          isLoading={isLoading}
-          data={data?.slice().reverse()}
-          isError={!!error}
-          errorComponent={<div>Error load a player</div>}
-          loadingComponent={
-            <Loader size="h-10 w-10" className="h-full w-full py-10" />
-          }
-          emptyComponent={
-            <div>
-              <Table className="">
-                <TableHeader>
-                  <TableRow>
-                    {TABLE_FIELDS.map((col) => (
-                      <TableHead
-                        key={col.field}
-                        sortable={col.sortable}
-                        sortKey={col.field}
-                        currentSort={currentSort}
-                        onSort={handleSort}
-                      >
-                        {col.label}
-                      </TableHead>
-                    ))}
-                  </TableRow>
-                </TableHeader>
-              </Table>
-              <EmptyPlaceholder
-                title="No bets found"
-                subtitle="You don't have any bets yet."
-              />
+      {/* Bet Legs */}
+      <div className="mb-4 space-y-2">
+        {bet.legs.map((leg) => {
+          const legConfig = statusConfig[leg.status];
+          return (
+            <div
+              key={leg.id}
+              className={`rounded-md border px-3 py-2 ${
+                leg.status === 'won'
+                  ? 'border-green-500/30 bg-green-500/10'
+                  : leg.status === 'lost'
+                    ? 'border-red-500/30 bg-red-500/10'
+                    : 'border-border/50 bg-secondary/30'
+              }`}
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex-1">
+                  <div className="mb-1 flex items-center gap-2">
+                    <Badge variant="outline" className="px-1.5 py-0 text-xs">
+                      {leg.sport}
+                    </Badge>
+                    <span className="text-xs text-muted-foreground">
+                      {leg.homeTeam} vs {leg.awayTeam}
+                    </span>
+                  </div>
+                  <p className="text-sm font-medium text-foreground">
+                    {leg.description}{' '}
+                    <span className="font-bold text-primary">{leg.odds}</span>
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                    <Calendar className="h-3 w-3" />
+                    {leg.date}
+                  </div>
+                  <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                    <Clock className="h-3 w-3" />
+                    {leg.time}
+                  </div>
+                </div>
+              </div>
             </div>
-          }
-        >
-          {(bets) => (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  {TABLE_FIELDS?.map((col) => (
-                    <TableHead
-                      key={col.field}
-                      sortable={col.sortable}
-                      sortKey={col.field}
-                      currentSort={currentSort}
-                      onSort={handleSort}
-                    >
-                      {col.label}
-                    </TableHead>
-                  ))}
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {bets.map((bet) =>
-                  bet?.selections?.map((selection, idx) => {
-                    const pl = computePL(bet, selection);
-
-                    console.log(pl);
-                    return (
-                      <TableRow key={`${bet.id}-${idx}`}>
-                        <TableCell>
-                          {formatUtcToLocalDate(bet?.created_at?.toString())}
-                        </TableCell>
-                        <TableCell>
-                          {selection?.game?.home_team} vs{' '}
-                          {selection?.game?.away_team}
-                        </TableCell>
-                        <TableCell>
-                          You placed a bet of ${selection?.amount} on the{' '}
-                          {selection?.payload?.description}
-                        </TableCell>
-                        <TableCell>{selection?.amount}</TableCell>
-                        <TableCell>
-                          {selection?.payload?.odds_at_bet_time}
-                        </TableCell>
-                        <TableCell
-                          className={
-                            pl == null
-                              ? ''
-                              : pl >= 0
-                                ? 'text-green-600'
-                                : 'text-red-600'
-                          }
-                        >
-                          {pl == null
-                            ? '—'
-                            : `${pl > 0 ? '+' : ''}$${pl.toFixed(2)}`}
-                        </TableCell>
-                        <TableCell>
-                          <Badge
-                            className="w-full max-w-[85px] py-2 capitalize"
-                            variant={
-                              bet?.status === 'win'
-                                ? 'green'
-                                : bet?.status === 'pending'
-                                  ? 'orange'
-                                  : 'red'
-                            }
-                          >
-                            {bet.status}
-                          </Badge>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  }),
-                )}
-              </TableBody>
-            </Table>
-          )}
-        </ListRenderer>
+          );
+        })}
       </div>
-    </div>
+
+      {/* Payout Info */}
+      <div className="flex items-center justify-between border-t border-border pt-3">
+        <div className="flex items-center gap-2">
+          <DollarSign className="h-4 w-4 text-muted-foreground" />
+          <span className="text-sm text-muted-foreground">
+            {bet.status === 'pending' ? 'Potential Payout' : 'Payout'}
+          </span>
+        </div>
+        <p
+          className={`text-lg font-bold ${
+            bet.status === 'won'
+              ? 'text-green-500'
+              : bet.status === 'lost'
+                ? 'text-red-500 line-through'
+                : 'text-primary'
+          }`}
+        >
+          ${bet.status === 'lost' ? '0.00' : bet.potentialPayout.toFixed(2)}
+        </p>
+      </div>
+    </Card>
   );
 };
 
