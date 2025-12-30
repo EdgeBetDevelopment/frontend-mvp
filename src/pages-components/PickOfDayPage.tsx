@@ -42,7 +42,7 @@ export const CardSizeProvider = ({
 const PickOfDayPage = () => {
   return (
     <div className="tl-container relative mb-[60px]">
-      <div className="bg-primary-brand/60 absolute top-1/3 left-1/2 -z-10 h-[250px] w-1/3 -translate-x-1/2 rounded-full blur-[200px]" />
+      <div className="bg-primary-brand/60 absolute left-1/2 top-1/3 -z-10 h-[250px] w-1/3 -translate-x-1/2 rounded-full blur-[200px]" />
       <div
         style={{ backgroundImage: `url(${GridBgImage.src})` }}
         className="absolute inset-0 -z-10 h-full w-full"
@@ -145,29 +145,29 @@ const PremiumPickOfDay = () => {
 
   const onClickFullAnalysis = (game: IGame) => {
     const simplifiedGame = {
-      id: game?.game_prediction.id,
+      id: game?.game_prediction?.id,
       game: {
-        ...game?.game_prediction.game,
-        home_team_id: game?.game_prediction.home_team_id,
-        home_team_logo: game?.game_prediction.home_team_logo,
-        away_team_logo: game?.game_prediction.away_team_logo,
-        away_team_id: game?.game_prediction.away_team_id,
-        home_team: game?.game_prediction.game.home_team,
-        away_team: game?.game_prediction.game.away_team,
+        ...game?.game_prediction?.game,
+        home_team_id: game?.game_prediction?.home_team_id,
+        home_team_logo: game?.game_prediction?.home_team_logo,
+        away_team_logo: game?.game_prediction?.away_team_logo,
+        away_team_id: game?.game_prediction?.away_team_id,
+        home_team: game?.game_prediction?.game?.home_team,
+        away_team: game?.game_prediction?.game?.away_team,
       },
       prediction: {
-        win_probability_away: game?.game_prediction.win_probability_away,
-        win_probability_home: game?.game_prediction.win_probability_home,
-        odds_away: game?.game_prediction.odds_away,
-        odds_home: game?.game_prediction.odds_home,
-        favorite_team: game?.game_prediction.favorite_team,
-        predicted_winner: game?.game_prediction.predicted_winner,
-        analysis: game?.game_prediction.analysis,
+        win_probability_away: game?.game_prediction?.win_probability_away,
+        win_probability_home: game?.game_prediction?.win_probability_home,
+        odds_away: game?.game_prediction?.odds_away,
+        odds_home: game?.game_prediction?.odds_home,
+        favorite_team: game?.game_prediction?.favorite_team,
+        predicted_winner: game?.game_prediction?.predicted_winner,
+        analysis: game?.game_prediction?.analysis,
       },
-      nba_game_id: game?.game_prediction.game.nba_game_id,
-      start_time: game?.game_prediction.game.start_time,
-      status: game?.game_prediction.game.status,
-      final_score: game?.game_prediction.game.final_score,
+      nba_game_id: game?.game_prediction?.game?.nba_game_id,
+      start_time: game?.game_prediction?.game?.start_time,
+      status: game?.game_prediction?.game?.status,
+      final_score: game?.game_prediction?.game?.final_score,
       scoreboard: null,
     };
 
@@ -183,27 +183,27 @@ const PremiumPickOfDay = () => {
   const onClickTrackBet = (game: IGame | null) => {
     const simplifiedGame = {
       game: {
-        id: game?.game_prediction.game.id,
+        id: game?.game_prediction?.game?.id,
         game_prediction: game?.game_prediction,
-        home_team_id: game?.game_prediction.home_team_id,
-        home_team_logo: game?.game_prediction.home_team_logo,
-        away_team_logo: game?.game_prediction.away_team_logo,
-        away_team_id: game?.game_prediction.away_team_id,
-        home_team: game?.game_prediction.game.home_team,
-        away_team: game?.game_prediction.game.away_team,
-        start_time: game?.game_prediction.game.start_time,
-        status: game?.game_prediction.game.status,
-        final_score: game?.game_prediction.game.final_score,
-        nba_game_id: game?.game_prediction.game.nba_game_id,
+        home_team_id: game?.game_prediction?.home_team_id,
+        home_team_logo: game?.game_prediction?.home_team_logo,
+        away_team_logo: game?.game_prediction?.away_team_logo,
+        away_team_id: game?.game_prediction?.away_team_id,
+        home_team: game?.game_prediction?.game?.home_team,
+        away_team: game?.game_prediction?.game?.away_team,
+        start_time: game?.game_prediction?.game?.start_time,
+        status: game?.game_prediction?.game?.status,
+        final_score: game?.game_prediction?.game?.final_score,
+        nba_game_id: game?.game_prediction?.game?.nba_game_id,
       },
       prediction: {
-        win_probability_away: game?.game_prediction.win_probability_away,
-        win_probability_home: game?.game_prediction.win_probability_home,
-        odds_away: game?.game_prediction.odds_away,
-        odds_home: game?.game_prediction.odds_home,
-        favorite_team: game?.game_prediction.favorite_team,
-        predicted_winner: game?.game_prediction.predicted_winner,
-        analysis: game?.game_prediction.analysis,
+        win_probability_away: game?.game_prediction?.win_probability_away,
+        win_probability_home: game?.game_prediction?.win_probability_home,
+        odds_away: game?.game_prediction?.odds_away,
+        odds_home: game?.game_prediction?.odds_home,
+        favorite_team: game?.game_prediction?.favorite_team,
+        predicted_winner: game?.game_prediction?.predicted_winner,
+        analysis: game?.game_prediction?.analysis,
       },
       scoreboard: null,
     };
@@ -299,8 +299,8 @@ export const PickCard = ({
         <TeamItem name={awayTeam} logo={awayTeamLogo} />
       </div>
 
-      <CardContainer className="border-border relative z-10 flex w-full flex-col gap-3 overflow-hidden p-8">
-        <div className="absolute top-0 left-0 -z-10 h-full w-full rounded-full bg-[#337587] blur-[150px]" />
+      <CardContainer className="relative z-10 flex w-full flex-col gap-3 overflow-hidden border-border p-8">
+        <div className="absolute left-0 top-0 -z-10 h-full w-full rounded-full bg-[#337587] blur-[150px]" />
 
         <div className="flex flex-col gap-6">
           <div className="flex items-center gap-2">
@@ -357,7 +357,7 @@ const TeamItem = ({ name, logo }: { name: string; logo: string }) => {
   const isSingle = useCardSize() === 'single';
 
   return (
-    <div className="border-border flex items-center gap-3 rounded-xl border bg-[#33758780] px-4 py-2">
+    <div className="flex items-center gap-3 rounded-xl border border-border bg-[#33758780] px-4 py-2">
       <Avatar className="h-11 w-11 rounded-full p-1.5">
         <AvatarImage src={logo} />
       </Avatar>
@@ -386,7 +386,7 @@ const TeamOddItem = ({
   return (
     <div className="tl-flex-between">
       <div className="flex items-center gap-3">
-        <Avatar className="border-border bg-surface-secondary h-11 w-11 rounded-full border p-1.5">
+        <Avatar className="bg-surface-secondary h-11 w-11 rounded-full border border-border p-1.5">
           <AvatarImage src={logo} />
         </Avatar>
         <div

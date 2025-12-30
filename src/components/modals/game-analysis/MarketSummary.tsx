@@ -15,8 +15,8 @@ const MarketSummary = ({
 }) => {
   if (!prediction) return null;
 
-  const homeTeam = game.game.home_team;
-  const awayTeam = game.game.away_team;
+  const homeTeam = game?.game?.home_team;
+  const awayTeam = game?.game?.away_team;
 
   return (
     <div className="space-y-4">

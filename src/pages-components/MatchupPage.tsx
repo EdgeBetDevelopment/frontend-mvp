@@ -75,7 +75,7 @@ const MatchupPage = () => {
       }
 
       const lastGame = lastPage[lastPage.length - 1];
-      const nextLastId = Number(lastGame.game.id);
+      const nextLastId = Number(lastGame?.game?.id);
 
       return nextLastId;
     },
@@ -141,7 +141,7 @@ const MatchupPage = () => {
         const url = formUrlQuery({
           params: params.toString(),
           key: 'game-analysis',
-          value: game.game.id.toString(),
+          value: game?.game?.id?.toString(),
         });
         router.push(url);
       }, 100);
@@ -200,11 +200,11 @@ const MatchupPage = () => {
     }
 
     const gameId = Number(gameAnalysisParam);
-    const found = flatGames.find((g) => g.game.id === gameId);
+    const found = flatGames.find((g) => g?.game?.id === gameId);
 
     if (found) {
       const currentGame = useStore.getState().selectedGame;
-      if (!currentGame || currentGame.game.id !== found.game.id) {
+      if (!currentGame || currentGame?.game?.id !== found?.game?.id) {
         setSelectedGame(found);
       }
 

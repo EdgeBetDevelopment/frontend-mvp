@@ -24,8 +24,8 @@ interface ITrackGameCard {
 }
 
 const TrackGameCard = ({ game, index }: ITrackGameCard) => {
-  const formattedDate = formatUtcToLocalDate(game.game.start_time);
-  const formattedTime = formatUtcToLocalTimeAmPm(game.game.start_time);
+  const formattedDate = formatUtcToLocalDate(game?.game?.start_time);
+  const formattedTime = formatUtcToLocalTimeAmPm(game?.game?.start_time);
 
   const {
     isParlay,
@@ -121,13 +121,13 @@ const TrackGameCard = ({ game, index }: ITrackGameCard) => {
         <div className="mb-4">
           <div className="mb-2 flex items-center justify-between">
             <p className="font-semibold text-foreground">
-              Parlay ({parlay.bets.length} bets)
+              Parlay ({parlay?.bets?.length} bets)
             </p>
           </div>
           <p className="text-lg font-bold text-foreground">
             Parlay Odds:{' '}
             <span className="text-primary">
-              {parlay.bets.length === 0
+              {parlay?.bets?.length === 0
                 ? '-'
                 : isAmerican
                   ? formatOddsWithSign(
@@ -146,7 +146,7 @@ const TrackGameCard = ({ game, index }: ITrackGameCard) => {
             </div>
             <div>
               <p className="text-sm font-semibold text-foreground">
-                {game.game.home_team} vs {game.game.away_team}
+                {game?.game?.home_team} vs {game?.game?.away_team}
               </p>
               <div className="flex items-center gap-2 text-xs text-muted-foreground">
                 <span className="flex items-center gap-1">
@@ -180,7 +180,7 @@ const TrackGameCard = ({ game, index }: ITrackGameCard) => {
       <div className="mb-4 space-y-2">
         {isParlay ? (
           parlay?.bets?.length ? (
-            parlay.bets.map((b, i) => (
+            parlay?.bets?.map((b, i) => (
               <div
                 key={i}
                 className="flex items-center justify-between rounded-md bg-primary/20 px-3 py-2"

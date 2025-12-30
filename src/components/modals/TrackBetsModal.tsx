@@ -83,12 +83,12 @@ const TrackBetsModal = ({
 
   const onSubmit = async () => {
     if (isParlay) {
-      if (!parlay || parlay.bets.length === 0) return;
+      if (!parlay || parlay?.bets?.length === 0) return;
 
       const payload = {
         amount: parlay.amount ?? 0,
         win_amount: parlay.win_amount ?? 0,
-        bets: parlay.bets.map(mapPick),
+        bets: parlay?.bets?.map(mapPick),
       };
 
       console.log('PARLAY payload', payload);
@@ -103,7 +103,7 @@ const TrackBetsModal = ({
         bets: single.map((ticket) => ({
           amount: ticket.amount ?? 0,
           win_amount: ticket.win_amount ?? 0,
-          bets: ticket.bets.map(mapPick),
+          bets: ticket?.bets?.map(mapPick),
         })),
       };
 
@@ -130,7 +130,7 @@ const TrackBetsModal = ({
     setSelectedGame(null);
   };
 
-  const hasItems = isParlay ? parlay.bets.length > 0 : single.length > 0;
+  const hasItems = isParlay ? parlay?.bets?.length > 0 : single.length > 0;
 
   // async function onSubmit(values: z.infer<typeof formSchema>) {
   //   const body = {
@@ -172,7 +172,7 @@ const TrackBetsModal = ({
         modal={false}
       >
         <SheetContent
-          className="bg-surface-secondary border-border flex h-full w-full max-w-[324px] flex-col gap-10 rounded-l-3xl border p-3"
+          className="bg-surface-secondary flex h-full w-full max-w-[324px] flex-col gap-10 rounded-l-3xl border border-border p-3"
           side="right"
         >
           <div className="flex flex-col gap-5 align-bottom text-2xl font-medium capitalize">

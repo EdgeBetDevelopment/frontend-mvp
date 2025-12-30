@@ -164,8 +164,7 @@ const PlayerProfile = () => {
   const { profile } = playerNameData || {};
 
   const router = useRouter();
-  const [timelineFilter, setTimelineFilter] =
-    useState<TimelineFilter>('season');
+  const [timelineFilter, setTimelineFilter] = useState<TimelineFilter>('7days');
   const [selectedProps, setSelectedProps] = useState<PropKey[]>([
     'Points',
     'Assists',
@@ -174,7 +173,7 @@ const PlayerProfile = () => {
 
   const seasonText = (() => {
     if (playerNameData?.season_stats?.SEASON_ID?.includes('-'))
-      return playerNameData.season_stats.SEASON_ID.replace('-', ' - ');
+      return playerNameData?.season_stats?.SEASON_ID?.replace('-', ' - ');
     const currentYear = new Date().getFullYear();
     return `${currentYear}`;
   })();

@@ -26,6 +26,7 @@ export interface ITeam {
   league_standings: {
     Conference: string;
     Division: string;
+    OppPointsPG: number;
   };
   injuries: Injury[];
   recent_games: Game[];

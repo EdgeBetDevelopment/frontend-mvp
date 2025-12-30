@@ -57,7 +57,7 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
   const predictedWinnerInfo = React.useMemo(() => {
     if (!game?.prediction?.predicted_winner || !game?.game) return null;
     try {
-      return getTeamInfoByName(game.prediction.predicted_winner, game.game);
+      return getTeamInfoByName(game?.prediction?.predicted_winner, game?.game);
     } catch (error) {
       console.error('Error getting predicted winner info:', error);
       return null;
@@ -67,7 +67,7 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
   const favoriteTeamInfo = React.useMemo(() => {
     if (!game?.prediction?.favorite_team || !game?.game) return null;
     try {
-      return getTeamInfoByName(game.prediction.favorite_team, game.game);
+      return getTeamInfoByName(game?.prediction?.favorite_team, game?.game);
     } catch (error) {
       console.error('Error getting favorite team info:', error);
       return null;
@@ -202,10 +202,10 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
   const { overview, riskFactors, injuries, keyStrengths } = parseAnalysis(
     game.prediction?.analysis,
   );
-  const homeTeamName = game.game.home_team;
-  const awayTeamName = game.game.away_team;
-  const gameDate = formatUtcToLocalDate(game.game.start_time);
-  const gameTime = formatUtcToLocalTimeAmPm(game.game.start_time);
+  const homeTeamName = game?.game?.home_team;
+  const awayTeamName = game?.game?.away_team;
+  const gameDate = formatUtcToLocalDate(game?.game?.start_time);
+  const gameTime = formatUtcToLocalTimeAmPm(game?.game?.start_time);
 
   // Filter injuries by team
   const getTeamInjuries = (teamName: string) => {
@@ -243,7 +243,7 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
   const awayWinProb = game.prediction?.win_probability_away || 0;
 
   return (
-    <Dialog key={game.game.id} open={open} onOpenChange={onClose}>
+    <Dialog key={game?.game?.id} open={open} onOpenChange={onClose}>
       <DialogContent className="max-h-[90vh] max-w-[95vw] gap-0 overflow-hidden p-0 sm:max-w-[90vw] md:max-w-4xl lg:max-w-5xl">
         {/* Header */}
         <DialogHeader className="border-b border-border bg-gradient-to-r from-card to-secondary/30 px-4 py-3 sm:px-6 sm:py-4">
@@ -251,9 +251,9 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
             <div className="flex items-center gap-2 sm:gap-4">
               <div className="flex items-center gap-2 sm:gap-3">
                 <div className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-full bg-primary/20 sm:h-10 sm:w-10">
-                  {game.game.home_team_logo ? (
+                  {game?.game?.home_team_logo ? (
                     <img
-                      src={game.game.home_team_logo}
+                      src={game?.game?.home_team_logo}
                       alt={homeTeamName}
                       className="h-6 w-6 object-contain sm:h-8 sm:w-8"
                     />
@@ -269,9 +269,9 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
                   {awayTeamName}
                 </DialogTitle>
                 <div className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-full bg-primary/20 sm:h-10 sm:w-10">
-                  {game.game.away_team_logo ? (
+                  {game?.game?.away_team_logo ? (
                     <img
-                      src={game.game.away_team_logo}
+                      src={game?.game?.away_team_logo}
                       alt={awayTeamName}
                       className="h-6 w-6 object-contain sm:h-8 sm:w-8"
                     />
@@ -296,9 +296,9 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
                 variant="outline"
                 className="border-primary/30 bg-primary/10 text-primary"
               >
-                {game.game.status === 'scheduled'
+                {game?.game?.status === 'scheduled'
                   ? 'Scheduled'
-                  : game.game.status}
+                  : game?.game?.status}
               </Badge>
             </div>
           </div>
@@ -510,8 +510,8 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
                     </h3>
                     <div className="space-y-3">
                       {game.prediction?.value_bets &&
-                      game.prediction.value_bets.length > 0 ? (
-                        game.prediction.value_bets
+                      game?.prediction?.value_bets?.length > 0 ? (
+                        game?.prediction?.value_bets
                           .slice(0, 3)
                           .map((bet, idx) => {
                             // Extract bet type from square brackets [type]
@@ -577,8 +577,8 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
                     </h3>
                     <div className="space-y-3">
                       {game.prediction?.conservative_bets &&
-                      game.prediction.conservative_bets.length > 0 ? (
-                        game.prediction.conservative_bets
+                      game?.prediction?.conservative_bets?.length > 0 ? (
+                        game?.prediction?.conservative_bets
                           .slice(0, 3)
                           .map((bet, idx) => {
                             // Extract bet type from square brackets [type]
@@ -661,7 +661,7 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
                       </TableHeader>
                       <TableBody>
                         {game.scoreboard?.home_team_injury &&
-                          game.scoreboard.home_team_injury.map(
+                          game?.scoreboard?.home_team_injury?.map(
                             (player, idx) => (
                               <TableRow
                                 key={`home-${idx}`}
@@ -700,7 +700,7 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
                             ),
                           )}
                         {game.scoreboard?.away_team_injury &&
-                          game.scoreboard.away_team_injury.map(
+                          game?.scoreboard?.away_team_injury?.map(
                             (player, idx) => (
                               <TableRow
                                 key={`away-${idx}`}
@@ -739,9 +739,10 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
                             ),
                           )}
                         {(!game.scoreboard?.home_team_injury ||
-                          game.scoreboard.home_team_injury.length === 0) &&
-                          (!game.scoreboard?.away_team_injury ||
-                            game.scoreboard.away_team_injury.length === 0) && (
+                          game?.scoreboard?.home_team_injury?.length === 0) &&
+                          (!game?.scoreboard?.away_team_injury ||
+                            game?.scoreboard?.away_team_injury?.length ===
+                              0) && (
                             <TableRow>
                               <TableCell
                                 colSpan={6}

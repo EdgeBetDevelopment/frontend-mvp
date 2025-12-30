@@ -25,8 +25,8 @@ interface IGameCard {
 
 const GameCard = ({ game, onClickFullAnalysis, type }: IGameCard) => {
   const { isAuthenticated } = useAuth();
-  const formattedDate = formatUtcToLocalDate(game.game.start_time);
-  const formattedTime = formatUtcToLocalTimeAmPm(game.game.start_time);
+  const formattedDate = formatUtcToLocalDate(game?.game?.start_time);
+  const formattedTime = formatUtcToLocalTimeAmPm(game?.game?.start_time);
 
   return (
     <Card className="overflow-hidden border-border bg-gradient-to-br from-card to-secondary/20 transition-all hover:border-primary/50">
@@ -35,17 +35,17 @@ const GameCard = ({ game, onClickFullAnalysis, type }: IGameCard) => {
         <div className="mb-2 flex items-center justify-between">
           <h3 className="font-display text-lg font-bold text-foreground">
             <Link
-              href={ROUTES.TEAM(game.game.home_team_id)}
+              href={ROUTES.TEAM(game?.game?.home_team_id)}
               className="hover:underline"
             >
-              {game.game.home_team}
+              {game?.game?.home_team}
             </Link>{' '}
             <span className="font-normal text-muted-foreground">vs</span>{' '}
             <Link
-              href={ROUTES.TEAM(game.game.away_team_id)}
+              href={ROUTES.TEAM(game?.game?.away_team_id)}
               className="hover:underline"
             >
-              {game.game.away_team}
+              {game?.game?.away_team}
             </Link>
           </h3>
         </div>
@@ -107,7 +107,7 @@ const GameBets = ({ game }: { game: IGameWithAI }) => {
           Top 3 Best Value Bets
         </h4>
         <div className="space-y-2">
-          {game.prediction?.value_bets
+          {game?.prediction?.value_bets
             ?.slice(0, 3)
             .map((bet, index) => (
               <GameBetsItem
@@ -126,7 +126,7 @@ const GameBets = ({ game }: { game: IGameWithAI }) => {
           Top 3 Conservative Bets
         </h4>
         <div className="space-y-2">
-          {game.prediction?.conservative_bets
+          {game?.prediction?.conservative_bets
             ?.slice(0, 3)
             .map((bet, index) => (
               <GameBetsItem
@@ -205,7 +205,7 @@ const GameBetsItem = ({
     setTrackedGame(game);
 
     const pick = {
-      game_id: game.game.id,
+      game_id: game?.game?.id,
       odds,
       selected_team_id,
       selected_team_name,

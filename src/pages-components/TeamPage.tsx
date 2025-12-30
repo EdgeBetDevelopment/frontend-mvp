@@ -67,7 +67,7 @@ const TeamPage = () => {
 
   const winPct = team?.overall_stats
     ? (
-        (team?.overall_stats?.W /
+        ((team?.overall_stats?.W || 0) /
           ((team?.overall_stats?.W || 0) + (team?.overall_stats?.L || 0))) *
         100
       ).toFixed(1)
@@ -78,44 +78,59 @@ const TeamPage = () => {
         {
           name: 'PPG',
           value: parseFloat(
-            (team.team_statistics.PTS / team.team_statistics.GP).toFixed(1),
+            (
+              (team?.team_statistics?.PTS || 0) /
+              (team?.team_statistics?.GP || 1)
+            ).toFixed(1),
           ),
           color: 'hsl(var(--chart-1))',
         },
         {
           name: 'RPG',
           value: parseFloat(
-            (team.team_statistics.REB / team.team_statistics.GP).toFixed(1),
+            (
+              (team?.team_statistics?.REB || 0) /
+              (team?.team_statistics?.GP || 1)
+            ).toFixed(1),
           ),
           color: 'hsl(var(--chart-3))',
         },
         {
           name: 'APG',
           value: parseFloat(
-            (team.team_statistics.AST / team.team_statistics.GP).toFixed(1),
+            (
+              (team?.team_statistics?.AST || 0) /
+              (team?.team_statistics?.GP || 1)
+            ).toFixed(1),
           ),
           color: 'hsl(var(--chart-4))',
         },
         {
           name: 'FG%',
-          value: parseFloat((team.team_statistics.FG_PCT * 100).toFixed(1)),
+          value: parseFloat(
+            ((team?.team_statistics?.FG_PCT || 0) * 100).toFixed(1),
+          ),
           color: 'hsl(var(--chart-5))',
         },
         {
           name: '3P%',
-          value: parseFloat((team.team_statistics.FG3_PCT * 100).toFixed(1)),
+          value: parseFloat(
+            ((team?.team_statistics?.FG3_PCT || 0) * 100).toFixed(1),
+          ),
           color: 'hsl(var(--chart-1))',
         },
         {
           name: 'FT%',
-          value: parseFloat((team.team_statistics.FT_PCT * 100).toFixed(1)),
+          value: parseFloat(
+            ((team?.team_statistics?.FT_PCT || 0) * 100).toFixed(1),
+          ),
           color: 'hsl(var(--chart-2))',
         },
       ]
     : [];
 
-  const injuries = team?.player_statistics.filter(
-    (p) => p.status !== 'healthy',
+  const injuries = team?.player_statistics?.filter(
+    (p) => p?.status !== 'healthy',
   );
 
   const getStatusBadge = (status: string) => {
@@ -201,15 +216,15 @@ const TeamPage = () => {
                 border: '2px solid #1e293b',
               }}
             >
-              {team.abbreviation}
+              {team?.abbreviation}
             </div>
             <div className="flex-1">
               <h1 className="mb-2 font-display text-3xl font-bold md:text-4xl">
-                {team.full_name}
+                {team?.full_name}
               </h1>
               <div className="flex flex-wrap items-center gap-4 text-muted-foreground">
                 <span className="flex items-center gap-1">
-                  <MapPin className="h-4 w-4" /> {team.city}
+                  <MapPin className="h-4 w-4" /> {team?.city}
                 </span>
                 <span>{team?.league_standings?.Conference} Conference</span>
                 <span>{team?.league_standings?.Division} Division</span>
@@ -217,7 +232,7 @@ const TeamPage = () => {
             </div>
             <div className="text-right">
               <div className="text-4xl font-bold text-primary">
-                {team.overall_stats.W}-{team.overall_stats.L}
+                {team?.overall_stats?.W}-{team?.overall_stats?.L}
               </div>
               <div className="text-muted-foreground">{winPct}% Win Rate</div>
             </div>
@@ -227,7 +242,10 @@ const TeamPage = () => {
           <Card className="border-border bg-card/50">
             <CardContent className="p-4 text-center">
               <div className="text-2xl font-bold text-primary">
-                {(team.overall_stats.PTS / team.overall_stats.GP).toFixed(1)}
+                {(
+                  (team?.overall_stats?.PTS || 0) /
+                  (team?.overall_stats?.GP || 1)
+                ).toFixed(1)}
               </div>
               <div className="text-sm text-muted-foreground">PPG</div>
             </CardContent>
@@ -235,7 +253,10 @@ const TeamPage = () => {
           <Card className="border-border bg-card/50">
             <CardContent className="p-4 text-center">
               <div className="text-2xl font-bold text-primary">
-                {(team.overall_stats.REB / team.overall_stats.GP).toFixed(1)}
+                {(
+                  (team?.overall_stats?.REB || 0) /
+                  (team?.overall_stats?.GP || 1)
+                ).toFixed(1)}
               </div>
               <div className="text-sm text-muted-foreground">RPG</div>
             </CardContent>
@@ -243,7 +264,10 @@ const TeamPage = () => {
           <Card className="border-border bg-card/50">
             <CardContent className="p-4 text-center">
               <div className="text-2xl font-bold text-primary">
-                {(team.overall_stats.AST / team.overall_stats.GP).toFixed(1)}
+                {(
+                  (team?.overall_stats?.AST || 0) /
+                  (team?.overall_stats?.GP || 1)
+                ).toFixed(1)}
               </div>
               <div className="text-sm text-muted-foreground">APG</div>
             </CardContent>
@@ -251,7 +275,7 @@ const TeamPage = () => {
           <Card className="border-border bg-card/50">
             <CardContent className="p-4 text-center">
               <div className="text-2xl font-bold text-primary">
-                {(team.overall_stats.FG_PCT * 100).toFixed(1)}%
+                {((team?.overall_stats?.FG_PCT || 0) * 100).toFixed(1)}%
               </div>
               <div className="text-sm text-muted-foreground">FG%</div>
             </CardContent>
@@ -276,27 +300,27 @@ const TeamPage = () => {
                 <CardContent className="space-y-3">
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Founded</span>
-                    <span>{team.year_founded}</span>
+                    <span>{team?.year_founded}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Arena</span>
-                    <span>{team.arena}</span>
+                    <span>{team?.arena}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Capacity</span>
-                    <span>{team.arena_capacity.toLocaleString()}</span>
+                    <span>{team?.arena_capacity?.toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Coach</span>
-                    <span>{team.head_coach}</span>
+                    <span>{team?.head_coach}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">GM</span>
-                    <span>{team.general_manager}</span>
+                    <span>{team?.general_manager}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Owner</span>
-                    <span>{team.owner}</span>
+                    <span>{team?.owner}</span>
                   </div>
                 </CardContent>
               </Card>
@@ -312,20 +336,20 @@ const TeamPage = () => {
                 <CardContent>
                   {team?.injuries && team?.injuries.length > 0 ? (
                     <div className="space-y-4">
-                      {team?.injuries.map((injury, index) => (
+                      {team?.injuries?.map((injury, index) => (
                         <div
                           key={index}
                           className="flex items-center justify-between"
                         >
                           <div>
-                            <div className="font-medium">{injury.player}</div>
+                            <div className="font-medium">{injury?.player}</div>
                             <div className="text-sm text-muted-foreground">
-                              {injury.position}
-                              {injury.return_date &&
-                                ` • Return: ${injury.return_date}`}
+                              {injury?.position}
+                              {injury?.return_date &&
+                                ` • Return: ${injury?.return_date}`}
                             </div>
                           </div>
-                          {getStatusBadge(injury.status)}
+                          {getStatusBadge(injury?.status)}
                         </div>
                       ))}
                     </div>
@@ -348,26 +372,29 @@ const TeamPage = () => {
                 <CardContent>
                   {team?.upcoming_games && team?.upcoming_games.length > 0 ? (
                     <div className="space-y-4">
-                      {team?.upcoming_games.slice(0, 3).map((game) => (
+                      {team?.upcoming_games?.slice(0, 3).map((game) => (
                         <div
-                          key={game.game_id}
+                          key={game?.game_id}
                           className="flex items-center justify-between rounded-lg bg-muted/30 p-3"
                         >
                           <div>
                             <div className="font-medium">
-                              {game.home_team_id === team.id ? 'vs' : '@'}{' '}
-                              {game.opponent}
+                              {game?.home_team_id === team?.id ? 'vs' : '@'}{' '}
+                              {game?.opponent}
                             </div>
                             <div className="text-sm text-muted-foreground">
-                              {new Date(game.date).toLocaleDateString('en-US', {
-                                month: 'short',
-                                day: 'numeric',
-                                year: 'numeric',
-                              })}
+                              {new Date(game?.date).toLocaleDateString(
+                                'en-US',
+                                {
+                                  month: 'short',
+                                  day: 'numeric',
+                                  year: 'numeric',
+                                },
+                              )}
                             </div>
                           </div>
                           <Badge variant="outline">
-                            {game.home_team_id === team.id ? 'Home' : 'Away'}
+                            {game?.home_team_id === team?.id ? 'Home' : 'Away'}
                           </Badge>
                         </div>
                       ))}
@@ -392,11 +419,11 @@ const TeamPage = () => {
               <CardContent>
                 {team?.recent_games && team?.recent_games.length > 0 ? (
                   <div className="flex flex-wrap gap-4">
-                    {team?.recent_games.map((game) => {
-                      const isWin = game.result === 'W';
+                    {team?.recent_games?.map((game) => {
+                      const isWin = game?.result === 'W';
                       return (
                         <div
-                          key={game.game_id}
+                          key={game?.game_id}
                           className={`flex min-w-[180px] flex-col rounded-lg border p-4 ${
                             isWin
                               ? 'border-emerald-500/30 bg-emerald-500/10'
@@ -404,7 +431,7 @@ const TeamPage = () => {
                           }`}
                         >
                           <div className="mb-2 text-xs text-muted-foreground">
-                            {new Date(game.date).toLocaleDateString('en-US', {
+                            {new Date(game?.date).toLocaleDateString('en-US', {
                               month: 'short',
                               day: 'numeric',
                             })}
@@ -415,15 +442,15 @@ const TeamPage = () => {
                                 isWin ? 'text-emerald-400' : 'text-red-400'
                               }`}
                             >
-                              {game.result}
+                              {game?.result}
                             </div>
                             <div>
                               <div className="font-medium">
-                                {game.home_team_id === team.id ? 'vs' : '@'}{' '}
-                                {game.opponent}
+                                {game?.home_team_id === team?.id ? 'vs' : '@'}{' '}
+                                {game?.opponent}
                               </div>
                               <div className="text-sm text-muted-foreground">
-                                {game.final_score}
+                                {game?.final_score}
                               </div>
                             </div>
                           </div>
@@ -463,28 +490,28 @@ const TeamPage = () => {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {team.player_statistics.map((player) => (
+                      {team?.player_statistics?.map((player) => (
                         <TableRow
-                          key={player.PLAYER_ID}
+                          key={player?.PLAYER_ID}
                           className="cursor-pointer hover:bg-muted/50"
                           onClick={() =>
-                            router.push(`/player/${player.PLAYER_ID}`)
+                            router.push(`/player/${player?.PLAYER_ID}`)
                           }
                         >
                           <TableCell className="font-medium">
-                            {player.NUM}
+                            {player?.NUM}
                           </TableCell>
                           <TableCell>
                             <div className="flex items-center gap-2">
-                              {player.PLAYER}
+                              {player?.PLAYER}
                               <ChevronRight className="h-4 w-4 text-muted-foreground" />
                             </div>
                           </TableCell>
-                          <TableCell>{player.POSITION}</TableCell>
-                          <TableCell>{player.HEIGHT}</TableCell>
-                          <TableCell>{player.WEIGHT} lbs</TableCell>
-                          <TableCell>{player.AGE}</TableCell>
-                          <TableCell>{player.EXP}</TableCell>
+                          <TableCell>{player?.POSITION}</TableCell>
+                          <TableCell>{player?.HEIGHT}</TableCell>
+                          <TableCell>{player?.WEIGHT} lbs</TableCell>
+                          <TableCell>{player?.AGE}</TableCell>
+                          <TableCell>{player?.EXP}</TableCell>
                           {/* <TableCell>{getStatusBadge(player.status)}</TableCell> */}
                         </TableRow>
                       ))}
@@ -501,32 +528,35 @@ const TeamPage = () => {
                   <CardTitle>Upcoming Games</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  {team?.upcoming_games && team.upcoming_games.length > 0 ? (
+                  {team?.upcoming_games && team?.upcoming_games?.length > 0 ? (
                     <div className="space-y-3">
-                      {team.upcoming_games.map((game) => (
+                      {team?.upcoming_games?.map((game) => (
                         <div
-                          key={game.game_id}
+                          key={game?.game_id}
                           className="flex items-center justify-between rounded-lg bg-muted/30 p-4"
                         >
                           <div>
                             <div className="text-lg font-medium">
-                              {game.home_team_id === team.id ? 'vs' : '@'}{' '}
-                              {game.opponent}
+                              {game?.home_team_id === team?.id ? 'vs' : '@'}{' '}
+                              {game?.opponent}
                             </div>
                             <div className="text-muted-foreground">
-                              {new Date(game.date).toLocaleDateString('en-US', {
-                                weekday: 'short',
-                                month: 'short',
-                                day: 'numeric',
-                                year: 'numeric',
-                              })}
+                              {new Date(game?.date).toLocaleDateString(
+                                'en-US',
+                                {
+                                  weekday: 'short',
+                                  month: 'short',
+                                  day: 'numeric',
+                                  year: 'numeric',
+                                },
+                              )}
                             </div>
                           </div>
                           <Badge
                             variant="outline"
                             className="px-4 py-1 text-base"
                           >
-                            {game.home_team_id === team.id ? 'Home' : 'Away'}
+                            {game?.home_team_id === team?.id ? 'Home' : 'Away'}
                           </Badge>
                         </div>
                       ))}
@@ -544,13 +574,13 @@ const TeamPage = () => {
                   <CardTitle>Recent Games</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  {team?.recent_games && team.recent_games.length > 0 ? (
+                  {team?.recent_games && team?.recent_games?.length > 0 ? (
                     <div className="space-y-3">
-                      {team.recent_games.map((game) => {
-                        const isWin = game.result === 'W';
+                      {team?.recent_games?.map((game) => {
+                        const isWin = game?.result === 'W';
                         return (
                           <div
-                            key={game.game_id}
+                            key={game?.game_id}
                             className={`flex items-center justify-between rounded-lg border p-4 ${
                               isWin
                                 ? 'border-emerald-500/30 bg-emerald-500/10'
@@ -559,11 +589,11 @@ const TeamPage = () => {
                           >
                             <div>
                               <div className="text-lg font-medium">
-                                {game.home_team_id === team.id ? 'vs' : '@'}{' '}
-                                {game.opponent}
+                                {game?.home_team_id === team?.id ? 'vs' : '@'}{' '}
+                                {game?.opponent}
                               </div>
                               <div className="text-muted-foreground">
-                                {new Date(game.date).toLocaleDateString(
+                                {new Date(game?.date).toLocaleDateString(
                                   'en-US',
                                   {
                                     weekday: 'short',
@@ -579,10 +609,10 @@ const TeamPage = () => {
                                   isWin ? 'text-emerald-400' : 'text-red-400'
                                 }`}
                               >
-                                {game.result}
+                                {game?.result}
                               </div>
                               <div className="text-muted-foreground">
-                                {game.final_score}
+                                {game?.final_score}
                               </div>
                             </div>
                           </div>
@@ -662,39 +692,53 @@ const TeamPage = () => {
                     <TableBody>
                       <TableRow>
                         <TableCell className="font-medium">
-                          {team.abbreviation}
+                          {team?.abbreviation}
                         </TableCell>
-                        <TableCell>{team.team_statistics.GP}</TableCell>
+                        <TableCell>{team?.team_statistics?.GP}</TableCell>
                         <TableCell className="text-emerald-400">
-                          {team.team_statistics.W}
+                          {team?.team_statistics?.W}
                         </TableCell>
                         <TableCell className="text-red-400">
-                          {team.team_statistics.L}
+                          {team?.team_statistics?.L}
                         </TableCell>
                         <TableCell>
                           {(
-                            team.team_statistics.PTS / team.team_statistics.GP
+                            (team?.team_statistics?.PTS || 0) /
+                            (team?.team_statistics?.GP || 1)
                           ).toFixed(1)}
                         </TableCell>
-                        <TableCell>-</TableCell>
                         <TableCell>
-                          {(
-                            team.team_statistics.REB / team.team_statistics.GP
-                          ).toFixed(1)}
+                          {team?.league_standings?.OppPointsPG.toFixed(1)}
                         </TableCell>
                         <TableCell>
                           {(
-                            team.team_statistics.AST / team.team_statistics.GP
+                            (team?.team_statistics?.REB || 0) /
+                            (team?.team_statistics?.GP || 1)
                           ).toFixed(1)}
                         </TableCell>
                         <TableCell>
-                          {(team.team_statistics.FG_PCT * 100).toFixed(1)}%
+                          {(
+                            (team?.team_statistics?.AST || 0) /
+                            (team?.team_statistics?.GP || 1)
+                          ).toFixed(1)}
                         </TableCell>
                         <TableCell>
-                          {(team.team_statistics.FG3_PCT * 100).toFixed(1)}%
+                          {((team?.team_statistics?.FG_PCT || 0) * 100).toFixed(
+                            1,
+                          )}
+                          %
                         </TableCell>
                         <TableCell>
-                          {(team.team_statistics.FT_PCT * 100).toFixed(1)}%
+                          {(
+                            (team?.team_statistics?.FG3_PCT || 0) * 100
+                          ).toFixed(1)}
+                          %
+                        </TableCell>
+                        <TableCell>
+                          {((team?.team_statistics?.FT_PCT || 0) * 100).toFixed(
+                            1,
+                          )}
+                          %
                         </TableCell>
                       </TableRow>
                     </TableBody>
