@@ -32,6 +32,8 @@ import { formUrlQuery } from '@/utils/url';
 import ListRenderer from '@/wrappers/ListRenderer';
 
 import TrackBetsAside from './TrackBetAside';
+import Navigation from '@/components/Navigation';
+import Footer from '@/components/Footer';
 
 const MatchupPage = () => {
   const { isAuthenticated } = useAuth();
@@ -178,6 +180,7 @@ const MatchupPage = () => {
   const onCloseAuth = () => {
     setAuthDismissed(true);
     closeModal('auth');
+    router.push('/');
   };
 
   useEffect(() => {
@@ -212,7 +215,8 @@ const MatchupPage = () => {
   }, [isAuthenticated, params, flatGames]);
 
   return (
-    <>
+    <div className="min-h-screen bg-background">
+      <Navigation />
       <div className="tl-container mb-[90px] flex h-auto flex-row justify-center lg:h-[840px] lg:max-w-[1352px] lg:gap-2 xl:gap-14">
         <div className="xl flex w-full flex-col gap-4 lg:max-w-[calc(100%-420px)]">
           <div>
@@ -277,6 +281,7 @@ const MatchupPage = () => {
           onClose={onClickClearTrackBet}
         />
       </div>
+      <Footer />
 
       {isAuthenticated && flatGames.length > 0 && (
         <GameAnalysisModal
@@ -284,7 +289,7 @@ const MatchupPage = () => {
           onClose={onClickCloseModal}
         />
       )}
-    </>
+    </div>
   );
 };
 
