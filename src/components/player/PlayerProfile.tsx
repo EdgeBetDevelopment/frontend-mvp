@@ -347,7 +347,7 @@ const PlayerProfile = () => {
     );
   }
 
-  if (!player || !playerNameData) {
+  if (!player && !playerNameData) {
     return (
       <div className="min-h-screen bg-background">
         <Navigation />

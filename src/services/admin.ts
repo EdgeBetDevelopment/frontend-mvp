@@ -7,7 +7,7 @@ const customDataProvider: DataProvider = {
     let response;
 
     if (resource === 'users') {
-      response = await axiosInstance.get('/api/v1/user/all');
+      response = await axiosInstance.get('/user/api/v1/user/all');
       return {
         data: response.data,
         total: response.data.length,
@@ -15,7 +15,7 @@ const customDataProvider: DataProvider = {
     }
 
     if (resource === 'usersWithBets') {
-      response = await axiosInstance.get('/api/v1/user/all/bets');
+      response = await axiosInstance.get('/user/api/v1/user/all/bets');
       const users = response.data.map((user: any) => ({
         ...user,
         totalBets: user.bets?.length || 0,
@@ -27,7 +27,7 @@ const customDataProvider: DataProvider = {
     }
 
     if (resource === 'review') {
-      response = await axiosInstance.get('/api/v1/review/get_reviews');
+      response = await axiosInstance.get('/review/api/v1/review/get_reviews');
       console.log(response.data.reviews);
       return {
         data: response.data.reviews,
@@ -35,7 +35,15 @@ const customDataProvider: DataProvider = {
       };
     }
 
-    response = await axiosInstance.get(`/Prod/api/v1/${resource}`);
+    if (resource === 'pick_of_the_day') {
+      response = await axiosInstance.get('/nba/api/v1/pick_of_the_day/');
+      return {
+        data: response.data,
+        total: response.data.length,
+      };
+    }
+
+    response = await axiosInstance.get(`/nba/api/v1/${resource}`);
     return {
       data: response.data,
       total: response.data.length,
@@ -44,58 +52,99 @@ const customDataProvider: DataProvider = {
 
   getOne: async (resource, params) => {
     if (resource === 'users') {
-      const { data } = await axiosInstance.get(`/api/v1/user/${params.id}`);
+      const { data } = await axiosInstance.get(
+        `/user/api/v1/user/${params.id}`,
+      );
       return { data };
     }
 
     if (resource === 'usersWithBets') {
       const { data } = await axiosInstance.get(
-        `/api/v1/user/${params.id}/bets`,
+        `/user/api/v1/user/${params.id}/bets`,
       );
       return { data };
     }
 
     if (resource === 'review') {
       const { data } = await axiosInstance.get(
-        `/api/v1/review/get_review_by_id/${params.id}`,
+        `/review/api/v1/review/get_review_by_id/${params.id}`,
       );
 
       return { data };
     }
 
+    if (resource === 'pick_of_the_day') {
+      const { data } = await axiosInstance.get(
+        `/nba/api/v1/pick_of_the_day/${params.id}`,
+      );
+      return { data };
+    }
+
     const { data } = await axiosInstance.get(
-      `/api/v1/${resource}/${params.id}`,
+      `/user/api/v1/${resource}/${params.id}`,
     );
     return { data };
   },
 
   create: async (resource, params) => {
+    if (resource === 'users' || resource === 'usersWithBets') {
+      const { data } = await axiosInstance.post(
+        `/user/api/v1/user`,
+        params.data,
+      );
+      return { data };
+    }
+
     if (resource === 'review') {
       const { data } = await axiosInstance.post(
-        `/api/v1/review/create_review`,
+        `/review/api/v1/review/create_review`,
+        params.data,
+      );
+      return { data };
+    }
+
+    if (resource === 'pick_of_the_day') {
+      const { data } = await axiosInstance.post(
+        `/nba/api/v1/pick_of_the_day/`,
         params.data,
       );
       return { data };
     }
 
     const { data } = await axiosInstance.post(
-      `/Prod/api/v1/${resource}`,
+      `/Prod/user/api/v1/${resource}`,
       params.data,
     );
     return { data };
   },
 
   update: async (resource, params) => {
+    if (resource === 'users' || resource === 'usersWithBets') {
+      const { data } = await axiosInstance.put(
+        `/user/api/v1/user/${params.id}`,
+        params.data,
+      );
+      return { data };
+    }
+
     if (resource === 'review') {
       const { data } = await axiosInstance.patch(
-        `/api/v1/review/update_review/${params.id}`,
+        `/review/api/v1/review/update_review/${params.id}`,
+        params.data,
+      );
+      return { data };
+    }
+
+    if (resource === 'pick_of_the_day') {
+      const { data } = await axiosInstance.put(
+        `/nba/api/v1/pick_of_the_day/${params.id}`,
         params.data,
       );
       return { data };
     }
 
     const { data } = await axiosInstance.put(
-      `/api/v1/${resource}/${params.id}`,
+      `/user/api/v1/${resource}/${params.id}`,
       params.data,
     );
     return { data };
@@ -103,16 +152,23 @@ const customDataProvider: DataProvider = {
 
   delete: async (resource, params) => {
     if (resource === 'users' || resource === 'usersWithBets') {
-      await axiosInstance.delete(`/api/v1/user/${params.id}`);
+      await axiosInstance.delete(`/user/api/v1/user/${params.id}`);
       return { data: { id: params.id } };
     }
 
     if (resource === 'review') {
-      await axiosInstance.delete(`/api/v1/review/delete_review/${params.id}`);
+      await axiosInstance.delete(
+        `/review/api/v1/review/delete_review/${params.id}`,
+      );
       return { data: { id: params.id } };
     }
 
-    await axiosInstance.delete(`/api/v1/${resource}/${params.id}`);
+    if (resource === 'pick_of_the_day') {
+      await axiosInstance.delete(`/nba/api/v1/pick_of_the_day/${params.id}`);
+      return { data: { id: params.id } };
+    }
+
+    await axiosInstance.delete(`/user/api/v1/${resource}/${params.id}`);
     return { data: { id: params.id } };
   },
 };
