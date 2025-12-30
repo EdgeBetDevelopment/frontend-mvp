@@ -3,6 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { toast } from 'sonner';
+import { Calendar, Clock, ChevronRight } from 'lucide-react';
 
 import { useAuth } from '@/context/AuthContext';
 import { useIsMobile } from '@/hooks/useIsMobile';
@@ -10,19 +11,11 @@ import useModalManager from '@/hooks/useModalManager';
 import { ROUTES } from '@/routes';
 import { useStore } from '@/store';
 import { IGameWithAI } from '@/types/game';
-import { Avatar, AvatarImage } from '@/ui/avatar';
 import { Badge } from '@/ui/badge';
-import { Button } from '@/ui/button';
-import { Separator } from '@/ui/separator';
+import { Card } from '@/ui/card';
 import { convertAmericanToDecimal } from '@/utils/convertAmericanToDecimal';
 import { formatOddsWithSign } from '@/utils/formatOdds';
 import { formatUtcToLocalDate, formatUtcToLocalTimeAmPm } from '@/utils/time';
-import CardContainer from '../../ui/containers/CardContainer';
-
-import CalendarIcon from '@/assets/icons/calendar.svg';
-import ChevronRightIcon from '@/assets/icons/chevron-right.svg';
-import ClockIcon from '@/assets/icons/clock.svg';
-import NBALogoIcon from '@/assets/nbaLogo.png';
 
 interface IGameCard {
   game: IGameWithAI;
@@ -32,108 +25,88 @@ interface IGameCard {
 
 const GameCard = ({ game, onClickFullAnalysis, type }: IGameCard) => {
   const { isAuthenticated } = useAuth();
+  const formattedDate = formatUtcToLocalDate(game.game.start_time);
+  const formattedTime = formatUtcToLocalTimeAmPm(game.game.start_time);
 
   return (
-    <CardContainer className="tl-gradient-mistBlue-opacity border-border flex flex-col gap-3">
-      <GameCardHeader game={game} />
-
-      <div className="bg-surface-secondary border-border flex flex-col gap-2.5 rounded-3xl border p-3">
-        <div className="tl-paraghraph2 flex items-center gap-2">
-          <Avatar className="flex h-8 w-8 items-center justify-center rounded-full border bg-[#33758780]">
-            <div>
-              <AvatarImage src={NBALogoIcon.src} />
-            </div>
-          </Avatar>
-          {type ? type.toUpperCase() : 'NBA'}
-
-          {game?.scoreboard?.label && (
-            <>
-              <ChevronRightIcon className="text-text-secondary" />
-              {/* {game?.scoreboard?.label} */}
-              Regular Season Game
-            </>
-          )}
+    <Card className="overflow-hidden border-border bg-gradient-to-br from-card to-secondary/20 transition-all hover:border-primary/50">
+      {/* Header */}
+      <div className="border-b border-border/50 p-4">
+        <div className="mb-2 flex items-center justify-between">
+          <h3 className="font-display text-lg font-bold text-foreground">
+            <Link
+              href={ROUTES.TEAM(game.game.home_team_id)}
+              className="hover:underline"
+            >
+              {game.game.home_team}
+            </Link>{' '}
+            <span className="font-normal text-muted-foreground">vs</span>{' '}
+            <Link
+              href={ROUTES.TEAM(game.game.away_team_id)}
+              className="hover:underline"
+            >
+              {game.game.away_team}
+            </Link>
+          </h3>
         </div>
-
-        <div>
-          <Button
-            className="pl-0!"
-            onClick={onClickFullAnalysis}
-            variant="clear"
-          >
-            Full analysis <ChevronRightIcon />
-          </Button>
+        <div className="flex items-center gap-4 text-sm text-muted-foreground">
+          <span className="flex items-center gap-1">
+            <Calendar className="h-3.5 w-3.5" />
+            {formattedDate}
+          </span>
+          <span className="flex items-center gap-1">
+            <Clock className="h-3.5 w-3.5" />
+            {formattedTime}
+          </span>
         </div>
-
-        <Separator />
-
-        {isAuthenticated && <GameBets game={game} />}
       </div>
-    </CardContainer>
+
+      {/* Sport Badge */}
+      <div className="border-b border-border/50 bg-secondary/20 px-4 py-3">
+        <div className="flex items-center gap-2">
+          <Badge
+            variant="outline"
+            className="border-primary/30 bg-primary/20 text-primary"
+          >
+            {type ? type.toUpperCase() : 'NBA'}
+          </Badge>
+          <ChevronRight className="h-4 w-4 text-muted-foreground" />
+          <span className="text-sm text-muted-foreground">
+            {game?.scoreboard?.label || 'Regular Season Game'}
+          </span>
+        </div>
+        <button
+          className="mt-2 flex items-center gap-1 text-sm font-medium text-foreground transition-colors hover:text-primary"
+          onClick={onClickFullAnalysis}
+        >
+          Full analysis
+          <ChevronRight className="h-4 w-4" />
+        </button>
+      </div>
+
+      {/* Bets Section */}
+      {isAuthenticated && (
+        <div className="space-y-4 p-4">
+          <GameBets game={game} />
+        </div>
+      )}
+    </Card>
   );
 };
 
 export default GameCard;
 
-export const GameCardHeader = ({ game }: { game: IGameWithAI }) => {
-  const formattedDate = formatUtcToLocalDate(game.game.start_time);
-  const formattedTime = formatUtcToLocalTimeAmPm(game.game.start_time);
-
-  return (
-    <div className="flex items-center">
-      <div className="relative flex items-center">
-        <Avatar className="border-border bg-surface-secondary h-11 w-11 rounded-full border p-1.5">
-          <AvatarImage src={game.game.home_team_logo} />
-        </Avatar>
-
-        <div className="relative -left-3.5">
-          <Avatar className="border-border bg-surface-secondary h-11 w-11 rounded-full border p-1.5">
-            <AvatarImage src={game.game.away_team_logo} />
-          </Avatar>
-        </div>
-      </div>
-
-      <div>
-        <div className="tl-paraghraph2 flex items-center gap-1">
-          <Link
-            href={ROUTES.TEAM(game.game.home_team_id)}
-            className="text-text-primary hover:underline"
-          >
-            {game.game.home_team}
-          </Link>
-          <div>vs</div>
-          <Link
-            href={ROUTES.TEAM(game.game.away_team_id)}
-            className="text-text-primary hover:underline"
-          >
-            {game.game.away_team}
-          </Link>
-        </div>
-
-        <div className="tl-paraghraph3 flex items-center gap-4">
-          <div className="flex items-center gap-1">
-            <CalendarIcon /> {formattedDate}
-          </div>
-          <div className="flex items-center gap-1">
-            <ClockIcon /> {formattedTime}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
 const GameBets = ({ game }: { game: IGameWithAI }) => {
   const isAmerican = useStore((state) => state.isAmerican);
 
   return (
-    <div className="flex flex-col gap-2">
-      <div className="flex flex-col gap-1">
-        <p className="text-center text-lg font-semibold">
+    <>
+      {/* Value Bets */}
+      <div>
+        <h4 className="mb-3 text-center font-semibold text-foreground">
           Top 3 Best Value Bets
-        </p>
-
-        <div className="flex flex-col gap-2">
+        </h4>
+        <div className="space-y-2">
           {game.prediction?.value_bets
             ?.slice(0, 3)
             .map((bet, index) => (
@@ -147,12 +120,12 @@ const GameBets = ({ game }: { game: IGameWithAI }) => {
         </div>
       </div>
 
-      <div className="flex flex-col gap-1">
-        <p className="text-center text-lg font-semibold">
+      {/* Conservative Bets */}
+      <div>
+        <h4 className="mb-3 text-center font-semibold text-foreground">
           Top 3 Conservative Bets
-        </p>
-
-        <div className="flex flex-col gap-2">
+        </h4>
+        <div className="space-y-2">
           {game.prediction?.conservative_bets
             ?.slice(0, 3)
             .map((bet, index) => (
@@ -165,7 +138,7 @@ const GameBets = ({ game }: { game: IGameWithAI }) => {
             ))}
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
@@ -250,12 +223,11 @@ const GameBetsItem = ({
   };
 
   return (
-    <Badge
-      variant="mistBlue"
-      className="text-text-primary w-full cursor-pointer rounded-[10px] bg-green-700 px-3 py-1.5 text-center text-base font-semibold break-words whitespace-normal"
-      onClick={() => handleClick()}
+    <button
+      onClick={handleClick}
+      className="w-full cursor-pointer rounded-lg bg-primary/90 px-4 py-2.5 text-center text-sm font-medium text-primary-foreground transition-colors hover:bg-primary"
     >
       {displayedText}
-    </Badge>
+    </button>
   );
 };

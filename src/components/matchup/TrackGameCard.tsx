@@ -1,29 +1,21 @@
 'use client';
 
 import React from 'react';
-import Link from 'next/link';
 import { NumericFormat } from 'react-number-format';
+import { Calendar, Clock, X, ChevronRight } from 'lucide-react';
 
-import { ROUTES } from '@/routes';
 import { useStore } from '@/store';
 import { IGameWithAI } from '@/types/game';
-import { Avatar, AvatarImage } from '@/ui/avatar';
+import { Badge } from '@/components/ui/badge';
+import { Card } from '@/ui/card';
 import { Button } from '@/ui/button';
+import { Input } from '@/components/ui/input';
 import {
   convertAmericanToDecimal,
   convertEuropeanToAmerican,
 } from '@/utils/convertAmericanToDecimal';
 import { formatOddsWithSign } from '@/utils/formatOdds';
 import { formatUtcToLocalDate, formatUtcToLocalTimeAmPm } from '@/utils/time';
-import CardContainer from '../../ui/containers/CardContainer';
-import { Input } from '../../ui/input';
-
-import CalendarIcon from '@/assets/icons/calendar.svg';
-import CancelIcon from '@/assets/icons/cancel.svg';
-import ChevronRightIcon from '@/assets/icons/chevron-right.svg';
-import ClockIcon from '@/assets/icons/clock.svg';
-import SmallCancelIcon from '@/assets/icons/small-cancel.svg';
-import NBALogoIcon from '@/assets/nbaLogo.png';
 
 interface ITrackGameCard {
   game: IGameWithAI;
@@ -115,65 +107,26 @@ const TrackGameCard = ({ game, index }: ITrackGameCard) => {
   };
 
   return (
-    <CardContainer className="tl-gradient-mistBlue-opacity border-border relative flex flex-col gap-3">
-      <Button
-        className={`absolute top-1 right-1 z-10 ${isParlay && 'top-4.5 right-5'}`}
-        variant="clear"
-        size="icon"
-        onClick={() => handleRemove()}
+    <Card className="relative border-border/50 bg-secondary/30 p-4">
+      {/* Close button */}
+      <button
+        className="absolute right-2 top-2 text-muted-foreground transition-colors hover:text-foreground"
+        onClick={handleRemove}
       >
-        <CancelIcon />
-      </Button>
+        <X className="h-4 w-4" />
+      </button>
 
-      {/* Header */}
-      {!isParlay && (
-        <div className="relative flex items-center gap-2">
-          <div className="relative flex w-[44px] items-center">
-            <Avatar className="border-border bg-surface-secondary h-8 w-8 rounded-full border p-1">
-              <AvatarImage src={game.game.home_team_logo} />
-            </Avatar>
-            <div className="absolute left-3.5">
-              <Avatar className="border-border bg-surface-secondary h-8 w-8 rounded-full border p-1">
-                <AvatarImage src={game.game.away_team_logo} />
-              </Avatar>
-            </div>
+      {/* Game info for single bets or Parlay header */}
+      {isParlay ? (
+        <div className="mb-4">
+          <div className="mb-2 flex items-center justify-between">
+            <p className="font-semibold text-foreground">
+              Parlay ({parlay.bets.length} bets)
+            </p>
           </div>
-
-          <div>
-            <div className="tl-paraghraph2 flex items-center gap-1">
-              <Link
-                href={ROUTES.TEAM(game.game.home_team_id)}
-                className="text-text-primary hover:underline"
-              >
-                {game.game.home_team}
-              </Link>
-              <div>vs</div>
-              <Link
-                href={ROUTES.TEAM(game.game.away_team_id)}
-                className="text-text-primary hover:underline"
-              >
-                {game.game.away_team}
-              </Link>
-            </div>
-
-            <div className="tl-paraghraph3 flex items-center gap-4">
-              <div className="flex items-center gap-1">
-                <CalendarIcon /> {formattedDate}
-              </div>
-              <div className="flex items-center gap-1">
-                <ClockIcon /> {formattedTime}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      <div className="bg-surface-secondary border-border flex flex-col gap-4 rounded-3xl border p-3">
-        {isParlay && (
-          <>
-            <p className="text-[16px]">{`Parlay (${parlay.bets.length} bets)`}</p>
-            <p>
-              {`Parlay Odds: `}
+          <p className="text-lg font-bold text-foreground">
+            Parlay Odds:{' '}
+            <span className="text-primary">
               {parlay.bets.length === 0
                 ? '-'
                 : isAmerican
@@ -181,97 +134,116 @@ const TrackGameCard = ({ game, index }: ITrackGameCard) => {
                       convertEuropeanToAmerican(parlayOdds),
                       true,
                     )
-                  : parlayOdds}
-            </p>
-          </>
-        )}
-        {!isParlay && (
-          <div className="tl-paraghraph2 flex items-center gap-2">
-            <Avatar className="flex h-8 w-8 items-center justify-center rounded-full border bg-[#33758780]">
-              <div>
-                <AvatarImage src={NBALogoIcon.src} />
-              </div>
-            </Avatar>
-            <div>NBA</div>
-            {game?.scoreboard?.label && (
-              <>
-                <ChevronRightIcon className="text-text-secondary" />
-                {game?.scoreboard?.label}
-              </>
-            )}
-          </div>
-        )}
-
-        <div className="flex flex-col gap-3">
-          {isParlay ? (
-            parlay?.bets?.length ? (
-              parlay?.bets?.map((b, i) => (
-                <div
-                  key={i}
-                  className="flex w-full justify-between gap-2 rounded-md bg-[#33758780] p-2 text-sm font-medium text-[#B3B3B3]"
-                >
-                  <span>{formatDescription(b?.description ?? '')}</span>
-                  {typeof b?.odds === 'number' && (
-                    <div className="flex items-center gap-[10px]">
-                      <span className="font-semibold text-white">
-                        {!isAmerican
-                          ? convertAmericanToDecimal(b?.odds)
-                          : formatOddsWithSign(b?.odds, true)}
-                      </span>
-                      <Button
-                        className="max-h-[10px] max-w-[10px]"
-                        variant="clear"
-                        size="icon"
-                        onClick={() => handleRemoveOneParlay(`${b?.pid}`)}
-                      >
-                        <SmallCancelIcon />
-                      </Button>
-                    </div>
-                  )}
-                </div>
-              ))
-            ) : null
-          ) : (
-            <div className="flex w-fit flex-row gap-1 rounded-md bg-[#33758780] p-2 text-[12px] font-medium text-[#B3B3B3]">
-              <p>{formatDescription(currentPick?.description ?? '')}</p>
-              <p className="font-semibold text-white">
-                {!isAmerican
-                  ? convertAmericanToDecimal(currentPick?.odds)
-                  : formatOddsWithSign(currentPick?.odds, true)}
+                  : parlayOdds.toFixed(2)}
+            </span>
+          </p>
+        </div>
+      ) : (
+        <div className="mb-3">
+          <div className="flex items-center gap-2">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted">
+              <span className="text-xs font-bold">NBA</span>
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-foreground">
+                {game.game.home_team} vs {game.game.away_team}
               </p>
-            </div>
-          )}
-        </div>
-
-        <div className="flex flex-col gap-4">
-          <div className="flex flex-col gap-1">
-            <label className="text-xs font-medium text-gray-400">
-              Risk Amount ($)
-            </label>
-            <div className="w-full">
-              <NumericFormat
-                value={currentTicket?.amount ?? ''}
-                onValueChange={(v) => {
-                  const val = parseFloat(v.value);
-                  handleSetAmount(Number.isNaN(val) ? 0 : val);
-                }}
-                className="w-full align-middle text-base font-normal tracking-normal"
-                customInput={Input}
-                thousandSeparator
-                placeholder="Your amount"
-                allowNegative={false}
-              />
-              {!currentTicket?.amount && (
-                <p className="text-destructive mt-1 text-sm">
-                  Enter valid amount
-                </p>
-              )}
+              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                <span className="flex items-center gap-1">
+                  <Calendar className="h-3 w-3" />
+                  {formattedDate}
+                </span>
+                <span className="flex items-center gap-1">
+                  <Clock className="h-3 w-3" />
+                  {formattedTime}
+                </span>
+              </div>
             </div>
           </div>
-          <p>Win Amount ($): ${currentTicket?.win_amount}</p>
+
+          <div className="mt-2 flex items-center gap-2">
+            <Badge
+              variant="outline"
+              className="border-primary/30 bg-primary/20 text-xs text-primary"
+            >
+              NBA
+            </Badge>
+            <ChevronRight className="h-3 w-3 text-muted-foreground" />
+            <span className="text-xs text-muted-foreground">
+              {game?.scoreboard?.label || 'Regular Season Game'}
+            </span>
+          </div>
         </div>
+      )}
+
+      {/* Bets list */}
+      <div className="mb-4 space-y-2">
+        {isParlay ? (
+          parlay?.bets?.length ? (
+            parlay.bets.map((b, i) => (
+              <div
+                key={i}
+                className="flex items-center justify-between rounded-md bg-primary/20 px-3 py-2"
+              >
+                <span className="mr-2 flex-1 text-sm text-foreground">
+                  {formatDescription(b?.description ?? '')}
+                </span>
+                <span className="mr-2 font-bold text-foreground">
+                  {!isAmerican
+                    ? convertAmericanToDecimal(b?.odds ?? 0).toFixed(2)
+                    : formatOddsWithSign(b?.odds ?? 0, true)}
+                </span>
+                <button
+                  onClick={() => handleRemoveOneParlay(`${b?.pid}`)}
+                  className="text-muted-foreground transition-colors hover:text-foreground"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+            ))
+          ) : null
+        ) : (
+          <div className="rounded-md bg-primary/90 px-3 py-2 text-sm font-medium text-primary-foreground">
+            {formatDescription(currentPick?.description ?? '')}{' '}
+            <span className="font-bold">
+              {!isAmerican
+                ? convertAmericanToDecimal(currentPick?.odds ?? 0).toFixed(2)
+                : formatOddsWithSign(currentPick?.odds ?? 0, true)}
+            </span>
+          </div>
+        )}
       </div>
-    </CardContainer>
+
+      {/* Risk amount input */}
+      <div className="mb-2">
+        <label className="mb-1 block text-sm text-muted-foreground">
+          Risk Amount ($)
+        </label>
+        <NumericFormat
+          value={currentTicket?.amount ?? ''}
+          onValueChange={(v) => {
+            const val = parseFloat(v.value);
+            handleSetAmount(Number.isNaN(val) ? 0 : val);
+          }}
+          className="w-full"
+          customInput={Input}
+          thousandSeparator
+          placeholder="0"
+          allowNegative={false}
+        />
+        {!currentTicket?.amount && (
+          <p className="mt-1 text-xs text-destructive">Enter valid amount</p>
+        )}
+      </div>
+
+      {/* Win amount */}
+      <p className="text-sm text-foreground">
+        Win Amount ($):{' '}
+        <span className="font-bold text-primary">
+          ${currentTicket?.win_amount?.toFixed(2) || '0.00'}
+        </span>
+      </p>
+    </Card>
   );
 };
 

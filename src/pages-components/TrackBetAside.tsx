@@ -14,6 +14,7 @@ import { useStore } from '@/store';
 import { BetPick } from '@/store/slices/matchupSlice';
 import { IGameWithAI } from '@/types/game';
 import { Button } from '@/ui/button';
+import { Card } from '@/ui/card';
 import Loader from '@/ui/loader';
 
 const TrackBetsAside = () => {
@@ -109,49 +110,55 @@ const TrackBetsAside = () => {
 
   return (
     <>
-      <div className="bg-surface-secondary border-border hidden h-full w-full max-w-[324px] min-w-[324px] flex-col gap-10 rounded-3xl border p-4 lg:flex">
-        <div className="flex flex-col gap-5 align-bottom text-2xl font-medium capitalize">
-          <p>Track Bet</p>
+      <Card className="sticky top-24 border-border bg-card p-6">
+        <h2 className="mb-4 font-display text-xl font-bold text-foreground">
+          Track Bet
+        </h2>
+
+        <div className="mb-6">
           <BetModeSwitch />
         </div>
 
-        {!trackedGame ? (
-          <div className="flex h-full items-center justify-center text-3xl">
-            Select The Game
-          </div>
-        ) : (
-          <div className="flex flex-1 flex-col gap-3 overflow-auto">
-            {isParlay ? (
-              <TrackGameCard
-                key="parlay"
-                index={0}
-                game={trackedGame}
-                onClickFullAnalysis={() => onClickFullAnalysis(trackedGame)}
-              />
-            ) : (
-              single.map((_, index) => (
+        <div className="max-h-[500px] overflow-y-auto pr-1">
+          {!trackedGame ? (
+            <div className="flex min-h-[200px] items-center justify-center">
+              <p className="font-display text-xl text-muted-foreground">
+                Select The Game
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {isParlay ? (
                 <TrackGameCard
-                  key={index}
-                  index={index}
+                  key="parlay"
+                  index={0}
                   game={trackedGame}
                   onClickFullAnalysis={() => onClickFullAnalysis(trackedGame)}
                 />
-              ))
-            )}
+              ) : (
+                single.map((_, index) => (
+                  <TrackGameCard
+                    key={index}
+                    index={index}
+                    game={trackedGame}
+                    onClickFullAnalysis={() => onClickFullAnalysis(trackedGame)}
+                  />
+                ))
+              )}
 
-            {hasItems && (
-              <Button
-                disabled={isLoading}
-                onClick={onSubmit}
-                variant="gradient"
-                size="lg"
-              >
-                {isLoading ? <Loader /> : <>Track Bet</>}
-              </Button>
-            )}
-          </div>
-        )}
-      </div>
+              {hasItems && (
+                <Button
+                  disabled={isLoading}
+                  onClick={onSubmit}
+                  className="w-full"
+                >
+                  {isLoading ? <Loader /> : 'Track Bet'}
+                </Button>
+              )}
+            </div>
+          )}
+        </div>
+      </Card>
 
       <GameAnalysisModal
         open={isModalOpen('game-analysis')}

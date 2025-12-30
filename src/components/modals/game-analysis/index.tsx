@@ -244,47 +244,47 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
 
   return (
     <Dialog key={game.game.id} open={open} onOpenChange={onClose}>
-      <DialogContent className="max-h-[90vh] max-w-5xl gap-0 overflow-hidden p-0">
+      <DialogContent className="max-h-[90vh] max-w-[95vw] gap-0 overflow-hidden p-0 sm:max-w-[90vw] md:max-w-4xl lg:max-w-5xl">
         {/* Header */}
-        <DialogHeader className="border-b border-border bg-gradient-to-r from-card to-secondary/30 px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-primary/20">
+        <DialogHeader className="border-b border-border bg-gradient-to-r from-card to-secondary/30 px-4 py-3 sm:px-6 sm:py-4">
+          <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center sm:gap-4">
+            <div className="flex items-center gap-2 sm:gap-4">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-full bg-primary/20 sm:h-10 sm:w-10">
                   {game.game.home_team_logo ? (
                     <img
                       src={game.game.home_team_logo}
                       alt={homeTeamName}
-                      className="h-8 w-8 object-contain"
+                      className="h-6 w-6 object-contain sm:h-8 sm:w-8"
                     />
                   ) : (
-                    <span className="text-lg font-bold text-primary">
+                    <span className="text-base font-bold text-primary sm:text-lg">
                       {homeTeamName.charAt(0)}
                     </span>
                   )}
                 </div>
-                <DialogTitle className="font-display text-xl">
+                <DialogTitle className="font-display text-base sm:text-lg md:text-xl">
                   {homeTeamName}{' '}
                   <span className="font-normal text-muted-foreground">vs</span>{' '}
                   {awayTeamName}
                 </DialogTitle>
-                <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-primary/20">
+                <div className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-full bg-primary/20 sm:h-10 sm:w-10">
                   {game.game.away_team_logo ? (
                     <img
                       src={game.game.away_team_logo}
                       alt={awayTeamName}
-                      className="h-8 w-8 object-contain"
+                      className="h-6 w-6 object-contain sm:h-8 sm:w-8"
                     />
                   ) : (
-                    <span className="text-lg font-bold text-primary">
+                    <span className="text-base font-bold text-primary sm:text-lg">
                       {awayTeamName.charAt(0)}
                     </span>
                   )}
                 </div>
               </div>
             </div>
-            <div className="flex items-center gap-4 text-sm text-muted-foreground">
-              <span className="flex items-center gap-1.5">
+            <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground sm:gap-4 sm:text-sm">
+              <span className="flex items-center gap-1 sm:gap-1.5">
                 <Calendar className="h-4 w-4" />
                 {gameDate}
               </span>
@@ -305,9 +305,9 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
         </DialogHeader>
 
         <ScrollArea className="max-h-[calc(90vh-80px)]">
-          <div className="space-y-6 p-6">
+          <div className="space-y-4 p-4 sm:space-y-6 sm:p-6">
             {/* Predicted Winner & Key Stats Row */}
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 md:grid-cols-3">
               <Card className="border-primary/20 bg-gradient-to-br from-primary/10 to-primary/5 p-4">
                 <div className="mb-2 flex items-center gap-2">
                   <Target className="h-4 w-4 text-primary" />
@@ -381,9 +381,12 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
                     </h3>
                     <div className="space-y-2 text-sm text-muted-foreground">
                       {overview.map((item, idx) => (
-                        <div key={idx} className="flex items-start gap-2">
+                        <div
+                          key={idx}
+                          className="flex min-w-0 items-start gap-2"
+                        >
                           <ChevronRight className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                          <p>{item}</p>
+                          <p className="min-w-0 flex-1 break-words">{item}</p>
                         </div>
                       ))}
                     </div>
@@ -399,9 +402,12 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
                     </h3>
                     <div className="space-y-2 text-sm">
                       {keyStrengths.map((item, idx) => (
-                        <div key={idx} className="flex items-start gap-2">
+                        <div
+                          key={idx}
+                          className="flex min-w-0 items-start gap-2"
+                        >
                           <span className="shrink-0 text-emerald-600">•</span>
-                          <p>{item}</p>
+                          <p className="min-w-0 flex-1 break-words">{item}</p>
                         </div>
                       ))}
                     </div>
@@ -420,12 +426,12 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
                         <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
                           Injuries
                         </span>
-                        <div className="mt-2 space-y-2">
+                        <div className="mt-2 max-h-[200px] space-y-2 overflow-y-auto">
                           {homeInjuries.length > 0 ? (
                             homeInjuries.map((injury, idx) => (
                               <div
                                 key={idx}
-                                className="text-sm leading-relaxed"
+                                className="break-words text-sm leading-relaxed"
                               >
                                 {injury}
                               </div>
@@ -450,12 +456,12 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
                         <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
                           Injuries
                         </span>
-                        <div className="mt-2 space-y-2">
+                        <div className="mt-2 max-h-[200px] space-y-2 overflow-y-auto">
                           {awayInjuries.length > 0 ? (
                             awayInjuries.map((injury, idx) => (
                               <div
                                 key={idx}
-                                className="text-sm leading-relaxed"
+                                className="break-words text-sm leading-relaxed"
                               >
                                 {injury}
                               </div>
@@ -482,10 +488,10 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
                       {riskFactors.map((risk, idx) => (
                         <div
                           key={idx}
-                          className="flex items-start gap-2 text-sm"
+                          className="flex min-w-0 items-start gap-2 text-sm"
                         >
                           <span className="shrink-0 text-destructive">⚠</span>
-                          <p>{risk}</p>
+                          <p className="min-w-0 flex-1 break-words">{risk}</p>
                         </div>
                       ))}
                     </div>
@@ -495,7 +501,7 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
 
               {/* Betting Picks Tab */}
               <TabsContent value="bets" className="mt-4 space-y-4">
-                <div className="grid gap-6 md:grid-cols-2">
+                <div className="grid gap-4 md:gap-6 lg:grid-cols-2">
                   {/* Value Bets */}
                   <div>
                     <h3 className="mb-4 flex items-center gap-2 text-lg font-semibold">
@@ -534,7 +540,7 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
                             return (
                               <Card
                                 key={idx}
-                                className="cursor-pointer border-emerald-500/30 bg-emerald-500/10 p-4 transition-colors hover:border-emerald-500/50"
+                                className="min-w-0 cursor-pointer border-emerald-500/30 bg-emerald-500/10 p-4 transition-colors hover:border-emerald-500/50"
                               >
                                 <div className="mb-2 flex items-center justify-between">
                                   <Badge
@@ -544,9 +550,11 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
                                     {betType}
                                   </Badge>
                                 </div>
-                                <p className="mb-2 font-semibold">{betTitle}</p>
+                                <p className="mb-2 min-w-0 break-words font-semibold">
+                                  {betTitle}
+                                </p>
                                 {betDescription && (
-                                  <p className="text-sm text-muted-foreground">
+                                  <p className="min-w-0 break-words text-sm text-muted-foreground">
                                     {betDescription}
                                   </p>
                                 )}
@@ -599,7 +607,7 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
                             return (
                               <Card
                                 key={idx}
-                                className="cursor-pointer border-amber-500/30 bg-amber-500/10 p-4 transition-colors hover:border-amber-500/50"
+                                className="min-w-0 cursor-pointer border-amber-500/30 bg-amber-500/10 p-4 transition-colors hover:border-amber-500/50"
                               >
                                 <div className="mb-2 flex items-center justify-between">
                                   <Badge
@@ -609,9 +617,11 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
                                     {betType}
                                   </Badge>
                                 </div>
-                                <p className="mb-2 font-semibold">{betTitle}</p>
+                                <p className="mb-2 min-w-0 break-words font-semibold">
+                                  {betTitle}
+                                </p>
                                 {betDescription && (
-                                  <p className="text-sm text-muted-foreground">
+                                  <p className="min-w-0 break-words text-sm text-muted-foreground">
                                     {betDescription}
                                   </p>
                                 )}
@@ -630,105 +640,121 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
 
               {/* Injury Report Tab */}
               <TabsContent value="injuries" className="mt-4">
-                <Card className="overflow-hidden">
-                  <Table>
-                    <TableHeader>
-                      <TableRow className="bg-secondary/30">
-                        <TableHead className="font-semibold">Player</TableHead>
-                        <TableHead className="font-semibold">Team</TableHead>
-                        <TableHead className="font-semibold">Pos</TableHead>
-                        <TableHead className="font-semibold">
-                          Est. Return
-                        </TableHead>
-                        <TableHead className="font-semibold">Notes</TableHead>
-                        <TableHead className="text-right font-semibold">
-                          Status
-                        </TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {game.scoreboard?.home_team_injury &&
-                        game.scoreboard.home_team_injury.map((player, idx) => (
-                          <TableRow
-                            key={`home-${idx}`}
-                            className="hover:bg-secondary/10"
-                          >
-                            <TableCell className="font-medium">
-                              {player.player}
-                            </TableCell>
-                            <TableCell className="text-muted-foreground">
-                              {player.team_name}
-                            </TableCell>
-                            <TableCell>{player.position}</TableCell>
-                            <TableCell>{player.return_date}</TableCell>
-                            <TableCell className="max-w-[200px] text-muted-foreground">
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <div className="cursor-help truncate">
-                                    {player.comment}
-                                  </div>
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                  <p className="max-w-xs">{player.comment}</p>
-                                </TooltipContent>
-                              </Tooltip>
-                            </TableCell>
-                            <TableCell className="text-right">
-                              <Badge className={getStatusColor(player.status)}>
-                                {player.status}
-                              </Badge>
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      {game.scoreboard?.away_team_injury &&
-                        game.scoreboard.away_team_injury.map((player, idx) => (
-                          <TableRow
-                            key={`away-${idx}`}
-                            className="hover:bg-secondary/10"
-                          >
-                            <TableCell className="font-medium">
-                              {player.player}
-                            </TableCell>
-                            <TableCell className="text-muted-foreground">
-                              {player.team_name}
-                            </TableCell>
-                            <TableCell>{player.position}</TableCell>
-                            <TableCell>{player.return_date}</TableCell>
-                            <TableCell className="max-w-[200px] text-muted-foreground">
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <div className="cursor-help truncate">
-                                    {player.comment}
-                                  </div>
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                  <p className="max-w-xs">{player.comment}</p>
-                                </TooltipContent>
-                              </Tooltip>
-                            </TableCell>
-                            <TableCell className="text-right">
-                              <Badge className={getStatusColor(player.status)}>
-                                {player.status}
-                              </Badge>
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      {(!game.scoreboard?.home_team_injury ||
-                        game.scoreboard.home_team_injury.length === 0) &&
-                        (!game.scoreboard?.away_team_injury ||
-                          game.scoreboard.away_team_injury.length === 0) && (
-                          <TableRow>
-                            <TableCell
-                              colSpan={6}
-                              className="py-8 text-center text-muted-foreground"
-                            >
-                              No injury reports available
-                            </TableCell>
-                          </TableRow>
-                        )}
-                    </TableBody>
-                  </Table>
-                </Card>
+                <div className="overflow-x-auto">
+                  <Card className="overflow-hidden">
+                    <Table className="min-w-[600px]">
+                      <TableHeader>
+                        <TableRow className="bg-secondary/30">
+                          <TableHead className="font-semibold">
+                            Player
+                          </TableHead>
+                          <TableHead className="font-semibold">Team</TableHead>
+                          <TableHead className="font-semibold">Pos</TableHead>
+                          <TableHead className="font-semibold">
+                            Est. Return
+                          </TableHead>
+                          <TableHead className="font-semibold">Notes</TableHead>
+                          <TableHead className="text-right font-semibold">
+                            Status
+                          </TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {game.scoreboard?.home_team_injury &&
+                          game.scoreboard.home_team_injury.map(
+                            (player, idx) => (
+                              <TableRow
+                                key={`home-${idx}`}
+                                className="hover:bg-secondary/10"
+                              >
+                                <TableCell className="font-medium">
+                                  {player.player}
+                                </TableCell>
+                                <TableCell className="text-muted-foreground">
+                                  {player.team_name}
+                                </TableCell>
+                                <TableCell>{player.position}</TableCell>
+                                <TableCell>{player.return_date}</TableCell>
+                                <TableCell className="max-w-[200px] text-muted-foreground">
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      <div className="cursor-help truncate">
+                                        {player.comment}
+                                      </div>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                      <p className="max-w-xs">
+                                        {player.comment}
+                                      </p>
+                                    </TooltipContent>
+                                  </Tooltip>
+                                </TableCell>
+                                <TableCell className="text-right">
+                                  <Badge
+                                    className={getStatusColor(player.status)}
+                                  >
+                                    {player.status}
+                                  </Badge>
+                                </TableCell>
+                              </TableRow>
+                            ),
+                          )}
+                        {game.scoreboard?.away_team_injury &&
+                          game.scoreboard.away_team_injury.map(
+                            (player, idx) => (
+                              <TableRow
+                                key={`away-${idx}`}
+                                className="hover:bg-secondary/10"
+                              >
+                                <TableCell className="font-medium">
+                                  {player.player}
+                                </TableCell>
+                                <TableCell className="text-muted-foreground">
+                                  {player.team_name}
+                                </TableCell>
+                                <TableCell>{player.position}</TableCell>
+                                <TableCell>{player.return_date}</TableCell>
+                                <TableCell className="max-w-[200px] text-muted-foreground">
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      <div className="cursor-help truncate">
+                                        {player.comment}
+                                      </div>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                      <p className="max-w-xs">
+                                        {player.comment}
+                                      </p>
+                                    </TooltipContent>
+                                  </Tooltip>
+                                </TableCell>
+                                <TableCell className="text-right">
+                                  <Badge
+                                    className={getStatusColor(player.status)}
+                                  >
+                                    {player.status}
+                                  </Badge>
+                                </TableCell>
+                              </TableRow>
+                            ),
+                          )}
+                        {(!game.scoreboard?.home_team_injury ||
+                          game.scoreboard.home_team_injury.length === 0) &&
+                          (!game.scoreboard?.away_team_injury ||
+                            game.scoreboard.away_team_injury.length === 0) && (
+                            <TableRow>
+                              <TableCell
+                                colSpan={6}
+                                className="py-8 text-center text-muted-foreground"
+                              >
+                                No injury reports available
+                              </TableCell>
+                            </TableRow>
+                          )}
+                      </TableBody>
+                    </Table>
+                  </Card>
+                </div>
               </TabsContent>
             </Tabs>
           </div>

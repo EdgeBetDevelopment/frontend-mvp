@@ -217,39 +217,36 @@ const MatchupPage = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
-      <div className="tl-container mb-[90px] flex h-auto flex-row justify-center lg:h-[840px] lg:max-w-[1352px] lg:gap-2 xl:gap-14">
-        <div className="xl flex w-full flex-col gap-4 lg:max-w-[calc(100%-420px)]">
-          <div>
-            <MatchupPageFilters />
-            <div className="mt-4 block w-full md:max-w-[300px] lg:hidden">
-              <Button
-                variant="gradient"
-                className="w-full"
-                onClick={onOpenTrackBet}
-              >
-                Track bet
-              </Button>
-            </div>
-          </div>
+      <div className="container mx-auto px-6 py-24">
+        <MatchupPageFilters />
 
-          {isAuthenticated && (
-            <ListRenderer
-              isLoading={isLoading}
-              data={flatGames}
-              isError={isError}
-              errorComponent={<div>Error load games</div>}
-              loadingComponent={<GamesLoading />}
-              emptyComponent={
-                <EmptyPlaceholder
-                  className="mt-30"
-                  title="No games found"
-                  subtitle="For now, there are no games available."
-                />
-              }
-            >
-              {(games) => (
-                <ScrollArea className="pr-4">
-                  <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-2">
+        <div className="mt-8 block lg:hidden">
+          <Button variant="default" className="w-full" onClick={onOpenTrackBet}>
+            Track bet
+          </Button>
+        </div>
+
+        {/* Main Content */}
+        <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-4">
+          {/* Matchups Grid */}
+          <div className="lg:col-span-3">
+            {isAuthenticated && (
+              <ListRenderer
+                isLoading={isLoading}
+                data={flatGames}
+                isError={isError}
+                errorComponent={<div>Error load games</div>}
+                loadingComponent={<GamesLoading />}
+                emptyComponent={
+                  <div className="flex h-64 items-center justify-center rounded-lg border border-border bg-card">
+                    <p className="text-lg text-muted-foreground">
+                      No games scheduled for the next 24 hours
+                    </p>
+                  </div>
+                }
+              >
+                {(games) => (
+                  <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                     {games.map((game: IGameWithAI, idx: number) => {
                       const key =
                         game?.game?.id ??
@@ -264,24 +261,28 @@ const MatchupPage = () => {
                       );
                     })}
                   </div>
-                </ScrollArea>
-              )}
-            </ListRenderer>
-          )}
-        </div>
+                )}
+              </ListRenderer>
+            )}
+          </div>
 
-        <TrackBetsAside />
+          {/* Track Bet Sidebar */}
+          <div className="lg:col-span-1">
+            <TrackBetsAside />
+          </div>
+        </div>
       </div>
+
+      <Footer />
 
       <AuthModal isOpen={isModalOpen('auth')} onClose={onCloseAuth} />
 
-      <div className="block lg:hidden">
+      {/* <div className="block lg:hidden">
         <TrackBetsModal
           isOpen={isModalOpen('track-bet')}
           onClose={onClickClearTrackBet}
         />
-      </div>
-      <Footer />
+      </div> */}
 
       {isAuthenticated && flatGames.length > 0 && (
         <GameAnalysisModal
@@ -297,9 +298,9 @@ export default MatchupPage;
 
 const GamesLoading = () => {
   return (
-    <div className="grid w-full grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
       {Array.from({ length: 4 }).map((_, index) => (
-        <Skeleton key={index} className="h-[387px] w-full rounded-3xl" />
+        <Skeleton key={index} className="h-[400px] w-full rounded-lg" />
       ))}
     </div>
   );

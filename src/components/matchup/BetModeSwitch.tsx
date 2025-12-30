@@ -18,16 +18,16 @@ export default function BetModeSwitch({ className }: Props) {
       onValueChange={(v) => setIsParlay(v === 'parlay')}
       className={cn('w-full', className)}
     >
-      <TabsList className="h-auto w-full rounded-full border-[1px] border-solid border-[#484848] bg-[#2a2a2a] p-1.5">
+      <TabsList className="grid h-10 w-full grid-cols-2 border border-border bg-secondary/30">
         <TabsTrigger
           value="single"
-          className="h-auto rounded-full p-1.5 text-sm font-semibold data-[state=active]:bg-[#8CFFE9] data-[state=active]:text-black data-[state=inactive]:text-white/70"
+          className="text-sm font-medium data-[state=active]:bg-background data-[state=active]:text-foreground"
         >
           Single
         </TabsTrigger>
         <TabsTrigger
           value="parlay"
-          className="h-auto rounded-full p-1.5 text-sm font-semibold data-[state=active]:bg-[#8CFFE9] data-[state=active]:text-black data-[state=inactive]:text-white/70"
+          className="text-sm font-medium data-[state=active]:bg-background data-[state=active]:text-foreground"
         >
           Parlay
         </TabsTrigger>

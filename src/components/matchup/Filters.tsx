@@ -6,66 +6,34 @@ import {
   useRouter,
   useSearchParams,
 } from 'next/navigation';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from '@/components/ui/carousel';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
 import { Button } from '@/ui/button';
+import { Tabs, TabsList, TabsTrigger } from '@/ui/tabs';
 import { formUrlQuery } from '@/utils/url';
-
-import { OddsTypeSwitcher } from './SwitchSelector';
-
-import AmericanFootballIcon from '@/assets/icons/american-football.svg';
-import BaseballIcon from '@/assets/icons/baseball.svg';
-import FootbalIcon from '@/assets/icons/football.svg';
-import TennisIcon from '@/assets/icons/tenins.svg';
+import { useStore } from '@/store';
 
 const SPORTS_TYPE = [
-  { icon: <FootbalIcon />, label: 'NBA', value: null, disabled: false },
-  { icon: <FootbalIcon />, label: 'WNBA', value: 'wnba', disabled: true },
-  {
-    icon: <AmericanFootballIcon />,
-    label: 'NFL',
-    value: 'nfl',
-    disabled: true,
-  },
-  {
-    icon: <AmericanFootballIcon />,
-    label: 'NCAAF',
-    value: 'ncaaf',
-    disabled: true,
-  },
-  {
-    icon: <AmericanFootballIcon />,
-    label: 'NCAAB',
-    value: 'ncaab',
-    disabled: true,
-  },
-  { icon: <FootbalIcon />, label: 'Soccer', value: 'soccer', disabled: true },
-  { icon: <TennisIcon />, label: 'Tennis', value: 'tennis', disabled: true },
-  { icon: <TennisIcon />, label: 'UFC', value: 'ufc', disabled: true },
-  { icon: <BaseballIcon />, label: 'MLB', value: 'mlb', disabled: true },
-  { icon: <BaseballIcon />, label: 'Golf', value: 'golf', disabled: true },
-  { icon: <BaseballIcon />, label: 'NHL', value: 'nhl', disabled: true },
+  { label: 'NBA', value: null, disabled: false },
+  { label: 'NFL', value: 'nfl', disabled: true },
+  { label: 'NCAAF', value: 'ncaaf', disabled: true },
+  { label: 'NCAAB', value: 'ncaab', disabled: true },
+  { label: 'MLB', value: 'mlb', disabled: true },
+  { label: 'NHL', value: 'nhl', disabled: true },
+  { label: 'WNBA', value: 'wnba', disabled: true },
+  { label: 'Tennis', value: 'tennis', disabled: true },
 ];
 
 const MatchupPageFilters = () => {
   const params = useSearchParams() as ReadonlyURLSearchParams;
   const router = useRouter();
   const type = params.get('type');
+  const isAmerican = useStore((state) => state.isAmerican);
+  const setIsAmerican = useStore((state) => state.setIsAmerican);
 
   const onChangeType = (value: string | null, disabled?: boolean) => {
-    if (disabled || value === type) return;
+    if (disabled) return;
+    if (value === type) return;
 
     const url = value
       ? formUrlQuery({ params: params.toString(), key: 'type', value })
@@ -75,53 +43,43 @@ const MatchupPageFilters = () => {
   };
 
   return (
-    <TooltipProvider>
-      <div className="">
-        <div className="relative px-12">
-          <Carousel opts={{ align: 'start' }} className="relative w-full">
-            <CarouselPrevious />
+    <div className="space-y-6">
+      {/* Sport Tabs */}
+      <div className="flex items-center gap-2">
+        <Button variant="ghost" size="icon" className="shrink-0">
+          <ChevronLeft className="h-5 w-5" />
+        </Button>
 
-            <CarouselContent className="">
-              {SPORTS_TYPE.map((tab) => {
-                const button = (
-                  <Button
-                    className="w-full min-w-[100px] sm:min-w-[140px]"
-                    variant={type === tab.value ? 'brand' : 'default'}
-                    onClick={() => onChangeType(tab.value, tab.disabled)}
-                  >
-                    {tab.icon}
-                    <span className="">{tab.label}</span>
-                  </Button>
-                );
-
-                return (
-                  <CarouselItem
-                    key={tab.label}
-                    className="basis-[50%] px-2 sm:basis-[35%] md:basis-[30%] lg:basis-auto"
-                  >
-                    {tab.disabled ? (
-                      <Tooltip>
-                        <TooltipTrigger asChild>{button}</TooltipTrigger>
-                        <TooltipContent className="text-sm">
-                          Coming soon
-                        </TooltipContent>
-                      </Tooltip>
-                    ) : (
-                      button
-                    )}
-                  </CarouselItem>
-                );
-              })}
-            </CarouselContent>
-
-            <CarouselNext />
-          </Carousel>
+        <div className="scrollbar-hide flex gap-2 overflow-x-auto pb-2">
+          {SPORTS_TYPE.map((sport) => (
+            <Button
+              key={sport.label}
+              variant={type === sport.value ? 'default' : 'outline'}
+              onClick={() => onChangeType(sport.value, sport.disabled)}
+              className="shrink-0"
+              disabled={sport.disabled}
+            >
+              {sport.label}
+            </Button>
+          ))}
         </div>
-        <div className="mt-4 flex w-full md:max-w-[300px]">
-          <OddsTypeSwitcher />
-        </div>
+
+        <Button variant="ghost" size="icon" className="shrink-0">
+          <ChevronRight className="h-5 w-5" />
+        </Button>
       </div>
-    </TooltipProvider>
+
+      {/* Region Toggle */}
+      <Tabs
+        value={isAmerican ? 'american' : 'european'}
+        onValueChange={(v) => setIsAmerican(v === 'american')}
+      >
+        <TabsList>
+          <TabsTrigger value="american">American</TabsTrigger>
+          <TabsTrigger value="european">European</TabsTrigger>
+        </TabsList>
+      </Tabs>
+    </div>
   );
 };
 
