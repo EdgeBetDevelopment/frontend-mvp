@@ -4,11 +4,6 @@ import { JSX } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
-import { FaFacebook } from 'react-icons/fa';
-import { FaCircleUser } from 'react-icons/fa6';
-import { FaXTwitter } from 'react-icons/fa6';
-import { FaInstagram } from 'react-icons/fa6';
-import { IoPeopleCircle } from 'react-icons/io5';
 import {
   BarChart,
   Bar,
@@ -32,8 +27,10 @@ import Navigation from '@/components/Navigation';
 import {
   AlertTriangle,
   ArrowLeft,
+  Calendar,
   ChevronRight,
   MapPin,
+  TrendingUp,
   Trophy,
   Users,
 } from 'lucide-react';
@@ -116,39 +113,60 @@ const TeamPage = () => {
         },
       ]
     : [];
-  // const getStatusBadge = (status: Player['status']) => {
-  //   switch (status) {
-  //     case 'healthy':
-  //       return (
-  //         <Badge
-  //           variant="outline"
-  //           className="border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
-  //         >
-  //           Healthy
-  //         </Badge>
-  //       );
-  //     case 'questionable':
-  //       return (
-  //         <Badge
-  //           variant="outline"
-  //           className="border-yellow-500/30 bg-yellow-500/10 text-yellow-400"
-  //         >
-  //           Questionable
-  //         </Badge>
-  //       );
-  //     case 'out':
-  //       return (
-  //         <Badge
-  //           variant="outline"
-  //           className="border-red-500/30 bg-red-500/10 text-red-400"
-  //         >
-  //           Out
-  //         </Badge>
-  //       );
-  //   }
-  // };
 
-  // const injuries = team.roster.filter((p) => p.status !== 'healthy');
+  const injuries = team?.player_statistics.filter(
+    (p) => p.status !== 'healthy',
+  );
+
+  const getStatusBadge = (status: string) => {
+    switch (status?.toLowerCase()) {
+      case 'out':
+        return (
+          <Badge
+            variant="outline"
+            className="border-red-500/30 bg-red-500/10 text-red-400"
+          >
+            Out
+          </Badge>
+        );
+      case 'questionable':
+        return (
+          <Badge
+            variant="outline"
+            className="border-yellow-500/30 bg-yellow-500/10 text-yellow-400"
+          >
+            Questionable
+          </Badge>
+        );
+      case 'day-to-day':
+        return (
+          <Badge
+            variant="outline"
+            className="border-orange-500/30 bg-orange-500/10 text-orange-400"
+          >
+            Day-to-Day
+          </Badge>
+        );
+      default:
+        return (
+          <Badge
+            variant="outline"
+            className="border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
+          >
+            Active
+          </Badge>
+        );
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <Loader
+        size="h-14 w-14"
+        className="flex h-[70vh] w-full items-center justify-center"
+      />
+    );
+  }
 
   if (!team) {
     return (
@@ -193,8 +211,8 @@ const TeamPage = () => {
                 <span className="flex items-center gap-1">
                   <MapPin className="h-4 w-4" /> {team.city}
                 </span>
-                <span>{team?.conference} Conference</span>
-                <span>{team?.division} Division</span>
+                <span>{team?.league_standings?.Conference} Conference</span>
+                <span>{team?.league_standings?.Division} Division</span>
               </div>
             </div>
             <div className="text-right">
@@ -284,126 +302,142 @@ const TeamPage = () => {
               </Card>
 
               {/* Injury Report */}
-              {/* <Card className="border-border bg-card">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <AlertTriangle className="h-5 w-5 text-yellow-400" />
-                  Injury Report
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                {injuries.length > 0 ? (
-                  <div className="space-y-4">
-                    {injuries.map((player) => (
-                      <div
-                        key={player.id}
-                        className="flex items-center justify-between"
-                      >
-                        <div>
-                          <div className="font-medium">{player.name}</div>
-                          <div className="text-sm text-muted-foreground">
-                            {player.injury}
+              <Card className="border-border bg-card">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <AlertTriangle className="h-5 w-5 text-yellow-400" />
+                    Injury Report
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {team?.injuries && team?.injuries.length > 0 ? (
+                    <div className="space-y-4">
+                      {team?.injuries.map((injury, index) => (
+                        <div
+                          key={index}
+                          className="flex items-center justify-between"
+                        >
+                          <div>
+                            <div className="font-medium">{injury.player}</div>
+                            <div className="text-sm text-muted-foreground">
+                              {injury.position}
+                              {injury.return_date &&
+                                ` • Return: ${injury.return_date}`}
+                            </div>
                           </div>
+                          {getStatusBadge(injury.status)}
                         </div>
-                        {getStatusBadge(player.status)}
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="py-4 text-center text-muted-foreground">
-                    No injuries reported
-                  </p>
-                )}
-              </CardContent>
-            </Card> */}
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="py-4 text-center text-muted-foreground">
+                      No injuries reported
+                    </p>
+                  )}
+                </CardContent>
+              </Card>
 
               {/* Upcoming Games */}
-              {/* <Card className="border-border bg-card">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Calendar className="h-5 w-5 text-primary" />
-                  Upcoming Games
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {upcomingGames.slice(0, 3).map((game) => (
-                    <div
-                      key={game.id}
-                      className="flex items-center justify-between rounded-lg bg-muted/30 p-3"
-                    >
-                      <div>
-                        <div className="font-medium">
-                          {game.location === 'home' ? 'vs' : '@'}{' '}
-                          {game.opponent}
+              <Card className="border-border bg-card">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Calendar className="h-5 w-5 text-primary" />
+                    Upcoming Games
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {team?.upcoming_games && team?.upcoming_games.length > 0 ? (
+                    <div className="space-y-4">
+                      {team?.upcoming_games.slice(0, 3).map((game) => (
+                        <div
+                          key={game.game_id}
+                          className="flex items-center justify-between rounded-lg bg-muted/30 p-3"
+                        >
+                          <div>
+                            <div className="font-medium">
+                              {game.home_team_id === team.id ? 'vs' : '@'}{' '}
+                              {game.opponent}
+                            </div>
+                            <div className="text-sm text-muted-foreground">
+                              {new Date(game.date).toLocaleDateString('en-US', {
+                                month: 'short',
+                                day: 'numeric',
+                                year: 'numeric',
+                              })}
+                            </div>
+                          </div>
+                          <Badge variant="outline">
+                            {game.home_team_id === team.id ? 'Home' : 'Away'}
+                          </Badge>
                         </div>
-                        <div className="text-sm text-muted-foreground">
-                          {game.date} • {game.time}
-                        </div>
-                      </div>
-                      <Badge variant="outline">
-                        {game.location === 'home' ? 'Home' : 'Away'}
-                      </Badge>
+                      ))}
                     </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card> */}
+                  ) : (
+                    <p className="py-4 text-center text-muted-foreground">
+                      No upcoming games
+                    </p>
+                  )}
+                </CardContent>
+              </Card>
             </div>
 
             {/* Recent Results */}
-            {/* <Card className="border-border bg-card">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <TrendingUp className="h-5 w-5 text-primary" />
-                Recent Results
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-wrap gap-4">
-                {recentGames.map((game) => (
-                  <div
-                    key={game.id}
-                    className={`flex min-w-[180px] flex-col rounded-lg border p-4 ${
-                      game.result?.win
-                        ? 'border-emerald-500/30 bg-emerald-500/10'
-                        : 'border-red-500/30 bg-red-500/10'
-                    }`}
-                  >
-                    <div className="mb-2 text-xs text-muted-foreground">
-                      {game.date}
-                    </div>
-                    <div className="flex flex-1 items-center gap-3">
-                      <div
-                        className={`text-2xl font-bold ${game.result?.win ? 'text-emerald-400' : 'text-red-400'}`}
-                      >
-                        {game.result?.win ? 'W' : 'L'}
-                      </div>
-                      <div>
-                        <div className="font-medium">
-                          {game.location === 'home' ? 'vs' : '@'}{' '}
-                          {game.opponent}
+            <Card className="border-border bg-card">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <TrendingUp className="h-5 w-5 text-primary" />
+                  Recent Results
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {team?.recent_games && team?.recent_games.length > 0 ? (
+                  <div className="flex flex-wrap gap-4">
+                    {team?.recent_games.map((game) => {
+                      const isWin = game.result === 'W';
+                      return (
+                        <div
+                          key={game.game_id}
+                          className={`flex min-w-[180px] flex-col rounded-lg border p-4 ${
+                            isWin
+                              ? 'border-emerald-500/30 bg-emerald-500/10'
+                              : 'border-red-500/30 bg-red-500/10'
+                          }`}
+                        >
+                          <div className="mb-2 text-xs text-muted-foreground">
+                            {new Date(game.date).toLocaleDateString('en-US', {
+                              month: 'short',
+                              day: 'numeric',
+                            })}
+                          </div>
+                          <div className="flex flex-1 items-center gap-3">
+                            <div
+                              className={`text-2xl font-bold ${
+                                isWin ? 'text-emerald-400' : 'text-red-400'
+                              }`}
+                            >
+                              {game.result}
+                            </div>
+                            <div>
+                              <div className="font-medium">
+                                {game.home_team_id === team.id ? 'vs' : '@'}{' '}
+                                {game.opponent}
+                              </div>
+                              <div className="text-sm text-muted-foreground">
+                                {game.final_score}
+                              </div>
+                            </div>
+                          </div>
                         </div>
-                        <div className="text-sm text-muted-foreground">
-                          {game.result?.teamScore} -{' '}
-                          {game.result?.opponentScore}
-                        </div>
-                      </div>
-                    </div>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="mt-3 w-full text-xs hover:bg-background/50"
-                      onClick={() => navigate(`/game/${team.id}-${game.id}`)}
-                    >
-                      View Game Breakdown
-                      <ChevronRight className="ml-1 h-3 w-3" />
-                    </Button>
+                      );
+                    })}
                   </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card> */}
+                ) : (
+                  <p className="py-4 text-center text-muted-foreground">
+                    No recent games
+                  </p>
+                )}
+              </CardContent>
+            </Card>
           </TabsContent>
           <TabsContent value="roster">
             <Card className="border-border bg-card">
@@ -425,7 +459,7 @@ const TeamPage = () => {
                         <TableHead>Weight</TableHead>
                         <TableHead>Age</TableHead>
                         <TableHead>Exp</TableHead>
-                        <TableHead>Status</TableHead>
+                        {/* <TableHead>Status</TableHead> */}
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -459,6 +493,110 @@ const TeamPage = () => {
                 </div>
               </CardContent>
             </Card>
+          </TabsContent>
+          <TabsContent value="schedule" className="space-y-6">
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+              <Card className="border-border bg-card">
+                <CardHeader>
+                  <CardTitle>Upcoming Games</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {team?.upcoming_games && team.upcoming_games.length > 0 ? (
+                    <div className="space-y-3">
+                      {team.upcoming_games.map((game) => (
+                        <div
+                          key={game.game_id}
+                          className="flex items-center justify-between rounded-lg bg-muted/30 p-4"
+                        >
+                          <div>
+                            <div className="text-lg font-medium">
+                              {game.home_team_id === team.id ? 'vs' : '@'}{' '}
+                              {game.opponent}
+                            </div>
+                            <div className="text-muted-foreground">
+                              {new Date(game.date).toLocaleDateString('en-US', {
+                                weekday: 'short',
+                                month: 'short',
+                                day: 'numeric',
+                                year: 'numeric',
+                              })}
+                            </div>
+                          </div>
+                          <Badge
+                            variant="outline"
+                            className="px-4 py-1 text-base"
+                          >
+                            {game.home_team_id === team.id ? 'Home' : 'Away'}
+                          </Badge>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="py-4 text-center text-muted-foreground">
+                      No upcoming games scheduled
+                    </p>
+                  )}
+                </CardContent>
+              </Card>
+
+              <Card className="border-border bg-card">
+                <CardHeader>
+                  <CardTitle>Recent Games</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {team?.recent_games && team.recent_games.length > 0 ? (
+                    <div className="space-y-3">
+                      {team.recent_games.map((game) => {
+                        const isWin = game.result === 'W';
+                        return (
+                          <div
+                            key={game.game_id}
+                            className={`flex items-center justify-between rounded-lg border p-4 ${
+                              isWin
+                                ? 'border-emerald-500/30 bg-emerald-500/10'
+                                : 'border-red-500/30 bg-red-500/10'
+                            }`}
+                          >
+                            <div>
+                              <div className="text-lg font-medium">
+                                {game.home_team_id === team.id ? 'vs' : '@'}{' '}
+                                {game.opponent}
+                              </div>
+                              <div className="text-muted-foreground">
+                                {new Date(game.date).toLocaleDateString(
+                                  'en-US',
+                                  {
+                                    weekday: 'short',
+                                    month: 'short',
+                                    day: 'numeric',
+                                  },
+                                )}
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <div
+                                className={`text-xl font-bold ${
+                                  isWin ? 'text-emerald-400' : 'text-red-400'
+                                }`}
+                              >
+                                {game.result}
+                              </div>
+                              <div className="text-muted-foreground">
+                                {game.final_score}
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <p className="py-4 text-center text-muted-foreground">
+                      No recent games
+                    </p>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
           </TabsContent>
           <TabsContent value="stats" className="space-y-6">
             <Card className="border-border bg-card">
@@ -572,154 +710,5 @@ const TeamPage = () => {
     </div>
   );
 };
-
-{
-  /* </div>
-    </div>
-        <div className="flex w-full flex-col items-center">
-          <div className="flex flex-col items-center gap-1.5">
-
-              <IoPeopleCircle className="h-14 w-14" />
-            <h1 className="text-3xl font-bold">{team.full_name}</h1>
-            <p className="text-sm text-gray-400">
-              {team.nickname} ({team.abbreviation})
-            </p>
-          </div>
-
-          <div className="my-10 grid w-full max-w-6xl grid-cols-1 gap-6 md:grid-cols-3">
-            <div className="col-span-1 space-y-4">
-              <div className="rounded-lg bg-[#1A1A1A] p-4">
-                <h2 className="mb-2 text-xl font-semibold">Team Info</h2>
-                <p>
-                  <strong>City:</strong> {team.city}, {team.state}
-                </p>
-                <p>
-                  <strong>Founded:</strong> {team.year_founded}
-                </p>
-                <p>
-                  <strong>Arena:</strong> {team.arena} ({team.arena_capacity} seats)
-                </p>
-                <p>
-                  <strong>Owner:</strong> {team.owner}
-                </p>
-                <p>
-                  <strong>GM:</strong> {team.general_manager}
-                </p>
-                <p>
-                  <strong>Coach:</strong> {team.head_coach}
-                </p>
-                <p>
-                  <strong>Affiliate:</strong> {team.d_league_affiliation}
-                </p>
-              </div>
-
-              <div className="rounded-lg bg-[#1A1A1A] p-4">
-                <h2 className="mb-2 text-xl font-semibold">Social Media</h2>
-                <ul className="space-y-1">
-                  {Object.entries(team.social_media).map(([platform, url]) => (
-                    <li key={platform} className="flex items-center">
-                      <Link href={url} target="_blank" rel="noopener noreferrer">
-                        <Button
-                          variant="link"
-                          className="text-text-primary flex items-center p-0"
-                        >
-                          {SOCIAL_ICONS[platform] ?? null}
-                          {platform}
-                        </Button>
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              <div className="rounded-lg bg-[#1A1A1A] p-4">
-                <h2 className="mb-2 text-xl font-semibold">
-                  Stats (Season {team.team_statistics.GROUP_VALUE})
-                </h2>
-                <p>
-                  <strong>Games Played:</strong> {team.team_statistics.GP}
-                </p>
-                <p>
-                  <strong>Wins:</strong> {team.team_statistics.W}
-                </p>
-                <p>
-                  <strong>Losses:</strong> {team.team_statistics.L}
-                </p>
-                <p>
-                  <strong>Win %:</strong>{' '}
-                  {(team.team_statistics.W_PCT * 100).toFixed(1)}%
-                </p>
-              </div>
-            </div>
-
-            <div className="col-span-2">
-              <h2 className="mb-4 text-2xl font-bold">Players</h2>
-              <div className="grid grid-cols-1 items-stretch gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {team.player_statistics.map((player) => (
-                  <Link
-                    href={ROUTES.PLAYER(String(player.PLAYER_ID))}
-                    key={player.PLAYER_ID}
-                  >
-                    <PlayerCard player={player} />
-                  </Link>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          <div className="my-10 min-h-[244px] w-full min-w-[374px]">
-            <TeamStatsChart stats={team?.team_statistics} />
-          </div>
-
-          <div className="w-full">
-            <div className="rounded-lg border border-border bg-[#1A1A1A] p-4">
-              <h3 className="mb-4 text-lg font-semibold text-white">
-                Overall Statistic
-              </h3>
-
-              <TeamStatsTable
-                stats={[
-                  {
-                    logo: team.logo,
-                    name: team.nickname,
-                    stats: team.team_statistics,
-                  },
-                ]}
-              />
-            </div>
-          </div>
-        </div> 
-        
-        {/* // interface IPlayerCard {
-//   player: ITeamPlayer;
-// }
-
-// const PlayerCard = ({ player }: IPlayerCard) => {
-//   return (
-//     <div
-//       key={player.PLAYER_ID}
-//       className="flex h-full flex-col items-center gap-2 rounded-lg bg-[#111] p-4 shadow-md transition hover:shadow-lg"
-//     >
-//       <FaCircleUser className="h-10 w-10" />
-
-//       <div className="flex w-full flex-col items-start gap-1">
-//         <div className="mb-2 flex w-full items-center justify-between">
-//           <h3 className="text-lg font-semibold">{player.PLAYER}</h3>
-//           <span className="text-sm text-gray-400">#{player.NUM}</span>
-//         </div>
-
-//         <p className="text-sm text-gray-300">{player.POSITION}</p>
-//         <p className="text-sm text-gray-500">
-//           {player.HEIGHT}, {player.WEIGHT} lbs
-//         </p>
-//         <p className="text-sm text-gray-400">
-//           Age: {player.AGE} | Exp: {player.EXP}
-//         </p>
-//         <p className="mt-1 text-xs text-gray-500">{player.HOW_ACQUIRED}</p>
-//       </div>
-//     </div>
-//   );
-// }; */
-}
 
 export default TeamPage;

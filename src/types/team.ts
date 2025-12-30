@@ -23,6 +23,13 @@ export interface ITeam {
   team_statistics: TeamStatistics;
   player_statistics: Player[];
   overall_stats: TeamStatistics;
+  league_standings: {
+    Conference: string;
+    Division: string;
+  };
+  injuries: Injury[];
+  recent_games: Game[];
+  upcoming_games: Game[];
 }
 
 export interface SocialMedia {
@@ -110,4 +117,22 @@ export interface Player extends ITeamPlayer {
   PLAYER_ID: number;
   HOW_ACQUIRED: string;
   status: string;
+}
+
+export interface Injury {
+  team_name: string;
+  player: string;
+  position: string;
+  status: string;
+  return_date: string | null;
+}
+
+export interface Game {
+  game_id: number;
+  date: string;
+  opponent: string;
+  home_team_id: number;
+  away_team_id: number;
+  final_score?: string;
+  result?: string;
 }
