@@ -1,36 +1,28 @@
 import { useStore } from '@/store';
 import { convertAmericanToDecimal } from '@/utils/convertAmericanToDecimal';
+import { IBet } from '@/types/game';
+import { formatOddsWithSign } from '@/utils/formatOdds';
 
 const TopBets = ({
   valueBets,
   conservativeBets,
 }: {
-  valueBets: string[];
-  conservativeBets: string[];
+  valueBets: IBet[];
+  conservativeBets: IBet[];
 }) => {
   const isAmerican = useStore((state) => state.isAmerican);
 
-  const splitBetText = (text: string, isAmerican: boolean) => {
-    const [beforeRaw, afterRaw] = text.split(':');
-    let before = beforeRaw?.trim() || text;
-
-    const oddsMatch = before.match(/\(([-+]?\d+)\)/);
-    const odds = oddsMatch ? parseInt(oddsMatch[1], 10) : null;
-
-    if (odds !== null && !isAmerican) {
-      const decimalOdds = convertAmericanToDecimal(odds).toFixed(2);
-      before = before.replace(/\(([-+]?\d+)\)/, `(${decimalOdds})`);
-    }
-
-    let after = afterRaw?.trim();
-
-    if (after?.includes(';')) {
-      after = after.split(';')[0].trim();
-    }
+  const formatBetDisplay = (bet: IBet, isAmerican: boolean) => {
+    const decimalOdds = convertAmericanToDecimal(bet.bet_coefficient).toFixed(
+      2,
+    );
+    const displayedOdds = isAmerican
+      ? formatOddsWithSign(bet.bet_coefficient, true)
+      : decimalOdds;
 
     return {
-      before,
-      after,
+      main: `${bet.bet_name} (${displayedOdds})`,
+      team: bet.bet_team,
     };
   };
 
@@ -40,16 +32,16 @@ const TopBets = ({
         <h3 className="align-bottom text-lg font-semibold tracking-normal">
           Top 3 Best Value Bets
         </h3>
-        {valueBets?.slice(0, 3).map((bet: string, idx: number) => {
-          const { before, after } = splitBetText(bet, isAmerican);
+        {valueBets?.slice(0, 3).map((bet: IBet, idx: number) => {
+          const { main, team } = formatBetDisplay(bet, isAmerican);
           return (
             <div key={idx} className="mb-4">
               <div className="mb-2 rounded-lg bg-green-700 px-4 py-2 text-center text-base font-semibold text-white">
-                {before}
+                {main}
               </div>
-              {after && (
-                <p className="text-center text-sm break-words whitespace-normal text-white/80">
-                  {after}
+              {team && (
+                <p className="whitespace-normal break-words text-center text-sm text-white/80">
+                  {team}
                 </p>
               )}
             </div>
@@ -61,16 +53,16 @@ const TopBets = ({
         <h3 className="align-bottom text-lg font-semibold tracking-normal">
           Top 3 Conservative Bets
         </h3>
-        {conservativeBets?.slice(0, 3).map((bet: string, idx: number) => {
-          const { before, after } = splitBetText(bet, isAmerican);
+        {conservativeBets?.slice(0, 3).map((bet: IBet, idx: number) => {
+          const { main, team } = formatBetDisplay(bet, isAmerican);
           return (
             <div key={idx} className="mb-4">
               <div className="mb-2 rounded-lg bg-green-700 px-4 py-2 text-center text-base font-semibold text-white">
-                {before}
+                {main}
               </div>
-              {after && (
-                <p className="text-center text-sm break-words whitespace-normal text-white/80">
-                  {after}
+              {team && (
+                <p className="whitespace-normal break-words text-center text-sm text-white/80">
+                  {team}
                 </p>
               )}
             </div>

@@ -44,25 +44,8 @@ const TrackGameCard = ({ game, index }: ITrackGameCard) => {
   } = useStore();
 
   function formatDescription(desc: string) {
-    console.log(desc);
-    let formatted = desc
-      .replace(/\[.*?\]/g, '')
-      .replace(/\(.*?\)/g, '')
-      .split(':')[0]
-      .trim();
-
-    formatted = formatted.replace(
-      /(\s)([\d.]+)(\s|$)/g,
-      (match, space1, num, space2) => {
-        const number = parseFloat(num);
-        if (!isNaN(number) && number > 0) {
-          return `${space1}+${num}${space2}`;
-        }
-        return match;
-      },
-    );
-
-    return formatted;
+    // Since description now comes clean from backend, just return it
+    return desc;
   }
 
   const currentTicket = isParlay ? parlay : single[index];

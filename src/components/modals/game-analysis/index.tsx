@@ -74,116 +74,6 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
     }
   }, [game?.prediction?.favorite_team, game?.game]);
 
-  // Parse analysis text into sections
-  const parseAnalysis = (text?: string) => {
-    if (!text)
-      return { overview: [], riskFactors: [], injuries: [], keyStrengths: [] };
-
-    // Split by sections and clean up
-    const sections = {
-      overview: [] as string[],
-      riskFactors: [] as string[],
-      injuries: [] as string[],
-      keyStrengths: [] as string[],
-    };
-
-    // Find major sections
-    const riskFactorMatch = text.match(/•\s*Risk Factors?:?([\s\S]*)/i);
-    const injuriesMatch = text.match(
-      /•\s*Injuries?:?([\s\S]*?)(?=•\s*(Risk Factors?|Momentum|Key Strengths):|$)/i,
-    );
-    const keyStrengthsMatch = text.match(
-      /•\s*Key Strengths?:?([\s\S]*?)(?=•\s*Risk Factors?:|$)/i,
-    );
-    const overviewMatch = text.match(
-      /^([\s\S]*?)(?=•\s*(Injuries?|Key Strengths?|Risk Factors?):|$)/i,
-    );
-
-    // Parse overview section
-    if (overviewMatch) {
-      const overviewText = overviewMatch[1];
-      const bullets = overviewText
-        .split(/\n\s*•\s*/)
-        .filter((line) => line.trim());
-
-      bullets.forEach((bullet) => {
-        // Clean up and join broken lines
-        let cleaned = bullet.replace(/\s+/g, ' ').replace(/…+/g, ' ').trim();
-
-        // Remove leading dashes and symbols
-        cleaned = cleaned.replace(/^[-•\s]+/, '');
-
-        // Remove section header words if they appear in the text
-        cleaned = cleaned.replace(
-          /^(Matchup Overview|Current Status):\s*-?\s*/i,
-          '',
-        );
-
-        // Skip section headers and very short lines
-        const isHeader =
-          /^(Matchup Overview|Current Status|Injuries|Key Strengths):?\s*$/i.test(
-            cleaned,
-          );
-
-        if (cleaned && cleaned.length > 10 && !isHeader) {
-          sections.overview.push(cleaned);
-        }
-      });
-    }
-
-    // Parse injuries section
-    if (injuriesMatch) {
-      const injuriesText = injuriesMatch[1];
-      const bullets = injuriesText
-        .split(/\n\s*•\s*/)
-        .filter((line) => line.trim());
-
-      bullets.forEach((bullet) => {
-        let cleaned = bullet.replace(/\s+/g, ' ').replace(/…+/g, ' ').trim();
-        // Remove leading dashes
-        cleaned = cleaned.replace(/^[-\s]+/, '');
-
-        if (cleaned && cleaned.length > 10) {
-          sections.injuries.push(cleaned);
-        }
-      });
-    }
-
-    // Parse risk factors section
-    if (riskFactorMatch) {
-      const riskText = riskFactorMatch[1];
-      const bullets = riskText.split(/\n\s*•\s*/).filter((line) => line.trim());
-
-      bullets.forEach((bullet) => {
-        let cleaned = bullet.replace(/\s+/g, ' ').replace(/…+/g, ' ').trim();
-        cleaned = cleaned.replace(/^[-\s]+/, '');
-
-        if (cleaned && cleaned.length > 10) {
-          sections.riskFactors.push(cleaned);
-        }
-      });
-    }
-
-    // Parse key strengths section
-    if (keyStrengthsMatch) {
-      const strengthsText = keyStrengthsMatch[1];
-      const bullets = strengthsText
-        .split(/\n\s*•\s*/)
-        .filter((line) => line.trim());
-
-      bullets.forEach((bullet) => {
-        let cleaned = bullet.replace(/\s+/g, ' ').replace(/…+/g, ' ').trim();
-        cleaned = cleaned.replace(/^[-\s]+/, '');
-
-        if (cleaned && cleaned.length > 10) {
-          sections.keyStrengths.push(cleaned);
-        }
-      });
-    }
-
-    return sections;
-  };
-
   const getStatusColor = (status?: string) => {
     if (!status) return 'bg-muted text-muted-foreground';
     const normalized = status.toLowerCase();
@@ -199,44 +89,20 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
     return null;
   }
 
-  const { overview, riskFactors, injuries, keyStrengths } = parseAnalysis(
-    game.prediction?.analysis,
-  );
+  const analysis = game.prediction?.analysis;
+  const overview = analysis?.overview || [];
+  const homeTeamAnalysis = analysis?.home_team_analysis;
+  const awayTeamAnalysis = analysis?.away_team_analysis;
+  const riskFactors = analysis?.risk_factors || [];
+  const homeInjuries = homeTeamAnalysis?.injuries || '';
+  const awayInjuries = awayTeamAnalysis?.injuries || '';
+  const homeKeyStrengths = homeTeamAnalysis?.key_strengths || [];
+  const awayKeyStrengths = awayTeamAnalysis?.key_strengths || [];
+
   const homeTeamName = game?.game?.home_team;
   const awayTeamName = game?.game?.away_team;
   const gameDate = formatUtcToLocalDate(game?.game?.start_time);
   const gameTime = formatUtcToLocalTimeAmPm(game?.game?.start_time);
-
-  // Filter injuries by team
-  const getTeamInjuries = (teamName: string) => {
-    // Extract last word from team name (e.g., "Los Angeles Lakers" -> "Lakers")
-    const teamShortName = teamName.split(' ').pop() || teamName;
-
-    return injuries
-      .filter((injury) => {
-        const lowerInjury = injury.toLowerCase();
-        const lowerTeam = teamName.toLowerCase();
-        const lowerShort = teamShortName.toLowerCase();
-
-        // Check various patterns
-        return (
-          lowerInjury.startsWith(lowerTeam + ':') ||
-          lowerInjury.startsWith(lowerShort + ':') ||
-          lowerInjury.includes(lowerTeam + ':') ||
-          lowerInjury.includes(lowerShort + ':')
-        );
-      })
-      .map((injury) => {
-        // Remove team name from beginning
-        return injury
-          .replace(new RegExp(`^${teamName}:\\s*`, 'i'), '')
-          .replace(new RegExp(`^${teamShortName}:\\s*`, 'i'), '')
-          .trim();
-      });
-  };
-
-  const homeInjuries = getTeamInjuries(homeTeamName);
-  const awayInjuries = getTeamInjuries(awayTeamName);
 
   // Calculate point differentials
   const homeWinProb = game.prediction?.win_probability_home || 0;
@@ -329,7 +195,7 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
                   </span>
                 </div>
                 <p className="text-xl font-semibold">
-                  {(homeWinProb * 100).toFixed(1)}%
+                  {homeWinProb.toFixed(1)}%
                 </p>
                 <p className="text-sm text-primary">Win Probability</p>
               </Card>
@@ -341,7 +207,7 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
                   </span>
                 </div>
                 <p className="text-xl font-semibold">
-                  {(awayWinProb * 100).toFixed(1)}%
+                  {awayWinProb.toFixed(1)}%
                 </p>
                 <p className="text-sm text-primary">Win Probability</p>
               </Card>
@@ -379,38 +245,14 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
                       <Shield className="h-4 w-4 text-primary" />
                       Game Overview
                     </h3>
-                    <div className="space-y-2 text-sm text-muted-foreground">
+                    <ul className="space-y-2 text-sm text-muted-foreground">
                       {overview.map((item, idx) => (
-                        <div
-                          key={idx}
-                          className="flex min-w-0 items-start gap-2"
-                        >
+                        <li key={idx} className="flex items-start gap-2">
                           <ChevronRight className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                          <p className="min-w-0 flex-1 break-words">{item}</p>
-                        </div>
+                          {item}
+                        </li>
                       ))}
-                    </div>
-                  </Card>
-                )}
-
-                {/* Key Strengths */}
-                {keyStrengths.length > 0 && (
-                  <Card className="border-emerald-500/20 bg-emerald-500/5 p-4">
-                    <h3 className="mb-3 flex items-center gap-2 font-semibold text-emerald-600">
-                      <Activity className="h-4 w-4" />
-                      Key Strengths
-                    </h3>
-                    <div className="space-y-2 text-sm">
-                      {keyStrengths.map((item, idx) => (
-                        <div
-                          key={idx}
-                          className="flex min-w-0 items-start gap-2"
-                        >
-                          <span className="shrink-0 text-emerald-600">•</span>
-                          <p className="min-w-0 flex-1 break-words">{item}</p>
-                        </div>
-                      ))}
-                    </div>
+                    </ul>
                   </Card>
                 )}
 
@@ -426,22 +268,25 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
                         <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
                           Injuries
                         </span>
-                        <div className="mt-2 max-h-[200px] space-y-2 overflow-y-auto">
-                          {homeInjuries.length > 0 ? (
-                            homeInjuries.map((injury, idx) => (
-                              <div
-                                key={idx}
-                                className="break-words text-sm leading-relaxed"
-                              >
-                                {injury}
-                              </div>
-                            ))
-                          ) : (
-                            <p className="text-sm text-muted-foreground">
-                              No injuries reported
-                            </p>
-                          )}
-                        </div>
+                        <p className="mt-1 text-sm">
+                          {homeInjuries || 'No injuries reported'}
+                        </p>
+                      </div>
+                      <div>
+                        <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                          Key Strengths
+                        </span>
+                        <ul className="mt-1 space-y-1">
+                          {homeKeyStrengths.map((s, idx) => (
+                            <li
+                              key={idx}
+                              className="flex items-start gap-2 text-sm"
+                            >
+                              <span className="text-primary">•</span>
+                              {s}
+                            </li>
+                          ))}
+                        </ul>
                       </div>
                     </div>
                   </Card>
@@ -456,22 +301,27 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
                         <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
                           Injuries
                         </span>
-                        <div className="mt-2 max-h-[200px] space-y-2 overflow-y-auto">
-                          {awayInjuries.length > 0 ? (
-                            awayInjuries.map((injury, idx) => (
-                              <div
-                                key={idx}
-                                className="break-words text-sm leading-relaxed"
-                              >
-                                {injury}
-                              </div>
-                            ))
-                          ) : (
-                            <p className="text-sm text-muted-foreground">
-                              No injuries reported
-                            </p>
-                          )}
-                        </div>
+                        <p className="mt-1 text-sm">
+                          {awayInjuries || 'No injuries reported'}
+                        </p>
+                      </div>
+                      <div>
+                        <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                          Key Strengths
+                        </span>
+                        <ul className="mt-1 space-y-1">
+                          {awayKeyStrengths.map((s, idx) => (
+                            <li
+                              key={idx}
+                              className="flex items-start gap-2 text-sm"
+                            >
+                              <span className="text-secondary-foreground">
+                                •
+                              </span>
+                              {s}
+                            </li>
+                          ))}
+                        </ul>
                       </div>
                     </div>
                   </Card>
@@ -484,29 +334,29 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
                       <AlertTriangle className="h-4 w-4" />
                       Risk Factors
                     </h3>
-                    <div className="space-y-2">
+                    <ul className="space-y-2">
                       {riskFactors.map((risk, idx) => (
-                        <div
+                        <li
                           key={idx}
-                          className="flex min-w-0 items-start gap-2 text-sm"
+                          className="flex items-start gap-2 text-sm"
                         >
                           <span className="shrink-0 text-destructive">⚠</span>
-                          <p className="min-w-0 flex-1 break-words">{risk}</p>
-                        </div>
+                          {risk}
+                        </li>
                       ))}
-                    </div>
+                    </ul>
                   </Card>
                 )}
               </TabsContent>
 
               {/* Betting Picks Tab */}
               <TabsContent value="bets" className="mt-4 space-y-4">
-                <div className="grid gap-4 md:gap-6 lg:grid-cols-2">
+                <div className="grid gap-6 md:grid-cols-2">
                   {/* Value Bets */}
                   <div>
                     <h3 className="mb-4 flex items-center gap-2 text-lg font-semibold">
                       <div className="h-2 w-2 rounded-full bg-emerald-500" />
-                      Value Bets
+                      Top 3 Value Bets
                     </h3>
                     <div className="space-y-3">
                       {game.prediction?.value_bets &&
@@ -514,33 +364,14 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
                         game?.prediction?.value_bets
                           .slice(0, 3)
                           .map((bet, idx) => {
-                            // Extract bet type from square brackets [type]
-                            const betTypeMatch = bet.match(/^\[([^\]]+)\]/);
-                            const betType = betTypeMatch
-                              ? betTypeMatch[1]
-                                  .replace(/_/g, ' ')
-                                  .replace(/\b\w/g, (l) => l.toUpperCase())
-                              : `Value Bet ${idx + 1}`;
-                            // Remove [type] from bet text
-                            let betText = bet.replace(/^\[[^\]]+\]\s*/, '');
-                            // Remove team name after punctuation at the end (period, semicolon, colon)
-                            betText = betText.replace(
-                              /[.;:]\s*[A-Za-z0-9\s]+$/,
-                              '',
-                            );
-
-                            // Split into title and description by colon or semicolon
-                            const parts = betText.split(/:\s*/);
-                            const betTitle = parts[0]?.trim() || betText;
-                            const betDescription = parts
-                              .slice(1)
-                              .join(': ')
-                              .trim();
+                            const betType = bet.market_type
+                              .replace(/_/g, ' ')
+                              .replace(/\b\w/g, (l) => l.toUpperCase());
 
                             return (
                               <Card
                                 key={idx}
-                                className="min-w-0 cursor-pointer border-emerald-500/30 bg-emerald-500/10 p-4 transition-colors hover:border-emerald-500/50"
+                                className="cursor-pointer border-emerald-500/30 bg-emerald-500/10 p-4 transition-colors hover:border-emerald-500/50"
                               >
                                 <div className="mb-2 flex items-center justify-between">
                                   <Badge
@@ -549,15 +380,17 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
                                   >
                                     {betType}
                                   </Badge>
+                                  <span className="font-mono font-bold text-emerald-400">
+                                    {bet.bet_coefficient > 0 ? '+' : ''}
+                                    {bet.bet_coefficient}
+                                  </span>
                                 </div>
-                                <p className="mb-2 min-w-0 break-words font-semibold">
-                                  {betTitle}
+                                <p className="mb-2 font-semibold">
+                                  {bet.bet_name}
                                 </p>
-                                {betDescription && (
-                                  <p className="min-w-0 break-words text-sm text-muted-foreground">
-                                    {betDescription}
-                                  </p>
-                                )}
+                                <p className="text-sm text-muted-foreground">
+                                  {bet.bet_description}
+                                </p>
                               </Card>
                             );
                           })
@@ -573,7 +406,7 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
                   <div>
                     <h3 className="mb-4 flex items-center gap-2 text-lg font-semibold">
                       <div className="h-2 w-2 rounded-full bg-amber-500" />
-                      Conservative Bets
+                      Top 3 Conservative Bets
                     </h3>
                     <div className="space-y-3">
                       {game.prediction?.conservative_bets &&
@@ -581,33 +414,14 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
                         game?.prediction?.conservative_bets
                           .slice(0, 3)
                           .map((bet, idx) => {
-                            // Extract bet type from square brackets [type]
-                            const betTypeMatch = bet.match(/^\[([^\]]+)\]/);
-                            const betType = betTypeMatch
-                              ? betTypeMatch[1]
-                                  .replace(/_/g, ' ')
-                                  .replace(/\b\w/g, (l) => l.toUpperCase())
-                              : `Conservative Bet ${idx + 1}`;
-                            // Remove [type] from bet text
-                            let betText = bet.replace(/^\[[^\]]+\]\s*/, '');
-                            // Remove team name after punctuation at the end (period, semicolon, colon)
-                            betText = betText.replace(
-                              /[.;:]\s*[A-Za-z0-9\s]+$/,
-                              '',
-                            );
-
-                            // Split into title and description by colon or semicolon
-                            const parts = betText.split(/:\s*/);
-                            const betTitle = parts[0]?.trim() || betText;
-                            const betDescription = parts
-                              .slice(1)
-                              .join(': ')
-                              .trim();
+                            const betType = bet.market_type
+                              .replace(/_/g, ' ')
+                              .replace(/\b\w/g, (l) => l.toUpperCase());
 
                             return (
                               <Card
                                 key={idx}
-                                className="min-w-0 cursor-pointer border-amber-500/30 bg-amber-500/10 p-4 transition-colors hover:border-amber-500/50"
+                                className="cursor-pointer border-amber-500/30 bg-amber-500/10 p-4 transition-colors hover:border-amber-500/50"
                               >
                                 <div className="mb-2 flex items-center justify-between">
                                   <Badge
@@ -616,15 +430,17 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
                                   >
                                     {betType}
                                   </Badge>
+                                  <span className="font-mono font-bold text-amber-400">
+                                    {bet.bet_coefficient > 0 ? '+' : ''}
+                                    {bet.bet_coefficient}
+                                  </span>
                                 </div>
-                                <p className="mb-2 min-w-0 break-words font-semibold">
-                                  {betTitle}
+                                <p className="mb-2 font-semibold">
+                                  {bet.bet_name}
                                 </p>
-                                {betDescription && (
-                                  <p className="min-w-0 break-words text-sm text-muted-foreground">
-                                    {betDescription}
-                                  </p>
-                                )}
+                                <p className="text-sm text-muted-foreground">
+                                  {bet.bet_description}
+                                </p>
                               </Card>
                             );
                           })

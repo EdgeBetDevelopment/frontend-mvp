@@ -10,7 +10,7 @@ import { useIsMobile } from '@/hooks/useIsMobile';
 import useModalManager from '@/hooks/useModalManager';
 import { ROUTES } from '@/routes';
 import { useStore } from '@/store';
-import { IGameWithAI } from '@/types/game';
+import { IGameWithAI, IBet } from '@/types/game';
 import { Badge } from '@/ui/badge';
 import { Card } from '@/ui/card';
 import { convertAmericanToDecimal } from '@/utils/convertAmericanToDecimal';
@@ -114,7 +114,7 @@ const GameBets = ({ game }: { game: IGameWithAI }) => {
                 game={game}
                 isAmerican={isAmerican}
                 key={index}
-                text={bet}
+                bet={bet}
               />
             ))}
         </div>
@@ -133,7 +133,7 @@ const GameBets = ({ game }: { game: IGameWithAI }) => {
                 game={game}
                 isAmerican={isAmerican}
                 key={index}
-                text={bet}
+                bet={bet}
               />
             ))}
         </div>
@@ -143,73 +143,43 @@ const GameBets = ({ game }: { game: IGameWithAI }) => {
 };
 
 const GameBetsItem = ({
-  text,
+  bet,
   isAmerican,
   game,
 }: {
-  text: string;
+  bet: IBet;
   isAmerican: boolean;
   game: IGameWithAI;
 }) => {
   const { setTrackedGame, upsertSingle, upsertParlayPick } = useStore();
   const { openModal } = useModalManager();
-
-  const oddsMatch = text.match(/\(([-+]?\d+)\)/);
-  const odds = oddsMatch ? parseInt(oddsMatch[1], 10) : null;
   const isMobile = useIsMobile();
 
-  const teamMatch = text.match(/; ([^.;\n]+)/);
-  const team = teamMatch ? teamMatch[1].trim() : '';
-  const decimalOdds =
-    odds !== null ? convertAmericanToDecimal(odds).toFixed(2) : '';
+  const decimalOdds = convertAmericanToDecimal(bet.bet_coefficient).toFixed(2);
 
-  const resolveTeam = (team: string) => {
-    if (team === game?.game?.home_team) {
-      return {
-        id: String(game?.game?.home_team_id),
-        name: game?.game?.home_team,
-      };
+  const displayedText = isAmerican
+    ? `${bet.bet_name} (${formatOddsWithSign(bet.bet_coefficient, true)})`
+    : `${bet.bet_name} (${decimalOdds})`;
+
+  const resolveTeamId = (teamName: string) => {
+    if (teamName === game?.game?.home_team) {
+      return String(game?.game?.home_team_id);
     }
-
-    if (team === game?.game?.away_team) {
-      return {
-        id: String(game?.game?.away_team_id),
-        name: game?.game?.away_team,
-      };
+    if (teamName === game?.game?.away_team) {
+      return String(game?.game?.away_team_id);
     }
-
-    return { id: '', name: team };
+    return '';
   };
 
-  const { id: selected_team_id, name: selected_team_name } = resolveTeam(team);
-
-  const displayedText =
-    odds !== null && !isAmerican
-      ? text
-          .split(':')[0]
-          .replace(/\(([-+]?\d+)\)/, `(${decimalOdds})`)
-          .replace(/\[.*?\]/g, '')
-          .trim()
-      : text
-          .split(':')[0]
-          .replace(/\(([-+]?\d+)\)/, (match, oddsValue) => {
-            const formatted = formatOddsWithSign(parseInt(oddsValue, 10), true);
-            return `(${formatted})`;
-          })
-          .replace(/\[.*?\]/g, '')
-          .trim();
-
   const handleClick = () => {
-    if (odds == null) return;
-
     setTrackedGame(game);
 
     const pick = {
       game_id: game?.game?.id,
-      odds,
-      selected_team_id,
-      selected_team_name,
-      description: text,
+      odds: bet.bet_coefficient,
+      selected_team_id: resolveTeamId(bet.bet_team),
+      selected_team_name: bet.bet_team,
+      description: bet.bet_name,
       sport: 'nba' as const,
     };
 

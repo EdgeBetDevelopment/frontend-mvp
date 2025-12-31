@@ -44,6 +44,28 @@ interface IPOdds {
   suspended: number;
 }
 
+export interface IBet {
+  market_type: string;
+  bet_name: string;
+  bet_team: string;
+  bet_value: number | null;
+  bet_over_under: string | null;
+  bet_coefficient: number;
+  bet_description: string;
+}
+
+export interface ITeamAnalysis {
+  injuries: string;
+  key_strengths: string[];
+}
+
+export interface IAnalysis {
+  overview: string[];
+  home_team_analysis: ITeamAnalysis;
+  away_team_analysis: ITeamAnalysis;
+  risk_factors: string[];
+}
+
 export interface IPrediction {
   win_probability_home: number;
   win_probability_away: number;
@@ -51,9 +73,9 @@ export interface IPrediction {
   odds_away: number;
   predicted_winner: string;
   favorite_team: string;
-  analysis: string;
-  value_bets: string[];
-  conservative_bets: string[];
+  analysis: IAnalysis;
+  value_bets: IBet[];
+  conservative_bets: IBet[];
   spread_home: string;
   spread_away: string;
   over_home: string;
