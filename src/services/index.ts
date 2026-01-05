@@ -90,6 +90,26 @@ const apiService = {
       full_name: player.full_name,
     }));
 
+    if (normalizedPlayers.length === 0 && normalizedTeams.length > 0) {
+      const teamPlayers: any[] = [];
+      normalizedTeams.forEach((team: any) => {
+        if (team.players && Array.isArray(team.players)) {
+          team.players.forEach((player: any) => {
+            teamPlayers.push({
+              ...player,
+              type: 'player',
+              full_name: player.full_name,
+              team_id: team.id,
+              team_name: team.full_name,
+              sport: team.sport,
+              team_abbreviation: team.abbreviation,
+            });
+          });
+        }
+      });
+      return [...normalizedTeams, ...teamPlayers];
+    }
+
     return [...normalizedTeams, ...normalizedPlayers];
   },
   async createBet(data: any): Promise<string> {
