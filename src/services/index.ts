@@ -90,9 +90,7 @@ const apiService = {
       full_name: player.full_name,
     }));
 
-    const mixed = [...normalizedTeams, ...normalizedPlayers];
-
-    return mixed.sort(() => Math.random() - 0.5);
+    return [...normalizedTeams, ...normalizedPlayers];
   },
   async createBet(data: any): Promise<string> {
     const response = await axiosInstance.post(

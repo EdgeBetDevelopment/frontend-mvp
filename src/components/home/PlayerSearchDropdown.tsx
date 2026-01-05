@@ -122,12 +122,17 @@ const PlayerSearchDropdown = ({
                   <span className="truncate font-semibold text-foreground">
                     {player.full_name || player.name}
                   </span>
-                  <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
+                  {player.team_abbreviation && (
+                    <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
+                      {player.team_abbreviation}
+                    </span>
+                  )}
+                  <span className="rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground">
                     {player.sport}
                   </span>
                 </div>
                 <div className="text-sm text-muted-foreground">
-                  {player.team} • {player.position}
+                  {player.position}
                 </div>
               </div>
             </div>
