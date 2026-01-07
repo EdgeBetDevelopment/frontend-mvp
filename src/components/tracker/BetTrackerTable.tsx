@@ -22,7 +22,10 @@ import apiService from '@/services';
 import { Badge } from '@/ui/badge';
 import { Card } from '@/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/ui/tabs';
-import { formatUtcToLocalDate } from '@/utils/time';
+import {
+  formatDateWithoutConversion,
+  formatTimeAmPmWithoutConversion,
+} from '@/utils/time';
 import { formUrlQuery } from '@/utils/url';
 import Footer from '../Footer';
 import Navigation from '../Navigation';
@@ -194,19 +197,47 @@ const BetTrackerTable = () => {
         const game = selection?.game || {};
         const payload = selection?.payload || {};
 
+        let formattedDescription = payload.description || '';
+        const selectedTeamName = payload.selected_team_name || '';
+        const odds = payload.odds_at_bet_time || '';
+
+        if (formattedDescription && selectedTeamName) {
+          const mainBetInfo = formattedDescription.split(':')[0];
+
+          if (
+            mainBetInfo.includes('Spread') ||
+            mainBetInfo.includes('Point Spread')
+          ) {
+            const spreadMatch = mainBetInfo.match(/([+-]?\d+\.?\d*)/);
+            if (spreadMatch) {
+              formattedDescription = `${selectedTeamName} ${spreadMatch[0]}`;
+            }
+          } else if (
+            mainBetInfo.includes('Moneyline') ||
+            mainBetInfo.includes('ML')
+          ) {
+            formattedDescription = `${selectedTeamName} ML`;
+          } else {
+            formattedDescription =
+              `${selectedTeamName} ${mainBetInfo.replace(selectedTeamName, '').trim()}`.replace(
+                /\s+/g,
+                ' ',
+              );
+          }
+        }
+
         return {
           id: selection.id || idx,
-          sport: game.sport || 'nba',
+          sport: (game.sport || 'nba').toUpperCase(),
           homeTeam: game.home_team || '',
           awayTeam: game.away_team || '',
-          description: payload.description || '',
+          description: formattedDescription,
           odds: payload.odds_at_bet_time || '-',
-          date: game.start_time ? formatUtcToLocalDate(game.start_time) : '-',
+          date: game.start_time
+            ? formatDateWithoutConversion(game.start_time)
+            : '-',
           time: game.start_time
-            ? new Date(game.start_time).toLocaleTimeString('en-US', {
-                hour: 'numeric',
-                minute: '2-digit',
-              })
+            ? formatTimeAmPmWithoutConversion(game.start_time)
             : '-',
           status: mapBetStatus(selection.status || bet.status),
           amount: Number(selection.amount || 0),
@@ -391,11 +422,12 @@ const BetSlip = ({ bet }: { bet: TrackedBet }) => {
               </Badge>
             </div>
             <p className="mt-1 text-xs text-muted-foreground">
-              {new Date(bet.createdAt).toLocaleDateString('en-US', {
+              {new Date(bet.createdAt).toLocaleString('en-US', {
                 month: 'short',
                 day: 'numeric',
                 hour: 'numeric',
                 minute: '2-digit',
+                hour12: true,
               })}
             </p>
           </div>

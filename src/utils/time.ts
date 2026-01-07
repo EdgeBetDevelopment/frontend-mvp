@@ -32,3 +32,13 @@ export const convertUTCToLocalWithAmPm = (utcTime?: string) => {
   if (!utcTime) return dayjs().format('MM/DD/YYYY hh:mm A');
   return dayjs.utc(utcTime).local().format('MM/DD/YYYY hh:mm A');
 };
+
+export const formatDateWithoutConversion = (dateTime?: string) => {
+  if (!dateTime) return dayjs().format('MM/DD/YYYY');
+  return dayjs(dateTime).format('MM/DD/YYYY');
+};
+
+export const formatTimeAmPmWithoutConversion = (dateTime?: string) => {
+  if (!dateTime) return dayjs().format('hh:mm A');
+  return dayjs(dateTime).format('hh:mm A');
+};
