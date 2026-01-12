@@ -24,6 +24,9 @@ const SecuritySettings: React.FC<SecuritySettingsProps> = ({ user }) => {
   const [disableCode, setDisableCode] = useState('');
   const [recoveryCode, setRecoveryCode] = useState('');
 
+  // Support both old and new 2FA response format
+  const is2FAEnabled = user.two_fa?.is_enabled ?? user.is_2fa_enabled ?? false;
+
   const {
     enable2FA,
     confirm2FA,
@@ -151,7 +154,7 @@ const SecuritySettings: React.FC<SecuritySettingsProps> = ({ user }) => {
               </div>
             </div>
             <div className="flex items-center gap-3">
-              {user.is_2fa_enabled && (
+              {is2FAEnabled && (
                 <span className="flex items-center gap-1 rounded-full border border-primary bg-transparent px-3 py-1 text-sm font-medium text-primary">
                   <svg
                     className="h-3 w-3"
@@ -170,9 +173,9 @@ const SecuritySettings: React.FC<SecuritySettingsProps> = ({ user }) => {
               <label className="relative inline-flex cursor-pointer items-center">
                 <input
                   type="checkbox"
-                  checked={user.is_2fa_enabled}
+                  checked={is2FAEnabled}
                   onChange={() => {
-                    if (user.is_2fa_enabled) {
+                    if (is2FAEnabled) {
                       setStep('disable');
                     } else {
                       handleEnableClick();
@@ -187,7 +190,7 @@ const SecuritySettings: React.FC<SecuritySettingsProps> = ({ user }) => {
           </div>
         </div>
 
-        {user.is_2fa_enabled && step === 'disable' && (
+        {is2FAEnabled && step === 'disable' && (
           <form
             onSubmit={handleDisableSubmit}
             className="space-y-3 rounded-lg border border-border bg-muted/50 p-4"
@@ -205,7 +208,7 @@ const SecuritySettings: React.FC<SecuritySettingsProps> = ({ user }) => {
                   setDisableCode(e.target.value.replace(/\D/g, '').slice(0, 6))
                 }
                 maxLength={6}
-                className="text-center text-xl tracking-widest text-foreground"
+                className="text-center text-xl tracking-widest text-black"
                 disabled={isDisabling}
               />
             </div>
@@ -234,7 +237,7 @@ const SecuritySettings: React.FC<SecuritySettingsProps> = ({ user }) => {
           </form>
         )}
 
-        {user.is_2fa_enabled && (
+        {is2FAEnabled && (
           <div className="space-y-3 rounded-lg border border-border bg-muted/50 p-4">
             <div>
               <p className="font-medium">Lost your device?</p>
@@ -260,7 +263,7 @@ const SecuritySettings: React.FC<SecuritySettingsProps> = ({ user }) => {
                     placeholder="Enter backup code"
                     value={recoveryCode}
                     onChange={(e) => setRecoveryCode(e.target.value)}
-                    className="font-mono"
+                    className="font-mono text-black"
                     disabled={isRecovering}
                   />
                 </div>

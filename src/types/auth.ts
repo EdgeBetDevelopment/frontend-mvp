@@ -15,7 +15,11 @@ export interface IUser {
   is_active: boolean;
   phone_number: string;
   id: number;
-  is_2fa_enabled?: boolean;
+  is_2fa_enabled?: boolean; // deprecated
+  two_fa?: {
+    id: number;
+    is_enabled: boolean;
+  };
 }
 
 export interface IAuthRepsonse {

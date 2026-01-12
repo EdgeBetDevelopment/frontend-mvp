@@ -46,7 +46,7 @@ const TwoFactorBackupLogin: React.FC<TwoFactorBackupLoginProps> = ({
             placeholder="Enter backup code"
             value={backupCode}
             onChange={(e) => setBackupCode(e.target.value)}
-            className="font-mono"
+            className="font-mono text-black"
             disabled={isLoading}
           />
         </div>
