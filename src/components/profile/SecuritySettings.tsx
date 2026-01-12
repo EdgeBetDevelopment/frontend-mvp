@@ -140,101 +140,99 @@ const SecuritySettings: React.FC<SecuritySettingsProps> = ({ user }) => {
           </div>
         </div>
 
-        <div className="space-y-4 rounded-lg border border-border p-4">
+        <div className="rounded-lg bg-secondary/50 p-4">
           <div className="flex items-center justify-between">
-            <div className="space-y-1">
-              <p className="font-medium">Two-Factor Authentication</p>
-              <p className="text-sm text-muted-foreground">
-                Add an extra layer of security to your account
-              </p>
+            <div className="flex items-center gap-4">
+              <div>
+                <p className="font-semibold">Two-Factor Authentication</p>
+                <p className="text-sm text-muted-foreground">
+                  Add an extra layer of security to your account
+                </p>
+              </div>
             </div>
             <div className="flex items-center gap-3">
-              {user.is_2fa_enabled ? (
-                <>
-                  <span className="flex items-center gap-2 rounded-full border border-primary bg-primary/10 px-3 py-1 text-sm font-medium text-primary">
-                    <svg
-                      className="h-4 w-4"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                    Enabled
-                  </span>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setStep('disable')}
-                    disabled={step === 'disable'}
+              {user.is_2fa_enabled && (
+                <span className="flex items-center gap-1 rounded-full border border-primary bg-transparent px-3 py-1 text-sm font-medium text-primary">
+                  <svg
+                    className="h-3 w-3"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
                   >
-                    Disable
-                  </Button>
-                </>
-              ) : (
-                <Button
-                  size="sm"
-                  onClick={handleEnableClick}
-                  disabled={isEnabling}
-                >
-                  {isEnabling ? <Loader /> : 'Enable'}
-                </Button>
+                    <path
+                      fillRule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                  Enabled
+                </span>
               )}
+              <label className="relative inline-flex cursor-pointer items-center">
+                <input
+                  type="checkbox"
+                  checked={user.is_2fa_enabled}
+                  onChange={() => {
+                    if (user.is_2fa_enabled) {
+                      setStep('disable');
+                    } else {
+                      handleEnableClick();
+                    }
+                  }}
+                  className="peer sr-only"
+                  disabled={isEnabling}
+                />
+                <div className="peer h-6 w-11 rounded-full bg-muted after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-border after:bg-background after:transition-all after:content-[''] peer-checked:bg-primary peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary peer-focus:ring-offset-2"></div>
+              </label>
             </div>
           </div>
-
-          {user.is_2fa_enabled && step === 'disable' && (
-            <form
-              onSubmit={handleDisableSubmit}
-              className="space-y-3 border-t border-border pt-4"
-            >
-              <div className="space-y-2">
-                <Label htmlFor="disable-code">
-                  Enter verification code to disable 2FA
-                </Label>
-                <Input
-                  id="disable-code"
-                  type="text"
-                  placeholder="000000"
-                  value={disableCode}
-                  onChange={(e) =>
-                    setDisableCode(
-                      e.target.value.replace(/\D/g, '').slice(0, 6),
-                    )
-                  }
-                  maxLength={6}
-                  className="text-center text-xl tracking-widest"
-                  disabled={isDisabling}
-                />
-              </div>
-              <div className="flex gap-2">
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    setStep('idle');
-                    setDisableCode('');
-                  }}
-                  disabled={isDisabling}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  type="submit"
-                  variant="destructive"
-                  size="sm"
-                  disabled={disableCode.length !== 6 || isDisabling}
-                >
-                  {isDisabling ? <Loader /> : 'Disable 2FA'}
-                </Button>
-              </div>
-            </form>
-          )}
         </div>
+
+        {user.is_2fa_enabled && step === 'disable' && (
+          <form
+            onSubmit={handleDisableSubmit}
+            className="space-y-3 rounded-lg border border-border bg-muted/50 p-4"
+          >
+            <div className="space-y-2">
+              <Label htmlFor="disable-code">
+                Enter verification code to disable 2FA
+              </Label>
+              <Input
+                id="disable-code"
+                type="text"
+                placeholder="000000"
+                value={disableCode}
+                onChange={(e) =>
+                  setDisableCode(e.target.value.replace(/\D/g, '').slice(0, 6))
+                }
+                maxLength={6}
+                className="text-center text-xl tracking-widest text-foreground"
+                disabled={isDisabling}
+              />
+            </div>
+            <div className="flex gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setStep('idle');
+                  setDisableCode('');
+                }}
+                disabled={isDisabling}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                variant="destructive"
+                size="sm"
+                disabled={disableCode.length !== 6 || isDisabling}
+              >
+                {isDisabling ? <Loader /> : 'Disable 2FA'}
+              </Button>
+            </div>
+          </form>
+        )}
 
         {user.is_2fa_enabled && (
           <div className="space-y-3 rounded-lg border border-border bg-muted/50 p-4">

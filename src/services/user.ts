@@ -28,6 +28,18 @@ export const userService = {
     return res.data;
   },
 
+  async changePassword(data: {
+    current_password: string;
+    new_password: string;
+    new_password_confirm: string;
+  }): Promise<string> {
+    const res = await axiosInstance.post(
+      `/user/api/v1/user/me/change_password`,
+      data,
+    );
+    return res.data;
+  },
+
   // 2FA Management
   async enable2FA(): Promise<I2FAEnableResponse> {
     const res = await axiosInstance.post(`/user/api/v1/user/2fa/enable`);
