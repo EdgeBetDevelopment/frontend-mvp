@@ -15,10 +15,31 @@ export interface IUser {
   is_active: boolean;
   phone_number: string;
   id: number;
+  is_2fa_enabled?: boolean;
 }
 
 export interface IAuthRepsonse {
   user: IUser;
   access_token: string;
   refresh_token: string;
+  requires_2fa?: boolean;
+  temp_token?: string;
+}
+
+// 2FA Types
+export interface I2FAEnableResponse {
+  qr_uri: string;
+}
+
+export interface I2FAConfirmResponse {
+  backup_codes: string[];
+}
+
+export interface I2FARecoveryResponse {
+  qr_uri: string;
+}
+
+export interface I2FALoginRequest {
+  code: string;
+  temp_token: string;
 }

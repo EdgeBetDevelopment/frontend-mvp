@@ -55,6 +55,29 @@ const authService = {
 
     return response.data;
   },
+
+  // 2FA Login methods
+  async login2FA(data: {
+    code: string;
+    temp_token: string;
+  }): Promise<IAuthRepsonse> {
+    const response = await axiosInstance.post(
+      `/auth/api/v1/auth/login/2fa`,
+      data,
+    );
+    return response.data;
+  },
+
+  async login2FABackup(data: {
+    code: string;
+    temp_token: string;
+  }): Promise<IAuthRepsonse> {
+    const response = await axiosInstance.post(
+      `/auth/api/v1/auth/login/2fa/backup`,
+      data,
+    );
+    return response.data;
+  },
 };
 
 export default authService;

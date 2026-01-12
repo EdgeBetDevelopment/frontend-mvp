@@ -14,6 +14,7 @@ interface ILoginForm {
   title?: string;
   onSuccessLogin?: () => void;
   onGoogleLoginSuccess?: () => void;
+  on2FARequired?: (tempToken: string) => void;
 }
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL!;
@@ -22,6 +23,7 @@ const LoginForm = ({
   title = 'Welcome!',
   onSuccessLogin,
   onGoogleLoginSuccess,
+  on2FARequired,
 }: ILoginForm) => {
   const router = useRouter();
 
@@ -56,7 +58,10 @@ const LoginForm = ({
         Or, Sign in with email
       </p>
 
-      <BaseLoginForm onSuccessLogin={onSuccessLogin} />
+      <BaseLoginForm
+        onSuccessLogin={onSuccessLogin}
+        on2FARequired={on2FARequired}
+      />
     </div>
   );
 };

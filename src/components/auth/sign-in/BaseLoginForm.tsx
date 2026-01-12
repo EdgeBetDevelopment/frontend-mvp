@@ -11,11 +11,13 @@ import ArrowRight from '@/assets/icons/arrow-right.svg';
 
 interface IBaseLoginForm {
   onSuccessLogin?: () => void;
+  on2FARequired?: (tempToken: string) => void;
 }
 
-const BaseLoginForm = ({ onSuccessLogin }: IBaseLoginForm) => {
+const BaseLoginForm = ({ onSuccessLogin, on2FARequired }: IBaseLoginForm) => {
   const { form, error, loginIsLoading, onSubmit } = useLoginForm({
     onSuccessLogin,
+    on2FARequired,
   });
 
   const {

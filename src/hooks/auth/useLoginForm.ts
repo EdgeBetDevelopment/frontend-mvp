@@ -17,9 +17,13 @@ export type LoginFormValues = z.infer<typeof loginSchema>;
 
 interface UseLoginFormProps {
   onSuccessLogin?: () => void;
+  on2FARequired?: (tempToken: string) => void;
 }
 
-export const useLoginForm = ({ onSuccessLogin }: UseLoginFormProps = {}) => {
+export const useLoginForm = ({
+  onSuccessLogin,
+  on2FARequired,
+}: UseLoginFormProps = {}) => {
   const { setTokens } = useAuth();
 
   const {
@@ -29,6 +33,15 @@ export const useLoginForm = ({ onSuccessLogin }: UseLoginFormProps = {}) => {
   } = useMutation({
     mutationFn: authService.login,
     onSuccess: (data) => {
+      // Check if 2FA is required
+      if (data.requires_2fa && data.temp_token) {
+        if (on2FARequired) {
+          on2FARequired(data.temp_token);
+        }
+        return;
+      }
+
+      // Regular login without 2FA
       setTokens({
         accessToken: data.access_token,
         refreshToken: data.refresh_token,

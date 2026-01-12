@@ -22,5 +22,6 @@ export const ROUTES = {
     VERIFY_CODE: '/verification-code',
     RESET_PASS: '/reset-password',
     RESET_PASS_SUCCESS: '/reset-password/successfully',
+    TWO_FACTOR: '/two-factor',
   },
 };
