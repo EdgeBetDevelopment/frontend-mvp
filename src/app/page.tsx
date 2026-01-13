@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useQuery } from '@tanstack/react-query';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import SportCardRedesigned from '@/components/home/SportCardRedesigned';
@@ -9,66 +10,70 @@ import { Reviews } from '@/components/home/Reviews';
 import { CTA } from '@/components/home/CTA';
 import { SearchSection } from '@/components/home/SearchSection';
 import WhopAuthHandler from '@/components/home/WhopAuthHandler';
-
-const sports = [
-  {
-    id: 'nba',
-    name: 'NBA',
-    icon: '🏀',
-    color: 'nba',
-    matches: 3,
-    description: 'US Basketball',
-  },
-  {
-    id: 'nfl',
-    name: 'NFL',
-    icon: '🏈',
-    color: 'nfl',
-    matches: 1,
-    description: 'US Football',
-    comingSoon: true,
-  },
-  {
-    id: 'ncaaf',
-    name: 'NCAAF',
-    icon: '🏈',
-    color: 'ncaaf',
-    matches: 1,
-    description: 'US College Football',
-    comingSoon: true,
-  },
-  {
-    id: 'ncaab',
-    name: 'NCAAB',
-    icon: '🏀',
-    color: 'ncaab',
-    matches: 1,
-    description: 'US College Basketball',
-    comingSoon: true,
-  },
-  {
-    id: 'mlb',
-    name: 'MLB',
-    icon: '⚾',
-    color: 'mlb',
-    matches: 0,
-    description: 'US Baseball',
-    comingSoon: true,
-  },
-  {
-    id: 'tennis',
-    name: 'Tennis',
-    icon: '🎾',
-    color: 'tennis',
-    matches: 0,
-    description: 'WTA / ATP Events',
-    comingSoon: true,
-  },
-];
+import apiService from '@/services';
 
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState('');
   const router = useRouter();
+
+  const { data: nbaGames } = useQuery({
+    queryKey: ['nbaGamesCount'],
+    queryFn: () => apiService.getGames(),
+    staleTime: 1000 * 60 * 5, // 5 хвилин
+  });
+
+  const nbaGamesCount = nbaGames?.length || 0;
+
+  const sports = [
+    {
+      id: 'nba',
+      name: 'NBA',
+      icon: '🏀',
+      color: 'nba',
+      matches: nbaGamesCount,
+      description: 'US Basketball',
+    },
+    {
+      id: 'nfl',
+      name: 'NFL',
+      icon: '🏈',
+      color: 'nfl',
+      description: 'US Football',
+      comingSoon: true,
+    },
+    {
+      id: 'ncaaf',
+      name: 'NCAAF',
+      icon: '🏈',
+      color: 'ncaaf',
+      description: 'US College Football',
+      comingSoon: true,
+    },
+    {
+      id: 'ncaab',
+      name: 'NCAAB',
+      icon: '🏀',
+      color: 'ncaab',
+      description: 'US College Basketball',
+      comingSoon: true,
+    },
+    {
+      id: 'mlb',
+      name: 'MLB',
+      icon: '⚾',
+      color: 'mlb',
+      description: 'US Baseball',
+      comingSoon: true,
+    },
+    {
+      id: 'tennis',
+      name: 'Tennis',
+      icon: '🎾',
+      color: 'tennis',
+      description: 'WTA / ATP Events',
+      comingSoon: true,
+    },
+  ];
 
   const handleSportClick = (sportId: string) => {
     router.push(`/matchup?sport=${sportId}`);
