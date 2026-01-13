@@ -197,32 +197,58 @@ const BetTrackerTable = () => {
         const game = selection?.game || {};
         const payload = selection?.payload || {};
 
-        let formattedDescription = payload.description || '';
         const selectedTeamName = payload.selected_team_name || '';
         const odds = payload.odds_at_bet_time || '';
 
-        if (formattedDescription && selectedTeamName) {
-          const mainBetInfo = formattedDescription.split(':')[0];
+        const descriptionObj = payload.description || {};
+        let formattedDescription = '';
 
-          if (
-            mainBetInfo.includes('Spread') ||
-            mainBetInfo.includes('Point Spread')
-          ) {
-            const spreadMatch = mainBetInfo.match(/([+-]?\d+\.?\d*)/);
-            if (spreadMatch) {
-              formattedDescription = `${selectedTeamName} ${spreadMatch[0]}`;
-            }
-          } else if (
-            mainBetInfo.includes('Moneyline') ||
-            mainBetInfo.includes('ML')
-          ) {
+        if (typeof descriptionObj === 'object' && descriptionObj !== null) {
+          const marketType = descriptionObj.market_type || '';
+          const betName = descriptionObj.bet_name || '';
+          const betValue = descriptionObj.bet_value;
+          const betOverUnder = descriptionObj.bet_over_under;
+
+          if (marketType.toLowerCase().includes('spread')) {
+            formattedDescription =
+              betName ||
+              `${selectedTeamName} ${betValue > 0 ? '+' : ''}${betValue}`;
+          } else if (marketType.toLowerCase().includes('total')) {
+            formattedDescription = betName || `${betOverUnder} ${betValue}`;
+          } else if (marketType.toLowerCase().includes('moneyline')) {
             formattedDescription = `${selectedTeamName} ML`;
+          } else if (marketType.toLowerCase().includes('player_prop')) {
+            formattedDescription = betName;
           } else {
             formattedDescription =
-              `${selectedTeamName} ${mainBetInfo.replace(selectedTeamName, '').trim()}`.replace(
-                /\s+/g,
-                ' ',
-              );
+              betName || descriptionObj.bet_description || selectedTeamName;
+          }
+        } else if (typeof descriptionObj === 'string') {
+          formattedDescription = descriptionObj;
+
+          if (formattedDescription && selectedTeamName) {
+            const mainBetInfo = formattedDescription.split(':')[0];
+
+            if (
+              mainBetInfo.includes('Spread') ||
+              mainBetInfo.includes('Point Spread')
+            ) {
+              const spreadMatch = mainBetInfo.match(/([+-]?\d+\.?\d*)/);
+              if (spreadMatch) {
+                formattedDescription = `${selectedTeamName} ${spreadMatch[0]}`;
+              }
+            } else if (
+              mainBetInfo.includes('Moneyline') ||
+              mainBetInfo.includes('ML')
+            ) {
+              formattedDescription = `${selectedTeamName} ML`;
+            } else {
+              formattedDescription =
+                `${selectedTeamName} ${mainBetInfo.replace(selectedTeamName, '').trim()}`.replace(
+                  /\s+/g,
+                  ' ',
+                );
+            }
           }
         }
 
