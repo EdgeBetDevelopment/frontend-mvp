@@ -123,8 +123,7 @@ const apiService = {
 
   async createSingleBets(data: any): Promise<string> {
     const response = await axiosInstance.post(
-      `/bet/api/v1/bet/create_single_bets
-`,
+      `/bet/api/v1/bet/create_single_bets`,
       data,
     );
 

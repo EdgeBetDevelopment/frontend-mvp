@@ -52,6 +52,7 @@ export interface IBet {
   bet_over_under: string | null;
   bet_coefficient: number;
   bet_description: string;
+  bet_player?: string | null;
 }
 
 export interface ITeamAnalysis {

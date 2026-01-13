@@ -72,14 +72,53 @@ const TrackBetsModal = ({
     },
   });
 
-  const mapPick = (bet: BetPick) => ({
-    game_id: bet.game_id,
-    odds: bet.odds,
-    selected_team_id: bet.selected_team_id,
-    selected_team_name: bet.selected_team_name,
-    description: bet.description,
-    sport: bet.sport,
-  });
+  const mapPick = (bet: BetPick) => {
+    const description = bet.description || '';
+
+    let marketType = bet.market_type || '';
+    let betValue = bet.bet_value ?? 0;
+    let betOverUnder = bet.bet_over_under || '';
+    let betPlayer = bet.bet_player || '';
+
+    if (!marketType) {
+      const marketTypeMatch = description.match(/^(\w+)/);
+      marketType = marketTypeMatch ? marketTypeMatch[1] : '';
+    }
+
+    if (betValue === 0 || betValue === null) {
+      const valueMatch = description.match(/([+-]?\d+\.?\d*)/);
+      betValue = valueMatch ? parseFloat(valueMatch[1]) : 0;
+    }
+
+    if (!betOverUnder) {
+      const overUnderMatch = description
+        .toLowerCase()
+        .match(/\b(over|under)\b/);
+      betOverUnder = overUnderMatch ? overUnderMatch[1] : '';
+    }
+
+    const betName = description;
+
+    return {
+      game_id: bet.game_id,
+      odds: bet.odds,
+      selected_team_id: bet.selected_team_id || '',
+      selected_team_name: bet.selected_team_name,
+      description: {
+        market_type: marketType,
+        bet_name: betName,
+        bet_win_margin_min_value: 0,
+        bet_win_margin_max_value: 0,
+        bet_value: betValue,
+        bet_over_under: betOverUnder,
+        bet_team: bet.selected_team_name,
+        bet_player: betPlayer,
+        bet_coefficient: bet.odds,
+        bet_description: description,
+      },
+      sport: bet.sport,
+    };
+  };
 
   const onSubmit = async () => {
     if (isParlay) {

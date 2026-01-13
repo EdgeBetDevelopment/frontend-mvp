@@ -181,6 +181,10 @@ const GameBetsItem = ({
       selected_team_name: bet.bet_team,
       description: bet.bet_name,
       sport: 'nba' as const,
+      market_type: bet.market_type,
+      bet_value: bet.bet_value,
+      bet_over_under: bet.bet_over_under,
+      bet_player: bet.bet_player || null,
     };
 
     upsertParlayPick(pick);

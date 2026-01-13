@@ -16,6 +16,10 @@ export interface BetPick {
   description: string;
   sport: Sport;
   pid?: string;
+  market_type?: string;
+  bet_value?: number | null;
+  bet_over_under?: string | null;
+  bet_player?: string | null;
 }
 
 export interface Ticket {
