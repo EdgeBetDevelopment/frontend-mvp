@@ -13,6 +13,14 @@ const apiService = {
     return response.data;
   },
 
+  async getGameById(gameId: string): Promise<any> {
+    const response = await axiosInstance.get(
+      `/nba/api/v1/nba/game_details/${gameId}`,
+    );
+
+    return response.data;
+  },
+
   async getScoreboard(): Promise<any> {
     const response = await axiosInstance.get(`/nba/api/v1/nba/get_scoreboard`);
 

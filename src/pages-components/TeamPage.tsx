@@ -444,7 +444,7 @@ const TeamPage = () => {
                             >
                               {game?.result}
                             </div>
-                            <div>
+                            <div className="flex-1">
                               <div className="font-medium">
                                 {game?.home_team_id === team?.id ? 'vs' : '@'}{' '}
                                 {game?.opponent}
@@ -454,6 +454,15 @@ const TeamPage = () => {
                               </div>
                             </div>
                           </div>
+                          <button
+                            onClick={() =>
+                              router.push(ROUTES.GAME(game?.game_id))
+                            }
+                            className="mt-3 flex items-center gap-1 text-xs font-medium text-primary transition-colors hover:underline"
+                          >
+                            View Game Breakdown
+                            <ChevronRight className="h-3 w-3" />
+                          </button>
                         </div>
                       );
                     })}
@@ -587,7 +596,7 @@ const TeamPage = () => {
                                 : 'border-red-500/30 bg-red-500/10'
                             }`}
                           >
-                            <div>
+                            <div className="flex-1">
                               <div className="text-lg font-medium">
                                 {game?.home_team_id === team?.id ? 'vs' : '@'}{' '}
                                 {game?.opponent}
@@ -602,6 +611,15 @@ const TeamPage = () => {
                                   },
                                 )}
                               </div>
+                              <button
+                                onClick={() =>
+                                  router.push(ROUTES.GAME(game?.game_id))
+                                }
+                                className="mt-2 flex items-center gap-1 text-sm font-medium text-primary transition-colors hover:underline"
+                              >
+                                View Game Breakdown
+                                <ChevronRight className="h-4 w-4" />
+                              </button>
                             </div>
                             <div className="text-right">
                               <div

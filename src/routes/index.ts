@@ -8,6 +8,7 @@ export const ROUTES = {
   MATCHUP: '/matchup',
   PLAYER: (id: string) => `/player/${id}`,
   TEAM: (id: string | number) => `/team/${id}`,
+  GAME: (id: string | number) => `/game/${id}`,
 
   PROFILE: {
     PROFILE: '/profile',
