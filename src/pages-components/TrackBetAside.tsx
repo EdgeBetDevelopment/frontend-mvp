@@ -34,16 +34,20 @@ const TrackBetsAside = () => {
   const { mutate, isPending: isPendingCreateBet } = useMutation({
     mutationFn: async (body: any) => {
       console.log(body);
-      if (!isParlay) apiService.createSingleBets(body);
-      if (isParlay) apiService.createBet(body);
+      if (!isParlay) return apiService.createSingleBets(body);
+      if (isParlay) return apiService.createBet(body);
     },
     onSuccess: () => {
-      if (isParlay) clearParlay();
-      else clearSingle();
-      toast.success('Bet created successfully');
+      if (isParlay) {
+        clearParlay();
+        toast.success('Parlay bet created successfully');
+      } else {
+        clearSingle();
+        toast.success('Single bet created successfully');
+      }
     },
     onError: (error) => {
-      toast.error('Error creating bet');
+      toast.error('Failed to create bet');
       console.error('Error creating bet:', error);
     },
   });
