@@ -159,16 +159,6 @@ const PickCard = ({
             {analysis}
           </p>
         </div>
-
-        <div className="pt-2">
-          <Button
-            onClick={onClickFullAnalysis}
-            variant="outline"
-            className="w-full"
-          >
-            Full Analysis
-          </Button>
-        </div>
       </CardContent>
     </Card>
   );
@@ -321,11 +311,6 @@ const PickOfDayPage = () => {
 
         <Footer />
       </div>
-
-      <GameAnalysisModal
-        open={isModalOpen('gameAnalysis')}
-        onClose={onClickCloseModal}
-      />
 
       <TrackBetsModal
         isOpen={isModalOpen('track-bet')}
