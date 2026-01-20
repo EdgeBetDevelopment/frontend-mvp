@@ -14,11 +14,11 @@ export const DeleteGamePredictionButton = () => {
   const record = useRecordContext();
 
   const handleClick = () => {
-    if (!record?.game_prediction?.id) return;
+    if (!record?.id) return;
 
     deleteOne(
       'pick_of_the_day',
-      { id: record.game_prediction.id },
+      { id: record.id },
       {
         onSuccess: () => {
           notify('Game prediction deleted', { type: 'info' });

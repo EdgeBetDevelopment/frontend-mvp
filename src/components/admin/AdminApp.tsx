@@ -4,6 +4,7 @@ import { Admin, Resource } from 'react-admin';
 
 import customDataProvider from '@/services/admin';
 
+import { AdminLayout } from './AdminLayout';
 import { PickOfTheDayCreate } from './PickOfTheDayCreate';
 import { PickOfTheDayList } from './PickOfTheDayList';
 import { ReviewCreate } from './ReviewCreate';
@@ -30,7 +31,7 @@ const AdminApp = () => {
   }
 
   return (
-    <Admin dataProvider={customDataProvider}>
+    <Admin dataProvider={customDataProvider} layout={AdminLayout}>
       <Resource
         name="review"
         list={ReviewList}
