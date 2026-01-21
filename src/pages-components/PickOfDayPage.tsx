@@ -87,7 +87,7 @@ const PickCard = ({
     : `${awayTeam} +${Math.abs(odds)}`;
 
   const oddsFormatted = odds > 0 ? `+${odds}` : odds;
-  const analysis = pick?.game_prediction?.analysis?.overview?.[0] || '';
+  const analysis = pick?.game_prediction?.analysis?.overview || '';
 
   const formattedDate = formatUtcToLocalDate(
     pick?.game_prediction?.game?.start_time,
