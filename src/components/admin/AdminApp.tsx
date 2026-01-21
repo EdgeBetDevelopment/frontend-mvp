@@ -17,47 +17,60 @@ import { UserWithBetsList } from './UserWithBetsList';
 
 const AdminApp = () => {
   const accessToken = localStorage.getItem('accessToken');
+  const isAdmin = localStorage.getItem('isAdmin') === 'true';
+  const isSuperAdmin = localStorage.getItem('isSuperAdmin') === 'true';
   const router = useRouter();
-  console.log(accessToken);
 
   useEffect(() => {
     if (!accessToken) {
       router.replace('/login');
+      return;
     }
-  }, [accessToken, router]);
 
-  if (!accessToken) {
+    // Check if user has admin access
+    if (!isAdmin && !isSuperAdmin) {
+      router.replace('/');
+    }
+  }, [accessToken, isAdmin, isSuperAdmin, router]);
+
+  if (!accessToken || (!isAdmin && !isSuperAdmin)) {
     return null;
   }
 
   return (
     <Admin dataProvider={customDataProvider} layout={AdminLayout}>
-      <Resource
-        name="review"
-        list={ReviewList}
-        create={ReviewCreate}
-        edit={ReviewEdit}
-        options={{ label: 'Reviews' }}
-      />
-      <Resource
-        name="users"
-        list={UserList}
-        show={User}
-        options={{ label: 'Users' }}
-      />
-      <Resource
-        name="usersWithBets"
-        list={UserWithBetsList}
-        show={UserWithBets}
-        options={{ label: 'Users with Bets' }}
-      />
+      {/* Pick of the Day - доступно для всіх адмінів */}
       <Resource
         create={PickOfTheDayCreate}
         name="pick_of_the_day"
-        // show={PickOfTheDay}
         list={PickOfTheDayList}
         options={{ label: 'Pick of the Days' }}
       />
+
+      {/* Решта ресурсів - тільки для super admin */}
+      {isSuperAdmin && (
+        <>
+          <Resource
+            name="review"
+            list={ReviewList}
+            create={ReviewCreate}
+            edit={ReviewEdit}
+            options={{ label: 'Reviews' }}
+          />
+          <Resource
+            name="users"
+            list={UserList}
+            show={User}
+            options={{ label: 'Users' }}
+          />
+          <Resource
+            name="usersWithBets"
+            list={UserWithBetsList}
+            show={UserWithBets}
+            options={{ label: 'Users with Bets' }}
+          />
+        </>
+      )}
     </Admin>
   );
 };

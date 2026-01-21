@@ -1,4 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import authService from '@/services/auth';
 import { useAuth } from '@/context/AuthContext';
@@ -11,6 +12,7 @@ interface Use2FALoginProps {
 
 export const use2FALogin = ({ onSuccess, tempToken }: Use2FALoginProps) => {
   const { setTokens } = useAuth();
+  const router = useRouter();
 
   const verify2FAMutation = useMutation({
     mutationFn: (code: string) =>
@@ -19,7 +21,16 @@ export const use2FALogin = ({ onSuccess, tempToken }: Use2FALoginProps) => {
       setTokens({
         accessToken: data.access_token,
         refreshToken: data.refresh_token,
+        isAdmin: data.is_admin,
+        isSuperAdmin: data.is_super_admin,
       });
+
+      // Redirect to admin if user is admin or super admin
+      if (data.is_admin || data.is_super_admin) {
+        router.push('/admin');
+        return;
+      }
+
       if (onSuccess) {
         onSuccess();
       }
@@ -40,7 +51,16 @@ export const use2FALogin = ({ onSuccess, tempToken }: Use2FALoginProps) => {
       setTokens({
         accessToken: data.access_token,
         refreshToken: data.refresh_token,
+        isAdmin: data.is_admin,
+        isSuperAdmin: data.is_super_admin,
       });
+
+      // Redirect to admin if user is admin or super admin
+      if (data.is_admin || data.is_super_admin) {
+        router.push('/admin');
+        return;
+      }
+
       if (onSuccess) {
         onSuccess();
       }

@@ -23,11 +23,13 @@ export interface IUser {
 }
 
 export interface IAuthRepsonse {
-  user: IUser;
+  user?: IUser;
   access_token: string;
   refresh_token: string;
   requires_2fa?: boolean;
   temp_token?: string;
+  is_admin?: boolean;
+  is_super_admin?: boolean;
 }
 
 // 2FA Types

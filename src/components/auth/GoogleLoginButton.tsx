@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { useMutation } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
 import { useAuth } from '@/context/AuthContext';
@@ -33,6 +34,7 @@ const GoogleLoginButton = ({
   onSuccess?: () => void;
 }) => {
   const { setTokens } = useAuth();
+  const router = useRouter();
 
   const { mutate: loginGoogle, isPending } = useMutation({
     mutationFn: (body: { token: string }) => authService.loginGoogle(body),
@@ -40,13 +42,21 @@ const GoogleLoginButton = ({
       setTokens({
         accessToken: data.access_token,
         refreshToken: data.refresh_token,
+        isAdmin: data.is_admin,
+        isSuperAdmin: data.is_super_admin,
       });
+
+      toast.success('Logged in with Google!');
+
+      // Redirect to admin if user is admin or super admin
+      if (data.is_admin || data.is_super_admin) {
+        router.push('/admin');
+        return;
+      }
 
       if (onSuccess) {
         onSuccess();
       }
-
-      toast.success('Logged in with Google!');
     },
     onError: (error: any) => {
       toast.error(error?.response?.data?.message || 'Google login failed');

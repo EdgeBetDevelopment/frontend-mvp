@@ -6,7 +6,14 @@ interface AuthContextType {
   accessToken: string | null;
   refreshToken: string | null;
   isAuthenticated: boolean;
-  setTokens: (tokens: { accessToken: string; refreshToken?: string }) => void;
+  isAdmin: boolean;
+  isSuperAdmin: boolean;
+  setTokens: (tokens: {
+    accessToken: string;
+    refreshToken?: string;
+    isAdmin?: boolean;
+    isSuperAdmin?: boolean;
+  }) => void;
   clearTokens: () => void;
 }
 
@@ -17,12 +24,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [refreshToken, setRefreshToken] = useState<string | null>(null);
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  const [isSuperAdmin, setIsSuperAdmin] = useState<boolean>(false);
   const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
       setAccessToken(localStorage.getItem('accessToken'));
       setRefreshToken(localStorage.getItem('refreshToken'));
+      setIsAdmin(localStorage.getItem('isAdmin') === 'true');
+      setIsSuperAdmin(localStorage.getItem('isSuperAdmin') === 'true');
       setIsInitialized(true);
     }
   }, []);
@@ -30,13 +41,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const setTokens = ({
     accessToken,
     refreshToken,
+    isAdmin: admin,
+    isSuperAdmin: superAdmin,
   }: {
     accessToken: string;
     refreshToken?: string;
+    isAdmin?: boolean;
+    isSuperAdmin?: boolean;
   }) => {
     setAccessToken(accessToken);
+    setIsAdmin(admin || false);
+    setIsSuperAdmin(superAdmin || false);
     if (typeof window !== 'undefined') {
       localStorage.setItem('accessToken', accessToken);
+      localStorage.setItem('isAdmin', String(admin || false));
+      localStorage.setItem('isSuperAdmin', String(superAdmin || false));
 
       if (refreshToken) {
         setRefreshToken(refreshToken);
@@ -48,11 +67,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const clearTokens = () => {
     setAccessToken(null);
     setRefreshToken(null);
+    setIsAdmin(false);
+    setIsSuperAdmin(false);
     if (typeof window !== 'undefined') {
       localStorage.removeItem('accessToken');
       localStorage.removeItem('token');
       localStorage.removeItem('userId');
       localStorage.removeItem('refreshToken');
+      localStorage.removeItem('isAdmin');
+      localStorage.removeItem('isSuperAdmin');
     }
   };
 
@@ -68,6 +91,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         accessToken,
         refreshToken,
         isAuthenticated,
+        isAdmin,
+        isSuperAdmin,
         setTokens,
         clearTokens,
       }}

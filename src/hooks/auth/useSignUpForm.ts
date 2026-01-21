@@ -1,5 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
@@ -37,6 +38,7 @@ interface UseSignUpFormProps {
 
 export const useSignUpForm = ({ onSuccessSignUp }: UseSignUpFormProps = {}) => {
   const { setTokens } = useAuth();
+  const router = useRouter();
 
   const form = useForm<SignUpFormValues>({
     resolver: zodResolver(signUpSchema),
@@ -59,7 +61,15 @@ export const useSignUpForm = ({ onSuccessSignUp }: UseSignUpFormProps = {}) => {
       setTokens({
         accessToken: data.access_token,
         refreshToken: data.refresh_token,
+        isAdmin: data.is_admin,
+        isSuperAdmin: data.is_super_admin,
       });
+
+      // Redirect to admin if user is admin or super admin
+      if (data.is_admin || data.is_super_admin) {
+        router.push('/admin');
+        return;
+      }
 
       if (onSuccessSignUp) {
         onSuccessSignUp();
