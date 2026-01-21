@@ -43,6 +43,14 @@ const customDataProvider: DataProvider = {
       };
     }
 
+    if (resource === 'subscribers') {
+      response = await axiosInstance.get('/subscribe/api/v1/subscriber/');
+      return {
+        data: response.data,
+        total: response.data.length,
+      };
+    }
+
     response = await axiosInstance.get(`/nba/api/v1/${resource}`);
     return {
       data: response.data,
@@ -80,6 +88,13 @@ const customDataProvider: DataProvider = {
       return { data };
     }
 
+    if (resource === 'subscribers') {
+      const { data } = await axiosInstance.get(
+        `/subscribe/api/v1/subscriber/${params.id}`,
+      );
+      return { data };
+    }
+
     const { data } = await axiosInstance.get(
       `/user/api/v1/${resource}/${params.id}`,
     );
@@ -106,6 +121,14 @@ const customDataProvider: DataProvider = {
     if (resource === 'pick_of_the_day') {
       const { data } = await axiosInstance.post(
         `/nba/api/v1/pick_of_the_day/`,
+        params.data,
+      );
+      return { data };
+    }
+
+    if (resource === 'subscribers') {
+      const { data } = await axiosInstance.post(
+        `/subscribe/api/v1/subscriber/`,
         params.data,
       );
       return { data };
@@ -143,6 +166,14 @@ const customDataProvider: DataProvider = {
       return { data };
     }
 
+    if (resource === 'subscribers') {
+      const { data } = await axiosInstance.patch(
+        `/subscribe/api/v1/subscriber/${params.id}`,
+        params.data,
+      );
+      return { data };
+    }
+
     const { data } = await axiosInstance.put(
       `/user/api/v1/${resource}/${params.id}`,
       params.data,
@@ -165,6 +196,11 @@ const customDataProvider: DataProvider = {
 
     if (resource === 'pick_of_the_day') {
       await axiosInstance.delete(`/nba/api/v1/pick_of_the_day/${params.id}`);
+      return { data: { id: params.id } };
+    }
+
+    if (resource === 'subscribers') {
+      await axiosInstance.delete(`/subscribe/api/v1/subscriber/${params.id}`);
       return { data: { id: params.id } };
     }
 

@@ -10,6 +10,9 @@ import { PickOfTheDayList } from './PickOfTheDayList';
 import { ReviewCreate } from './ReviewCreate';
 import { ReviewEdit } from './ReviewEdit';
 import { ReviewList } from './ReviewList';
+import { SubscriberCreate } from './SubscriberCreate';
+import { SubscriberEdit } from './SubscriberEdit';
+import { SubscriberList } from './SubscriberList';
 import { User } from './User';
 import { UserWithBets } from './UserBet';
 import { UserList } from './UserList';
@@ -50,6 +53,13 @@ const AdminApp = () => {
       {/* Решта ресурсів - тільки для super admin */}
       {isSuperAdmin && (
         <>
+          <Resource
+            name="subscribers"
+            list={SubscriberList}
+            create={SubscriberCreate}
+            edit={SubscriberEdit}
+            options={{ label: 'Newsletter Subscribers' }}
+          />
           <Resource
             name="review"
             list={ReviewList}
