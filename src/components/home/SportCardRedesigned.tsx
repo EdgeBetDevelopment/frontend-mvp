@@ -1,5 +1,6 @@
 import { Card } from '@/components/ui/card';
 import { ArrowRight, Clock } from 'lucide-react';
+import Loader from '@/ui/loader';
 
 interface SportCardProps {
   sport: {
@@ -10,6 +11,7 @@ interface SportCardProps {
     matches?: number;
     description: string;
     comingSoon?: boolean;
+    isLoadingMatches?: boolean;
   };
   onClick: () => void;
   delay?: number;
@@ -62,7 +64,11 @@ const SportCardRedesigned = ({ sport, onClick, delay = 0 }: SportCardProps) => {
           ></span>
           {sport?.matches !== undefined && (
             <span className="text-muted-foreground">
-              {sport?.matches} upcoming matches
+              {sport.isLoadingMatches ? (
+                <Loader size="h-4 w-4" />
+              ) : (
+                <>{sport?.matches} upcoming matches</>
+              )}
             </span>
           )}
         </div>

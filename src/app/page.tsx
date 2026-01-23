@@ -16,10 +16,10 @@ export default function Home() {
   const [searchQuery, setSearchQuery] = useState('');
   const router = useRouter();
 
-  const { data: nbaGames } = useQuery({
+  const { data: nbaGames, isLoading: isLoadingGames } = useQuery({
     queryKey: ['nbaGamesCount'],
     queryFn: () => apiService.getGames(),
-    staleTime: 1000 * 60 * 5, // 5 хвилин
+    staleTime: 1000 * 60 * 5,
   });
 
   const nbaGamesCount = nbaGames?.length || 0;
@@ -32,6 +32,7 @@ export default function Home() {
       color: 'nba',
       matches: nbaGamesCount,
       description: 'US Basketball',
+      isLoadingMatches: isLoadingGames,
     },
     {
       id: 'nfl',
