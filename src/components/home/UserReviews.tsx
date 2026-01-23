@@ -99,7 +99,7 @@ export const UserReviews = () => {
   return (
     <div className="tl-container my-[90px] flex w-full flex-col items-center gap-[90px]">
       <PageTitle
-        title="user reviews"
+        title="User Reviews"
         description="Discover what our community of successful bettors has to say about
             their experience. Our platform has helped thousands of users transform
             their approach to sports betting, delivering consistent results
@@ -108,8 +108,8 @@ export const UserReviews = () => {
 
       <div className="relative w-full px-4 sm:px-6 md:px-8">
         <div className="mx-auto max-w-[1352px]">
-          <div className="from-background pointer-events-none absolute inset-y-0 left-0 z-10 w-8 bg-gradient-to-r to-transparent sm:left-5 sm:w-10 md:w-12"></div>
-          <div className="from-background pointer-events-none absolute inset-y-0 right-0 z-10 w-8 bg-gradient-to-l to-transparent sm:right-5 sm:w-10 md:w-12"></div>
+          <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-8 bg-gradient-to-r from-background to-transparent sm:left-5 sm:w-10 md:w-12"></div>
+          <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-8 bg-gradient-to-l from-background to-transparent sm:right-5 sm:w-10 md:w-12"></div>
 
           <Carousel
             className="w-full"
