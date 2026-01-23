@@ -412,7 +412,7 @@ const PlayerProfile = () => {
               {(player?.NUM || playerNameData?.profile?.Number) && (
                 <div className="rounded-lg border border-primary/30 bg-primary/10 p-3 text-center">
                   <span className="text-sm font-semibold text-primary">
-                    #{player?.NUM || playerNameData?.profile?.Number}
+                    {player?.NUM || playerNameData?.profile?.Number}
                   </span>
                   <p className="mt-1 text-xs text-muted-foreground">Number</p>
                 </div>
