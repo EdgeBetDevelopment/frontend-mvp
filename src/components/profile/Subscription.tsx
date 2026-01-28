@@ -53,6 +53,21 @@ export const Subscription = () => {
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [selectedTypeId, setSelectedTypeId] = useState<number | null>(null);
 
+  const handleRefresh = async () => {
+    await refetch();
+
+    if (refreshToken) {
+      try {
+        const response = await authService.refreshToken(refreshToken);
+        if (response.token) {
+          setTokens({ accessToken: response.token });
+        }
+      } catch (error) {
+        console.error('Failed to refresh token:', error);
+      }
+    }
+  };
+
   const cancelMutation = useMutation({
     mutationFn: async (data: { selectedId: number; selectedTypeId: number }) =>
       paymentService.cancelSubscription(data.selectedId, data.selectedTypeId),
@@ -137,7 +152,7 @@ export const Subscription = () => {
           </p>
           <Button
             variant="outline"
-            onClick={() => refetch()}
+            onClick={handleRefresh}
             className="border-border"
           >
             Refresh
