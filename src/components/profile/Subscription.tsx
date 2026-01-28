@@ -5,7 +5,9 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { CreditCard, Calendar, Loader2 } from 'lucide-react';
 
 import paymentService from '@/services/payment';
+import authService from '@/services/auth';
 import { userService } from '@/services/user';
+import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/ui/button';
 import { Separator } from '@/ui/separator';
 import {
@@ -29,6 +31,7 @@ type Sub = {
 
 export const Subscription = () => {
   const qc = useQueryClient();
+  const { refreshToken, setTokens } = useAuth();
 
   const {
     data: subscriptions,
@@ -53,7 +56,19 @@ export const Subscription = () => {
   const cancelMutation = useMutation({
     mutationFn: async (data: { selectedId: number; selectedTypeId: number }) =>
       paymentService.cancelSubscription(data.selectedId, data.selectedTypeId),
-    onSuccess: () => {
+    onSuccess: async () => {
+      if (refreshToken) {
+        try {
+          const response = await authService.refreshToken(refreshToken);
+          if (response.token) {
+            setTokens({ accessToken: response.token });
+          }
+          console.log(response.token);
+        } catch (error) {
+          console.error('Failed to refresh token:', error);
+        }
+      }
+
       qc.invalidateQueries({ queryKey: ['subscriptions'] });
       qc.invalidateQueries({ queryKey: ['me'] });
     },

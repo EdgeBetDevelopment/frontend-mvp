@@ -78,6 +78,14 @@ const authService = {
     );
     return response.data;
   },
+
+  async refreshToken(token: string): Promise<{ token: string }> {
+    const response = await axiosInstance.post(
+      `/auth/api/v1/auth/refresh`,
+      { token },
+    );
+    return response.data;
+  },
 };
 
 export default authService;
