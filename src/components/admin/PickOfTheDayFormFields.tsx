@@ -10,6 +10,14 @@ import {
 
 import apiService from '@/services';
 
+import {
+  confidenceLevelChoices,
+  confidenceLevelChoicesSimple,
+  nbaMarketTypeChoices,
+  unitChoices,
+} from './pick-of-the-day/choices';
+import { MarketTypeFields } from './pick-of-the-day/MarketTypeFields';
+
 export const PickOfTheDayFormFields = () => {
   const record = useRecordContext();
   const [gameChoices, setGameChoices] = useState<
@@ -23,45 +31,14 @@ export const PickOfTheDayFormFields = () => {
     }[]
   >([]);
   const [selectedGame, setSelectedGame] = useState<any>(null);
-
-  const sportChoices = [
-    { id: 'nba', name: 'NBA' },
-    { id: 'other', name: 'Other' },
-  ];
-
-  const nbaMarketTypeChoices = [
-    { id: 'other', name: 'Other' },
-    { id: 'moneyline', name: 'Moneyline' },
-    { id: 'spread', name: 'Spread' },
-    { id: 'total', name: 'Total (Game Total)' },
-    { id: 'team_total', name: 'Team Total' },
-    { id: 'win_margin', name: 'Win Margin' },
-    { id: 'first_half_moneyline', name: 'First Half Moneyline' },
-    { id: 'first_half_spread', name: 'First Half Spread' },
-    { id: 'first_half_total', name: 'First Half Total' },
-    { id: 'player_points_prop', name: 'Player Points Prop' },
-    { id: 'player_rebounds_prop', name: 'Player Rebounds Prop' },
-    { id: 'player_assists_prop', name: 'Player Assists Prop' },
-  ];
-
-  const otherMarketTypeChoices = [{ id: 'other', name: 'Other' }];
-
-  const confidenceLevelChoices = [
-    { id: 'lock', name: 'Lock' },
-    { id: 'high', name: 'High' },
-    { id: 'medium', name: 'Medium' },
-    { id: 'low', name: 'Low' },
-  ];
-
-  const overUnderChoices = [
-    { id: 'over', name: 'Over' },
-    { id: 'under', name: 'Under' },
-  ];
+  const [sportChoices, setSportChoices] = useState<
+    { id: string; name: string }[]
+  >([]);
 
   useEffect(() => {
     const fetchGames = async () => {
       try {
-        const gamesResponse = await apiService.getGames();
+        const gamesResponse: any = await apiService.getGames();
         const items = Array.isArray(gamesResponse)
           ? gamesResponse
           : gamesResponse?.games || gamesResponse?.data || [];
@@ -88,6 +65,26 @@ export const PickOfTheDayFormFields = () => {
   }, []);
 
   useEffect(() => {
+    const fetchSports = async () => {
+      try {
+        const sports: any = await apiService.getPickOfTheDaySports();
+        const choices = (Array.isArray(sports) ? sports : ['nba']).map(
+          (sport) => ({
+            id: sport,
+            name: String(sport).toUpperCase(),
+          }),
+        );
+        setSportChoices(choices.length ? choices : [{ id: 'nba', name: 'NBA' }]);
+      } catch (error) {
+        console.error('Error fetching sports:', error);
+        setSportChoices([{ id: 'nba', name: 'NBA' }]);
+      }
+    };
+
+    fetchSports();
+  }, []);
+
+  useEffect(() => {
     if (!record?.game_id || gameChoices.length === 0) {
       return;
     }
@@ -106,7 +103,15 @@ export const PickOfTheDayFormFields = () => {
         choices={sportChoices}
         validate={required()}
       />
-      <TextInput source="pick" label="Your pick" validate={required()} />
+      <FormDataConsumer>
+        {({ formData }) =>
+          formData?.sport === 'nba' ? (
+            <TextInput source="pick" label="Pick" validate={required()} />
+          ) : (
+            <TextInput source="pick" label="Your Pick" validate={required()} />
+          )
+        }
+      </FormDataConsumer>
 
       <FormDataConsumer>
         {({ formData }) =>
@@ -123,247 +128,67 @@ export const PickOfTheDayFormFields = () => {
               }}
             />
           ) : (
-            <NumberInput source="game_id" label="Game" validate={required()} />
+            <TextInput source="game_id" label="Game" validate={required()} />
           )
         }
       </FormDataConsumer>
 
       <FormDataConsumer>
-        {({ formData }) => (
-          <SelectInput
-            source="settlement.market_type"
-            label="Market Type"
-            choices={
-              formData?.sport === 'nba'
-                ? nbaMarketTypeChoices
-                : otherMarketTypeChoices
-            }
-            validate={required()}
-          />
-        )}
+        {({ formData }) =>
+          formData?.sport === 'nba' ? (
+            <SelectInput
+              source="settlement.market_type"
+              label="Market Type"
+              choices={nbaMarketTypeChoices}
+              validate={required()}
+            />
+          ) : null
+        }
       </FormDataConsumer>
 
       <FormDataConsumer>
         {({ formData }) => {
           const marketType = formData?.settlement?.market_type;
           const isNBA = formData?.sport === 'nba';
-
-          const renderTeamInput = (label: string) => {
-            if (isNBA && selectedGame) {
-              return (
-                <SelectInput
-                  source="settlement.bet_team"
-                  label={label}
-                  choices={[
-                    { id: selectedGame.home_team, name: selectedGame.home_team },
-                    { id: selectedGame.away_team, name: selectedGame.away_team },
-                  ]}
-                  validate={required()}
-                />
-              );
-            }
-
-            return (
-              <TextInput
-                source="settlement.bet_team"
-                label={label}
-                validate={required()}
-              />
-            );
-          };
-
-          if (marketType === 'other' || !marketType) {
-            return null;
-          }
-
-          if (marketType === 'moneyline') {
-            return renderTeamInput('Team');
-          }
-
-          if (marketType === 'spread') {
-            return (
-              <>
-                {renderTeamInput('Team')}
-                <NumberInput
-                  source="settlement.bet_value"
-                  label="Spread Value"
-                  validate={required()}
-                />
-              </>
-            );
-          }
-
-          if (marketType === 'total') {
-            return (
-              <>
-                <NumberInput
-                  source="settlement.bet_value"
-                  label="Total Value"
-                  validate={required()}
-                />
-                <SelectInput
-                  source="settlement.bet_over_under"
-                  label="Over / Under"
-                  choices={overUnderChoices}
-                  validate={required()}
-                />
-              </>
-            );
-          }
-
-          if (marketType === 'team_total') {
-            return (
-              <>
-                {renderTeamInput('Team')}
-                <NumberInput
-                  source="settlement.bet_value"
-                  label="Total Value"
-                  validate={required()}
-                />
-                <SelectInput
-                  source="settlement.bet_over_under"
-                  label="Over / Under"
-                  choices={overUnderChoices}
-                  validate={required()}
-                />
-              </>
-            );
-          }
-
-          if (marketType === 'win_margin') {
-            return (
-              <>
-                {renderTeamInput('Team')}
-                <NumberInput
-                  source="settlement.bet_win_margin_min_value"
-                  label="Minimum Win Margin"
-                  validate={required()}
-                />
-                <NumberInput
-                  source="settlement.bet_win_margin_max_value"
-                  label="Maximum Win Margin"
-                  validate={required()}
-                />
-              </>
-            );
-          }
-
-          if (marketType === 'first_half_moneyline') {
-            return renderTeamInput('Team');
-          }
-
-          if (marketType === 'first_half_spread') {
-            return (
-              <>
-                {renderTeamInput('Team')}
-                <NumberInput
-                  source="settlement.bet_value"
-                  label="Spread Value"
-                  validate={required()}
-                />
-              </>
-            );
-          }
-
-          if (marketType === 'first_half_total') {
-            return (
-              <>
-                <NumberInput
-                  source="settlement.bet_value"
-                  label="Total Value"
-                  validate={required()}
-                />
-                <SelectInput
-                  source="settlement.bet_over_under"
-                  label="Over / Under"
-                  choices={overUnderChoices}
-                  validate={required()}
-                />
-              </>
-            );
-          }
-
-          if (marketType === 'player_points_prop') {
-            return (
-              <>
-                <TextInput
-                  source="settlement.bet_player"
-                  label="Player"
-                  validate={required()}
-                />
-                <NumberInput
-                  source="settlement.bet_value"
-                  label="Points Value"
-                  validate={required()}
-                />
-                <SelectInput
-                  source="settlement.bet_over_under"
-                  label="Over / Under"
-                  choices={overUnderChoices}
-                  validate={required()}
-                />
-              </>
-            );
-          }
-
-          if (marketType === 'player_rebounds_prop') {
-            return (
-              <>
-                <TextInput
-                  source="settlement.bet_player"
-                  label="Player"
-                  validate={required()}
-                />
-                <NumberInput
-                  source="settlement.bet_value"
-                  label="Rebounds Value"
-                  validate={required()}
-                />
-                <SelectInput
-                  source="settlement.bet_over_under"
-                  label="Over / Under"
-                  choices={overUnderChoices}
-                  validate={required()}
-                />
-              </>
-            );
-          }
-
-          if (marketType === 'player_assists_prop') {
-            return (
-              <>
-                <TextInput
-                  source="settlement.bet_player"
-                  label="Player"
-                  validate={required()}
-                />
-                <NumberInput
-                  source="settlement.bet_value"
-                  label="Assists Value"
-                  validate={required()}
-                />
-                <SelectInput
-                  source="settlement.bet_over_under"
-                  label="Over / Under"
-                  choices={overUnderChoices}
-                  validate={required()}
-                />
-              </>
-            );
-          }
-
-          return null;
+          return (
+            <MarketTypeFields
+              marketType={marketType}
+              isNBA={isNBA}
+              selectedGame={selectedGame}
+            />
+          );
         }}
       </FormDataConsumer>
 
       <NumberInput source="odds" label="Odds" validate={required()} />
-      <SelectInput
-        source="confidence_level"
-        label="Confidence Level"
-        choices={confidenceLevelChoices}
-        validate={required()}
-      />
-      <NumberInput source="units" label="Units" validate={required()} />
+      <FormDataConsumer>
+        {({ formData }) => (
+          <SelectInput
+            source="confidence_level"
+            label="Confidence Level"
+            choices={
+              formData?.sport === 'nba'
+                ? confidenceLevelChoices
+                : confidenceLevelChoicesSimple
+            }
+            validate={required()}
+          />
+        )}
+      </FormDataConsumer>
+      <FormDataConsumer>
+        {({ formData }) =>
+          formData?.sport === 'nba' ? (
+            <NumberInput source="units" label="Units" validate={required()} />
+          ) : (
+            <SelectInput
+              source="units"
+              label="Units"
+              choices={unitChoices}
+              validate={required()}
+            />
+          )
+        }
+      </FormDataConsumer>
       <TextInput source="analysis" multiline validate={required()} />
     </>
   );
