@@ -32,6 +32,22 @@ export const sanitizePickOfTheDayPayload = (data: any) => {
   }
 
   const result: Record<string, any> = { ...data };
+  const sport = String(result.sport || '').toLowerCase();
+
+  if (sport && sport !== 'nba') {
+    if (!result.game_name && result.game_id) {
+      result.game_name = result.game_id;
+    }
+    delete result.game_id;
+    delete result.settlement;
+    if (result.start_time instanceof Date) {
+      result.start_time = result.start_time.toISOString().replace(/Z$/, '');
+    } else if (typeof result.start_time === 'string') {
+      result.start_time = result.start_time.replace(/Z$/, '');
+    }
+    return result;
+  }
+
   const settlement = sanitizeSettlement(result.settlement);
 
   if (settlement) {

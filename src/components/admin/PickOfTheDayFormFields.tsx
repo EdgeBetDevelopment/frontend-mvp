@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
 import {
+  DateTimeInput,
   FormDataConsumer,
   NumberInput,
   required,
   SelectInput,
   TextInput,
   useRecordContext,
+  useInput,
 } from 'react-admin';
 
 import apiService from '@/services';
@@ -17,6 +19,42 @@ import {
   unitChoices,
 } from './pick-of-the-day/choices';
 import { MarketTypeFields } from './pick-of-the-day/MarketTypeFields';
+
+const toLocalDateTimeValue = (value?: string) => {
+  if (!value) {
+    return '';
+  }
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    return '';
+  }
+  const local = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+  return local.toISOString().slice(0, 16);
+};
+
+const NonNbaDefaults = () => {
+  const record = useRecordContext();
+  const {
+    field: { value: gameNameValue, onChange: onGameNameChange },
+  } = useInput({ source: 'game_name' });
+  const {
+    field: { value: startTimeValue, onChange: onStartTimeChange },
+  } = useInput({ source: 'start_time' });
+
+  useEffect(() => {
+    if (!gameNameValue && record?.game?.name) {
+      onGameNameChange(record.game.name);
+    }
+  }, [gameNameValue, onGameNameChange, record?.game?.name]);
+
+  useEffect(() => {
+    if (!startTimeValue && record?.game?.start_time) {
+      onStartTimeChange(toLocalDateTimeValue(record.game.start_time));
+    }
+  }, [startTimeValue, onStartTimeChange, record?.game?.start_time]);
+
+  return null;
+};
 
 export const PickOfTheDayFormFields = () => {
   const record = useRecordContext();
@@ -74,15 +112,29 @@ export const PickOfTheDayFormFields = () => {
             name: String(sport).toUpperCase(),
           }),
         );
-        setSportChoices(choices.length ? choices : [{ id: 'nba', name: 'NBA' }]);
+        const recordSport = record?.sport;
+        const withRecord = recordSport
+          ? choices.some((choice) => choice.id === recordSport)
+            ? choices
+            : [...choices, { id: recordSport, name: String(recordSport).toUpperCase() }]
+          : choices;
+        setSportChoices(
+          withRecord.length ? withRecord : [{ id: 'nba', name: 'NBA' }],
+        );
       } catch (error) {
         console.error('Error fetching sports:', error);
-        setSportChoices([{ id: 'nba', name: 'NBA' }]);
+        if (record?.sport) {
+          setSportChoices([
+            { id: record.sport, name: String(record.sport).toUpperCase() },
+          ]);
+        } else {
+          setSportChoices([{ id: 'nba', name: 'NBA' }]);
+        }
       }
     };
 
     fetchSports();
-  }, []);
+  }, [record?.sport]);
 
   useEffect(() => {
     if (!record?.game_id || gameChoices.length === 0) {
@@ -104,18 +156,22 @@ export const PickOfTheDayFormFields = () => {
         validate={required()}
       />
       <FormDataConsumer>
-        {({ formData }) =>
-          formData?.sport === 'nba' ? (
+        {({ formData }) => {
+          const isNBA =
+            String(formData?.sport || '').toLowerCase() === 'nba';
+          return isNBA ? (
             <TextInput source="pick" label="Pick" validate={required()} />
           ) : (
             <TextInput source="pick" label="Your Pick" validate={required()} />
-          )
-        }
+          );
+        }}
       </FormDataConsumer>
 
       <FormDataConsumer>
-        {({ formData }) =>
-          formData?.sport === 'nba' ? (
+        {({ formData }) => {
+          const isNBA =
+            String(formData?.sport || '').toLowerCase() === 'nba';
+          return isNBA ? (
             <SelectInput
               source="game_id"
               label="Game"
@@ -128,28 +184,35 @@ export const PickOfTheDayFormFields = () => {
               }}
             />
           ) : (
-            <TextInput source="game_id" label="Game" validate={required()} />
-          )
-        }
+            <TextInput
+              source="game_name"
+              label="Game"
+              validate={required()}
+            />
+          );
+        }}
       </FormDataConsumer>
 
       <FormDataConsumer>
-        {({ formData }) =>
-          formData?.sport === 'nba' ? (
+        {({ formData }) => {
+          const isNBA =
+            String(formData?.sport || '').toLowerCase() === 'nba';
+          return isNBA ? (
             <SelectInput
               source="settlement.market_type"
               label="Market Type"
               choices={nbaMarketTypeChoices}
               validate={required()}
             />
-          ) : null
-        }
+          ) : null;
+        }}
       </FormDataConsumer>
 
       <FormDataConsumer>
         {({ formData }) => {
           const marketType = formData?.settlement?.market_type;
-          const isNBA = formData?.sport === 'nba';
+          const isNBA =
+            String(formData?.sport || '').toLowerCase() === 'nba';
           return (
             <MarketTypeFields
               marketType={marketType}
@@ -160,24 +223,50 @@ export const PickOfTheDayFormFields = () => {
         }}
       </FormDataConsumer>
 
+      <FormDataConsumer>
+        {({ formData }) => {
+          const isNBA =
+            String(formData?.sport || '').toLowerCase() === 'nba';
+          const now = new Date();
+          const localMin = new Date(
+            now.getTime() - now.getTimezoneOffset() * 60000,
+          )
+            .toISOString()
+            .slice(0, 16);
+          return isNBA ? null : (
+            <>
+              <NonNbaDefaults />
+              <DateTimeInput
+                source="start_time"
+                label="Start Time"
+                validate={required()}
+                inputProps={{ min: localMin }}
+              />
+            </>
+          );
+        }}
+      </FormDataConsumer>
+
       <NumberInput source="odds" label="Odds" validate={required()} />
       <FormDataConsumer>
-        {({ formData }) => (
-          <SelectInput
-            source="confidence_level"
-            label="Confidence Level"
-            choices={
-              formData?.sport === 'nba'
-                ? confidenceLevelChoices
-                : confidenceLevelChoicesSimple
-            }
-            validate={required()}
-          />
-        )}
+        {({ formData }) => {
+          const isNBA =
+            String(formData?.sport || '').toLowerCase() === 'nba';
+          return (
+            <SelectInput
+              source="confidence_level"
+              label="Confidence Level"
+              choices={isNBA ? confidenceLevelChoices : confidenceLevelChoicesSimple}
+              validate={required()}
+            />
+          );
+        }}
       </FormDataConsumer>
       <FormDataConsumer>
-        {({ formData }) =>
-          formData?.sport === 'nba' ? (
+        {({ formData }) => {
+          const isNBA =
+            String(formData?.sport || '').toLowerCase() === 'nba';
+          return isNBA ? (
             <NumberInput source="units" label="Units" validate={required()} />
           ) : (
             <SelectInput
@@ -186,8 +275,8 @@ export const PickOfTheDayFormFields = () => {
               choices={unitChoices}
               validate={required()}
             />
-          )
-        }
+          );
+        }}
       </FormDataConsumer>
       <TextInput source="analysis" multiline validate={required()} />
     </>

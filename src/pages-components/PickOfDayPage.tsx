@@ -11,7 +11,7 @@ import apiService from '@/services';
 
 import { ApiPickCard } from './pick-of-day/components/ApiPickCard';
 import { ModeratorStats } from './pick-of-day/components/ModeratorStats';
-import { NotificationBanner } from './pick-of-day/components/NotificationBanner';
+// import { NotificationBanner } from './pick-of-day/components/NotificationBanner';
 import type { ApiPick } from './pick-of-day/types';
 
 const PickOfDayPage = () => {
@@ -60,7 +60,7 @@ const PickOfDayPage = () => {
           </p>
         </div>
 
-        <NotificationBanner />
+        {/* <NotificationBanner /> */}
         <ModeratorStats />
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-8">

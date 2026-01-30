@@ -16,6 +16,12 @@ export const PickOfTheDayList = () => (
       bulkActionButtons={false}
       rowClick="show"
       sx={{
+        '& .pickoday-game-col': {
+          width: '24rem',
+        },
+        '& .pickoday-game-col > div': {
+          width: '24rem',
+        },
         '& .RaDatagrid-headerCell': {
           fontWeight: 'bold',
           backgroundColor: 'rgba(255, 255, 255, 0.05)',
@@ -39,16 +45,26 @@ export const PickOfTheDayList = () => (
       />
       <FunctionField
         label="Game"
+        headerClassName="pickoday-game-col"
+        cellClassName="pickoday-game-col"
         render={(record: any) => (
-          <div style={{ fontWeight: 500 }}>
-            <div>{record.game?.home_team}</div>
-            <div
-              style={{ color: 'rgba(255, 255, 255, 0.5)', fontSize: '0.9em' }}
-            >
-              vs {record.game?.away_team}
+          record.game?.home_team ? (
+            <div style={{ fontWeight: 500, display: 'flex', gap: '4px' }}>
+              <div>{record.game?.home_team}</div>
+              <div>vs {record.game?.away_team}</div>
             </div>
-          </div>
+          ) : (
+            <div style={{ fontWeight: 500 }}>{record.game?.name}</div>
+          )
         )}
+      />
+      <FunctionField
+        label="Start Time"
+        render={(record: any) =>
+          record.game?.start_time ? (
+            <DateField source="game.start_time" showTime />
+          ) : null
+        }
       />
       <FunctionField
         label="Result"

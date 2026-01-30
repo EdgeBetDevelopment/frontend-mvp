@@ -119,10 +119,12 @@ const customDataProvider: DataProvider = {
     }
 
     if (resource === 'pick_of_the_day') {
-      const { data } = await axiosInstance.post(
-        `/nba/api/v1/pick_of_the_day/`,
-        params.data,
-      );
+      const sport = String(params.data?.sport || '').toLowerCase();
+      const url =
+        sport && sport !== 'nba'
+          ? `/nba/api/v1/pick_of_the_day/create_other_sport`
+          : `/nba/api/v1/pick_of_the_day/`;
+      const { data } = await axiosInstance.post(url, params.data);
       return { data };
     }
 
