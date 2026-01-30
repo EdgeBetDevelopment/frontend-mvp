@@ -6,9 +6,64 @@ import {
   List,
   TextField,
   FunctionField,
+  useNotify,
+  useUpdate,
 } from 'react-admin';
 
 import { DeleteGamePredictionButton } from './DeteleGamePredictionButton';
+
+const StatusSelector = ({ record }: { record: any }) => {
+  const notify = useNotify();
+  const [update, { isLoading }] = useUpdate();
+  const status = record?.status || 'pending';
+  const colorMap: Record<string, string> = {
+    win: '#22c55e',
+    loss: '#ef4444',
+    pending: 'rgb(245,158,11)',
+    canceled: '#94a3b8',
+  };
+  const normalizedStatus = status === 'win' || status === 'loss' ? status : '';
+
+  return (
+    <select
+      value={normalizedStatus}
+      disabled={isLoading}
+      onMouseDown={(e) => e.stopPropagation()}
+      onClick={(e) => e.stopPropagation()}
+      aria-label="Result status"
+      title={status}
+      onChange={(e) => {
+        update(
+          'pick_of_the_day',
+          { id: record.id, data: { status: e.target.value } },
+          {
+            onSuccess: () => notify('Status updated'),
+            onError: () => notify('Failed to update status', { type: 'error' }),
+          },
+        );
+      }}
+      style={{
+        width: '100%',
+        height: 30,
+        borderRadius: 3,
+        backgroundColor: colorMap[status] || '#94a3b8',
+        color: 'transparent',
+        border: '1px solid rgba(255,255,255,0.15)',
+        padding: '0 8px',
+        appearance: 'none',
+        cursor: 'pointer',
+      }}
+    >
+      <option value="" disabled hidden />
+      <option value="win" style={{ backgroundColor: '#22c55e', color: '#0b3d1a' }}>
+        win
+      </option>
+      <option value="loss" style={{ backgroundColor: '#ef4444', color: '#3b0a0a' }}>
+        loss
+      </option>
+    </select>
+  );
+};
 
 export const PickOfTheDayList = () => (
   <List>
@@ -69,6 +124,10 @@ export const PickOfTheDayList = () => (
       <FunctionField
         label="Result"
         render={(record: any) => {
+          const sport = String(record?.sport || '').toLowerCase();
+          if (sport && sport !== 'nba') {
+            return <StatusSelector record={record} />;
+          }
           const status = record?.status || 'pending';
           const colorMap: Record<string, string> = {
             win: '#22c55e',
