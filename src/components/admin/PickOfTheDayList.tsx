@@ -2,6 +2,7 @@ import {
   BooleanField,
   Datagrid,
   DateField,
+  EditButton,
   List,
   TextField,
   FunctionField,
@@ -29,65 +30,54 @@ export const PickOfTheDayList = () => (
         },
       }}
     >
-      <TextField source="id" label="ID" sx={{ fontWeight: 600 }} />
       <TextField source="user_id" label="User" />
       <FunctionField
-        label="Matchup"
+        label="Sport"
+        render={(record: any) => (
+          <span style={{ textTransform: 'uppercase' }}>{record?.sport}</span>
+        )}
+      />
+      <FunctionField
+        label="Game"
         render={(record: any) => (
           <div style={{ fontWeight: 500 }}>
-            <div>{record.game_prediction?.game?.home_team}</div>
+            <div>{record.game?.home_team}</div>
             <div
               style={{ color: 'rgba(255, 255, 255, 0.5)', fontSize: '0.9em' }}
             >
-              vs {record.game_prediction?.game?.away_team}
+              vs {record.game?.away_team}
             </div>
           </div>
         )}
       />
       <FunctionField
-        label="Odds"
-        render={(record: any) => (
-          <div style={{ fontSize: '0.95em' }}>
-            <div>Home: {record.game_prediction?.odds_home}</div>
-            <div style={{ opacity: 0.7 }}>
-              Away: {record.game_prediction?.odds_away}
-            </div>
-          </div>
-        )}
-      />
-      <FunctionField
-        label="Win Probability"
-        render={(record: any) => (
-          <div style={{ fontSize: '0.95em' }}>
-            <div>Home: {record.game_prediction?.win_probability_home}%</div>
-            <div style={{ opacity: 0.7 }}>
-              Away: {record.game_prediction?.win_probability_away}%
-            </div>
-          </div>
-        )}
-      />
-      <TextField
-        source="game_prediction.favorite_team"
-        label="Favorite"
-        sx={{ fontWeight: 500, color: '#60a5fa' }}
-      />
-      <TextField
-        source="game_prediction.predicted_winner"
-        label="Winner"
-        sx={{ fontWeight: 600, color: '#34d399' }}
-      />
-      <TextField
-        source="game_prediction.analysis.overview"
-        label="Overview"
-        sx={{
-          maxWidth: '300px',
-          overflow: 'hidden',
-          textOverflow: 'ellipsis',
-          whiteSpace: 'nowrap',
+        label="Result"
+        render={(record: any) => {
+          const status = record?.status || 'pending';
+          const colorMap: Record<string, string> = {
+            win: '#22c55e',
+            loss: '#ef4444',
+            pending: '#f59e0b',
+            canceled: '#94a3b8',
+          };
+          const color = colorMap[status] || '#94a3b8';
+
+          return (
+            <span
+              title={status}
+              style={{
+                display: 'inline-block',
+                width: '100%',
+                height: 30,
+                borderRadius: 3,
+                backgroundColor: color,
+                boxShadow: '0 0 0 1px rgba(255, 255, 255, 0.1)',
+              }}
+            />
+          );
         }}
       />
-      <BooleanField source="is_premium" label="Premium" />
-      <DateField source="updated_at" label="Updated" showTime />
+      <EditButton />
       <DeleteGamePredictionButton />
     </Datagrid>
   </List>

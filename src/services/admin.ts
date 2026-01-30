@@ -159,7 +159,7 @@ const customDataProvider: DataProvider = {
     }
 
     if (resource === 'pick_of_the_day') {
-      const { data } = await axiosInstance.put(
+      const { data } = await axiosInstance.patch(
         `/nba/api/v1/pick_of_the_day/${params.id}`,
         params.data,
       );
