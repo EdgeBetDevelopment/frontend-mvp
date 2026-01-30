@@ -10,10 +10,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/ui/tabs';
 import apiService from '@/services';
 
 import { ApiPickCard } from './pick-of-day/components/ApiPickCard';
-import { ModeratorCard } from './pick-of-day/components/ModeratorCard';
 import { ModeratorStats } from './pick-of-day/components/ModeratorStats';
 import { NotificationBanner } from './pick-of-day/components/NotificationBanner';
-import { mockPicks } from './pick-of-day/data';
 import type { ApiPick } from './pick-of-day/types';
 
 const PickOfDayPage = () => {
@@ -33,6 +31,14 @@ const PickOfDayPage = () => {
   } = useQuery({
     queryKey: ['pick-of-day', 'this-week'],
     queryFn: () => apiService.getPickOfTheDayThisWeek(),
+  });
+  const {
+    data: allPicks = [],
+    isLoading: isAllLoading,
+    isError: isAllError,
+  } = useQuery({
+    queryKey: ['pick-of-day', 'all'],
+    queryFn: () => apiService.getPickOfTheDayList(),
   });
 
   return (
@@ -116,9 +122,26 @@ const PickOfDayPage = () => {
 
           <TabsContent value="history" className="mt-6">
             <div className="space-y-6">
-              {mockPicks.map((pick) => (
-                <ModeratorCard key={pick.id} pick={pick} />
-              ))}
+              {isAllLoading ? (
+                <div className="text-center text-muted-foreground">
+                  Loading...
+                </div>
+              ) : null}
+              {isAllError ? (
+                <div className="text-center text-red-500">
+                  Error loading picks
+                </div>
+              ) : null}
+              {!isAllLoading && !isAllError && allPicks.length === 0 ? (
+                <div className="text-center text-muted-foreground">
+                  No picks yet.
+                </div>
+              ) : null}
+              {!isAllLoading &&
+                !isAllError &&
+                allPicks.map((pick: ApiPick) => (
+                  <ApiPickCard key={pick.id} pick={pick} />
+                ))}
             </div>
           </TabsContent>
         </Tabs>
