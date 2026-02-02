@@ -30,6 +30,7 @@ export interface ApiPick {
     start_time: string;
     status: string;
     final_score: string;
+    name?: string;
   };
   sport: string;
   pick: string;

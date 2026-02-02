@@ -247,7 +247,7 @@ export const PickOfTheDayFormFields = () => {
         }}
       </FormDataConsumer>
 
-      <NumberInput source="odds" label="Odds" validate={required()} />
+      <TextInput source="odds" label="Odds" validate={required()} />
       <FormDataConsumer>
         {({ formData }) => {
           const isNBA =
