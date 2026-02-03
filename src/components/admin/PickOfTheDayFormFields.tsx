@@ -20,6 +20,46 @@ import {
 } from './pick-of-the-day/choices';
 import { MarketTypeFields } from './pick-of-the-day/MarketTypeFields';
 
+const validateOdds = (value: unknown) => {
+  if (value === null || value === undefined || value === '') {
+    return 'Required';
+  }
+  const normalized = String(value).trim();
+  if (normalized === '+' || normalized === '-') {
+    return 'Enter valid odds';
+  }
+  if (!/^[+-]?\d+(\.\d+)?$/.test(normalized)) {
+    return 'Enter valid odds';
+  }
+  return undefined;
+};
+
+const parseOdds = (value: unknown) => {
+  if (value === null || value === undefined || value === '') {
+    return null;
+  }
+  const normalized = String(value).trim();
+  if (normalized === '+' || normalized === '-') {
+    return normalized;
+  }
+  const num = Number(normalized);
+  return Number.isNaN(num) ? normalized : num;
+};
+
+const formatOdds = (value: unknown) => {
+  if (value === null || value === undefined || value === '') {
+    return '';
+  }
+  if (value === '+' || value === '-') {
+    return String(value);
+  }
+  const num = Number(value);
+  if (Number.isNaN(num)) {
+    return String(value);
+  }
+  return num > 0 ? `+${num}` : String(num);
+};
+
 const toLocalDateTimeValue = (value?: string) => {
   if (!value) {
     return '';
@@ -247,7 +287,15 @@ export const PickOfTheDayFormFields = () => {
         }}
       </FormDataConsumer>
 
-      <TextInput source="odds" label="Odds" validate={required()} />
+      <TextInput
+        source="odds"
+        label="Odds"
+        type="text"
+        validate={validateOdds}
+        parse={parseOdds}
+        format={formatOdds}
+        inputProps={{ inputMode: 'decimal', pattern: '[+-]?\\d*(\\.\\d+)?' }}
+      />
       <FormDataConsumer>
         {({ formData }) => {
           const isNBA =
