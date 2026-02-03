@@ -1,44 +1,121 @@
+'use client';
+
+import { useQuery } from '@tanstack/react-query';
+
 import { Card, CardContent } from '@/components/ui/card';
+import apiService from '@/services';
 
-import { moderators } from '../data';
+type PickOfDayUserStats = {
+  username: string;
+  wins: number;
+  losses: number;
+  win_rate: number;
+  ytd: number;
+};
 
-export const ModeratorStats = () => (
-  <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-3">
-    {Object.values(moderators).map((mod) => (
-      <Card key={mod.name} className="border-border/50 bg-card/30">
-        <CardContent className="py-4">
-          <div className="flex items-center gap-3">
-            <div
-              className={`flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br ${mod.color} font-bold text-white`}
-            >
-              {mod.avatar}
-            </div>
-            <div className="flex-1">
-              <p className="font-medium text-foreground">{mod.name}</p>
-              <p className="text-sm text-muted-foreground">{mod.record}</p>
-            </div>
-            <div className="flex items-center gap-4">
-              <div className="text-right">
-                <p className="text-lg font-bold text-emerald-400">
-                  {mod.winRate}%
-                </p>
-                <p className="text-xs text-muted-foreground">Win Rate</p>
-              </div>
-              <div className="border-l border-border/50 pl-4 text-right">
-                <p
-                  className={`text-lg font-bold ${
-                    mod.unitPL >= 0 ? 'text-emerald-400' : 'text-red-400'
-                  }`}
+const gradientColors = [
+  'from-amber-500 to-orange-600',
+  'from-emerald-500 to-teal-600',
+  'from-violet-500 to-purple-600',
+  'from-sky-500 to-indigo-600',
+  'from-rose-500 to-pink-600',
+  'from-lime-500 to-green-600',
+];
+
+const formatWinRate = (value: number) => {
+  if (!Number.isFinite(value)) return '0.0';
+  const normalized = value <= 1 ? value * 100 : value;
+  return normalized.toFixed(1);
+};
+
+const formatYtd = (value: number) => {
+  if (!Number.isFinite(value)) return '0.0';
+  return value.toFixed(1);
+};
+
+export const ModeratorStats = () => {
+  const {
+    data: users = [],
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ['pick-of-day', 'users'],
+    queryFn: () => apiService.getPickOfTheDayUsers(),
+  });
+
+  if (isLoading) {
+    return (
+      <div className="mb-8 text-center text-muted-foreground">Loading...</div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="mb-8 text-center text-red-500">
+        Error loading moderator stats
+      </div>
+    );
+  }
+
+  if (users.length === 0) {
+    return (
+      <div className="mb-8 text-center text-muted-foreground">
+        No moderator stats yet.
+      </div>
+    );
+  }
+
+  return (
+    <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-3">
+      {users.map((user: PickOfDayUserStats, index) => {
+        const winRate = formatWinRate(user.win_rate);
+        const ytd = formatYtd(user.ytd);
+        const record = `${user.wins}-${user.losses}`;
+        const color = gradientColors[index % gradientColors.length];
+        const avatar = user.username?.trim()?.charAt(0)?.toUpperCase() || '?';
+
+        return (
+          <Card
+            key={user.username || index}
+            className="border-border/50 bg-card/30"
+          >
+            <CardContent className="py-4">
+              <div className="flex items-center gap-3">
+                <div
+                  className={`flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br ${color} font-bold text-white`}
                 >
-                  {mod.unitPL >= 0 ? '+' : ''}
-                  {mod.unitPL}u
-                </p>
-                <p className="text-xs text-muted-foreground">YTD P/L</p>
+                  {avatar}
+                </div>
+                <div className="flex-1">
+                  <p className="font-medium text-foreground">
+                    {user.username || 'Unknown'}
+                  </p>
+                  <p className="text-sm text-muted-foreground">{record}</p>
+                </div>
+                <div className="flex items-center gap-4">
+                  <div className="text-right">
+                    <p className="text-lg font-bold text-emerald-400">
+                      {winRate}%
+                    </p>
+                    <p className="text-xs text-muted-foreground">Win Rate</p>
+                  </div>
+                  <div className="border-l border-border/50 pl-4 text-right">
+                    <p
+                      className={`text-lg font-bold ${
+                        user.ytd >= 0 ? 'text-emerald-400' : 'text-red-400'
+                      }`}
+                    >
+                      {user.ytd >= 0 ? '+' : ''}
+                      {ytd}u
+                    </p>
+                    <p className="text-xs text-muted-foreground">YTD P/L</p>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    ))}
-  </div>
-);
+            </CardContent>
+          </Card>
+        );
+      })}
+    </div>
+  );
+};

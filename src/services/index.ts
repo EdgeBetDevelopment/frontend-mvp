@@ -172,6 +172,15 @@ const apiService = {
     );
     return response.data;
   },
+
+  async getPickOfTheDayUsers(): Promise<
+    { username: string; wins: number; losses: number; win_rate: number; ytd: number }[]
+  > {
+    const response = await axiosInstance.get(
+      `/nba/api/v1/pick_of_the_day/users`,
+    );
+    return response.data;
+  },
 };
 
 export default apiService;
