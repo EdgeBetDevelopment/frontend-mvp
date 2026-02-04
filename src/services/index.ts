@@ -151,6 +151,36 @@ const apiService = {
     const response = await axiosInstance.get(`/nba/api/v1/pick_of_the_day/`);
     return response.data;
   },
+
+  async getPickOfTheDaySports(): Promise<string[]> {
+    const response = await axiosInstance.get(
+      `/nba/api/v1/pick_of_the_day/sports`,
+    );
+    return response.data;
+  },
+
+  async getPickOfTheDayToday(): Promise<any[]> {
+    const response = await axiosInstance.get(
+      `/nba/api/v1/pick_of_the_day/today`,
+    );
+    return response.data;
+  },
+
+  async getPickOfTheDayThisWeek(): Promise<any[]> {
+    const response = await axiosInstance.get(
+      `/nba/api/v1/pick_of_the_day/this_week`,
+    );
+    return response.data;
+  },
+
+  async getPickOfTheDayUsers(): Promise<
+    { username: string; wins: number; losses: number; win_rate: number; ytd: number }[]
+  > {
+    const response = await axiosInstance.get(
+      `/nba/api/v1/pick_of_the_day/users`,
+    );
+    return response.data;
+  },
 };
 
 export default apiService;

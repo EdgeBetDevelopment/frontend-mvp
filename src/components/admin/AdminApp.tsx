@@ -6,6 +6,7 @@ import customDataProvider from '@/services/admin';
 
 import { AdminLayout } from './AdminLayout';
 import { PickOfTheDayCreate } from './PickOfTheDayCreate';
+import { PickOfTheDayEdit } from './PickOfTheDayEdit';
 import { PickOfTheDayList } from './PickOfTheDayList';
 import { ReviewCreate } from './ReviewCreate';
 import { ReviewEdit } from './ReviewEdit';
@@ -45,6 +46,7 @@ const AdminApp = () => {
       {/* Pick of the Day - доступно для всіх адмінів */}
       <Resource
         create={PickOfTheDayCreate}
+        edit={PickOfTheDayEdit}
         name="pick_of_the_day"
         list={PickOfTheDayList}
         options={{ label: 'Pick of the Days' }}
