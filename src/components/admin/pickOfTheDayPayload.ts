@@ -32,6 +32,10 @@ export const sanitizePickOfTheDayPayload = (data: any) => {
   }
 
   const result: Record<string, any> = { ...data };
+
+  if ('odds' in result && result.odds !== undefined && result.odds !== null) {
+    result.odds = String(result.odds);
+  }
   const sport = String(result.sport || '').toLowerCase();
 
   if (sport && sport !== 'nba') {

@@ -36,28 +36,39 @@ const validateOdds = (value: unknown) => {
 
 const parseOdds = (value: unknown) => {
   if (value === null || value === undefined || value === '') {
-    return null;
+    return '';
   }
   const normalized = String(value).trim();
   if (normalized === '+' || normalized === '-') {
     return normalized;
   }
+  if (normalized.startsWith('-') || normalized.startsWith('+')) {
+    return normalized;
+  }
   const num = Number(normalized);
-  return Number.isNaN(num) ? normalized : num;
+  if (!Number.isNaN(num)) {
+    return `+${normalized}`;
+  }
+  return normalized;
 };
 
 const formatOdds = (value: unknown) => {
   if (value === null || value === undefined || value === '') {
     return '';
   }
-  if (value === '+' || value === '-') {
-    return String(value);
+  const str = String(value);
+  if (str === '+' || str === '-') {
+    return str;
   }
-  const num = Number(value);
-  if (Number.isNaN(num)) {
-    return String(value);
+
+  if (str.startsWith('-') || str.startsWith('+')) {
+    return str;
   }
-  return num > 0 ? `+${num}` : String(num);
+  const num = Number(str);
+  if (!Number.isNaN(num)) {
+    return `+${str}`;
+  }
+  return str;
 };
 
 const toLocalDateTimeValue = (value?: string) => {
@@ -156,7 +167,10 @@ export const PickOfTheDayFormFields = () => {
         const withRecord = recordSport
           ? choices.some((choice) => choice.id === recordSport)
             ? choices
-            : [...choices, { id: recordSport, name: String(recordSport).toUpperCase() }]
+            : [
+                ...choices,
+                { id: recordSport, name: String(recordSport).toUpperCase() },
+              ]
           : choices;
         setSportChoices(
           withRecord.length ? withRecord : [{ id: 'nba', name: 'NBA' }],
@@ -197,8 +211,7 @@ export const PickOfTheDayFormFields = () => {
       />
       <FormDataConsumer>
         {({ formData }) => {
-          const isNBA =
-            String(formData?.sport || '').toLowerCase() === 'nba';
+          const isNBA = String(formData?.sport || '').toLowerCase() === 'nba';
           return isNBA ? (
             <TextInput source="pick" label="Pick" validate={required()} />
           ) : (
@@ -209,8 +222,7 @@ export const PickOfTheDayFormFields = () => {
 
       <FormDataConsumer>
         {({ formData }) => {
-          const isNBA =
-            String(formData?.sport || '').toLowerCase() === 'nba';
+          const isNBA = String(formData?.sport || '').toLowerCase() === 'nba';
           return isNBA ? (
             <SelectInput
               source="game_id"
@@ -224,19 +236,14 @@ export const PickOfTheDayFormFields = () => {
               }}
             />
           ) : (
-            <TextInput
-              source="game_name"
-              label="Game"
-              validate={required()}
-            />
+            <TextInput source="game_name" label="Game" validate={required()} />
           );
         }}
       </FormDataConsumer>
 
       <FormDataConsumer>
         {({ formData }) => {
-          const isNBA =
-            String(formData?.sport || '').toLowerCase() === 'nba';
+          const isNBA = String(formData?.sport || '').toLowerCase() === 'nba';
           return isNBA ? (
             <SelectInput
               source="settlement.market_type"
@@ -251,8 +258,7 @@ export const PickOfTheDayFormFields = () => {
       <FormDataConsumer>
         {({ formData }) => {
           const marketType = formData?.settlement?.market_type;
-          const isNBA =
-            String(formData?.sport || '').toLowerCase() === 'nba';
+          const isNBA = String(formData?.sport || '').toLowerCase() === 'nba';
           return (
             <MarketTypeFields
               marketType={marketType}
@@ -265,8 +271,7 @@ export const PickOfTheDayFormFields = () => {
 
       <FormDataConsumer>
         {({ formData }) => {
-          const isNBA =
-            String(formData?.sport || '').toLowerCase() === 'nba';
+          const isNBA = String(formData?.sport || '').toLowerCase() === 'nba';
           const now = new Date();
           const localMin = new Date(
             now.getTime() - now.getTimezoneOffset() * 60000,
@@ -294,17 +299,17 @@ export const PickOfTheDayFormFields = () => {
         validate={validateOdds}
         parse={parseOdds}
         format={formatOdds}
-        inputProps={{ inputMode: 'decimal', pattern: '[+-]?\\d*(\\.\\d+)?' }}
       />
       <FormDataConsumer>
         {({ formData }) => {
-          const isNBA =
-            String(formData?.sport || '').toLowerCase() === 'nba';
+          const isNBA = String(formData?.sport || '').toLowerCase() === 'nba';
           return (
             <SelectInput
               source="confidence_level"
               label="Confidence Level"
-              choices={isNBA ? confidenceLevelChoices : confidenceLevelChoicesSimple}
+              choices={
+                isNBA ? confidenceLevelChoices : confidenceLevelChoicesSimple
+              }
               validate={required()}
             />
           );
@@ -312,8 +317,7 @@ export const PickOfTheDayFormFields = () => {
       </FormDataConsumer>
       <FormDataConsumer>
         {({ formData }) => {
-          const isNBA =
-            String(formData?.sport || '').toLowerCase() === 'nba';
+          const isNBA = String(formData?.sport || '').toLowerCase() === 'nba';
           return isNBA ? (
             <NumberInput source="units" label="Units" validate={required()} />
           ) : (

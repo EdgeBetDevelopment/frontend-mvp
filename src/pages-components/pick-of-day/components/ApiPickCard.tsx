@@ -1,28 +1,29 @@
-import { Clock, Crown, Star } from "lucide-react";
+import { Clock, Crown, Star } from 'lucide-react';
 
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 
-import type { ApiPick } from "../types";
-import { formatPostedAt } from "../helpers";
-import { ConfidenceBadge } from "./ConfidenceBadge";
+import type { ApiPick } from '../types';
+import { formatPostedAt } from '../helpers';
+import { ConfidenceBadge } from './ConfidenceBadge';
 
 const ApiConfidenceBadge = ({
   confidence,
 }: {
-  confidence: ApiPick["confidence_level"];
+  confidence: ApiPick['confidence_level'];
 }) => {
   const normalized =
-    confidence === "lock" || confidence === "high" || confidence === "medium"
+    confidence === 'lock' || confidence === 'high' || confidence === 'medium'
       ? confidence
-      : "medium";
+      : 'medium';
   return <ConfidenceBadge confidence={normalized} />;
 };
 
 export const ApiPickCard = ({ pick }: { pick: ApiPick }) => {
-  const gameLabel = pick?.game?.home_team || pick?.game?.away_team
-    ? `${pick.game.home_team} vs ${pick.game.away_team}`
-    : pick?.game?.name ?? "TBD";
+  const gameLabel =
+    pick?.game?.home_team || pick?.game?.away_team
+      ? `${pick.game.home_team} vs ${pick.game.away_team}`
+      : (pick?.game?.name ?? 'TBD');
 
   return (
     <Card className="overflow-hidden border-border/50 bg-card/50 transition-all duration-300 hover:border-primary/30">
@@ -62,7 +63,7 @@ export const ApiPickCard = ({ pick }: { pick: ApiPick }) => {
               {pick.sport?.toUpperCase()}
             </Badge>
             <span className="text-sm text-muted-foreground">
-              {pick.units} Unit{pick.units > 1 ? "s" : ""}
+              {pick.units} Unit{pick.units > 1 ? 's' : ''}
             </span>
           </div>
           <p className="mb-1 text-sm text-muted-foreground">{gameLabel}</p>
@@ -71,7 +72,14 @@ export const ApiPickCard = ({ pick }: { pick: ApiPick }) => {
               {pick.pick}
             </span>
             <span className="text-lg font-semibold text-primary">
-              {pick.odds}
+              {(() => {
+                const odds = String(pick.odds);
+                if (odds.startsWith('-') || odds.startsWith('+')) {
+                  return odds;
+                }
+                const num = Number(odds);
+                return !Number.isNaN(num) && num > 0 ? `+${odds}` : odds;
+              })()}
             </span>
           </div>
         </div>

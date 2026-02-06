@@ -161,11 +161,21 @@ const customDataProvider: DataProvider = {
     }
 
     if (resource === 'pick_of_the_day') {
-      const { data } = await axiosInstance.patch(
-        `/nba/api/v1/pick_of_the_day/${params.id}`,
-        params.data,
-      );
-      return { data };
+      console.log('DataProvider update - pick_of_the_day:', {
+        id: params.id,
+        data: params.data,
+      });
+      try {
+        const { data } = await axiosInstance.patch(
+          `/nba/api/v1/pick_of_the_day/${params.id}`,
+          params.data,
+        );
+        console.log('DataProvider update - response:', data);
+        return { data };
+      } catch (error) {
+        console.error('DataProvider update - error:', error);
+        throw error;
+      }
     }
 
     if (resource === 'subscribers') {
