@@ -114,9 +114,9 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
         {/* Header */}
         <DialogHeader className="border-b border-border bg-gradient-to-r from-card to-secondary/30 px-4 py-3 sm:px-6 sm:py-4">
           <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center sm:gap-4">
-            <div className="flex items-center gap-2 sm:gap-4">
-              <div className="flex items-center gap-2 sm:gap-3">
-                <div className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-full bg-primary/20 sm:h-10 sm:w-10">
+            <div className="flex w-full items-center gap-2 overflow-hidden sm:w-auto sm:gap-4">
+              <div className="flex items-center gap-2 overflow-hidden sm:gap-3">
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary/20 sm:h-10 sm:w-10">
                   {game?.game?.home_team_logo ? (
                     <img
                       src={game?.game?.home_team_logo}
@@ -129,12 +129,23 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
                     </span>
                   )}
                 </div>
-                <DialogTitle className="font-display text-base sm:text-lg md:text-xl">
-                  {homeTeamName}{' '}
-                  <span className="font-normal text-muted-foreground">vs</span>{' '}
-                  {awayTeamName}
+                <DialogTitle className="min-w-0 truncate font-display text-base sm:text-lg md:text-xl">
+                  <span className="hidden sm:inline">
+                    {homeTeamName}{' '}
+                    <span className="font-normal text-muted-foreground">
+                      vs
+                    </span>{' '}
+                    {awayTeamName}
+                  </span>
+                  <span className="truncate sm:hidden">
+                    {homeTeamName.split(' ').pop()}{' '}
+                    <span className="font-normal text-muted-foreground">
+                      vs
+                    </span>{' '}
+                    {awayTeamName.split(' ').pop()}
+                  </span>
                 </DialogTitle>
-                <div className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-full bg-primary/20 sm:h-10 sm:w-10">
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary/20 sm:h-10 sm:w-10">
                   {game?.game?.away_team_logo ? (
                     <img
                       src={game?.game?.away_team_logo}
@@ -174,23 +185,23 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
           <div className="space-y-4 p-4 sm:space-y-6 sm:p-6">
             {/* Predicted Winner & Key Stats Row */}
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 md:grid-cols-3">
-              <Card className="border-primary/20 bg-gradient-to-br from-primary/10 to-primary/5 p-4">
+              <Card className="overflow-hidden border-primary/20 bg-gradient-to-br from-primary/10 to-primary/5 p-4">
                 <div className="mb-2 flex items-center gap-2">
-                  <Target className="h-4 w-4 text-primary" />
+                  <Target className="h-4 w-4 shrink-0 text-primary" />
                   <span className="text-sm font-medium text-muted-foreground">
                     Predicted Winner
                   </span>
                 </div>
-                <p className="font-display text-2xl font-bold text-primary">
+                <p className="break-words font-display text-xl font-bold text-primary sm:text-2xl">
                   {predictedWinnerInfo?.name ||
                     game.prediction?.predicted_winner ||
                     'N/A'}
                 </p>
               </Card>
-              <Card className="border-border bg-card p-4">
+              <Card className="overflow-hidden border-border bg-card p-4">
                 <div className="mb-2 flex items-center gap-2">
-                  <Activity className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm font-medium text-muted-foreground">
+                  <Activity className="h-4 w-4 shrink-0 text-muted-foreground" />
+                  <span className="truncate text-sm font-medium text-muted-foreground">
                     {homeTeamName}
                   </span>
                 </div>
@@ -199,10 +210,10 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
                 </p>
                 <p className="text-sm text-primary">Win Probability</p>
               </Card>
-              <Card className="border-border bg-card p-4">
+              <Card className="overflow-hidden border-border bg-card p-4">
                 <div className="mb-2 flex items-center gap-2">
-                  <Activity className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm font-medium text-muted-foreground">
+                  <Activity className="h-4 w-4 shrink-0 text-muted-foreground" />
+                  <span className="truncate text-sm font-medium text-muted-foreground">
                     {awayTeamName}
                   </span>
                 </div>
@@ -215,24 +226,29 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
 
             {/* Main Content Tabs */}
             <Tabs defaultValue="analysis" className="w-full">
-              <TabsList className="w-full justify-start bg-secondary/30 p-1">
+              <TabsList className="w-full flex-nowrap justify-start overflow-x-auto bg-secondary/30 p-1">
                 <TabsTrigger
                   value="analysis"
-                  className="flex items-center gap-2"
+                  className="flex shrink-0 items-center gap-1 text-xs sm:gap-2 sm:text-sm"
                 >
                   <TrendingUp className="h-4 w-4" />
-                  Analysis
+                  <span>Analysis</span>
                 </TabsTrigger>
-                <TabsTrigger value="bets" className="flex items-center gap-2">
+                <TabsTrigger
+                  value="bets"
+                  className="flex shrink-0 items-center gap-1 text-xs sm:gap-2 sm:text-sm"
+                >
                   <Zap className="h-4 w-4" />
-                  Betting Picks
+                  <span className="hidden sm:inline">Betting Picks</span>
+                  <span className="sm:hidden">Bets</span>
                 </TabsTrigger>
                 <TabsTrigger
                   value="injuries"
-                  className="flex items-center gap-2"
+                  className="flex shrink-0 items-center gap-1 text-xs sm:gap-2 sm:text-sm"
                 >
                   <Users className="h-4 w-4" />
-                  Injury Report
+                  <span className="hidden sm:inline">Injury Report</span>
+                  <span className="sm:hidden">Injuries</span>
                 </TabsTrigger>
               </TabsList>
 
@@ -240,16 +256,16 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
               <TabsContent value="analysis" className="mt-4 space-y-4">
                 {/* Game Overview */}
                 {overview.length > 0 && (
-                  <Card className="p-4">
+                  <Card className="overflow-hidden p-4">
                     <h3 className="mb-3 flex items-center gap-2 font-semibold">
-                      <Shield className="h-4 w-4 text-primary" />
+                      <Shield className="h-4 w-4 shrink-0 text-primary" />
                       Game Overview
                     </h3>
                     <ul className="space-y-2 text-sm text-muted-foreground">
                       {overview.map((item, idx) => (
                         <li key={idx} className="flex items-start gap-2">
                           <ChevronRight className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                          {item}
+                          <span className="break-words">{item}</span>
                         </li>
                       ))}
                     </ul>
@@ -259,8 +275,8 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
                 {/* Team Analysis Side by Side */}
                 <div className="grid gap-4 md:grid-cols-2">
                   {/* Home Team */}
-                  <Card className="border-l-4 border-l-primary p-4">
-                    <h3 className="mb-3 font-semibold">
+                  <Card className="overflow-hidden border-l-4 border-l-primary p-4">
+                    <h3 className="mb-3 break-words font-semibold">
                       {homeTeamName} Analysis
                     </h3>
                     <div className="space-y-3">
@@ -268,7 +284,7 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
                         <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
                           Injuries
                         </span>
-                        <p className="mt-1 text-sm">
+                        <p className="mt-1 break-words text-sm">
                           {homeInjuries || 'No injuries reported'}
                         </p>
                       </div>
@@ -282,8 +298,8 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
                               key={idx}
                               className="flex items-start gap-2 text-sm"
                             >
-                              <span className="text-primary">•</span>
-                              {s}
+                              <span className="shrink-0 text-primary">•</span>
+                              <span className="break-words">{s}</span>
                             </li>
                           ))}
                         </ul>
@@ -292,8 +308,8 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
                   </Card>
 
                   {/* Away Team */}
-                  <Card className="border-l-4 border-l-secondary p-4">
-                    <h3 className="mb-3 font-semibold">
+                  <Card className="overflow-hidden border-l-4 border-l-secondary p-4">
+                    <h3 className="mb-3 break-words font-semibold">
                       {awayTeamName} Analysis
                     </h3>
                     <div className="space-y-3">
@@ -301,7 +317,7 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
                         <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
                           Injuries
                         </span>
-                        <p className="mt-1 text-sm">
+                        <p className="mt-1 break-words text-sm">
                           {awayInjuries || 'No injuries reported'}
                         </p>
                       </div>
@@ -315,10 +331,10 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
                               key={idx}
                               className="flex items-start gap-2 text-sm"
                             >
-                              <span className="text-secondary-foreground">
+                              <span className="shrink-0 text-secondary-foreground">
                                 •
                               </span>
-                              {s}
+                              <span className="break-words">{s}</span>
                             </li>
                           ))}
                         </ul>
@@ -329,9 +345,9 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
 
                 {/* Risk Factors */}
                 {riskFactors.length > 0 && (
-                  <Card className="border-destructive/20 bg-destructive/5 p-4">
+                  <Card className="overflow-hidden border-destructive/20 bg-destructive/5 p-4">
                     <h3 className="mb-3 flex items-center gap-2 font-semibold text-destructive">
-                      <AlertTriangle className="h-4 w-4" />
+                      <AlertTriangle className="h-4 w-4 shrink-0" />
                       Risk Factors
                     </h3>
                     <ul className="space-y-2">
@@ -341,7 +357,7 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
                           className="flex items-start gap-2 text-sm"
                         >
                           <span className="shrink-0 text-destructive">⚠</span>
-                          {risk}
+                          <span className="break-words">{risk}</span>
                         </li>
                       ))}
                     </ul>
@@ -371,24 +387,24 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
                             return (
                               <Card
                                 key={idx}
-                                className="cursor-pointer border-emerald-500/30 bg-emerald-500/10 p-4 transition-colors hover:border-emerald-500/50"
+                                className="cursor-pointer overflow-hidden border-emerald-500/30 bg-emerald-500/10 p-4 transition-colors hover:border-emerald-500/50"
                               >
-                                <div className="mb-2 flex items-center justify-between">
+                                <div className="mb-2 flex items-center justify-between gap-2">
                                   <Badge
                                     variant="outline"
-                                    className="border-emerald-500/30 bg-emerald-500/20 text-xs text-emerald-400"
+                                    className="truncate border-emerald-500/30 bg-emerald-500/20 text-xs text-emerald-400"
                                   >
                                     {betType}
                                   </Badge>
-                                  <span className="font-mono font-bold text-emerald-400">
+                                  <span className="shrink-0 font-mono font-bold text-emerald-400">
                                     {bet.bet_coefficient > 0 ? '+' : ''}
                                     {bet.bet_coefficient}
                                   </span>
                                 </div>
-                                <p className="mb-2 font-semibold">
+                                <p className="mb-2 break-words font-semibold">
                                   {bet.bet_name}
                                 </p>
-                                <p className="text-sm text-muted-foreground">
+                                <p className="break-words text-sm text-muted-foreground">
                                   {bet.bet_description}
                                 </p>
                               </Card>
@@ -421,24 +437,24 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
                             return (
                               <Card
                                 key={idx}
-                                className="cursor-pointer border-amber-500/30 bg-amber-500/10 p-4 transition-colors hover:border-amber-500/50"
+                                className="cursor-pointer overflow-hidden border-amber-500/30 bg-amber-500/10 p-4 transition-colors hover:border-amber-500/50"
                               >
-                                <div className="mb-2 flex items-center justify-between">
+                                <div className="mb-2 flex items-center justify-between gap-2">
                                   <Badge
                                     variant="outline"
-                                    className="border-amber-500/30 bg-amber-500/20 text-xs text-amber-400"
+                                    className="truncate border-amber-500/30 bg-amber-500/20 text-xs text-amber-400"
                                   >
                                     {betType}
                                   </Badge>
-                                  <span className="font-mono font-bold text-amber-400">
+                                  <span className="shrink-0 font-mono font-bold text-amber-400">
                                     {bet.bet_coefficient > 0 ? '+' : ''}
                                     {bet.bet_coefficient}
                                   </span>
                                 </div>
-                                <p className="mb-2 font-semibold">
+                                <p className="mb-2 break-words font-semibold">
                                   {bet.bet_name}
                                 </p>
-                                <p className="text-sm text-muted-foreground">
+                                <p className="break-words text-sm text-muted-foreground">
                                   {bet.bet_description}
                                 </p>
                               </Card>
@@ -456,21 +472,109 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
 
               {/* Injury Report Tab */}
               <TabsContent value="injuries" className="mt-4">
-                <div className="overflow-x-auto">
-                  <Card className="overflow-hidden">
+                {/* Mobile Card View */}
+                <div className="block space-y-3 md:hidden">
+                  {game.scoreboard?.home_team_injury &&
+                    game?.scoreboard?.home_team_injury?.map((player, idx) => (
+                      <Card key={`home-card-${idx}`} className="p-4">
+                        <div className="mb-3 flex items-start justify-between gap-2">
+                          <div>
+                            <h4 className="font-semibold">{player.player}</h4>
+                            <p className="text-sm text-muted-foreground">
+                              {player.team_name} · {player.position}
+                            </p>
+                          </div>
+                          <Badge className={getStatusColor(player.status)}>
+                            {player.status}
+                          </Badge>
+                        </div>
+                        <div className="space-y-2 text-sm">
+                          <div>
+                            <span className="font-medium">Est. Return: </span>
+                            <span className="text-muted-foreground">
+                              {player.return_date}
+                            </span>
+                          </div>
+                          {player.comment && (
+                            <div>
+                              <span className="font-medium">Notes: </span>
+                              <span className="text-muted-foreground">
+                                {player.comment}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      </Card>
+                    ))}
+                  {game.scoreboard?.away_team_injury &&
+                    game?.scoreboard?.away_team_injury?.map((player, idx) => (
+                      <Card key={`away-card-${idx}`} className="p-4">
+                        <div className="mb-3 flex items-start justify-between gap-2">
+                          <div>
+                            <h4 className="font-semibold">{player.player}</h4>
+                            <p className="text-sm text-muted-foreground">
+                              {player.team_name} · {player.position}
+                            </p>
+                          </div>
+                          <Badge className={getStatusColor(player.status)}>
+                            {player.status}
+                          </Badge>
+                        </div>
+                        <div className="space-y-2 text-sm">
+                          <div>
+                            <span className="font-medium">Est. Return: </span>
+                            <span className="text-muted-foreground">
+                              {player.return_date}
+                            </span>
+                          </div>
+                          {player.comment && (
+                            <div>
+                              <span className="font-medium">Notes: </span>
+                              <span className="text-muted-foreground">
+                                {player.comment}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      </Card>
+                    ))}
+                  {(!game.scoreboard?.home_team_injury ||
+                    game?.scoreboard?.home_team_injury?.length === 0) &&
+                    (!game?.scoreboard?.away_team_injury ||
+                      game?.scoreboard?.away_team_injury?.length === 0) && (
+                      <Card className="p-8">
+                        <p className="text-center text-muted-foreground">
+                          No injury reports available
+                        </p>
+                      </Card>
+                    )}
+                </div>
+
+                {/* Desktop Table View */}
+                <div className="relative hidden md:block">
+                  <div
+                    className="overflow-auto rounded-lg border border-border"
+                    style={{ maxHeight: 'calc(90vh - 350px)' }}
+                  >
                     <Table className="min-w-[600px]">
-                      <TableHeader>
+                      <TableHeader className="sticky top-0 z-10 bg-secondary backdrop-blur-sm">
                         <TableRow className="bg-secondary/30">
-                          <TableHead className="font-semibold">
+                          <TableHead className="whitespace-nowrap font-semibold">
                             Player
                           </TableHead>
-                          <TableHead className="font-semibold">Team</TableHead>
-                          <TableHead className="font-semibold">Pos</TableHead>
-                          <TableHead className="font-semibold">
+                          <TableHead className="whitespace-nowrap font-semibold">
+                            Team
+                          </TableHead>
+                          <TableHead className="whitespace-nowrap font-semibold">
+                            Pos
+                          </TableHead>
+                          <TableHead className="whitespace-nowrap font-semibold">
                             Est. Return
                           </TableHead>
-                          <TableHead className="font-semibold">Notes</TableHead>
-                          <TableHead className="text-right font-semibold">
+                          <TableHead className="whitespace-nowrap font-semibold">
+                            Notes
+                          </TableHead>
+                          <TableHead className="whitespace-nowrap text-right font-semibold">
                             Status
                           </TableHead>
                         </TableRow>
@@ -490,16 +594,21 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
                                   {player.team_name}
                                 </TableCell>
                                 <TableCell>{player.position}</TableCell>
-                                <TableCell>{player.return_date}</TableCell>
-                                <TableCell className="max-w-[200px] text-muted-foreground">
+                                <TableCell className="whitespace-nowrap">
+                                  {player.return_date}
+                                </TableCell>
+                                <TableCell className="max-w-[150px] text-muted-foreground sm:max-w-[250px]">
                                   <Tooltip>
                                     <TooltipTrigger asChild>
                                       <div className="cursor-help truncate">
                                         {player.comment}
                                       </div>
                                     </TooltipTrigger>
-                                    <TooltipContent>
-                                      <p className="max-w-xs">
+                                    <TooltipContent
+                                      side="left"
+                                      className="max-w-xs"
+                                    >
+                                      <p className="break-words">
                                         {player.comment}
                                       </p>
                                     </TooltipContent>
@@ -529,16 +638,21 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
                                   {player.team_name}
                                 </TableCell>
                                 <TableCell>{player.position}</TableCell>
-                                <TableCell>{player.return_date}</TableCell>
-                                <TableCell className="max-w-[200px] text-muted-foreground">
+                                <TableCell className="whitespace-nowrap">
+                                  {player.return_date}
+                                </TableCell>
+                                <TableCell className="max-w-[150px] text-muted-foreground sm:max-w-[250px]">
                                   <Tooltip>
                                     <TooltipTrigger asChild>
                                       <div className="cursor-help truncate">
                                         {player.comment}
                                       </div>
                                     </TooltipTrigger>
-                                    <TooltipContent>
-                                      <p className="max-w-xs">
+                                    <TooltipContent
+                                      side="left"
+                                      className="max-w-xs"
+                                    >
+                                      <p className="break-words">
                                         {player.comment}
                                       </p>
                                     </TooltipContent>
@@ -570,7 +684,7 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
                           )}
                       </TableBody>
                     </Table>
-                  </Card>
+                  </div>
                 </div>
               </TabsContent>
             </Tabs>
