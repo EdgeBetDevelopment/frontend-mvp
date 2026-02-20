@@ -5,6 +5,9 @@ import { Admin, Resource } from 'react-admin';
 import customDataProvider from '@/services/admin';
 
 import { AdminLayout } from './AdminLayout';
+import { ModeratorAdd } from './ModeratorAdd';
+import { ModeratorEdit } from './ModeratorEdit';
+import { ModeratorList } from './ModeratorList';
 import { PickOfTheDayCreate } from './PickOfTheDayCreate';
 import { PickOfTheDayEdit } from './PickOfTheDayEdit';
 import { PickOfTheDayList } from './PickOfTheDayList';
@@ -31,7 +34,6 @@ const AdminApp = () => {
       return;
     }
 
-    // Check if user has admin access
     if (!isAdmin && !isSuperAdmin) {
       router.replace('/');
     }
@@ -43,7 +45,6 @@ const AdminApp = () => {
 
   return (
     <Admin dataProvider={customDataProvider} layout={AdminLayout}>
-      {/* Pick of the Day - доступно для всіх адмінів */}
       <Resource
         create={PickOfTheDayCreate}
         edit={PickOfTheDayEdit}
@@ -51,10 +52,15 @@ const AdminApp = () => {
         list={PickOfTheDayList}
         options={{ label: 'Pick of the Days' }}
       />
-
-      {/* Решта ресурсів - тільки для super admin */}
       {isSuperAdmin && (
         <>
+          <Resource
+            name="moderators"
+            list={ModeratorList}
+            edit={ModeratorEdit}
+            create={ModeratorAdd}
+            options={{ label: 'Moderators' }}
+          />
           <Resource
             name="subscribers"
             list={SubscriberList}

@@ -1,6 +1,7 @@
 import { DataProvider } from 'react-admin';
 
 import { axiosInstance } from './client';
+import { userService } from './user';
 
 const customDataProvider: DataProvider = {
   getList: async (resource, params) => {
@@ -51,6 +52,14 @@ const customDataProvider: DataProvider = {
       };
     }
 
+    if (resource === 'moderators') {
+      response = { data: await userService.getModerators() };
+      return {
+        data: response.data,
+        total: response.data.length,
+      };
+    }
+
     response = await axiosInstance.get(`/nba/api/v1/${resource}`);
     return {
       data: response.data,
@@ -92,6 +101,11 @@ const customDataProvider: DataProvider = {
       const { data } = await axiosInstance.get(
         `/subscribe/api/v1/subscriber/${params.id}`,
       );
+      return { data };
+    }
+
+    if (resource === 'moderators') {
+      const data = await userService.getModerator(params.id as number);
       return { data };
     }
 
@@ -181,6 +195,14 @@ const customDataProvider: DataProvider = {
     if (resource === 'subscribers') {
       const { data } = await axiosInstance.patch(
         `/subscribe/api/v1/subscriber/${params.id}`,
+        params.data,
+      );
+      return { data };
+    }
+
+    if (resource === 'moderators') {
+      const data = await userService.updateModeratorPermissions(
+        params.id as number,
         params.data,
       );
       return { data };
