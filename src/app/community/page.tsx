@@ -1,31 +1,32 @@
-'use client';
+"use client";
 
-import { Check, MessageCircle, Users, X, Zap } from 'lucide-react';
+import { Check, MessageCircle, Users, X, Zap } from "lucide-react";
 
-import Footer from '@/components/Footer';
-import Navigation from '@/components/Navigation';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import Footer from "@/components/Footer";
+import Navigation from "@/components/Navigation";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import Link from "next/link";
 
 const Community = () => {
   const freeFeatures = [
-    { text: 'Access to free channels', included: true },
-    { text: 'Betting terminology resources', included: true },
-    { text: 'One free pick per day', included: true },
-    { text: 'Community discussions', included: false },
-    { text: 'Premium channels access', included: false },
-    { text: 'Additional plays & insights', included: false },
-    { text: 'Moderator bet logic & analysis', included: false },
+    { text: "Access to free channels", included: true },
+    { text: "Betting terminology resources", included: true },
+    { text: "One free pick per day", included: true },
+    { text: "Community discussions", included: false },
+    { text: "Premium channels access", included: false },
+    { text: "Additional plays & insights", included: false },
+    { text: "Moderator bet logic & analysis", included: false },
   ];
 
   const premiumFeatures = [
-    { text: 'Access to all free channels', included: true },
-    { text: 'Betting terminology resources', included: true },
-    { text: 'All daily picks', included: true },
-    { text: 'Community discussions', included: true },
-    { text: 'Premium channels access', included: true },
-    { text: 'Additional plays & insights', included: true },
-    { text: 'Moderator bet logic & analysis', included: true },
+    { text: "Access to all free channels", included: true },
+    { text: "Betting terminology resources", included: true },
+    { text: "All daily picks", included: true },
+    { text: "Community discussions", included: true },
+    { text: "Premium channels access", included: true },
+    { text: "Additional plays & insights", included: true },
+    { text: "Moderator bet logic & analysis", included: true },
   ];
 
   return (
@@ -44,16 +45,16 @@ const Community = () => {
             Join our Discord server and become part of a community dedicated to
             making informed betting decisions. Server access is completely free!
           </p>
-          <Button
-            size="lg"
-            className="gap-2 px-8 py-6 text-lg"
-            onClick={() =>
-              window.open('https://discord.gg/your-invite-link', '_blank')
-            }
+          <Link
+            href={`${process.env.NEXT_PUBLIC_DISCORD_INVITE}`}
+            target="_blank"
+            rel="noopener noreferrer"
           >
-            <MessageCircle className="h-5 w-5" />
-            Join Our Discord
-          </Button>
+            <Button size="lg" className="gap-2 px-8 py-6 text-lg">
+              <MessageCircle className="h-5 w-5" />
+              Join Our Discord
+            </Button>
+          </Link>
         </div>
         <div className="mx-auto grid max-w-4xl gap-8 md:grid-cols-2">
           <Card className="border-border/50 bg-card/50 backdrop-blur">
@@ -76,8 +77,8 @@ const Community = () => {
                     <span
                       className={
                         feature.included
-                          ? 'text-foreground'
-                          : 'text-muted-foreground/50'
+                          ? "text-foreground"
+                          : "text-muted-foreground/50"
                       }
                     >
                       {feature.text}
@@ -108,13 +109,11 @@ const Community = () => {
                 ))}
               </ul>
               <div className="border-border/50 mt-6 border-t pt-6">
-                <Button
-                  variant="outline"
-                  className="w-full"
-                  onClick={() => (window.location.href = '/pricing')}
-                >
-                  View Premium Plans
-                </Button>
+                <Link href="/pricing">
+                  <Button variant="outline" className="w-full">
+                    View Premium Plans
+                  </Button>
+                </Link>
               </div>
             </CardContent>
           </Card>
@@ -123,17 +122,16 @@ const Community = () => {
           <p className="text-muted-foreground mb-4">
             Ready to join thousands of smart bettors?
           </p>
-          <Button
-            size="lg"
-            variant="outline"
-            className="gap-2"
-            onClick={() =>
-              window.open('https://discord.gg/your-invite-link', '_blank')
-            }
+          <Link
+            href={`${process.env.NEXT_PUBLIC_DISCORD_INVITE}`}
+            target="_blank"
+            rel="noopener noreferrer"
           >
-            <MessageCircle className="h-5 w-5" />
-            Join Discord Server
-          </Button>
+            <Button size="lg" variant="outline" className="gap-2">
+              <MessageCircle className="h-5 w-5" />
+              Join Discord Server
+            </Button>
+          </Link>
         </div>
       </div>
 

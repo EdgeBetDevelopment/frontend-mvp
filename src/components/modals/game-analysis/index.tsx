@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import {
   Calendar,
   Clock,
@@ -12,24 +12,24 @@ import {
   Shield,
   Zap,
   ChevronRight,
-} from 'lucide-react';
+} from "lucide-react";
 
-import { useStore } from '@/store';
-import { Badge } from '@/ui/badge';
-import { Card } from '@/ui/card';
+import { useStore } from "@/store";
+import { Badge } from "@/ui/badge";
+import { Card } from "@/ui/card";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { ScrollArea } from '@/ui/scroll-area';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/ui/tabs';
+} from "@/components/ui/dialog";
+import { ScrollArea } from "@/ui/scroll-area";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/ui/tabs";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from '@/components/ui/tooltip';
+} from "@/components/ui/tooltip";
 import {
   Table,
   TableBody,
@@ -37,9 +37,13 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/ui/table';
-import { getTeamInfoByName } from '@/utils/team';
-import { formatUtcToLocalDate, formatUtcToLocalTimeAmPm } from '@/utils/time';
+} from "@/ui/table";
+import { getTeamInfoByName } from "@/utils/team";
+import {
+  formatUtcToLocalDate,
+  formatUtcToLocalTimeAmPm,
+  getStatusColor,
+} from "@/utils";
 
 interface IGameAnalysisModal {
   open: boolean;
@@ -59,7 +63,7 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
     try {
       return getTeamInfoByName(game?.prediction?.predicted_winner, game?.game);
     } catch (error) {
-      console.error('Error getting predicted winner info:', error);
+      console.error("Error getting predicted winner info:", error);
       return null;
     }
   }, [game?.prediction?.predicted_winner, game?.game]);
@@ -69,21 +73,10 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
     try {
       return getTeamInfoByName(game?.prediction?.favorite_team, game?.game);
     } catch (error) {
-      console.error('Error getting favorite team info:', error);
+      console.error("Error getting favorite team info:", error);
       return null;
     }
   }, [game?.prediction?.favorite_team, game?.game]);
-
-  const getStatusColor = (status?: string) => {
-    if (!status) return 'bg-muted text-muted-foreground';
-    const normalized = status.toLowerCase();
-    if (normalized.includes('out'))
-      return 'bg-destructive/80 text-destructive-foreground';
-    if (normalized.includes('day-to-day')) return 'bg-amber-600/80 text-white';
-    if (normalized.includes('questionable'))
-      return 'bg-yellow-600/80 text-white';
-    return 'bg-muted text-muted-foreground';
-  };
 
   if (!isClient || !game) {
     return null;
@@ -94,8 +87,8 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
   const homeTeamAnalysis = analysis?.home_team_analysis;
   const awayTeamAnalysis = analysis?.away_team_analysis;
   const riskFactors = analysis?.risk_factors || [];
-  const homeInjuries = homeTeamAnalysis?.injuries || '';
-  const awayInjuries = awayTeamAnalysis?.injuries || '';
+  const homeInjuries = homeTeamAnalysis?.injuries || "";
+  const awayInjuries = awayTeamAnalysis?.injuries || "";
   const homeKeyStrengths = homeTeamAnalysis?.key_strengths || [];
   const awayKeyStrengths = awayTeamAnalysis?.key_strengths || [];
 
@@ -131,18 +124,18 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
                 </div>
                 <DialogTitle className="min-w-0 truncate font-display text-base sm:text-lg md:text-xl">
                   <span className="hidden sm:inline">
-                    {homeTeamName}{' '}
+                    {homeTeamName}{" "}
                     <span className="font-normal text-muted-foreground">
                       vs
-                    </span>{' '}
+                    </span>{" "}
                     {awayTeamName}
                   </span>
                   <span className="truncate sm:hidden">
-                    {homeTeamName.split(' ').pop()}{' '}
+                    {homeTeamName.split(" ").pop()}{" "}
                     <span className="font-normal text-muted-foreground">
                       vs
-                    </span>{' '}
-                    {awayTeamName.split(' ').pop()}
+                    </span>{" "}
+                    {awayTeamName.split(" ").pop()}
                   </span>
                 </DialogTitle>
                 <div className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary/20 sm:h-10 sm:w-10">
@@ -173,8 +166,8 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
                 variant="outline"
                 className="border-primary/30 bg-primary/10 text-primary"
               >
-                {game?.game?.status === 'scheduled'
-                  ? 'Scheduled'
+                {game?.game?.status === "scheduled"
+                  ? "Scheduled"
                   : game?.game?.status}
               </Badge>
             </div>
@@ -195,7 +188,7 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
                 <p className="break-words font-display text-xl font-bold text-primary sm:text-2xl">
                   {predictedWinnerInfo?.name ||
                     game.prediction?.predicted_winner ||
-                    'N/A'}
+                    "N/A"}
                 </p>
               </Card>
               <Card className="overflow-hidden border-border bg-card p-4">
@@ -285,7 +278,7 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
                           Injuries
                         </span>
                         <p className="mt-1 break-words text-sm">
-                          {homeInjuries || 'No injuries reported'}
+                          {homeInjuries || "No injuries reported"}
                         </p>
                       </div>
                       <div>
@@ -318,7 +311,7 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
                           Injuries
                         </span>
                         <p className="mt-1 break-words text-sm">
-                          {awayInjuries || 'No injuries reported'}
+                          {awayInjuries || "No injuries reported"}
                         </p>
                       </div>
                       <div>
@@ -381,7 +374,7 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
                           .slice(0, 3)
                           .map((bet, idx) => {
                             const betType = bet.market_type
-                              .replace(/_/g, ' ')
+                              .replace(/_/g, " ")
                               .replace(/\b\w/g, (l) => l.toUpperCase());
 
                             return (
@@ -397,7 +390,7 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
                                     {betType}
                                   </Badge>
                                   <span className="shrink-0 font-mono font-bold text-emerald-400">
-                                    {bet.bet_coefficient > 0 ? '+' : ''}
+                                    {bet.bet_coefficient > 0 ? "+" : ""}
                                     {bet.bet_coefficient}
                                   </span>
                                 </div>
@@ -431,7 +424,7 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
                           .slice(0, 3)
                           .map((bet, idx) => {
                             const betType = bet.market_type
-                              .replace(/_/g, ' ')
+                              .replace(/_/g, " ")
                               .replace(/\b\w/g, (l) => l.toUpperCase());
 
                             return (
@@ -447,7 +440,7 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
                                     {betType}
                                   </Badge>
                                   <span className="shrink-0 font-mono font-bold text-amber-400">
-                                    {bet.bet_coefficient > 0 ? '+' : ''}
+                                    {bet.bet_coefficient > 0 ? "+" : ""}
                                     {bet.bet_coefficient}
                                   </span>
                                 </div>
@@ -554,7 +547,7 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
                 <div className="relative hidden md:block">
                   <div
                     className="overflow-auto rounded-lg border border-border"
-                    style={{ maxHeight: 'calc(90vh - 350px)' }}
+                    style={{ maxHeight: "calc(90vh - 350px)" }}
                   >
                     <Table className="min-w-[600px]">
                       <TableHeader className="sticky top-0 z-10 bg-secondary backdrop-blur-sm">
