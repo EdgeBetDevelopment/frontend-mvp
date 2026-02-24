@@ -40,7 +40,6 @@ export const userService = {
     return res.data;
   },
 
-  // 2FA Management
   async enable2FA(): Promise<I2FAEnableResponse> {
     const res = await axiosInstance.post(`/user/api/v1/user/2fa/enable`);
     return res.data;
@@ -63,6 +62,41 @@ export const userService = {
   async recover2FA(backupCode: string): Promise<I2FARecoveryResponse> {
     const res = await axiosInstance.post(
       `/user/api/v1/user/2fa/recovery?backup_code=${backupCode}`,
+    );
+    return res.data;
+  },
+
+  async getUsersByEmail(email: string) {
+    const res = await axiosInstance.get(
+      `/user/api/v1/user/get_users_by_email`,
+      {
+        params: { email },
+      },
+    );
+    return res.data;
+  },
+
+  async getModerators(skip = 0, limit = 100) {
+    const res = await axiosInstance.get(`/user/api/v1/user/moderators`, {
+      params: { skip, limit },
+    });
+    return res.data;
+  },
+
+  async getModerator(moderatorId: number) {
+    const res = await axiosInstance.get(
+      `/user/api/v1/user/moderator/${moderatorId}`,
+    );
+    return res.data;
+  },
+
+  async updateModeratorPermissions(
+    moderatorId: number,
+    permissions: Partial<{ is_admin: boolean; is_super_admin: boolean }>,
+  ) {
+    const res = await axiosInstance.post(
+      `/user/api/v1/user/moderator/${moderatorId}`,
+      permissions,
     );
     return res.data;
   },
