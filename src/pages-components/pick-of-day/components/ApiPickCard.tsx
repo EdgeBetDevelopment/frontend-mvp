@@ -33,7 +33,7 @@ export const ApiPickCard = ({ pick }: { pick: ApiPick }) => {
             <div>
               <div className="flex items-center gap-2">
                 <h3 className="text-lg font-semibold text-foreground">
-                  Moderator #{pick.user_id}
+                  {pick.username}
                 </h3>
                 {pick.is_premium ? (
                   <Crown className="h-4 w-4 text-amber-400" />
