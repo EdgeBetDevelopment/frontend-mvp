@@ -5,9 +5,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { Mail, Trash2, User } from 'lucide-react';
+import { Mail, Trash2 } from 'lucide-react';
 
-import { userService } from '@/services/user';
+import { profileService } from '../services';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -19,7 +19,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 
-import { ModalProfile } from './Modal';
+import { ModalProfile } from './ModalProfile';
 
 const Schema = z.object({
   username: z.string().min(2, 'Must be at least 2 characters'),
@@ -51,7 +51,7 @@ export const GeneralInformation = () => {
   useEffect(() => {
     (async () => {
       try {
-        const me = await userService.getMe();
+        const me = await profileService.getMe();
         console.log('ME:', me);
         setValue('username', me?.username ?? '');
         setValue('email', me?.email ?? '');
@@ -72,7 +72,7 @@ export const GeneralInformation = () => {
   const handleUpdate = async (data: FormData) => {
     try {
       setIsEmail(true);
-      const res = await userService.updateMe(data);
+      const res = await profileService.updateMe(data);
       console.log('updateMe:', res);
     } catch (e) {
       console.error('updateMe error:', e);
@@ -81,7 +81,7 @@ export const GeneralInformation = () => {
 
   const handleDelete = async () => {
     try {
-      const res = await userService.deleteMe();
+      const res = await profileService.deleteMe();
       console.log('deleteMe:', res);
     } catch (e) {
       console.error('deleteMe error:', e);

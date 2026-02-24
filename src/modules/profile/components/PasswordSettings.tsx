@@ -7,7 +7,7 @@ import { Card } from '@/ui/card';
 import { Input } from '@/ui/input';
 import { Label } from '@/ui/label';
 import Loader from '@/ui/loader';
-import { userService } from '@/services/user';
+import { profileService } from '../services';
 import { toast } from 'sonner';
 import { handleFetchError } from '@/utils/error-handling';
 
@@ -21,7 +21,7 @@ const PasswordSettings = () => {
       current_password: string;
       new_password: string;
       new_password_confirm: string;
-    }) => userService.changePassword(data),
+    }) => profileService.changePassword(data),
     onSuccess: () => {
       toast.success('Password updated successfully!');
       setCurrentPassword('');

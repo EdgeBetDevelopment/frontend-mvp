@@ -9,7 +9,7 @@ import { GeneralInformation } from './GeneralInformation';
 import { Subscription } from './Subscription';
 import SecuritySettings from './SecuritySettings';
 import PasswordSettings from './PasswordSettings';
-import { userService } from '@/services/user';
+import { profileService } from '../services';
 
 export function ProfileSection() {
   const { refreshToken, setTokens } = useAuth();
@@ -17,7 +17,7 @@ export function ProfileSection() {
 
   const { data: user } = useQuery({
     queryKey: ['user'],
-    queryFn: userService.getMe,
+    queryFn: profileService.getMe,
   });
 
   useEffect(() => {

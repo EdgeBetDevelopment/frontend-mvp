@@ -4,28 +4,34 @@ import {
   I2FARecoveryResponse,
 } from '@/types/auth';
 import { axiosInstance } from './client';
+import { profileService } from '@/modules/profile';
 
 export interface UpdateMeDto {
   email?: string;
   username?: string;
 }
 
+/**
+ * UserService - handles user-related operations
+ *
+ * Note: Profile-related methods (getMe, updateMe, deleteMe, changePassword, 2FA methods)
+ * have been moved to @/modules/profile/services.
+ * This service now primarily handles admin/moderator operations.
+ *
+ * For backward compatibility, profile methods are proxied to profileService.
+ */
 export const userService = {
+  // Profile methods - proxied to profileService for backward compatibility
   async getMe() {
-    const res = await axiosInstance.get(`/user/api/v1/user/me`);
-    return res.data;
+    return profileService.getMe();
   },
 
   async updateMe(payload: UpdateMeDto) {
-    const res = await axiosInstance.patch(`/user/api/v1/user/me`, payload, {
-      headers: { 'Content-Type': 'application/json' },
-    });
-    return res.data;
+    return profileService.updateMe(payload);
   },
 
   async deleteMe() {
-    const res = await axiosInstance.delete(`/user/api/v1/user/me`);
-    return res.data;
+    return profileService.deleteMe();
   },
 
   async changePassword(data: {
@@ -33,39 +39,26 @@ export const userService = {
     new_password: string;
     new_password_confirm: string;
   }): Promise<string> {
-    const res = await axiosInstance.post(
-      `/user/api/v1/user/me/change_password`,
-      data,
-    );
-    return res.data;
+    return profileService.changePassword(data);
   },
 
   async enable2FA(): Promise<I2FAEnableResponse> {
-    const res = await axiosInstance.post(`/user/api/v1/user/2fa/enable`);
-    return res.data;
+    return profileService.enable2FA();
   },
 
   async confirm2FA(code: string): Promise<I2FAConfirmResponse> {
-    const res = await axiosInstance.post(
-      `/user/api/v1/user/2fa/confirm?code=${code}`,
-    );
-    return res.data;
+    return profileService.confirm2FA(code);
   },
 
   async disable2FA(code: string): Promise<string> {
-    const res = await axiosInstance.post(
-      `/user/api/v1/user/2fa/disable?code=${code}`,
-    );
-    return res.data;
+    return profileService.disable2FA(code);
   },
 
   async recover2FA(backupCode: string): Promise<I2FARecoveryResponse> {
-    const res = await axiosInstance.post(
-      `/user/api/v1/user/2fa/recovery?backup_code=${backupCode}`,
-    );
-    return res.data;
+    return profileService.recover2FA(backupCode);
   },
 
+  // Admin/Moderator methods - remain in userService
   async getUsersByEmail(email: string) {
     const res = await axiosInstance.get(
       `/user/api/v1/user/get_users_by_email`,
