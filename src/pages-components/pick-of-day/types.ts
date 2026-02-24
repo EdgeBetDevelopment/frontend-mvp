@@ -21,6 +21,7 @@ export interface ModeratorPick {
 export interface ApiPick {
   id: number;
   user_id: number;
+  username: string;
   game_id: number | string;
   game?: {
     id: number;
