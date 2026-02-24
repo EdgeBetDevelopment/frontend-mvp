@@ -1,14 +1,13 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Button } from '@/ui/button';
-import { Card } from '@/ui/card';
+import { Button } from '@/shared/components/button';
+import { Card } from '@/shared/components/card';
 import { use2FAManagement } from '@/hooks/auth/use2FAManagement';
-import TwoFactorSetup from '@/components/auth/TwoFactorSetup';
-import BackupCodesDisplay from '@/components/auth/BackupCodesDisplay';
-import { Input } from '@/ui/input';
-import { Label } from '@/ui/label';
-import Loader from '@/ui/loader';
+import { TwoFactorSetup, BackupCodesDisplay } from '@/modules/auth';
+import { Input } from '@/shared/components/input';
+import { Label } from '@/shared/components/label';
+import Loader from '@/shared/components/loader';
 import { IUser } from '@/types/auth';
 
 interface SecuritySettingsProps {

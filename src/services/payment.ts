@@ -1,4 +1,4 @@
-import { axiosInstance } from './client';
+import { axiosInstance } from '@/shared/lib';
 
 export interface ISubscriptionType {
   id: number;

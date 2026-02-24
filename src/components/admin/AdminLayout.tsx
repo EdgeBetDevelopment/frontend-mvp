@@ -1,7 +1,7 @@
 import { Layout, AppBar } from 'react-admin';
 import { useRouter } from 'next/navigation';
 import { Box, Typography } from '@mui/material';
-import { Button } from '@/ui/button';
+import { Button } from '@/shared/components/button';
 
 const CustomAppBar = () => {
   const router = useRouter();

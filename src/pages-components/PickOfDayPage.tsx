@@ -6,7 +6,7 @@ import { Crown } from 'lucide-react';
 
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/ui/tabs';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/shared/components/tabs';
 import apiService from '@/services';
 
 import { ApiPickCard } from './pick-of-day/components/ApiPickCard';

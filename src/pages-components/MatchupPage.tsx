@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import React, {
   useCallback,
@@ -6,34 +6,34 @@ import React, {
   useMemo,
   useRef,
   useState,
-} from 'react';
-import { useInfiniteQuery } from '@tanstack/react-query';
+} from "react";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import {
   ReadonlyURLSearchParams,
   useRouter,
   useSearchParams,
-} from 'next/navigation';
+} from "next/navigation";
 
-import EmptyPlaceholder from '@/components/EmptyPlaceholder';
-import MatchupPageFilters from '@/components/matchup/Filters';
-import GameCard from '@/components/matchup/GameCard';
-import AuthModal from '@/components/modals/AuthModal';
-import GameAnalysisModal from '@/components/modals/game-analysis';
-import TrackBetsModal from '@/components/modals/TrackBetsModal';
-import { useAuth } from '@/context/AuthContext';
-import useModalManager from '@/hooks/useModalManager';
-import apiService from '@/services';
-import { useStore } from '@/store';
-import { IGameWithAI } from '@/types/game';
-import { Button } from '@/ui/button';
-import { ScrollArea } from '@/ui/scroll-area';
-import { Skeleton } from '@/ui/skeleton';
-import { formUrlQuery } from '@/utils/url';
-import ListRenderer from '@/wrappers/ListRenderer';
+import EmptyPlaceholder from "@/shared/components/EmptyPlaceholder";
+import MatchupPageFilters from "@/components/matchup/Filters";
+import GameCard from "@/components/matchup/GameCard";
+import AuthModal from "@/components/modals/AuthModal";
+import { GameAnalysisModal } from "@/modules/game/components/analysis";
+import TrackBetsModal from "@/components/modals/TrackBetsModal";
+import { useAuth } from "@/context/AuthContext";
+import useModalManager from "@/hooks/useModalManager";
+import apiService from "@/services";
+import { useStore } from "@/store";
+import { IGameWithAI } from "@/types/game";
+import { Button } from "@/shared/components/button";
+import { ScrollArea } from "@/shared/components/scroll-area";
+import { Skeleton } from "@/shared/components/skeleton";
+import { formUrlQuery } from "@/shared/utils";
+import ListRenderer from "@/wrappers/ListRenderer";
 
-import TrackBetsAside from './TrackBetAside';
-import Navigation from '@/components/Navigation';
-import Footer from '@/components/Footer';
+import TrackBetsAside from "./TrackBetAside";
+import Navigation from "@/components/Navigation";
+import Footer from "@/components/Footer";
 
 const MatchupPage = () => {
   const { isAuthenticated } = useAuth();
@@ -52,7 +52,7 @@ const MatchupPage = () => {
   const { setTrackedGame, setSelectedGame } = storeManager;
 
   const params = useSearchParams() as ReadonlyURLSearchParams;
-  const type = params.get('type');
+  const type = params.get("type");
   const router = useRouter();
 
   const [authDismissed, setAuthDismissed] = useState(false);
@@ -65,7 +65,7 @@ const MatchupPage = () => {
     hasNextPage,
     isFetchingNextPage,
   } = useInfiniteQuery<IGameWithAI[], Error>({
-    queryKey: ['games-feed'],
+    queryKey: ["games-feed"],
     queryFn: ({ pageParam }) =>
       apiService.getGames(pageParam as number | undefined),
     initialPageParam: undefined as number | undefined,
@@ -101,7 +101,7 @@ const MatchupPage = () => {
   useEffect(() => {
     const observer = new IntersectionObserver(handleIntersection, {
       root: null,
-      rootMargin: '200px',
+      rootMargin: "200px",
       threshold: 0,
     });
 
@@ -115,32 +115,32 @@ const MatchupPage = () => {
 
   const onClickTrackBet = (game: IGameWithAI) => {
     if (!isAuthenticated) {
-      openModal('auth');
+      openModal("auth");
       return;
     }
     setTrackedGame(game);
-    openModal('track-bet');
+    openModal("track-bet");
   };
 
   const onClickClearTrackBet = () => {
     setTrackedGame(null);
-    closeModal('track-bet');
+    closeModal("track-bet");
   };
 
   const onClickFullAnalysis = useCallback(
     (game: IGameWithAI) => {
       if (!isAuthenticated) {
-        openModal('auth');
+        openModal("auth");
         return;
       }
 
       setSelectedGame(game);
-      openModal('game-analysis');
+      openModal("game-analysis");
 
       setTimeout(() => {
         const url = formUrlQuery({
           params: params.toString(),
-          key: 'game-analysis',
+          key: "game-analysis",
           value: game?.game?.id?.toString(),
         });
         router.push(url);
@@ -150,21 +150,21 @@ const MatchupPage = () => {
   );
   const onOpenTrackBet = () => {
     if (!isAuthenticated) {
-      openModal('auth');
+      openModal("auth");
       return;
     }
-    openModal('track-bet');
+    openModal("track-bet");
   };
 
   const onClickCloseModal = useCallback(() => {
-    closeModal('game-analysis');
+    closeModal("game-analysis");
 
     setTimeout(() => {
       setSelectedGame(null);
 
       const url = formUrlQuery({
         params: params.toString(),
-        keysToRemove: ['game-analysis'],
+        keysToRemove: ["game-analysis"],
       });
       router.push(url);
     }, 150);
@@ -172,28 +172,28 @@ const MatchupPage = () => {
 
   useEffect(() => {
     if (!isAuthenticated && !authDismissed) {
-      openModal('auth');
+      openModal("auth");
     }
     if (isAuthenticated && authDismissed) setAuthDismissed(false);
   }, [isAuthenticated, authDismissed, openModal]);
 
   const onCloseAuth = () => {
     setAuthDismissed(true);
-    closeModal('auth');
-    router.push('/');
+    closeModal("auth");
+    router.push("/");
   };
 
   useEffect(() => {
     if (!isAuthenticated) return;
 
-    const gameAnalysisParam = params.get('game-analysis');
+    const gameAnalysisParam = params.get("game-analysis");
     const { openModal, closeModal, isModalOpen } = modalManagerRef.current;
     const { setSelectedGame } = storeManagerRef.current;
 
     if (!gameAnalysisParam) {
-      const modalOpen = isModalOpen('game-analysis');
+      const modalOpen = isModalOpen("game-analysis");
       if (modalOpen) {
-        closeModal('game-analysis');
+        closeModal("game-analysis");
         setTimeout(() => setSelectedGame(null), 100);
       }
       return;
@@ -208,8 +208,8 @@ const MatchupPage = () => {
         setSelectedGame(found);
       }
 
-      if (!isModalOpen('game-analysis')) {
-        openModal('game-analysis');
+      if (!isModalOpen("game-analysis")) {
+        openModal("game-analysis");
       }
     }
   }, [isAuthenticated, params, flatGames]);
@@ -275,7 +275,7 @@ const MatchupPage = () => {
 
       <Footer />
 
-      <AuthModal isOpen={isModalOpen('auth')} onClose={onCloseAuth} />
+      <AuthModal isOpen={isModalOpen("auth")} onClose={onCloseAuth} />
 
       {/* <div className="block lg:hidden">
         <TrackBetsModal
@@ -286,7 +286,7 @@ const MatchupPage = () => {
 
       {isAuthenticated && flatGames.length > 0 && (
         <GameAnalysisModal
-          open={isModalOpen('game-analysis')}
+          open={isModalOpen("game-analysis")}
           onClose={onClickCloseModal}
         />
       )}

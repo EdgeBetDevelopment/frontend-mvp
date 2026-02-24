@@ -1,13 +1,13 @@
-import { useEffect, useRef, useState } from 'react';
-import Image from 'next/image';
-import { useQuery } from '@tanstack/react-query';
-import { useDebounce } from 'use-debounce';
-import edgebetLogo from '@/assets/edgebet-logo.png';
-import { Search } from 'lucide-react';
-import { Input } from '@/components/ui/input';
-import PlayerSearchDropdown from '@/components/home/PlayerSearchDropdown';
-import apiService from '@/services';
-import { useClickOutside } from '@/hooks/useClickOutside';
+import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
+import { useQuery } from "@tanstack/react-query";
+import { useDebounce } from "use-debounce";
+import edgebetLogo from "@/assets/edgebet-logo.png";
+import { Search } from "lucide-react";
+import { Input } from "@/shared/components/input";
+import PlayerSearchDropdown from "@/components/home/PlayerSearchDropdown";
+import apiService from "@/services";
+import { useClickOutside } from "@/hooks/useClickOutside";
 
 interface SearchSectionProps {
   searchQuery: string;
@@ -29,7 +29,7 @@ export const SearchSection = ({
   useClickOutside(wrapperRef, () => setShowDropdown(false));
 
   const { data: searchResults = [], isPending: isLoading } = useQuery({
-    queryKey: ['search-teams-players', debouncedSearch],
+    queryKey: ["search-teams-players", debouncedSearch],
     queryFn: () => apiService.searchTeamsAndPlayers(debouncedSearch),
     enabled: !!debouncedSearch,
   });
@@ -44,13 +44,13 @@ export const SearchSection = ({
 
   const handlePlayerSelect = (player: { id: string; name: string }) => {
     setShowDropdown(false);
-    setSearchQuery('');
+    setSearchQuery("");
     onPlayerSelect(player);
   };
 
   const handleTeamSelect = (team: { id: string; name: string }) => {
     setShowDropdown(false);
-    setSearchQuery('');
+    setSearchQuery("");
     onTeamSelect(team);
   };
 

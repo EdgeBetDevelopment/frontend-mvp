@@ -7,7 +7,7 @@ import { FaRegUser } from 'react-icons/fa';
 
 import { useAuth } from '@/context/AuthContext';
 import { ROUTES } from '@/routes';
-import { Button } from '@/ui/button';
+import { Button } from '@/shared/components/button';
 import {
   DropdownMenu,
   DropdownMenuContent,

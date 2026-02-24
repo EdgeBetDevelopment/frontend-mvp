@@ -3,7 +3,7 @@ import {
   I2FAEnableResponse,
   I2FARecoveryResponse,
 } from '@/types/auth';
-import { axiosInstance } from './client';
+import { axiosInstance } from '@/shared/lib';
 
 export interface UpdateMeDto {
   email?: string;

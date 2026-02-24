@@ -5,8 +5,13 @@ import Link from "next/link";
 
 import Footer from "@/components/Footer";
 import Navigation from "@/components/Navigation";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/shared/components/button";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/shared/components/card";
 import { FREE_FEATURES, PREMIUM_FEATURES } from "@/modules/community";
 
 const Community = () => {

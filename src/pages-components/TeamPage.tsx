@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { JSX } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import Link from 'next/link';
-import { useParams, useRouter } from 'next/navigation';
+import { JSX } from "react";
+import { useQuery } from "@tanstack/react-query";
+import Link from "next/link";
+import { useParams, useRouter } from "next/navigation";
 import {
   BarChart,
   Bar,
@@ -13,17 +13,17 @@ import {
   Tooltip,
   ResponsiveContainer,
   Cell,
-} from 'recharts';
+} from "recharts";
 
-import EmptyPlaceholder from '@/components/EmptyPlaceholder';
-import TeamStatsChart from '@/components/team/TeamStatsChart';
-import { TeamStatsTable } from '@/components/team/TeamStatsTable';
-import { ROUTES } from '@/routes';
-import apiService from '@/services';
-import { ITeamPlayer } from '@/types/player';
-import { Button } from '@/ui/button';
-import Loader from '@/ui/loader';
-import Navigation from '@/components/Navigation';
+import EmptyPlaceholder from "@/shared/components/EmptyPlaceholder";
+import TeamStatsChart from "@/components/team/TeamStatsChart";
+import { TeamStatsTable } from "@/components/team/TeamStatsTable";
+import { ROUTES } from "@/shared/config/routes";
+import apiService from "@/services";
+import { ITeamPlayer } from "@/types/player";
+import { Button } from "@/shared/components/button";
+import Loader from "@/shared/components/loader";
+import Navigation from "@/components/Navigation";
 import {
   AlertTriangle,
   ArrowLeft,
@@ -33,11 +33,16 @@ import {
   TrendingUp,
   Trophy,
   Users,
-} from 'lucide-react';
-import Footer from '@/components/Footer';
+} from "lucide-react";
+import Footer from "@/components/Footer";
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/ui/tabs';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/shared/components/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shared/components/tabs";
 import {
   Table,
   TableBody,
@@ -45,9 +50,9 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/ui/table';
-import { Badge } from '@/ui/badge';
-import { Player } from '@/types/team';
+} from "@/shared/components/table";
+import { Badge } from "@/shared/components/badge";
+import { Player } from "@/types/team";
 
 const TeamPage = () => {
   const params = useParams();
@@ -59,7 +64,7 @@ const TeamPage = () => {
     error,
     isLoading,
   } = useQuery({
-    queryKey: ['team', teamId],
+    queryKey: ["team", teamId],
     queryFn: () => apiService.getTeamById(teamId),
     staleTime: 1000 * 60 * 5,
     retry: 2,
@@ -76,66 +81,66 @@ const TeamPage = () => {
   const chartData = team
     ? [
         {
-          name: 'PPG',
+          name: "PPG",
           value: parseFloat(
             (
               (team?.team_statistics?.PTS || 0) /
               (team?.team_statistics?.GP || 1)
             ).toFixed(1),
           ),
-          color: 'hsl(var(--chart-1))',
+          color: "hsl(var(--chart-1))",
         },
         {
-          name: 'RPG',
+          name: "RPG",
           value: parseFloat(
             (
               (team?.team_statistics?.REB || 0) /
               (team?.team_statistics?.GP || 1)
             ).toFixed(1),
           ),
-          color: 'hsl(var(--chart-3))',
+          color: "hsl(var(--chart-3))",
         },
         {
-          name: 'APG',
+          name: "APG",
           value: parseFloat(
             (
               (team?.team_statistics?.AST || 0) /
               (team?.team_statistics?.GP || 1)
             ).toFixed(1),
           ),
-          color: 'hsl(var(--chart-4))',
+          color: "hsl(var(--chart-4))",
         },
         {
-          name: 'FG%',
+          name: "FG%",
           value: parseFloat(
             ((team?.team_statistics?.FG_PCT || 0) * 100).toFixed(1),
           ),
-          color: 'hsl(var(--chart-5))',
+          color: "hsl(var(--chart-5))",
         },
         {
-          name: '3P%',
+          name: "3P%",
           value: parseFloat(
             ((team?.team_statistics?.FG3_PCT || 0) * 100).toFixed(1),
           ),
-          color: 'hsl(var(--chart-1))',
+          color: "hsl(var(--chart-1))",
         },
         {
-          name: 'FT%',
+          name: "FT%",
           value: parseFloat(
             ((team?.team_statistics?.FT_PCT || 0) * 100).toFixed(1),
           ),
-          color: 'hsl(var(--chart-2))',
+          color: "hsl(var(--chart-2))",
         },
       ]
     : [];
 
   const injuries = team?.player_statistics?.filter(
-    (p) => p?.status !== 'healthy',
+    (p) => p?.status !== "healthy",
   );
 
   const getStatusBadge = (status: string) => {
     switch (status?.toLowerCase()) {
-      case 'out':
+      case "out":
         return (
           <Badge
             variant="outline"
@@ -144,7 +149,7 @@ const TeamPage = () => {
             Out
           </Badge>
         );
-      case 'questionable':
+      case "questionable":
         return (
           <Badge
             variant="outline"
@@ -153,7 +158,7 @@ const TeamPage = () => {
             Questionable
           </Badge>
         );
-      case 'day-to-day':
+      case "day-to-day":
         return (
           <Badge
             variant="outline"
@@ -212,8 +217,8 @@ const TeamPage = () => {
             <div
               className="flex h-24 w-24 items-center justify-center rounded-2xl text-4xl font-bold"
               style={{
-                backgroundColor: '#1e293b20',
-                border: '2px solid #1e293b',
+                backgroundColor: "#1e293b20",
+                border: "2px solid #1e293b",
               }}
             >
               {team?.abbreviation}
@@ -379,22 +384,22 @@ const TeamPage = () => {
                         >
                           <div>
                             <div className="font-medium">
-                              {game?.home_team_id === team?.id ? 'vs' : '@'}{' '}
+                              {game?.home_team_id === team?.id ? "vs" : "@"}{" "}
                               {game?.opponent}
                             </div>
                             <div className="text-sm text-muted-foreground">
                               {new Date(game?.date).toLocaleDateString(
-                                'en-US',
+                                "en-US",
                                 {
-                                  month: 'short',
-                                  day: 'numeric',
-                                  year: 'numeric',
+                                  month: "short",
+                                  day: "numeric",
+                                  year: "numeric",
                                 },
                               )}
                             </div>
                           </div>
                           <Badge variant="outline">
-                            {game?.home_team_id === team?.id ? 'Home' : 'Away'}
+                            {game?.home_team_id === team?.id ? "Home" : "Away"}
                           </Badge>
                         </div>
                       ))}
@@ -420,33 +425,33 @@ const TeamPage = () => {
                 {team?.recent_games && team?.recent_games.length > 0 ? (
                   <div className="flex flex-wrap gap-4">
                     {team?.recent_games?.map((game) => {
-                      const isWin = game?.result === 'W';
+                      const isWin = game?.result === "W";
                       return (
                         <div
                           key={game?.game_id}
                           className={`flex min-w-[180px] flex-col rounded-lg border p-4 ${
                             isWin
-                              ? 'border-emerald-500/30 bg-emerald-500/10'
-                              : 'border-red-500/30 bg-red-500/10'
+                              ? "border-emerald-500/30 bg-emerald-500/10"
+                              : "border-red-500/30 bg-red-500/10"
                           }`}
                         >
                           <div className="mb-2 text-xs text-muted-foreground">
-                            {new Date(game?.date).toLocaleDateString('en-US', {
-                              month: 'short',
-                              day: 'numeric',
+                            {new Date(game?.date).toLocaleDateString("en-US", {
+                              month: "short",
+                              day: "numeric",
                             })}
                           </div>
                           <div className="flex flex-1 items-center gap-3">
                             <div
                               className={`text-2xl font-bold ${
-                                isWin ? 'text-emerald-400' : 'text-red-400'
+                                isWin ? "text-emerald-400" : "text-red-400"
                               }`}
                             >
                               {game?.result}
                             </div>
                             <div className="flex-1">
                               <div className="font-medium">
-                                {game?.home_team_id === team?.id ? 'vs' : '@'}{' '}
+                                {game?.home_team_id === team?.id ? "vs" : "@"}{" "}
                                 {game?.opponent}
                               </div>
                               <div className="text-sm text-muted-foreground">
@@ -546,17 +551,17 @@ const TeamPage = () => {
                         >
                           <div>
                             <div className="text-lg font-medium">
-                              {game?.home_team_id === team?.id ? 'vs' : '@'}{' '}
+                              {game?.home_team_id === team?.id ? "vs" : "@"}{" "}
                               {game?.opponent}
                             </div>
                             <div className="text-muted-foreground">
                               {new Date(game?.date).toLocaleDateString(
-                                'en-US',
+                                "en-US",
                                 {
-                                  weekday: 'short',
-                                  month: 'short',
-                                  day: 'numeric',
-                                  year: 'numeric',
+                                  weekday: "short",
+                                  month: "short",
+                                  day: "numeric",
+                                  year: "numeric",
                                 },
                               )}
                             </div>
@@ -565,7 +570,7 @@ const TeamPage = () => {
                             variant="outline"
                             className="px-4 py-1 text-base"
                           >
-                            {game?.home_team_id === team?.id ? 'Home' : 'Away'}
+                            {game?.home_team_id === team?.id ? "Home" : "Away"}
                           </Badge>
                         </div>
                       ))}
@@ -586,28 +591,28 @@ const TeamPage = () => {
                   {team?.recent_games && team?.recent_games?.length > 0 ? (
                     <div className="space-y-3">
                       {team?.recent_games?.map((game) => {
-                        const isWin = game?.result === 'W';
+                        const isWin = game?.result === "W";
                         return (
                           <div
                             key={game?.game_id}
                             className={`flex items-center justify-between rounded-lg border p-4 ${
                               isWin
-                                ? 'border-emerald-500/30 bg-emerald-500/10'
-                                : 'border-red-500/30 bg-red-500/10'
+                                ? "border-emerald-500/30 bg-emerald-500/10"
+                                : "border-red-500/30 bg-red-500/10"
                             }`}
                           >
                             <div className="flex-1">
                               <div className="text-lg font-medium">
-                                {game?.home_team_id === team?.id ? 'vs' : '@'}{' '}
+                                {game?.home_team_id === team?.id ? "vs" : "@"}{" "}
                                 {game?.opponent}
                               </div>
                               <div className="text-muted-foreground">
                                 {new Date(game?.date).toLocaleDateString(
-                                  'en-US',
+                                  "en-US",
                                   {
-                                    weekday: 'short',
-                                    month: 'short',
-                                    day: 'numeric',
+                                    weekday: "short",
+                                    month: "short",
+                                    day: "numeric",
                                   },
                                 )}
                               </div>
@@ -624,7 +629,7 @@ const TeamPage = () => {
                             <div className="text-right">
                               <div
                                 className={`text-xl font-bold ${
-                                  isWin ? 'text-emerald-400' : 'text-red-400'
+                                  isWin ? "text-emerald-400" : "text-red-400"
                                 }`}
                               >
                                 {game?.result}
@@ -669,9 +674,9 @@ const TeamPage = () => {
                       <YAxis stroke="hsl(var(--muted-foreground))" />
                       <Tooltip
                         contentStyle={{
-                          backgroundColor: 'hsl(var(--card))',
-                          border: '1px solid hsl(var(--border))',
-                          borderRadius: '8px',
+                          backgroundColor: "hsl(var(--card))",
+                          border: "1px solid hsl(var(--border))",
+                          borderRadius: "8px",
                         }}
                       />
                       <Bar dataKey="value" radius={[4, 4, 0, 0]}>

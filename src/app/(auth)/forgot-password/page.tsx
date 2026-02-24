@@ -1,4 +1,4 @@
-import ForgotPassword from '@/components/auth/reset-pass/ForgotPasswordForm';
+import { ForgotPasswordForm as ForgotPassword } from '@/modules/auth';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 

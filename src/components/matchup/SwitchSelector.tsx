@@ -1,24 +1,24 @@
-'use client';
+"use client";
 
-import { useEffect, useRef, useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useRef, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 
-import { cn } from '@/lib/utils';
-import { useStore } from '@/store';
+import { cn } from "@/shared/utils/helper";
+import { useStore } from "@/store";
 
 const ODDS_TYPE = [
-  { label: 'American', value: 'american' },
-  { label: 'European', value: 'european' },
+  { label: "American", value: "american" },
+  { label: "European", value: "european" },
 ];
 
 export function OddsTypeSwitcher() {
   const params = useSearchParams();
   const router = useRouter();
-  const current = params.get('odds') || 'american';
+  const current = params.get("odds") || "american";
 
   const [indicatorStyle, setIndicatorStyle] = useState({
     transform: `translateY(-50%)`,
-    width: '200px',
+    width: "200px",
   });
   const refs = useRef<Record<string, HTMLButtonElement | null>>({});
 
@@ -26,7 +26,7 @@ export function OddsTypeSwitcher() {
 
   const onChange = (val: string) => {
     const newParams = new URLSearchParams(params.toString());
-    newParams.set('odds', val);
+    newParams.set("odds", val);
     router.push(`?${newParams.toString()}`);
   };
 
@@ -49,7 +49,7 @@ export function OddsTypeSwitcher() {
         return prev;
       });
 
-      setIsAmerican(current === 'american');
+      setIsAmerican(current === "american");
     }
   }, [current, setIsAmerican]);
 
@@ -68,8 +68,8 @@ export function OddsTypeSwitcher() {
           }}
           onClick={() => onChange(option.value)}
           className={cn(
-            'relative z-10 w-full cursor-pointer rounded-full p-1.5 px-6 text-sm font-semibold transition-colors duration-300',
-            current === option.value ? 'text-white' : 'text-text-secondary',
+            "relative z-10 w-full cursor-pointer rounded-full p-1.5 px-6 text-sm font-semibold transition-colors duration-300",
+            current === option.value ? "text-white" : "text-text-secondary",
           )}
         >
           {option.label}

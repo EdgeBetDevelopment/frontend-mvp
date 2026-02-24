@@ -1,23 +1,23 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { useMutation } from '@tanstack/react-query';
-import { toast } from 'sonner';
-import { z } from 'zod';
+import React from "react";
+import { useMutation } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { z } from "zod";
 
-import TrackGameCard from '@/components/matchup/TrackGameCard';
-import { Sheet, SheetContent } from '@/components/ui/sheet';
-import { useAuth } from '@/context/AuthContext';
-import useModalManager from '@/hooks/useModalManager';
-import apiService from '@/services';
-import { useStore } from '@/store';
-import { BetPick } from '@/store/slices/matchupSlice';
-import { IGameWithAI } from '@/types/game';
-import { Button } from '@/ui/button';
-import Loader from '@/ui/loader';
-import BetModeSwitch from '../matchup/BetModeSwitch';
+import TrackGameCard from "@/components/matchup/TrackGameCard";
+import { Sheet, SheetContent } from "@/shared/components/sheet";
+import { useAuth } from "@/context/AuthContext";
+import useModalManager from "@/hooks/useModalManager";
+import apiService from "@/services";
+import { useStore } from "@/store";
+import { BetPick } from "@/store/slices/matchupSlice";
+import { IGameWithAI } from "@/types/game";
+import { Button } from "@/shared/components/button";
+import Loader from "@/shared/components/loader";
+import BetModeSwitch from "../matchup/BetModeSwitch";
 
-import GameAnalysisModal from './game-analysis';
+import GameAnalysisModal from "../../modules/game/components/analysis";
 
 const formSchema = z.object({
   // team: z.object(
@@ -28,9 +28,9 @@ const formSchema = z.object({
   //   { required_error: 'Please select a team' },
   // ),
 
-  team: z.string().min(1, 'Please select a team'),
-  odds: z.number().positive('Enter valid odds'),
-  amount: z.number().positive('Enter valid amount'),
+  team: z.string().min(1, "Please select a team"),
+  odds: z.number().positive("Enter valid odds"),
+  amount: z.number().positive("Enter valid amount"),
 });
 
 const TrackBetsModal = ({
@@ -64,25 +64,25 @@ const TrackBetsModal = ({
     onSuccess: () => {
       if (isParlay) clearParlay();
       else clearSingle();
-      toast.success('Bet created successfully');
+      toast.success("Bet created successfully");
     },
     onError: (error) => {
-      toast.error('Error creating bet');
-      console.error('Error creating bet:', error);
+      toast.error("Error creating bet");
+      console.error("Error creating bet:", error);
     },
   });
 
   const mapPick = (bet: BetPick) => {
-    const description = bet.description || '';
+    const description = bet.description || "";
 
-    let marketType = bet.market_type || '';
+    let marketType = bet.market_type || "";
     let betValue = bet.bet_value ?? 0;
-    let betOverUnder = bet.bet_over_under || '';
-    let betPlayer = bet.bet_player || '';
+    let betOverUnder = bet.bet_over_under || "";
+    let betPlayer = bet.bet_player || "";
 
     if (!marketType) {
       const marketTypeMatch = description.match(/^(\w+)/);
-      marketType = marketTypeMatch ? marketTypeMatch[1] : '';
+      marketType = marketTypeMatch ? marketTypeMatch[1] : "";
     }
 
     if (betValue === 0 || betValue === null) {
@@ -94,7 +94,7 @@ const TrackBetsModal = ({
       const overUnderMatch = description
         .toLowerCase()
         .match(/\b(over|under)\b/);
-      betOverUnder = overUnderMatch ? overUnderMatch[1] : '';
+      betOverUnder = overUnderMatch ? overUnderMatch[1] : "";
     }
 
     const betName = description;
@@ -102,7 +102,7 @@ const TrackBetsModal = ({
     return {
       game_id: bet.game_id,
       odds: bet.odds,
-      selected_team_id: bet.selected_team_id || '',
+      selected_team_id: bet.selected_team_id || "",
       selected_team_name: bet.selected_team_name,
       description: {
         market_type: marketType,
@@ -130,7 +130,7 @@ const TrackBetsModal = ({
         bets: parlay?.bets?.map(mapPick),
       };
 
-      console.log('PARLAY payload', payload);
+      console.log("PARLAY payload", payload);
       mutate(payload);
       return;
     }
@@ -146,10 +146,10 @@ const TrackBetsModal = ({
         })),
       };
 
-      console.log('SINGLE payload', payload);
+      console.log("SINGLE payload", payload);
       mutate(payload);
     } catch (error) {
-      console.error('Failed to prepare bet submission:', error);
+      console.error("Failed to prepare bet submission:", error);
     }
   };
 
@@ -157,15 +157,15 @@ const TrackBetsModal = ({
 
   const onClickFullAnalysis = (game: IGameWithAI) => {
     if (!isAuthenticated) {
-      openModal('auth');
+      openModal("auth");
       return;
     }
     setSelectedGame(game);
-    openModal('game-analysis');
+    openModal("game-analysis");
   };
 
   const onClickCloseModal = () => {
-    closeModal('game-analysis');
+    closeModal("game-analysis");
     setSelectedGame(null);
   };
 
@@ -259,7 +259,7 @@ const TrackBetsModal = ({
       </Sheet>
 
       <GameAnalysisModal
-        open={isModalOpen('game-analysis')}
+        open={isModalOpen("game-analysis")}
         onClose={onClickCloseModal}
       />
     </>

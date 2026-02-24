@@ -4,10 +4,10 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import paymentService from '@/services/payment';
-import { useState } from 'react';
+} from "@/shared/components/card";
+import { Button } from "@/shared/components/button";
+import paymentService from "@/services/payment";
+import { useState } from "react";
 
 interface AnnualPlanCardProps {
   id: number;
@@ -32,7 +32,7 @@ export const AnnualPlanCard = ({
       const url = await paymentService.subscribe(id);
       window.location.href = url;
     } catch (error) {
-      console.error('Stripe checkout error:', error);
+      console.error("Stripe checkout error:", error);
     } finally {
       setLoading(false);
     }
@@ -59,7 +59,7 @@ export const AnnualPlanCard = ({
             onClick={() => handleCheckout()}
             disabled={loading}
           >
-            {loading ? 'Processing...' : 'Get Annual Access'}
+            {loading ? "Processing..." : "Get Annual Access"}
           </Button>
         </CardContent>
       </Card>

@@ -8,16 +8,16 @@ import paymentService from '@/services/payment';
 import authService from '@/services/auth';
 import { userService } from '@/services/user';
 import { useAuth } from '@/context/AuthContext';
-import { Button } from '@/ui/button';
-import { Separator } from '@/ui/separator';
+import { Button } from '@/shared/components/button';
+import { Separator } from '@/shared/components/separator';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/ui/card';
-import { Badge } from '@/ui/badge';
+} from '@/shared/components/card';
+import { Badge } from '@/shared/components/badge';
 
 import { ModalProfile } from './Modal';
 

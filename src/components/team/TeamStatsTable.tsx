@@ -1,6 +1,6 @@
 'use client';
 
-import { Avatar, AvatarImage } from '@/ui/avatar';
+import { Avatar, AvatarImage } from '@/shared/components/avatar';
 import {
   Table,
   TableBody,
@@ -8,7 +8,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/ui/table';
+} from '@/shared/components/table';
 
 interface TeamStat {
   name: string;

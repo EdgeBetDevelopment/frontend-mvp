@@ -1,21 +1,22 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { NumericFormat } from 'react-number-format';
-import { Calendar, Clock, X, ChevronRight } from 'lucide-react';
+import React from "react";
+import { NumericFormat } from "react-number-format";
+import { Calendar, Clock, X, ChevronRight } from "lucide-react";
 
-import { useStore } from '@/store';
-import { IGameWithAI } from '@/types/game';
-import { Badge } from '@/components/ui/badge';
-import { Card } from '@/ui/card';
-import { Button } from '@/ui/button';
-import { Input } from '@/components/ui/input';
+import { useStore } from "@/store";
+import { IGameWithAI } from "@/types/game";
+import { Badge } from "@/shared/components/badge";
+import { Card } from "@/shared/components/card";
+import { Button } from "@/shared/components/button";
+import { Input } from "@/shared/components/input";
 import {
   convertAmericanToDecimal,
   convertEuropeanToAmerican,
-} from '@/utils/convertAmericanToDecimal';
-import { formatOddsWithSign } from '@/utils/formatOdds';
-import { formatUtcToLocalDate, formatUtcToLocalTimeAmPm } from '@/utils/time';
+  formatUtcToLocalDate,
+  formatUtcToLocalTimeAmPm,
+  formatOddsWithSign,
+} from "@/shared/utils";
 
 interface ITrackGameCard {
   game: IGameWithAI;
@@ -108,10 +109,10 @@ const TrackGameCard = ({ game, index }: ITrackGameCard) => {
             </p>
           </div>
           <p className="text-lg font-bold text-foreground">
-            Parlay Odds:{' '}
+            Parlay Odds:{" "}
             <span className="text-primary">
               {parlay?.bets?.length === 0
-                ? '-'
+                ? "-"
                 : isAmerican
                   ? formatOddsWithSign(
                       convertEuropeanToAmerican(parlayOdds),
@@ -153,7 +154,7 @@ const TrackGameCard = ({ game, index }: ITrackGameCard) => {
             </Badge>
             <ChevronRight className="h-3 w-3 text-muted-foreground" />
             <span className="text-xs text-muted-foreground">
-              {game?.scoreboard?.label || 'Regular Season Game'}
+              {game?.scoreboard?.label || "Regular Season Game"}
             </span>
           </div>
         </div>
@@ -169,7 +170,7 @@ const TrackGameCard = ({ game, index }: ITrackGameCard) => {
                 className="flex items-center justify-between rounded-md bg-primary/20 px-3 py-2"
               >
                 <span className="mr-2 flex-1 text-sm text-foreground">
-                  {formatDescription(b?.description ?? '')}
+                  {formatDescription(b?.description ?? "")}
                 </span>
                 <span className="mr-2 font-bold text-foreground">
                   {!isAmerican
@@ -187,7 +188,7 @@ const TrackGameCard = ({ game, index }: ITrackGameCard) => {
           ) : null
         ) : (
           <div className="rounded-md bg-primary/90 px-3 py-2 text-sm font-medium text-primary-foreground">
-            {formatDescription(currentPick?.description ?? '')}{' '}
+            {formatDescription(currentPick?.description ?? "")}{" "}
             <span className="font-bold">
               {!isAmerican
                 ? convertAmericanToDecimal(currentPick?.odds ?? 0).toFixed(2)
@@ -203,7 +204,7 @@ const TrackGameCard = ({ game, index }: ITrackGameCard) => {
           Risk Amount ($)
         </label>
         <NumericFormat
-          value={currentTicket?.amount ?? ''}
+          value={currentTicket?.amount ?? ""}
           onValueChange={(v) => {
             const val = parseFloat(v.value);
             handleSetAmount(Number.isNaN(val) ? 0 : val);
@@ -221,9 +222,9 @@ const TrackGameCard = ({ game, index }: ITrackGameCard) => {
 
       {/* Win amount */}
       <p className="text-sm text-foreground">
-        Win Amount ($):{' '}
+        Win Amount ($):{" "}
         <span className="font-bold text-primary">
-          ${currentTicket?.win_amount?.toFixed(2) || '0.00'}
+          ${currentTicket?.win_amount?.toFixed(2) || "0.00"}
         </span>
       </p>
     </Card>

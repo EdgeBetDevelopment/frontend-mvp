@@ -6,10 +6,9 @@ import { toast } from 'sonner';
 
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
-import TwoFactorVerify from '@/components/auth/TwoFactorVerify';
-import TwoFactorBackupLogin from '@/components/auth/TwoFactorBackupLogin';
+import { TwoFactorVerify, TwoFactorBackupLogin } from '@/modules/auth';
 import { use2FALogin } from '@/hooks/auth/use2FALogin';
-import { ROUTES } from '@/routes';
+import { ROUTES } from '@/shared/config/routes';
 
 const TwoFactorPage = () => {
   const router = useRouter();

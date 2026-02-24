@@ -1,4 +1,4 @@
-import { AvatarImage, AvatarFallback, Avatar } from '@/ui/avatar';
+import { AvatarImage, AvatarFallback, Avatar } from '@/shared/components/avatar';
 import { Users } from 'lucide-react';
 
 interface PlayerSearchDropdownProps {

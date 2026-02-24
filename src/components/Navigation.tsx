@@ -1,19 +1,19 @@
-'use client';
+"use client";
 
-import { Calendar, LogOut, Settings, Target, User } from 'lucide-react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { Calendar, LogOut, Settings, Target, User } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
-import { Button } from '@/components/ui/button';
+import { Button } from "@/shared/components/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from "@/shared/components/dropdown-menu";
 
-import edgebetIcon from '@/assets/edgebet-icon.png';
-import { useAuth } from '@/context/AuthContext';
+import edgebetIcon from "@/assets/edgebet-icon.png";
+import { useAuth } from "@/context/AuthContext";
 
 interface NavigationProps {
   isLoggedIn?: boolean;
@@ -34,7 +34,7 @@ const Navigation = ({
     if (onLogout) {
       onLogout();
     }
-    router.push('/login');
+    router.push("/login");
   };
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur-sm">
@@ -124,7 +124,7 @@ const Navigation = ({
         ) : (
           <Button
             className="bg-primary text-primary-foreground hover:bg-primary/90"
-            onClick={() => router.push('/login')}
+            onClick={() => router.push("/login")}
           >
             Get Started
           </Button>

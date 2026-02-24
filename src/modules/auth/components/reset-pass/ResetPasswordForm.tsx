@@ -1,36 +1,36 @@
-'use client';
+"use client";
 
-import React, { useEffect } from 'react';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation } from '@tanstack/react-query';
-import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
-import { toast } from 'sonner';
-import { z } from 'zod';
+import React, { useEffect } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
 
-import { ROUTES } from '@/routes';
+import { ROUTES } from "@/shared/config/routes";
 import authService from "../../services";
-import { useRecoveryStore } from '@/store/slices/resetPassSlice';
-import { Button } from '@/ui/button';
-import { Form, FormField, FormMessage } from '@/ui/form';
-import Loader from '@/ui/loader';
-import AuthFormInput from '../AuthFormInput';
-import H2 from '../H2';
+import { useRecoveryStore } from "@/store/slices/resetPassSlice";
+import { Button } from "@/shared/components/button";
+import { Form, FormField, FormMessage } from "@/shared/components/form";
+import Loader from "@/shared/components/loader";
+import AuthFormInput from "../AuthFormInput";
+import H2 from "../H2";
 
-import ArrowRight from '@/assets/icons/arrow-right.svg';
+import ArrowRight from "@/assets/icons/arrow-right.svg";
 
 const resetPasswordSchema = z
   .object({
     password: z
       .string()
-      .min(8, 'Password must be at least 8 characters')
-      .regex(/\d/, 'Password must include at least one number')
-      .regex(/[a-zA-Z]/, 'Password must include at least one letter'),
+      .min(8, "Password must be at least 8 characters")
+      .regex(/\d/, "Password must include at least one number")
+      .regex(/[a-zA-Z]/, "Password must include at least one letter"),
     confirmPassword: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: 'Passwords do not match',
-    path: ['confirmPassword'],
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
   });
 
 type ResetPasswordValues = z.infer<typeof resetPasswordSchema>;
@@ -41,7 +41,7 @@ const ResetPasswordForm = () => {
 
   useEffect(() => {
     if (!email || !code) {
-      toast.error('Email and code are required');
+      toast.error("Email and code are required");
       router.replace(ROUTES.AUTH.FORGOT_PASS);
     }
   }, []);
@@ -49,8 +49,8 @@ const ResetPasswordForm = () => {
   const form = useForm<ResetPasswordValues>({
     resolver: zodResolver(resetPasswordSchema),
     defaultValues: {
-      password: '',
-      confirmPassword: '',
+      password: "",
+      confirmPassword: "",
     },
   });
 
@@ -61,14 +61,14 @@ const ResetPasswordForm = () => {
   } = useMutation({
     mutationFn: authService.resetPassword,
     onSuccess: () => {
-      toast.success('Password reset successfully!');
+      toast.success("Password reset successfully!");
       clearAll();
       router.push(ROUTES.AUTH.RESET_PASS_SUCCESS);
     },
     onError: (error: any) => {
       toast.error(
         error.response?.data?.message ||
-          'Failed to reset password. Please try again.',
+          "Failed to reset password. Please try again.",
       );
     },
   });

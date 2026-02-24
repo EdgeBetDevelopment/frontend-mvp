@@ -1,6 +1,6 @@
 import { DataProvider } from 'react-admin';
 
-import { axiosInstance } from './client';
+import { axiosInstance } from '@/shared/lib';
 import { userService } from './user';
 
 const customDataProvider: DataProvider = {

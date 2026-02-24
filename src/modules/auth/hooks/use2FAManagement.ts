@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import { userService } from "@/services/user";
-import { handleFetchError } from "@/utils/error-handling";
+import { handleFetchError } from "@/shared/utils";
 
 interface Use2FAManagementProps {
   onEnableSuccess?: (qrCodeUrl: string) => void;

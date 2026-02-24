@@ -1,4 +1,4 @@
-import VerificationCodeForm from '@/components/auth/reset-pass/VerificationCodeForm';
+import { VerificationCodeForm } from '@/modules/auth';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 

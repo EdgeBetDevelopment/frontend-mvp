@@ -1,30 +1,30 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { Menu, X } from 'lucide-react';
-import Link from 'next/link';
+import { useState } from "react";
+import { Menu, X } from "lucide-react";
+import Link from "next/link";
 
-import { ROUTES } from '@/routes';
-import { Button } from '@/ui/button';
-import Logo from '../Logo';
+import { ROUTES } from "@/shared/config/routes";
+import { Button } from "@/shared/components";
+import Logo from "../../shared/components/Logo";
 
-import Profile from './Profile';
+import Profile from "./Profile";
 
 export const HEADER_PAGES = [
   {
-    name: 'Matchup',
+    name: "Matchup",
     link: ROUTES.MATCHUP,
   },
   {
-    name: 'Pricing',
+    name: "Pricing",
     link: ROUTES.PRICING,
   },
   {
-    name: 'Community',
+    name: "Community",
     link: ROUTES.COMMUNITY,
   },
   {
-    name: 'Methodology',
+    name: "Methodology",
     link: ROUTES.METHODOLOGY,
   },
 ];
@@ -62,7 +62,7 @@ const MenuBurger = () => {
     <div className="sm:hidden">
       <Button
         variant="gradient"
-        size={'icon'}
+        size={"icon"}
         onClick={() => setMenuOpen(!menuOpen)}
         className="text-white focus:outline-none"
       >

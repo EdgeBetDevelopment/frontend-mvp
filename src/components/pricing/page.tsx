@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 
-import PageTitle from '@/components/PageTitle';
-import paymentService, { ISubscriptionType } from '@/services/payment';
-import { Button } from '@/ui/button';
-import { Separator } from '@/ui/separator';
+import PageTitle from "@/shared/components/PageTitle";
+import paymentService, { ISubscriptionType } from "@/services/payment";
+import { Button } from "@/shared/components/button";
+import { Separator } from "@/shared/components/separator";
 
-import GridBgImage from '@/assets/gridBg.png';
-import ArrowRightIcon from '@/assets/icons/arrow-right.svg';
-import CheckIcon from '@/assets/icons/check.svg';
+import GridBgImage from "@/assets/gridBg.png";
+import ArrowRightIcon from "@/assets/icons/arrow-right.svg";
+import CheckIcon from "@/assets/icons/check.svg";
 
 const PricingBlock = () => {
   const [subscriptions, setSubscriptions] = useState<ISubscriptionType[]>([]);
@@ -20,7 +20,7 @@ const PricingBlock = () => {
         const data = await paymentService.getSubscriptionTypes();
         setSubscriptions(data);
       } catch (error) {
-        console.error('Error fetching subscription types', error);
+        console.error("Error fetching subscription types", error);
       }
     };
     fetchSubs();
@@ -39,7 +39,7 @@ const PricingBlock = () => {
           className="max-w-[1100px]"
           title={
             <div>
-              Start Winning with{' '}
+              Start Winning with{" "}
               <span className="text-primary-brand">Expert Predictions</span>
             </div>
           }
@@ -74,12 +74,12 @@ const PricingCard = ({ sub }: { sub: ISubscriptionType }) => {
       const url = await paymentService.subscribe(sub.id);
       window.location.href = url;
     } catch (error) {
-      console.error('Stripe checkout error:', error);
+      console.error("Stripe checkout error:", error);
     } finally {
       setLoading(false);
     }
   };
-  const period = sub.price < 30 ? 'week' : 'month';
+  const period = sub.price < 30 ? "week" : "month";
   return (
     <div className="border-border flex w-full flex-col gap-[18px] rounded-3xl border bg-black/50 p-5 sm:p-7">
       <div className="tl-flex-between">
@@ -109,7 +109,7 @@ const PricingCard = ({ sub }: { sub: ISubscriptionType }) => {
       </ul>
       <Button variant="gradient" onClick={handleCheckout} disabled={loading}>
         {loading ? (
-          'Redirecting…'
+          "Redirecting…"
         ) : (
           <>
             Get Started <ArrowRightIcon />

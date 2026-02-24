@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import React, { useEffect, useRef, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { useVirtualizer } from '@tanstack/react-virtual';
-import { useRouter } from 'next/navigation';
-import { AiOutlineTeam } from 'react-icons/ai';
-import { LuUserRound } from 'react-icons/lu';
-import { useDebounce } from 'use-debounce';
+import React, { useEffect, useRef, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useVirtualizer } from "@tanstack/react-virtual";
+import { useRouter } from "next/navigation";
+import { AiOutlineTeam } from "react-icons/ai";
+import { LuUserRound } from "react-icons/lu";
+import { useDebounce } from "use-debounce";
 
 import {
   Command,
@@ -15,14 +15,14 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from '@/components/ui/command';
-import { useClickOutside } from '@/hooks/useClickOutside';
-import { ROUTES } from '@/routes';
-import apiService from '@/services';
-import Loader from '@/ui/loader';
+} from "@/shared/components/command";
+import { useClickOutside } from "@/hooks/useClickOutside";
+import { ROUTES } from "@/routes";
+import apiService from "@/services";
+import Loader from "@/shared/components/loader";
 
 const SupportSearch = () => {
-  const [searchValue, setSearchValue] = useState('');
+  const [searchValue, setSearchValue] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
   const [debouncedSearch] = useDebounce(searchValue, 500);
   const router = useRouter();
@@ -32,7 +32,7 @@ const SupportSearch = () => {
   useClickOutside(wrapperRef, () => setShowDropdown(false));
 
   const { data: searchResults = [], isPending: isLoading } = useQuery({
-    queryKey: ['search-teams-players', debouncedSearch],
+    queryKey: ["search-teams-players", debouncedSearch],
     queryFn: () => apiService.searchTeamsAndPlayers(debouncedSearch),
     enabled: !!debouncedSearch,
   });
@@ -54,11 +54,11 @@ const SupportSearch = () => {
 
   const onSelectQuestion = (item: any) => {
     setShowDropdown(false);
-    setSearchValue('');
+    setSearchValue("");
 
-    if (item.type === 'team') {
+    if (item.type === "team") {
       router.push(ROUTES.TEAM(item.id));
-    } else if (item.type === 'player') {
+    } else if (item.type === "player") {
       router.push(ROUTES.PLAYER(item.id));
     }
   };
@@ -98,13 +98,13 @@ const SupportSearch = () => {
               <CommandList
                 ref={listRef}
                 className="bg-surface-secondary relative flex max-h-60 flex-col overflow-y-auto rounded-md"
-                style={{ height: '240px' }}
+                style={{ height: "240px" }}
               >
                 <CommandGroup>
                   <div
                     style={{
                       height: `${virtualizer.getTotalSize()}px`,
-                      position: 'relative',
+                      position: "relative",
                     }}
                   >
                     {virtualizer.getVirtualItems().map((virtualRow) => {
@@ -117,14 +117,14 @@ const SupportSearch = () => {
                           onSelect={() => onSelectQuestion(item)}
                           className="text-text-primary"
                           style={{
-                            position: 'absolute',
+                            position: "absolute",
                             top: 0,
                             left: 0,
-                            width: '100%',
+                            width: "100%",
                             transform: `translateY(${virtualRow.start}px)`,
                           }}
                         >
-                          {item.type === 'team' ? (
+                          {item.type === "team" ? (
                             <AiOutlineTeam />
                           ) : (
                             <LuUserRound />

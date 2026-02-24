@@ -1,33 +1,32 @@
-'use client';
+"use client";
 
-import React from 'react';
 import {
   ReadonlyURLSearchParams,
   useRouter,
   useSearchParams,
-} from 'next/navigation';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+} from "next/navigation";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
-import { Button } from '@/ui/button';
-import { Tabs, TabsList, TabsTrigger } from '@/ui/tabs';
-import { formUrlQuery } from '@/utils/url';
-import { useStore } from '@/store';
+import { Button } from "@/shared/components/button";
+import { Tabs, TabsList, TabsTrigger } from "@/shared/components/tabs";
+import { formUrlQuery } from "@/shared/utils";
+import { useStore } from "@/store";
 
 const SPORTS_TYPE = [
-  { label: 'NBA', value: null, disabled: false },
-  { label: 'NFL', value: 'nfl', disabled: true },
-  { label: 'NCAAF', value: 'ncaaf', disabled: true },
-  { label: 'NCAAB', value: 'ncaab', disabled: true },
-  { label: 'MLB', value: 'mlb', disabled: true },
-  { label: 'NHL', value: 'nhl', disabled: true },
-  { label: 'WNBA', value: 'wnba', disabled: true },
-  { label: 'Tennis', value: 'tennis', disabled: true },
+  { label: "NBA", value: null, disabled: false },
+  { label: "NFL", value: "nfl", disabled: true },
+  { label: "NCAAF", value: "ncaaf", disabled: true },
+  { label: "NCAAB", value: "ncaab", disabled: true },
+  { label: "MLB", value: "mlb", disabled: true },
+  { label: "NHL", value: "nhl", disabled: true },
+  { label: "WNBA", value: "wnba", disabled: true },
+  { label: "Tennis", value: "tennis", disabled: true },
 ];
 
 const MatchupPageFilters = () => {
   const params = useSearchParams() as ReadonlyURLSearchParams;
   const router = useRouter();
-  const type = params.get('type');
+  const type = params.get("type");
   const isAmerican = useStore((state) => state.isAmerican);
   const setIsAmerican = useStore((state) => state.setIsAmerican);
 
@@ -36,8 +35,8 @@ const MatchupPageFilters = () => {
     if (value === type) return;
 
     const url = value
-      ? formUrlQuery({ params: params.toString(), key: 'type', value })
-      : formUrlQuery({ params: params.toString(), keysToRemove: ['type'] });
+      ? formUrlQuery({ params: params.toString(), key: "type", value })
+      : formUrlQuery({ params: params.toString(), keysToRemove: ["type"] });
 
     router.push(url);
   };
@@ -54,7 +53,7 @@ const MatchupPageFilters = () => {
           {SPORTS_TYPE.map((sport) => (
             <Button
               key={sport.label}
-              variant={type === sport.value ? 'default' : 'outline'}
+              variant={type === sport.value ? "default" : "outline"}
               onClick={() => onChangeType(sport.value, sport.disabled)}
               className="shrink-0"
               disabled={sport.disabled}
@@ -71,8 +70,8 @@ const MatchupPageFilters = () => {
 
       {/* Region Toggle */}
       <Tabs
-        value={isAmerican ? 'american' : 'european'}
-        onValueChange={(v) => setIsAmerican(v === 'american')}
+        value={isAmerican ? "american" : "european"}
+        onValueChange={(v) => setIsAmerican(v === "american")}
       >
         <TabsList>
           <TabsTrigger value="american">American</TabsTrigger>

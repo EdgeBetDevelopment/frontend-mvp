@@ -4,9 +4,9 @@ import {
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
-} from '@/components/ui/carousel';
-import { Review, useReviews } from '@/hooks/useReviews';
-import ReviewCard from '@/components/home/ReviewCard';
+} from "@/shared/components/carousel";
+import { Review, useReviews } from "@/hooks/useReviews";
+import ReviewCard from "@/components/home/ReviewCard";
 
 export const Reviews = () => {
   const { data, isLoading } = useReviews();

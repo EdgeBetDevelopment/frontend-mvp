@@ -3,10 +3,10 @@
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
-import SignUpForm from '@/components/auth/sign-up/SignUpForm';
+import { SignUpForm } from '@/modules/auth';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
-import { ROUTES } from '@/routes';
+import { ROUTES } from '@/shared/config/routes';
 
 const SignUpPage = () => {
   const router = useRouter();

@@ -1,19 +1,19 @@
-import React from 'react';
-import Image from 'next/image';
+import React from "react";
+import Image from "next/image";
 
-import PageTitle from '@/components/PageTitle';
-import { Button } from '@/ui/button';
+import PageTitle from "@/shared/components/PageTitle";
+import { Button } from "@/shared/components/button";
 
-import DiscordImage from '@/assets/discord.png';
-import GridBgImage from '@/assets/gridBg.png';
-import ArrowRightIcon from '@/assets/icons/arrow-right.svg';
+import DiscordImage from "@/assets/discord.png";
+import GridBgImage from "@/assets/gridBg.png";
+import ArrowRightIcon from "@/assets/icons/arrow-right.svg";
 
 const DiscrodBlock = () => {
   return (
     <div
       style={{
         background:
-          'linear-gradient(90deg, rgba(12, 12, 12) 0%, rgba(233, 233, 233, 0.01) 50%, rgba(12, 12, 12) 100%)',
+          "linear-gradient(90deg, rgba(12, 12, 12) 0%, rgba(233, 233, 233, 0.01) 50%, rgba(12, 12, 12) 100%)",
       }}
       className="relative flex w-full flex-col items-center gap-9 overflow-hidden rounded-4xl bg-[#E9E9E90D] px-8 py-6 md:px-14 md:py-12"
     >
@@ -50,7 +50,7 @@ const DiscrodBlock = () => {
       </Button>
 
       <div className="h-auto w-full md:h-[272px] md:w-[580px]">
-        <Image placeholder="blur" src={DiscordImage} alt={'Discord'} />
+        <Image placeholder="blur" src={DiscordImage} alt={"Discord"} />
       </div>
     </div>
   );

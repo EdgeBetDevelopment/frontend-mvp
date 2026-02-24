@@ -1,21 +1,23 @@
-'use client';
+"use client";
 
-import React from 'react';
-import Link from 'next/link';
-import { toast } from 'sonner';
-import { Calendar, Clock, ChevronRight } from 'lucide-react';
+import Link from "next/link";
+import { toast } from "sonner";
+import { Calendar, Clock, ChevronRight } from "lucide-react";
 
-import { useAuth } from '@/context/AuthContext';
-import { useIsMobile } from '@/hooks/useIsMobile';
-import useModalManager from '@/hooks/useModalManager';
-import { ROUTES } from '@/routes';
-import { useStore } from '@/store';
-import { IGameWithAI, IBet } from '@/types/game';
-import { Badge } from '@/ui/badge';
-import { Card } from '@/ui/card';
-import { convertAmericanToDecimal } from '@/utils/convertAmericanToDecimal';
-import { formatOddsWithSign } from '@/utils/formatOdds';
-import { formatUtcToLocalDate, formatUtcToLocalTimeAmPm } from '@/utils/time';
+import { useAuth } from "@/context/AuthContext";
+import { useIsMobile } from "@/hooks/useIsMobile";
+import useModalManager from "@/hooks/useModalManager";
+import { ROUTES } from "@/shared/config/routes";
+import { useStore } from "@/store";
+import { IGameWithAI, IBet } from "@/types/game";
+import { Badge } from "@/shared/components/badge";
+import { Card } from "@/shared/components/card";
+import {
+  convertAmericanToDecimal,
+  formatOddsWithSign,
+  formatUtcToLocalDate,
+  formatUtcToLocalTimeAmPm,
+} from "@/shared/utils";
 
 interface IGameCard {
   game: IGameWithAI;
@@ -39,8 +41,8 @@ const GameCard = ({ game, onClickFullAnalysis, type }: IGameCard) => {
               className="hover:underline"
             >
               {game?.game?.home_team}
-            </Link>{' '}
-            <span className="font-normal text-muted-foreground">vs</span>{' '}
+            </Link>{" "}
+            <span className="font-normal text-muted-foreground">vs</span>{" "}
             <Link
               href={ROUTES.TEAM(game?.game?.away_team_id)}
               className="hover:underline"
@@ -68,11 +70,11 @@ const GameCard = ({ game, onClickFullAnalysis, type }: IGameCard) => {
             variant="outline"
             className="border-primary/30 bg-primary/20 text-primary"
           >
-            {type ? type.toUpperCase() : 'NBA'}
+            {type ? type.toUpperCase() : "NBA"}
           </Badge>
           <ChevronRight className="h-4 w-4 text-muted-foreground" />
           <span className="text-sm text-muted-foreground">
-            {game?.scoreboard?.label || 'Regular Season Game'}
+            {game?.scoreboard?.label || "Regular Season Game"}
           </span>
         </div>
         <button
@@ -168,7 +170,7 @@ const GameBetsItem = ({
     if (teamName === game?.game?.away_team) {
       return String(game?.game?.away_team_id);
     }
-    return '';
+    return "";
   };
 
   const handleClick = () => {
@@ -180,7 +182,7 @@ const GameBetsItem = ({
       selected_team_id: resolveTeamId(bet.bet_team),
       selected_team_name: bet.bet_team,
       description: bet.bet_name,
-      sport: 'nba' as const,
+      sport: "nba" as const,
       market_type: bet.market_type,
       bet_value: bet.bet_value,
       bet_over_under: bet.bet_over_under,
@@ -189,10 +191,10 @@ const GameBetsItem = ({
 
     upsertParlayPick(pick);
     upsertSingle(pick);
-    openModal('track-bet');
+    openModal("track-bet");
 
     if (isMobile) {
-      toast.success('Bet successfully recorded in the tracker');
+      toast.success("Bet successfully recorded in the tracker");
     }
   };
 

@@ -7,7 +7,7 @@ import Script from 'next/script';
 
 import { AuthProvider } from '@/context/AuthContext';
 import TanstackQueryProvider from '@/providers/QueryProvider';
-import { Toaster } from '@/ui/sonner';
+import { Toaster } from '@/shared/components/sonner';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',

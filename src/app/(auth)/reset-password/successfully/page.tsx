@@ -1,4 +1,4 @@
-import SuccessfullyResetPassword from '@/components/auth/reset-pass/SuccessfullyResetPassword';
+import { SuccessfullyResetPassword } from '@/modules/auth';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 

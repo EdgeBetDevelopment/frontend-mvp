@@ -1,6 +1,6 @@
-import { Card } from '@/components/ui/card';
-import { ArrowRight, Clock } from 'lucide-react';
-import Loader from '@/ui/loader';
+import { Card } from "@/shared/components/card";
+import { ArrowRight, Clock } from "lucide-react";
+import Loader from "@/shared/components/loader";
 
 interface SportCardProps {
   sport: {
@@ -29,8 +29,8 @@ const SportCardRedesigned = ({ sport, onClick, delay = 0 }: SportCardProps) => {
       onClick={handleClick}
       className={`group relative animate-fade-in overflow-hidden border-border bg-card transition-all ${
         sport.comingSoon
-          ? 'cursor-default opacity-70'
-          : 'cursor-pointer hover:scale-105 hover:border-primary/50 hover:shadow-lg'
+          ? "cursor-default opacity-70"
+          : "cursor-pointer hover:scale-105 hover:border-primary/50 hover:shadow-lg"
       }`}
       style={{ animationDelay: `${delay}s` }}
     >
@@ -47,8 +47,8 @@ const SportCardRedesigned = ({ sport, onClick, delay = 0 }: SportCardProps) => {
         <h3
           className={`mb-2 font-display text-2xl font-bold transition-colors ${
             sport.comingSoon
-              ? 'text-muted-foreground'
-              : 'text-foreground group-hover:text-primary'
+              ? "text-muted-foreground"
+              : "text-foreground group-hover:text-primary"
           }`}
         >
           {sport.name}

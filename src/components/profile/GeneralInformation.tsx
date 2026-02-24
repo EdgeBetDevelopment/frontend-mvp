@@ -1,29 +1,29 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { Mail, Trash2, User } from 'lucide-react';
+import { useEffect, useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { Mail, Trash2, User } from "lucide-react";
 
-import { userService } from '@/services/user';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { userService } from "@/services/user";
+import { Button } from "@/shared/components/button";
+import { Input } from "@/shared/components/input";
+import { Label } from "@/shared/components/label";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
+} from "@/shared/components/card";
 
-import { ModalProfile } from './Modal';
+import { ModalProfile } from "./Modal";
 
 const Schema = z.object({
-  username: z.string().min(2, 'Must be at least 2 characters'),
-  email: z.string().email('Invalid email address'),
+  username: z.string().min(2, "Must be at least 2 characters"),
+  email: z.string().email("Invalid email address"),
 });
 
 type FormData = z.infer<typeof Schema>;
@@ -44,28 +44,28 @@ export const GeneralInformation = () => {
     setValue,
     watch,
     formState: { errors, isSubmitting },
-  } = useForm<FormData>({ resolver: zodResolver(Schema), mode: 'onBlur' });
+  } = useForm<FormData>({ resolver: zodResolver(Schema), mode: "onBlur" });
 
-  const email = watch('email') ?? '';
+  const email = watch("email") ?? "";
 
   useEffect(() => {
     (async () => {
       try {
         const me = await userService.getMe();
-        console.log('ME:', me);
-        setValue('username', me?.username ?? '');
-        setValue('email', me?.email ?? '');
+        console.log("ME:", me);
+        setValue("username", me?.username ?? "");
+        setValue("email", me?.email ?? "");
       } catch (e) {
-        console.error('getMe error:', e);
+        console.error("getMe error:", e);
       }
     })();
   }, [setValue]);
 
   useEffect(() => {
-    const confirmed = searchParams.get('confirmed');
-    if (confirmed === 'true') {
+    const confirmed = searchParams.get("confirmed");
+    if (confirmed === "true") {
       setIsEmailUpdated(true);
-      router.replace('/profile', { scroll: false });
+      router.replace("/profile", { scroll: false });
     }
   }, [searchParams, router]);
 
@@ -73,18 +73,18 @@ export const GeneralInformation = () => {
     try {
       setIsEmail(true);
       const res = await userService.updateMe(data);
-      console.log('updateMe:', res);
+      console.log("updateMe:", res);
     } catch (e) {
-      console.error('updateMe error:', e);
+      console.error("updateMe error:", e);
     }
   };
 
   const handleDelete = async () => {
     try {
       const res = await userService.deleteMe();
-      console.log('deleteMe:', res);
+      console.log("deleteMe:", res);
     } catch (e) {
-      console.error('deleteMe error:', e);
+      console.error("deleteMe error:", e);
     }
   };
 
@@ -128,7 +128,7 @@ export const GeneralInformation = () => {
             <Label htmlFor="username">Username</Label>
             <Input
               id="username"
-              {...register('username')}
+              {...register("username")}
               className="border-border bg-secondary/50"
             />
             {errors.username && (
@@ -143,7 +143,7 @@ export const GeneralInformation = () => {
             <Input
               id="email"
               type="email"
-              {...register('email')}
+              {...register("email")}
               className="border-border bg-secondary/50"
             />
             {errors.email && (
@@ -163,7 +163,7 @@ export const GeneralInformation = () => {
           </Button>
 
           <Button onClick={handleSubmit(onSubmit)} disabled={isSubmitting}>
-            {isSubmitting ? 'Updating...' : 'Update'}
+            {isSubmitting ? "Updating..." : "Update"}
           </Button>
 
           <div className="border-t border-border pt-6">

@@ -1,19 +1,19 @@
-'use client';
+"use client";
 
-import { useRouter } from 'next/navigation';
-import { toast } from 'sonner';
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
-import LoginForm from '@/components/auth/sign-in/LoginForm';
-import Navigation from '@/components/Navigation';
-import Footer from '@/components/Footer';
-import { ROUTES } from '@/routes';
+import { LoginForm } from "@/modules/auth";
+import Navigation from "@/components/Navigation";
+import Footer from "@/components/Footer";
+import { ROUTES } from "@/shared/config/routes";
 
 const LoginPage = () => {
   const router = useRouter();
 
   const onSuccessLogin = () => {
     router.push(ROUTES.HOME);
-    toast.success('Login successful!');
+    toast.success("Login successful!");
   };
 
   const on2FARequired = (tempToken: string) => {

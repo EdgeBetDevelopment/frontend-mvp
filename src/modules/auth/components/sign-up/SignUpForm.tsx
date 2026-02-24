@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { useRouter } from 'next/navigation';
+import React from "react";
+import { useRouter } from "next/navigation";
 
-import { ROUTES } from '@/routes';
-import { Button } from '@/ui/button';
-import GoogleLoginButton from '../GoogleLoginButton';
-import H2 from '../H2';
+import { ROUTES } from "@/shared/config/routes";
+import { Button } from "@/shared/components/button";
+import GoogleLoginButton from "../GoogleLoginButton";
+import H2 from "../H2";
 
-import BaseSignUpForm from './BaseSignUpForm';
+import BaseSignUpForm from "./BaseSignUpForm";
 
 interface ISignUpForm {
   title?: string;
@@ -17,7 +17,7 @@ interface ISignUpForm {
 }
 
 const SignUpForm = ({
-  title = 'Welcome!',
+  title = "Welcome!",
   onSuccessSignUp,
   onGoogleSignUpSuccess,
 }: ISignUpForm) => {

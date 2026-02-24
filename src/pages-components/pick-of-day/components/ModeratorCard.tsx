@@ -1,10 +1,10 @@
-import { Clock, Crown, Star, TrendingUp } from 'lucide-react';
+import { Clock, Crown, Star, TrendingUp } from "lucide-react";
 
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader } from "@/shared/components/card";
+import { Badge } from "@/shared/components/badge";
 
-import type { ModeratorPick } from '../types';
-import { ConfidenceBadge } from './ConfidenceBadge';
+import type { ModeratorPick } from "../types";
+import { ConfidenceBadge } from "./ConfidenceBadge";
 
 export const ModeratorCard = ({ pick }: { pick: ModeratorPick }) => {
   return (
@@ -52,7 +52,7 @@ export const ModeratorCard = ({ pick }: { pick: ModeratorPick }) => {
               {pick.sport}
             </Badge>
             <span className="text-sm text-muted-foreground">
-              {pick.units} Unit{pick.units > 1 ? 's' : ''}
+              {pick.units} Unit{pick.units > 1 ? "s" : ""}
             </span>
           </div>
           <p className="mb-1 text-sm text-muted-foreground">{pick.game}</p>

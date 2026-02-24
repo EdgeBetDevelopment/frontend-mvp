@@ -1,8 +1,8 @@
-import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
-import { toast } from 'sonner';
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
+import { toast } from "sonner";
 
-import { Dialog, DialogContent, DialogTitle } from '../../ui/dialog';
-import LoginForm from '../auth/sign-in/LoginForm';
+import { Dialog, DialogContent, DialogTitle } from "@/shared/components";
+import LoginForm from "@/modules/auth/components/sign-in/LoginForm";
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -12,7 +12,7 @@ interface AuthModalProps {
 const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
   const handleLoginSuccess = () => {
     onClose();
-    toast.success('Login successful!');
+    toast.success("Login successful!");
   };
 
   const handleGoogleLoginSuccess = () => {

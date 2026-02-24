@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { axiosInstance } from '@/services/client';
+import { axiosInstance } from '@/shared/lib';
 
 export interface Review {
   id: number;

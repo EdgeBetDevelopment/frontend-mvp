@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useRef } from 'react';
-import Autoplay from 'embla-carousel-autoplay';
-import { Star } from 'lucide-react';
+import { useRef } from "react";
+import Autoplay from "embla-carousel-autoplay";
+import { Star } from "lucide-react";
 
 import {
   Carousel,
@@ -10,76 +10,76 @@ import {
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
-} from '@/components/ui/carousel';
-import { useReviews } from '@/hooks/useReviews';
-import { Avatar, AvatarFallback, AvatarImage } from '@/ui/avatar';
-import PageTitle from '../PageTitle';
+} from "@/shared/components/carousel";
+import { useReviews } from "@/hooks/useReviews";
+import { Avatar, AvatarFallback, AvatarImage } from "@/shared/components/avatar";
+import PageTitle from "../../shared/components/PageTitle";
 
-import AvatarPlaceholderImage from '@/assets/avatar.png';
+import AvatarPlaceholderImage from "@/assets/avatar.png";
 
 const TESTIMONIAL_DATA = [
   {
     id: 1,
-    name: 'John Smith',
-    email: 'johnsmith_betpro_123',
+    name: "John Smith",
+    email: "johnsmith_betpro_123",
     message:
-      'This platform has completely transformed my betting experience. The insights are incredibly valuable and the predictions have been consistently accurate for my wagers.',
+      "This platform has completely transformed my betting experience. The insights are incredibly valuable and the predictions have been consistently accurate for my wagers.",
   },
   {
     id: 2,
-    name: 'Samantha Ruiz',
-    email: 'samruiz_bestbetter_90',
+    name: "Samantha Ruiz",
+    email: "samruiz_bestbetter_90",
     message:
       "This platform changed my betting strategy completely. I've never been this confident before! The analytics provided here are unmatched and the community is very supportive.",
   },
   {
     id: 3,
-    name: 'Marcus Johnson',
-    email: 'marcus_j_winstreak',
+    name: "Marcus Johnson",
+    email: "marcus_j_winstreak",
     message:
-      'The analytics provided here are unmatched. I was skeptical at first, but after seeing consistent results, I can confidently say this is the best betting resource available. The interface is intuitive and makes tracking my bets effortless.',
+      "The analytics provided here are unmatched. I was skeptical at first, but after seeing consistent results, I can confidently say this is the best betting resource available. The interface is intuitive and makes tracking my bets effortless.",
   },
   {
     id: 4,
-    name: 'Elena Petrova',
-    email: 'elenap_superwin',
+    name: "Elena Petrova",
+    email: "elenap_superwin",
     message:
       "I was skeptical at first, but after using this platform, I can say it's worth every penny! The statistical models have given me an edge I never had before and the customer support is excellent.",
   },
   {
     id: 5,
-    name: 'Michael Carter',
-    email: 'mike_c_bigbets',
+    name: "Michael Carter",
+    email: "mike_c_bigbets",
     message:
       "Accurate predictions and great community. I've learned so much from the experts here! The platform is constantly improving and adding new features that enhance my betting experience significantly.",
   },
   {
     id: 6,
-    name: 'Sophia Lee',
-    email: 'sophia_lee_999',
+    name: "Sophia Lee",
+    email: "sophia_lee_999",
     message:
-      'Finally, a platform that actually helps me make informed decisions. The AI predictions are remarkably accurate, and the analysis tools help me understand the reasoning behind each recommendation. Love it!',
+      "Finally, a platform that actually helps me make informed decisions. The AI predictions are remarkably accurate, and the analysis tools help me understand the reasoning behind each recommendation. Love it!",
   },
   {
     id: 7,
-    name: 'Robert Wilson',
-    email: 'rob_wilson_bets',
+    name: "Robert Wilson",
+    email: "rob_wilson_bets",
     message:
-      'The statistical models used here have given me an edge I never had before. The platform is constantly improving and adding new features. The customer support team is responsive and helpful whenever I have questions.',
+      "The statistical models used here have given me an edge I never had before. The platform is constantly improving and adding new features. The customer support team is responsive and helpful whenever I have questions.",
   },
   {
     id: 8,
-    name: 'Laura Nguyen',
-    email: 'laura_ng_predictions',
+    name: "Laura Nguyen",
+    email: "laura_ng_predictions",
     message:
-      'User-friendly interface and top-notch insights. This is a game changer! Since joining this platform, my success rate has improved dramatically. The community discussions add another layer of value.',
+      "User-friendly interface and top-notch insights. This is a game changer! Since joining this platform, my success rate has improved dramatically. The community discussions add another layer of value.",
   },
   {
     id: 10,
-    name: 'Daniel Garcia',
-    email: 'dgarcia_winning',
+    name: "Daniel Garcia",
+    email: "dgarcia_winning",
     message:
-      'Since joining this platform, my success rate has improved dramatically. The AI predictions are remarkably accurate, and the analysis tools help me understand the reasoning behind each recommendation. Highly recommended for serious bettors.',
+      "Since joining this platform, my success rate has improved dramatically. The AI predictions are remarkably accurate, and the analysis tools help me understand the reasoning behind each recommendation. Highly recommended for serious bettors.",
   },
 ];
 
@@ -115,7 +115,7 @@ export const UserReviews = () => {
             className="w-full"
             plugins={[autoplayPlugin.current]}
             opts={{
-              align: 'center',
+              align: "center",
               loop: true,
               dragFree: true,
             }}
@@ -160,7 +160,7 @@ const StarRating = ({ value = 0 }: { value?: number }) => {
           <Star
             key={i}
             className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6"
-            fill={filled ? 'currentColor' : 'none'}
+            fill={filled ? "currentColor" : "none"}
             strokeWidth={filled ? 1 : 2}
             aria-hidden="true"
           />

@@ -81,7 +81,7 @@ const TeamStatsChart: FC<TeamStatsChartProps> = ({ stats }) => {
   ];
 
   return (
-    <div className="bg-graph-section border-border w-full rounded-lg border p-4 pb-6">
+    <div className="bg-glass-gradient border-border w-full rounded-lg border p-4 pb-6 backdrop-blur-[20px]">
       <h3 className="mb-2 text-lg font-semibold text-white">Team Overview</h3>
       <p className="mb-4 text-xs text-[#aaa]">Full season summary</p>
 

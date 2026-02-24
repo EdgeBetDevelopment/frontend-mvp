@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useQuery } from '@tanstack/react-query';
+import { useQuery } from "@tanstack/react-query";
 
-import { Card, CardContent } from '@/components/ui/card';
-import apiService from '@/services';
+import { Card, CardContent } from "@/shared/components/card";
+import apiService from "@/services";
 
 type PickOfDayUserStats = {
   username: string;
@@ -14,22 +14,22 @@ type PickOfDayUserStats = {
 };
 
 const gradientColors = [
-  'from-amber-500 to-orange-600',
-  'from-emerald-500 to-teal-600',
-  'from-violet-500 to-purple-600',
-  'from-sky-500 to-indigo-600',
-  'from-rose-500 to-pink-600',
-  'from-lime-500 to-green-600',
+  "from-amber-500 to-orange-600",
+  "from-emerald-500 to-teal-600",
+  "from-violet-500 to-purple-600",
+  "from-sky-500 to-indigo-600",
+  "from-rose-500 to-pink-600",
+  "from-lime-500 to-green-600",
 ];
 
 const formatWinRate = (value: number) => {
-  if (!Number.isFinite(value)) return '0.0';
+  if (!Number.isFinite(value)) return "0.0";
   const normalized = value <= 1 ? value * 100 : value;
   return normalized.toFixed(1);
 };
 
 const formatYtd = (value: number) => {
-  if (!Number.isFinite(value)) return '0.0';
+  if (!Number.isFinite(value)) return "0.0";
   return value.toFixed(1);
 };
 
@@ -39,7 +39,7 @@ export const ModeratorStats = () => {
     isLoading,
     isError,
   } = useQuery({
-    queryKey: ['pick-of-day', 'users'],
+    queryKey: ["pick-of-day", "users"],
     queryFn: () => apiService.getPickOfTheDayUsers(),
   });
 
@@ -72,7 +72,7 @@ export const ModeratorStats = () => {
         const ytd = formatYtd(user.ytd);
         const record = `${user.wins}-${user.losses}`;
         const color = gradientColors[index % gradientColors.length];
-        const avatar = user.username?.trim()?.charAt(0)?.toUpperCase() || '?';
+        const avatar = user.username?.trim()?.charAt(0)?.toUpperCase() || "?";
 
         return (
           <Card
@@ -88,7 +88,7 @@ export const ModeratorStats = () => {
                 </div>
                 <div className="flex-1">
                   <p className="font-medium text-foreground">
-                    {user.username || 'Unknown'}
+                    {user.username || "Unknown"}
                   </p>
                   <p className="text-sm text-muted-foreground">{record}</p>
                 </div>
@@ -102,10 +102,10 @@ export const ModeratorStats = () => {
                   <div className="border-l border-border/50 pl-4 text-right">
                     <p
                       className={`text-lg font-bold ${
-                        user.ytd >= 0 ? 'text-emerald-400' : 'text-red-400'
+                        user.ytd >= 0 ? "text-emerald-400" : "text-red-400"
                       }`}
                     >
-                      {user.ytd >= 0 ? '+' : ''}
+                      {user.ytd >= 0 ? "+" : ""}
                       {ytd}u
                     </p>
                     <p className="text-xs text-muted-foreground">YTD P/L</p>

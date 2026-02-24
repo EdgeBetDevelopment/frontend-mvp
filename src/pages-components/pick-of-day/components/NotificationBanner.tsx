@@ -1,7 +1,7 @@
-import { Bell } from 'lucide-react';
+import { Bell } from "lucide-react";
 
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { Card, CardContent } from "@/shared/components/card";
+import { Badge } from "@/shared/components/badge";
 
 export const NotificationBanner = () => (
   <Card className="mb-8 border-primary/20 bg-gradient-to-r from-primary/10 to-primary/5">

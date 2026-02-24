@@ -1,8 +1,7 @@
-import { IGameWithAI } from '@/types/game';
 import { ITeam } from '@/types/team';
 import { IGameTracker } from '@/types/tracker';
-
-import { axiosInstance } from './client';
+import { axiosInstance } from '@/shared/lib';
+import { IGameWithAI } from '@/modules/game/types';
 
 const apiService = {
   async getGames(lastId?: number): Promise<IGameWithAI[]> {

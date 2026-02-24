@@ -1,4 +1,4 @@
-import { axiosInstance } from "@/services/client";
+import { axiosInstance } from '@/shared/lib';
 
 import { IAuthRepsonse, ILogin, ISignUp } from "./types";
 

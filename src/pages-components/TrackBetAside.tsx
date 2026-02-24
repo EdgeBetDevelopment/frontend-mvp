@@ -1,21 +1,21 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { useMutation } from '@tanstack/react-query';
-import { toast } from 'sonner';
+import React from "react";
+import { useMutation } from "@tanstack/react-query";
+import { toast } from "sonner";
 
-import BetModeSwitch from '@/components/matchup/BetModeSwitch';
-import TrackGameCard from '@/components/matchup/TrackGameCard';
-import GameAnalysisModal from '@/components/modals/game-analysis';
-import { useAuth } from '@/context/AuthContext';
-import useModalManager from '@/hooks/useModalManager';
-import apiService from '@/services';
-import { useStore } from '@/store';
-import { BetPick } from '@/store/slices/matchupSlice';
-import { IGameWithAI } from '@/types/game';
-import { Button } from '@/ui/button';
-import { Card } from '@/ui/card';
-import Loader from '@/ui/loader';
+import BetModeSwitch from "@/components/matchup/BetModeSwitch";
+import TrackGameCard from "@/components/matchup/TrackGameCard";
+import { GameAnalysisModal } from "@/modules/game/components";
+import { useAuth } from "@/context/AuthContext";
+import useModalManager from "@/hooks/useModalManager";
+import apiService from "@/services";
+import { useStore } from "@/store";
+import { BetPick } from "@/store/slices/matchupSlice";
+import { IGameWithAI } from "@/types/game";
+import { Button } from "@/shared/components/button";
+import { Card } from "@/shared/components/card";
+import Loader from "@/shared/components/loader";
 
 const TrackBetsAside = () => {
   const {
@@ -40,29 +40,29 @@ const TrackBetsAside = () => {
     onSuccess: () => {
       if (isParlay) {
         clearParlay();
-        toast.success('Parlay bet created successfully');
+        toast.success("Parlay bet created successfully");
       } else {
         clearSingle();
-        toast.success('Single bet created successfully');
+        toast.success("Single bet created successfully");
       }
     },
     onError: (error) => {
-      toast.error('Failed to create bet');
-      console.error('Error creating bet:', error);
+      toast.error("Failed to create bet");
+      console.error("Error creating bet:", error);
     },
   });
 
   const mapPick = (bet: BetPick) => {
-    const description = bet.description || '';
+    const description = bet.description || "";
 
-    let marketType = bet.market_type || '';
+    let marketType = bet.market_type || "";
     let betValue = bet.bet_value ?? 0;
-    let betOverUnder = bet.bet_over_under || '';
-    let betPlayer = bet.bet_player || '';
+    let betOverUnder = bet.bet_over_under || "";
+    let betPlayer = bet.bet_player || "";
 
     if (!marketType) {
       const marketTypeMatch = description.match(/^(\w+)/);
-      marketType = marketTypeMatch ? marketTypeMatch[1] : '';
+      marketType = marketTypeMatch ? marketTypeMatch[1] : "";
     }
 
     if (betValue === 0 || betValue === null) {
@@ -74,7 +74,7 @@ const TrackBetsAside = () => {
       const overUnderMatch = description
         .toLowerCase()
         .match(/\b(over|under)\b/);
-      betOverUnder = overUnderMatch ? overUnderMatch[1] : '';
+      betOverUnder = overUnderMatch ? overUnderMatch[1] : "";
     }
 
     const betName = description;
@@ -82,7 +82,7 @@ const TrackBetsAside = () => {
     return {
       game_id: bet.game_id,
       odds: bet.odds,
-      selected_team_id: bet.selected_team_id || '',
+      selected_team_id: bet.selected_team_id || "",
       selected_team_name: bet.selected_team_name,
       description: {
         market_type: marketType,
@@ -110,7 +110,7 @@ const TrackBetsAside = () => {
         bets: parlay?.bets?.map(mapPick),
       };
 
-      console.log('PARLAY payload', payload);
+      console.log("PARLAY payload", payload);
       mutate(payload);
       return;
     }
@@ -126,10 +126,10 @@ const TrackBetsAside = () => {
         })),
       };
 
-      console.log('SINGLE payload', payload);
+      console.log("SINGLE payload", payload);
       mutate(payload);
     } catch (error) {
-      console.error('Failed to prepare bet submission:', error);
+      console.error("Failed to prepare bet submission:", error);
     }
   };
 
@@ -137,15 +137,15 @@ const TrackBetsAside = () => {
 
   const onClickFullAnalysis = (game: IGameWithAI) => {
     if (!isAuthenticated) {
-      openModal('auth');
+      openModal("auth");
       return;
     }
     setSelectedGame(game);
-    openModal('game-analysis');
+    openModal("game-analysis");
   };
 
   const onClickCloseModal = () => {
-    closeModal('game-analysis');
+    closeModal("game-analysis");
     setSelectedGame(null);
   };
 
@@ -195,7 +195,7 @@ const TrackBetsAside = () => {
                   onClick={onSubmit}
                   className="w-full"
                 >
-                  {isLoading ? <Loader /> : 'Track Bet'}
+                  {isLoading ? <Loader /> : "Track Bet"}
                 </Button>
               )}
             </div>
@@ -204,7 +204,7 @@ const TrackBetsAside = () => {
       </Card>
 
       <GameAnalysisModal
-        open={isModalOpen('game-analysis')}
+        open={isModalOpen("game-analysis")}
         onClose={onClickCloseModal}
       />
     </>

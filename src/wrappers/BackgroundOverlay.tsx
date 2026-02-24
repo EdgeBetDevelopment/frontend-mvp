@@ -1,8 +1,8 @@
-import React from 'react';
+import React from "react";
 
-import { cn } from '@/lib/utils';
+import { cn } from "@/shared/utils/helper";
 
-import GridBgImage from '@/assets/gridBg.png';
+import GridBgImage from "@/assets/gridBg.png";
 
 interface IBackgroundOverlay {
   bgClassName?: string;
@@ -13,7 +13,7 @@ const BackgroundOverlay = ({ bgClassName }: IBackgroundOverlay) => {
     <>
       <div
         className={cn(
-          'bg-primary-brand/60 absolute top-1/3 left-1/2 -z-10 h-[200px] w-1/3 -translate-x-1/2 rounded-full blur-[300px]',
+          "bg-primary-brand/60 absolute top-1/3 left-1/2 -z-10 h-[200px] w-1/3 -translate-x-1/2 rounded-full blur-[300px]",
           bgClassName,
         )}
       />

@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/button';
+import { Button } from "@/shared/components/button";
 import {
   Card,
   CardContent,
@@ -6,10 +6,10 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import paymentService from '@/services/payment';
-import { Check } from 'lucide-react';
-import { useState } from 'react';
+} from "@/shared/components/card";
+import paymentService from "@/services/payment";
+import { Check } from "lucide-react";
+import { useState } from "react";
 
 interface PricingCardProps {
   id: number;
@@ -44,7 +44,7 @@ export const PricingCard = ({
       const url = await paymentService.subscribe(id);
       window.location.href = url;
     } catch (error) {
-      console.error('Stripe checkout error:', error);
+      console.error("Stripe checkout error:", error);
     } finally {
       setLoading(false);
     }
@@ -54,8 +54,8 @@ export const PricingCard = ({
     <Card
       className={`relative flex flex-col ${
         popular
-          ? 'border-primary shadow-primary/20 scale-105 shadow-lg'
-          : 'border-border'
+          ? "border-primary shadow-primary/20 scale-105 shadow-lg"
+          : "border-border"
       }`}
     >
       {popular && (
@@ -92,15 +92,15 @@ export const PricingCard = ({
       <CardFooter>
         <Button
           className="w-full"
-          variant={popular ? 'default' : 'outline'}
+          variant={popular ? "default" : "outline"}
           onClick={() => handleCheckout()}
           disabled={loading}
         >
           {loading
-            ? 'Redirecting...'
-            : name === 'Starter'
-              ? 'Start Free Trial'
-              : 'Get Started'}
+            ? "Redirecting..."
+            : name === "Starter"
+              ? "Start Free Trial"
+              : "Get Started"}
         </Button>
       </CardFooter>
     </Card>
