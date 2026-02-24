@@ -1,11 +1,11 @@
-import { create } from 'zustand';
-import { devtools } from 'zustand/middleware';
+import { create } from "zustand";
+import { devtools } from "zustand/middleware";
 
-import { matchupSlice } from './slices/matchupSlice';
+import { matchupSlice } from "./slices/matchupSlice";
 
-type AuthState = ReturnType<typeof matchupSlice>;
+type MatchupState = ReturnType<typeof matchupSlice>;
 
-type IStore = AuthState;
+type IStore = MatchupState;
 
 export const useStore = create<IStore>()(
   devtools((...a) => ({

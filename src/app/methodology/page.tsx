@@ -134,47 +134,49 @@ const MobileNav = () => {
   );
 };
 
-const MethodologyContent = () => {
-  const { ref: historicalRef } = useSectionInView('historical');
-  const { ref: marketRef } = useSectionInView('market');
-  const { ref: processRef } = useSectionInView('process');
-  const { ref: trackingRef } = useSectionInView('tracking');
+type SectionData = {
+  id: string;
+  title: string;
+  subtitle: string;
+  text: string[];
+};
 
-  const refs: { [key: string]: (node?: Element | null) => void } = {
-    historical: historicalRef,
-    market: marketRef,
-    process: processRef,
-    tracking: trackingRef,
-  };
+const MethodologySection = ({ id, title, subtitle, text }: SectionData) => {
+  const { ref } = useSectionInView(id);
 
   return (
+    <section
+      ref={ref}
+      id={id}
+      className="flex scroll-mt-24 flex-col gap-4 sm:gap-6 md:scroll-mt-[142px]"
+    >
+      <h2 className="text-2xl font-bold tracking-normal sm:text-3xl md:text-[40px]">
+        {title}
+      </h2>
+
+      <div className="tl-paraghraph2 flex flex-col gap-3 sm:gap-4">
+        <p className="text-text-primary text-base font-medium tracking-normal sm:text-lg md:text-2xl">
+          {subtitle}
+        </p>
+
+        {text.map((paragraph, index) => (
+          <p
+            key={`${title}-${index}`}
+            className="text-sm leading-relaxed sm:text-base"
+          >
+            {paragraph}
+          </p>
+        ))}
+      </div>
+    </section>
+  );
+};
+
+const MethodologyContent = () => {
+  return (
     <div className="flex w-full flex-col gap-16 rounded-3xl bg-black p-6 sm:gap-20 sm:p-8 md:p-10 md:pl-20">
-      {SECTIONS_DATA.map(({ id, title, subtitle, text }) => (
-        <section
-          ref={refs[id]}
-          key={id}
-          id={id}
-          className="flex scroll-mt-24 flex-col gap-4 sm:gap-6 md:scroll-mt-[142px]"
-        >
-          <h2 className="text-2xl font-bold tracking-normal sm:text-3xl md:text-[40px]">
-            {title}
-          </h2>
-
-          <div className="tl-paraghraph2 flex flex-col gap-3 sm:gap-4">
-            <p className="text-text-primary text-base font-medium tracking-normal sm:text-lg md:text-2xl">
-              {subtitle}
-            </p>
-
-            {text.map((paragraph, index) => (
-              <p
-                key={`${title}-${index}`}
-                className="text-sm leading-relaxed sm:text-base"
-              >
-                {paragraph}
-              </p>
-            ))}
-          </div>
-        </section>
+      {SECTIONS_DATA.map((section) => (
+        <MethodologySection key={section.id} {...section} />
       ))}
     </div>
   );

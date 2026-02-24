@@ -1,15 +1,18 @@
-'use client';
+"use client";
 
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import { useInView } from 'react-intersection-observer';
+import React, { createContext, useContext, useEffect, useState } from "react";
+import { useInView } from "react-intersection-observer";
 
 type ActiveSectionContextProviderProps = {
   children: React.ReactNode;
 };
 
+const SCROLL_OBSERVER_THRESHOLD = 0.75;
+const SCROLL_DEBOUNCE_MS = 1000;
+
 type ActiveSectionContextType = {
   activeSection: string;
-  setActiveSection: React.Dispatch<React.SetStateAction<any>>;
+  setActiveSection: React.Dispatch<React.SetStateAction<string>>;
   timeOfLastClick: number;
   setTimeOfLastClick: React.Dispatch<React.SetStateAction<number>>;
 };
@@ -20,7 +23,7 @@ export const ActiveSectionContext =
 export default function ActiveSectionContextProvider({
   children,
 }: ActiveSectionContextProviderProps) {
-  const [activeSection, setActiveSection] = useState<string>('');
+  const [activeSection, setActiveSection] = useState<string>("");
   const [timeOfLastClick, setTimeOfLastClick] = useState(0); // we need to keep track of this to disable the observer temporarily when user clicks on a link
 
   return (
@@ -42,21 +45,24 @@ export function useActiveSectionContext() {
 
   if (context === null) {
     throw new Error(
-      'useActiveSectionContext must be used within an ActiveSectionContextProvider',
+      "useActiveSectionContext must be used within an ActiveSectionContextProvider",
     );
   }
 
   return context;
 }
 
-export function useSectionInView(sectionName: string, threshold = 0.75) {
+export function useSectionInView(
+  sectionName: string,
+  threshold = SCROLL_OBSERVER_THRESHOLD,
+) {
   const { ref, inView } = useInView({
     threshold,
   });
   const { setActiveSection, timeOfLastClick } = useActiveSectionContext();
 
   useEffect(() => {
-    if (inView && Date.now() - timeOfLastClick > 1000) {
+    if (inView && Date.now() - timeOfLastClick > SCROLL_DEBOUNCE_MS) {
       setActiveSection(sectionName);
     }
   }, [inView, setActiveSection, timeOfLastClick, sectionName]);
