@@ -1,34 +1,15 @@
 "use client";
 
 import { Check, MessageCircle, Users, X, Zap } from "lucide-react";
+import Link from "next/link";
 
 import Footer from "@/components/Footer";
 import Navigation from "@/components/Navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import Link from "next/link";
+import { FREE_FEATURES, PREMIUM_FEATURES } from "@/modules/community";
 
 const Community = () => {
-  const freeFeatures = [
-    { text: "Access to free channels", included: true },
-    { text: "Betting terminology resources", included: true },
-    { text: "One free pick per day", included: true },
-    { text: "Community discussions", included: false },
-    { text: "Premium channels access", included: false },
-    { text: "Additional plays & insights", included: false },
-    { text: "Moderator bet logic & analysis", included: false },
-  ];
-
-  const premiumFeatures = [
-    { text: "Access to all free channels", included: true },
-    { text: "Betting terminology resources", included: true },
-    { text: "All daily picks", included: true },
-    { text: "Community discussions", included: true },
-    { text: "Premium channels access", included: true },
-    { text: "Additional plays & insights", included: true },
-    { text: "Moderator bet logic & analysis", included: true },
-  ];
-
   return (
     <div className="bg-background min-h-screen">
       <Navigation />
@@ -67,7 +48,7 @@ const Community = () => {
             </CardHeader>
             <CardContent>
               <ul className="space-y-3">
-                {freeFeatures.map((feature, index) => (
+                {FREE_FEATURES.map((feature, index) => (
                   <li key={index} className="flex items-center gap-3">
                     {feature.included ? (
                       <Check className="text-sport-nfl h-5 w-5 flex-shrink-0" />
@@ -101,7 +82,7 @@ const Community = () => {
             </CardHeader>
             <CardContent>
               <ul className="space-y-3">
-                {premiumFeatures.map((feature, index) => (
+                {PREMIUM_FEATURES.map((feature, index) => (
                   <li key={index} className="flex items-center gap-3">
                     <Check className="text-primary h-5 w-5 flex-shrink-0" />
                     <span className="text-foreground">{feature.text}</span>
