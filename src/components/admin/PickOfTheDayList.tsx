@@ -55,10 +55,16 @@ const StatusSelector = ({ record }: { record: any }) => {
       }}
     >
       <option value="" disabled hidden />
-      <option value="win" style={{ backgroundColor: '#22c55e', color: '#0b3d1a' }}>
+      <option
+        value="win"
+        style={{ backgroundColor: '#22c55e', color: '#0b3d1a' }}
+      >
         win
       </option>
-      <option value="loss" style={{ backgroundColor: '#ef4444', color: '#3b0a0a' }}>
+      <option
+        value="loss"
+        style={{ backgroundColor: '#ef4444', color: '#3b0a0a' }}
+      >
         loss
       </option>
     </select>
@@ -91,7 +97,7 @@ export const PickOfTheDayList = () => (
         },
       }}
     >
-      <TextField source="user_id" label="User" />
+      <TextField source="username" label="User" />
       <FunctionField
         label="Sport"
         render={(record: any) => (
@@ -102,7 +108,7 @@ export const PickOfTheDayList = () => (
         label="Game"
         headerClassName="pickoday-game-col"
         cellClassName="pickoday-game-col"
-        render={(record: any) => (
+        render={(record: any) =>
           record.game?.home_team ? (
             <div style={{ fontWeight: 500, display: 'flex', gap: '4px' }}>
               <div>{record.game?.home_team}</div>
@@ -111,7 +117,7 @@ export const PickOfTheDayList = () => (
           ) : (
             <div style={{ fontWeight: 500 }}>{record.game?.name}</div>
           )
-        )}
+        }
       />
       <FunctionField
         label="Start Time"
