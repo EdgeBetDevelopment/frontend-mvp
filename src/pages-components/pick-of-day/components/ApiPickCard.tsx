@@ -62,7 +62,7 @@ export const ApiPickCard = ({ pick }: { pick: ApiPick }) => {
             <Badge variant="outline" className="text-xs">
               {pick.sport?.toUpperCase()}
             </Badge>
-            <span className="text-sm text-muted-foreground">
+            <span className="text-sm text-primary">
               {pick.units} Unit{pick.units > 1 ? 's' : ''}
             </span>
           </div>
