@@ -10,30 +10,22 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
+import { TeamStatistics } from '../types';
+import { METRIC_DESCRIPTIONS } from '../constants';
+import { generateDetailedChartData } from '../utils';
 
 interface TeamStatsChartProps {
-  stats: any;
+  stats: TeamStatistics;
 }
-
-const metricDescriptions: Record<string, string> = {
-  Wins: 'Number of games won',
-  Losses: 'Number of games lost',
-  'FG%': 'Field Goal Percentage',
-  '3PT%': 'Three Point Percentage',
-  'FT%': 'Free Throw Percentage',
-  'PTS (avg)': 'Average points per game',
-  'REB (avg)': 'Average rebounds per game',
-  'AST (avg)': 'Average assists per game',
-};
 
 const CustomTooltip = ({ active, payload }: any) => {
   if (!active || !payload || !payload.length) return null;
 
   return (
-    <div className="border-border w-[220px] rounded-md border bg-[#111] px-4 py-3 text-xs shadow-md">
+    <div className="w-[220px] rounded-md border border-border bg-[#111] px-4 py-3 text-xs shadow-md">
       {payload.map((entry: any, index: number) => {
         const metricName = entry.payload.name;
-        const description = metricDescriptions[metricName] || '';
+        const description = METRIC_DESCRIPTIONS[metricName] || '';
         return (
           <div key={index} className="">
             <div className="text-sm font-semibold text-white">
@@ -52,36 +44,17 @@ const CustomTooltip = ({ active, payload }: any) => {
   );
 };
 
-const TeamStatsChart: FC<TeamStatsChartProps> = ({ stats }) => {
+export const TeamStatsChart: FC<TeamStatsChartProps> = ({ stats }) => {
   if (!stats) return null;
 
-  const games = stats.GP || 1;
-
-  const chartData = [
-    { name: 'Wins', value: stats.W, fill: '#34D399' },
-    { name: 'Losses', value: stats.L, fill: '#DC2626' },
-    { name: 'FG%', value: +(stats.FG_PCT * 100).toFixed(1), fill: '#F59E0B' },
-    { name: '3PT%', value: +(stats.FG3_PCT * 100).toFixed(1), fill: '#10B981' },
-    { name: 'FT%', value: +(stats.FT_PCT * 100).toFixed(1), fill: '#60A5FA' },
-    {
-      name: 'PTS (avg)',
-      value: +(stats.PTS / games).toFixed(1),
-      fill: '#84FDF7',
-    },
-    {
-      name: 'REB (avg)',
-      value: +(stats.REB / games).toFixed(1),
-      fill: '#F472B6',
-    },
-    {
-      name: 'AST (avg)',
-      value: +(stats.AST / games).toFixed(1),
-      fill: '#A78BFA',
-    },
-  ];
+  const chartData = generateDetailedChartData(stats);
 
   return (
+<<<<<<<< HEAD:src/modules/team/components/TeamStatsChart.tsx
     <div className="bg-glass-gradient border-border w-full rounded-lg border p-4 pb-6 backdrop-blur-[20px]">
+========
+    <div className="bg-graph-section w-full rounded-lg border border-border p-4 pb-6">
+>>>>>>>> dev:src/modules/nba/team/components/TeamStatsChart.tsx
       <h3 className="mb-2 text-lg font-semibold text-white">Team Overview</h3>
       <p className="mb-4 text-xs text-[#aaa]">Full season summary</p>
 
@@ -97,5 +70,3 @@ const TeamStatsChart: FC<TeamStatsChartProps> = ({ stats }) => {
     </div>
   );
 };
-
-export default TeamStatsChart;

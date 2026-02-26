@@ -1,3 +1,3 @@
 export { default as TeamPage } from './TeamPage';
-export { default as TeamStatsChart } from './TeamStatsChart';
 export { TeamStatsTable } from './TeamStatsTable';
+// TeamStatsChart is now in @/modules/nba/team

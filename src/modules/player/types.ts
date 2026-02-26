@@ -21,4 +21,5 @@ export interface ITeamPlayer {
   SCHOOL: string;
   PLAYER_ID: number;
   HOW_ACQUIRED: string;
+  status: string;
 }

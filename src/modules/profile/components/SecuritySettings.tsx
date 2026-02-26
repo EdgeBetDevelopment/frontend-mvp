@@ -21,7 +21,6 @@ const SecuritySettings: React.FC<SecuritySettingsProps> = ({ user }) => {
   const [disableCode, setDisableCode] = useState('');
   const [recoveryCode, setRecoveryCode] = useState('');
 
-  // Support both old and new 2FA response format
   const is2FAEnabled = user.two_fa?.is_enabled ?? user.is_2fa_enabled ?? false;
 
   const {
