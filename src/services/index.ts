@@ -1,5 +1,5 @@
 import { IGameWithAI } from '@/types/game';
-import { ITeam } from '@/types/team';
+import { ITeam } from '@/modules/nba/team';
 import { IGameTracker } from '@/types/tracker';
 
 import { axiosInstance } from './client';
@@ -174,7 +174,13 @@ const apiService = {
   },
 
   async getPickOfTheDayUsers(): Promise<
-    { username: string; wins: number; losses: number; win_rate: number; ytd: number }[]
+    {
+      username: string;
+      wins: number;
+      losses: number;
+      win_rate: number;
+      ytd: number;
+    }[]
   > {
     const response = await axiosInstance.get(
       `/nba/api/v1/pick_of_the_day/users`,

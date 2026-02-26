@@ -7,7 +7,6 @@ import { cn } from '@/lib/utils';
 import { ROUTES } from '@/routes';
 import apiService from '@/services';
 import { ITeamPlayer } from '@/types/player';
-import { Player } from '@/types/team';
 import { Avatar } from '@/ui/avatar';
 import CardContainer from '@/ui/containers/CardContainer';
 import { Skeleton } from '@/ui/skeleton';
@@ -172,7 +171,7 @@ export const Card = ({
 }) => {
   return (
     <CardContainer
-      className={cn('flex flex-1/2 flex-col gap-2 rounded-lg', className)}
+      className={cn('flex-1/2 flex flex-col gap-2 rounded-lg', className)}
     >
       <div className="tl-flex-icon align-bottom text-sm font-medium tracking-normal">
         {icon}
@@ -189,7 +188,7 @@ const KeyPlayerCard = ({
   stats,
   isKeyPlayer,
 }: {
-  player: Player;
+  player: ITeamPlayer;
   stats?: { points: number; rebounds: number; assists: number } | null;
   isKeyPlayer?: boolean;
 }) => {
@@ -198,7 +197,7 @@ const KeyPlayerCard = ({
   return (
     <Link
       href={ROUTES.PLAYER(PLAYER_ID.toString())}
-      className="border-border hover:border-primary-brand flex min-h-[200px] min-w-[120px] cursor-pointer flex-col items-center gap-2 rounded-xl border p-3 transition-all"
+      className="hover:border-primary-brand flex min-h-[200px] min-w-[120px] cursor-pointer flex-col items-center gap-2 rounded-xl border border-border p-3 transition-all"
     >
       <div className="relative">
         {isKeyPlayer && (
@@ -210,7 +209,7 @@ const KeyPlayerCard = ({
           <div className="text-lg font-bold text-white">
             {fullname
               .split(' ')
-              .map((n) => n[0])
+              .map((n: string) => n[0])
               .join('')}
           </div>
         </Avatar>
@@ -233,6 +232,6 @@ const KeyPlayerCard = ({
 
 const CardSkeleton = () => {
   return (
-    <Skeleton className="flex h-[227px] flex-1/2 flex-col gap-2 rounded-lg" />
+    <Skeleton className="flex-1/2 flex h-[227px] flex-col gap-2 rounded-lg" />
   );
 };

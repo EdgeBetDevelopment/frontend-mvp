@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { TeamStatsTable as TeamStatsTableComponent } from '@/components/team/TeamStatsTable';
+import { TeamStatsTable as TeamStatsTableComponent } from '@/modules/nba/team';
 import apiService from '@/services';
 import { Skeleton } from '@/ui/skeleton';
 
@@ -41,7 +41,7 @@ const TeamStatsTable = ({
   const canShowData = !isLoading && !isError && homeTeam && awayTeam;
 
   return (
-    <div className="border-border space-y-4 rounded-lg">
+    <div className="space-y-4 rounded-lg border-border">
       <h3 className="align-bottom text-lg font-semibold tracking-normal">
         Total Season Stats
       </h3>
