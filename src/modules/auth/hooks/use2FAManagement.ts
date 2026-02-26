@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
-import { userService } from "@/services/user";
+import { userService } from '@/modules/profile';
 import { handleFetchError } from "@/shared/utils";
 
 interface Use2FAManagementProps {

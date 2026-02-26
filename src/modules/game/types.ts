@@ -1,4 +1,4 @@
-import { ITeamPlayer } from '@/types/player';
+import { ITeamPlayer } from '@/modules/player';
 
 interface IPeriod {
   period: number;

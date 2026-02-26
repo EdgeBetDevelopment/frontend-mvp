@@ -7,7 +7,7 @@ import {
   TooltipTrigger,
 } from "@/shared/components/tooltip";
 import { cn } from "@/shared/utils/helper";
-import { Injury } from "@/types/game";
+import { Injury } from "@/modules/game/types";
 import { Badge } from "@/shared/components/badge";
 import {
   Table,

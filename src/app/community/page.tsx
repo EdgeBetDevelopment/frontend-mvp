@@ -3,8 +3,8 @@
 import { Check, MessageCircle, Users, X, Zap } from "lucide-react";
 import Link from "next/link";
 
-import Footer from "@/components/Footer";
-import Navigation from "@/components/Navigation";
+import Footer from "@/shared/components/Footer";
+import Navigation from "@/shared/components/Navigation";
 import { Button } from "@/shared/components/button";
 import {
   Card,

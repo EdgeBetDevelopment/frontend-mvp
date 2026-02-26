@@ -1,6 +1,6 @@
 import { useStore } from "@/store";
 import { convertAmericanToDecimal, formatOddsWithSign } from "@/shared/utils";
-import { IBet } from "@/types/game";
+import { IBet } from "@/modules/game/types";
 
 const TopBets = ({
   valueBets,

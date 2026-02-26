@@ -1,46 +1,16 @@
 import { StateCreator } from "zustand";
 
-import { IGameWithAI } from "@/types/game";
+import { IGameWithAI } from "@/modules/game/types";
+import { BetPick, Ticket, IMatchupState } from "@/modules/matchup/types";
 import { calcParlayOddsDecimal, makeId } from "@/shared/utils";
 
-type Sport = "nba";
+export type { BetPick, Ticket };
 
-export interface BetPick {
-  game_id: number;
-  odds: number;
-  selected_team_id: string;
-  selected_team_name: string;
-  description: string;
-  sport: Sport;
-  pid?: string;
-  market_type?: string;
-  bet_value?: number | null;
-  bet_over_under?: string | null;
-  bet_player?: string | null;
-}
-
-export interface Ticket {
-  amount: number;
-  win_amount: number;
-  bets: BetPick[];
-}
-
-interface IMatchupState {
-  trackedGame: null | IGameWithAI;
-  selectedGame: null | IGameWithAI;
-
-  isParlay: boolean;
-  isAmerican: boolean;
-  single: Ticket[];
-  parlayOdds: number;
-
-  parlay: Ticket;
+interface IMatchupSliceState extends IMatchupState {
   setIsAmerican: (val: boolean) => void;
-
   setTrackedGame: (g: null | IGameWithAI) => void;
   setSelectedGame: (g: null | IGameWithAI) => void;
   setIsParlay: (v: boolean) => void;
-
   upsertSingle: (pick: BetPick, index?: number) => void;
   setSingleAmount: (index: number, amount: number) => void;
   setSingleWin: (index: number, win: number) => void;
@@ -48,7 +18,6 @@ interface IMatchupState {
   clearSingle: () => void;
   removeSingleAndSyncParlay: (index: number) => void;
   removeParlayAndSyncSingle: (key: number | string) => void;
-
   upsertParlayPick: (pick: BetPick, index?: number) => void;
   removeParlayPick: (key: number | string) => void;
   setParlayAmount: (amount: number) => void;
@@ -62,7 +31,7 @@ const emptyTicket = (): Ticket => ({
   bets: [],
 });
 
-export const matchupSlice: StateCreator<IMatchupState> = (set) => ({
+export const matchupSlice: StateCreator<IMatchupSliceState> = (set) => ({
   trackedGame: null,
   selectedGame: null,
   isAmerican: true,

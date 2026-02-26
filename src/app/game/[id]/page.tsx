@@ -2,7 +2,7 @@
 
 import React, { Suspense } from "react";
 import GameBreakdownPage from "../../../modules/game/components/GameBreakdownPage";
-import TanstackQueryProvider from "@/providers/QueryProvider";
+import TanstackQueryProvider from "@/shared/providers/QueryProvider";
 
 const Game = () => {
   return (

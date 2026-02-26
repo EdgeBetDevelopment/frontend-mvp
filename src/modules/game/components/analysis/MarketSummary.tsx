@@ -1,7 +1,7 @@
 import React from "react";
 
 import { useStore } from "@/store";
-import { IGameWithAI, IPrediction } from "@/types/game";
+import { IGameWithAI, IPrediction } from "@/modules/game/types";
 import { CardContainer } from "@/shared/components";
 import {
   convertAmericanToDecimal,

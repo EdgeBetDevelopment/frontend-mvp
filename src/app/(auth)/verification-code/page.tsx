@@ -1,6 +1,6 @@
 import { VerificationCodeForm } from '@/modules/auth';
-import Navigation from '@/components/Navigation';
-import Footer from '@/components/Footer';
+import Navigation from '@/shared/components/Navigation';
+import Footer from '@/shared/components/Footer';
 
 const ResetPassword = () => {
   return (

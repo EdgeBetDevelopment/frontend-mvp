@@ -3,14 +3,16 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
-import Navigation from '@/components/Navigation';
-import Footer from '@/components/Footer';
-import SportCardRedesigned from '@/components/home/SportCardRedesigned';
-import { Reviews } from '@/components/home/Reviews';
-import { CTA } from '@/components/home/CTA';
-import { SearchSection } from '@/components/home/SearchSection';
-import WhopAuthHandler from '@/components/home/WhopAuthHandler';
-import apiService from '@/services';
+import Navigation from '@/shared/components/Navigation';
+import Footer from '@/shared/components/Footer';
+import {
+  SportCardRedesigned,
+  Reviews,
+  CTA,
+  SearchSection,
+  WhopAuthHandler,
+} from '@/modules/home';
+import { gameService } from '@/modules/game';
 
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -18,7 +20,7 @@ export default function Home() {
 
   const { data: nbaGames, isLoading: isLoadingGames } = useQuery({
     queryKey: ['nbaGamesCount'],
-    queryFn: () => apiService.getGames(),
+    queryFn: () => gameService.getGames(),
     staleTime: 1000 * 60 * 5,
   });
 

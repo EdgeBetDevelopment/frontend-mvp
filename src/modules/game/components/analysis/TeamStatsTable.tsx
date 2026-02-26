@@ -1,8 +1,8 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery } from "@tanstack/react-query";
 
-import { TeamStatsTable as TeamStatsTableComponent } from '@/components/team/TeamStatsTable';
-import apiService from '@/services';
-import { Skeleton } from '@/shared/components/skeleton';
+import { TeamStatsTable as TeamStatsTableComponent } from "@/modules/team/components/TeamStatsTable";
+import { teamApi } from "@/modules/team";
+import { Skeleton } from "@/shared/components/skeleton";
 
 const TeamStatsTable = ({
   homeTeamId,
@@ -16,9 +16,9 @@ const TeamStatsTable = ({
     isLoading: isLoadingHome,
     isError: isErrorHome,
   } = useQuery({
-    queryKey: ['team', homeTeamId],
+    queryKey: ["team", homeTeamId],
     queryFn: () =>
-      homeTeamId ? apiService.getTeamById(`${homeTeamId}`) : null,
+      homeTeamId ? teamApi.getTeamById(`${homeTeamId}`) : null,
     enabled: !!homeTeamId,
     staleTime: 1000 * 60 * 5,
     retry: 2,
@@ -29,9 +29,9 @@ const TeamStatsTable = ({
     isLoading: isLoadingAway,
     isError: isErrorAway,
   } = useQuery({
-    queryKey: ['team', awayTeamId],
+    queryKey: ["team", awayTeamId],
     queryFn: () =>
-      awayTeamId ? apiService.getTeamById(`${awayTeamId}`) : null,
+      awayTeamId ? teamApi.getTeamById(`${awayTeamId}`) : null,
     enabled: !!awayTeamId,
     staleTime: 1000 * 60 * 5,
     retry: 2,

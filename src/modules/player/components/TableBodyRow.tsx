@@ -1,4 +1,4 @@
-import { TableCell, TableRow } from '../../ui/table';
+import { TableCell, TableRow } from "@/shared/components/table";
 
 const TableBodyRow: React.FC<{
   data: {

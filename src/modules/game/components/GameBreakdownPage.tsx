@@ -10,8 +10,8 @@ import {
   TrendingDown,
 } from "lucide-react";
 
-import Navigation from "@/components/Navigation";
-import Footer from "@/components/Footer";
+import Navigation from "@/shared/components/Navigation";
+import Footer from "@/shared/components/Footer";
 import { Button } from "@/shared/components/button";
 import {
   Card,
@@ -36,7 +36,7 @@ import {
 } from "@/shared/components/table";
 import Loader from "@/shared/components/loader";
 import EmptyPlaceholder from "@/shared/components/EmptyPlaceholder";
-import apiService from "@/services";
+import { gameService } from "@/modules/game";
 import { formatUtcToLocalDate, formatUtcToLocalTimeAmPm } from "@/shared/utils";
 
 interface PlayerStats {
@@ -248,7 +248,7 @@ const GameBreakdownPage = () => {
     isLoading,
   } = useQuery<GameDetailsData>({
     queryKey: ["game", gameId],
-    queryFn: () => apiService.getGameById(gameId),
+    queryFn: () => gameService.getGameById(gameId),
     staleTime: 1000 * 60 * 5,
     retry: 2,
   });

@@ -5,9 +5,9 @@ import Link from "next/link";
 
 import { cn } from "@/shared/utils/helper";
 import { ROUTES } from "@/shared/config/routes";
-import apiService from "@/services";
-import { ITeamPlayer } from "@/types/player";
-import { Player } from "@/types/team";
+import { teamApi } from "@/modules/team";
+import { ITeamPlayer } from "@/modules/player";
+import { Player } from "@/modules/team";
 import { Avatar } from "@/shared/components/avatar";
 import { CardContainer } from "@/shared/components";
 import { Skeleton } from "@/shared/components/skeleton";
@@ -44,7 +44,7 @@ const KeyPlayers: FC<IKeyPlayersProps> = ({
   const { data: homeTeam, isLoading: isLoadingHome } = useQuery({
     queryKey: ["team", homeTeamId],
     queryFn: () =>
-      homeTeamId ? apiService.getTeamById(`${homeTeamId}`) : null,
+      homeTeamId ? teamApi.getTeamById(`${homeTeamId}`) : null,
     enabled: !!homeTeamId,
     staleTime: 1000 * 60 * 5,
     retry: 2,
@@ -53,7 +53,7 @@ const KeyPlayers: FC<IKeyPlayersProps> = ({
   const { data: awayTeam, isLoading: isLoadingAway } = useQuery({
     queryKey: ["team", awayTeamId],
     queryFn: () =>
-      awayTeamId ? apiService.getTeamById(`${awayTeamId}`) : null,
+      awayTeamId ? teamApi.getTeamById(`${awayTeamId}`) : null,
     enabled: !!awayTeamId,
     staleTime: 1000 * 60 * 5,
     retry: 2,

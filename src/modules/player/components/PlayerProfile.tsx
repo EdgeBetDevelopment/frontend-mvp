@@ -5,7 +5,7 @@ import React from "react";
 import { Outfit } from "next/font/google";
 import { useParams, useRouter } from "next/navigation";
 
-import { usePlayer } from "@/hooks/usePlayer";
+import { usePlayer } from "@/modules/player/hooks";
 import Loader from "@/shared/components/loader";
 import { EmptyPlaceholder } from "@/shared/components";
 import {
@@ -21,7 +21,7 @@ import {
   Trophy,
   User,
 } from "lucide-react";
-import Navigation from "@/components/Navigation";
+import Navigation from "@/shared/components/Navigation";
 import {
   Card,
   CardContent,
@@ -67,7 +67,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { Badge } from "@/shared/components/badge";
-import Footer from "@/components/Footer";
+import Footer from "@/shared/components/Footer";
 
 const outfit = Outfit({
   subsets: ["latin"],

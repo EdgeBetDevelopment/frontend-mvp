@@ -1,6 +1,6 @@
-import Footer from '@/components/Footer';
-import Navigation from '@/components/Navigation';
-import { ProfileSection } from '@/components/profile/ProfileSection';
+import Footer from '@/shared/components/Footer';
+import Navigation from '@/shared/components/Navigation';
+import { ProfileSection } from '@/modules/profile';
 
 export default function Profile() {
   return (
