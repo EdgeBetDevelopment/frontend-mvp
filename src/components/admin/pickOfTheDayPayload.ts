@@ -49,11 +49,28 @@ export const sanitizePickOfTheDayPayload = (data: any) => {
     } else if (typeof result.start_time === 'string') {
       result.start_time = result.start_time.replace(/Z$/, '');
     }
+    delete result.game;
     return result;
   }
 
-  const settlement = sanitizeSettlement(result.settlement);
+  // For NBA sports:
+  // 1. Remove nested game object (API sends this but doesn't need it back)
+  delete result.game;
 
+  // 2. Ensure game_id is a number
+  if (
+    'game_id' in result &&
+    result.game_id !== undefined &&
+    result.game_id !== null
+  ) {
+    result.game_id =
+      typeof result.game_id === 'number'
+        ? result.game_id
+        : parseInt(String(result.game_id), 10);
+  }
+
+  // 3. Handle settlement
+  const settlement = sanitizeSettlement(result.settlement);
   if (settlement) {
     result.settlement = settlement;
   } else {

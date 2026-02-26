@@ -131,7 +131,7 @@ export const PickOfTheDayFormFields = () => {
         const items = Array.isArray(gamesResponse)
           ? gamesResponse
           : gamesResponse?.games || gamesResponse?.data || [];
-        const games = items
+        let games = items
           .map((item: any) => item?.game ?? item)
           .filter((game: any) => game?.id)
           .map((game: any) => {
@@ -144,6 +144,27 @@ export const PickOfTheDayFormFields = () => {
               away_team: game.away_team,
             };
           });
+
+        // Add the record's game if it's not in the list
+        // This is important for finished games that won't come from getGames()
+        if (record?.game && record?.game_id) {
+          const gameExists = games.some((g: any) => g.id === record.game_id);
+          if (!gameExists && record.game.id) {
+            const recordGame = record.game;
+            games = [
+              {
+                id: recordGame.id,
+                name: `${recordGame.home_team} vs ${recordGame.away_team} — ${new Date(recordGame.start_time).toLocaleString()}`,
+                home_team_id: recordGame.home_team_id,
+                away_team_id: recordGame.away_team_id,
+                home_team: recordGame.home_team,
+                away_team: recordGame.away_team,
+              },
+              ...games,
+            ];
+          }
+        }
+
         setGameChoices(games);
       } catch (error) {
         console.error('Error fetching games:', error);
@@ -151,6 +172,7 @@ export const PickOfTheDayFormFields = () => {
     };
 
     fetchGames();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -229,6 +251,7 @@ export const PickOfTheDayFormFields = () => {
               label="Game"
               choices={gameChoices}
               validate={required()}
+              parse={(value) => (value ? parseInt(value, 10) : undefined)}
               onChange={(e) => {
                 const selectedId = parseInt(e.target.value, 10);
                 const foundGame = gameChoices.find((g) => g.id === selectedId);
