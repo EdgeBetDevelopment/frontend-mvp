@@ -1,18 +1,18 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { REGEXP_ONLY_DIGITS } from 'input-otp';
-import { useFormContext } from 'react-hook-form';
-import { z } from 'zod';
+import React from "react";
+import { REGEXP_ONLY_DIGITS } from "input-otp";
+import { useFormContext } from "react-hook-form";
+import { z } from "zod";
 
 import {
   InputOTP,
   InputOTPGroup,
   InputOTPSlot,
-} from '@/components/ui/input-otp';
-import { FormField } from '@/ui/form';
+} from "@/shared/components/input-otp";
+import { FormField } from "@/shared/components/form";
 
-import { verifyCodeSchema } from './VerificationCodeForm';
+import { verifyCodeSchema } from "./VerificationCodeForm";
 
 const OtpCodeInput = () => {
   const form = useFormContext<z.infer<typeof verifyCodeSchema>>();

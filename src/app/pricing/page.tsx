@@ -2,16 +2,16 @@
 
 import React from 'react';
 
-import Navigation from '@/components/Navigation';
-import { usePricingPlans } from '@/components/pricing/hooks/usePricingPlans';
+import Navigation from '@/shared/components/Navigation';
+import Footer from "@/shared/components/Footer";
 import {
+    usePricingPlans,
     PricingHeader,
     PricingGrid,
     PricingDisclaimer,
     PricingFAQ,
     AnnualPlanCard
-} from "@/components/pricing/components";
-import Footer from "@/components/Footer";
+} from "@/modules/pricing";
 
 const PricingPage = () => {
     const { mappedPlans, loadingId, handleCheckout, isLoading } = usePricingPlans();

@@ -1,26 +1,26 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation } from '@tanstack/react-query';
-import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
-import { toast } from 'sonner';
-import { z } from 'zod';
+import React from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
 
-import { ROUTES } from '@/routes';
+import { ROUTES } from "@/shared/config/routes";
 import authService from "../../services";
-import { useRecoveryStore } from '@/store/slices/resetPassSlice';
-import { Button } from '@/ui/button';
-import { Form, FormField, FormMessage } from '@/ui/form';
-import Loader from '@/ui/loader';
-import AuthFormInput from '../AuthFormInput';
-import H2 from '../H2';
+import { useRecoveryStore } from "@/store/slices/resetPassSlice";
+import { Button } from "@/shared/components/button";
+import { Form, FormField, FormMessage } from "@/shared/components/form";
+import Loader from "@/shared/components/loader";
+import AuthFormInput from "../AuthFormInput";
+import H2 from "../H2";
 
-import ArrowRight from '@/assets/icons/arrow-right.svg';
+import ArrowRight from "@/assets/icons/arrow-right.svg";
 
 const forgotPasswordSchema = z.object({
-  email: z.string().email('Invalid email format'),
+  email: z.string().email("Invalid email format"),
 });
 
 type ForgotPasswordValues = z.infer<typeof forgotPasswordSchema>;
@@ -31,7 +31,7 @@ const ForgotPassword: React.FC = () => {
   const form = useForm<ForgotPasswordValues>({
     resolver: zodResolver(forgotPasswordSchema),
     defaultValues: {
-      email: email || '',
+      email: email || "",
     },
   });
 
@@ -43,12 +43,12 @@ const ForgotPassword: React.FC = () => {
     mutationFn: authService.forgotPassword,
     onSuccess: (data) => {
       router.push(ROUTES.AUTH.VERIFY_CODE);
-      toast.success('Verification code sent to your email.');
-      updateField('email', form.getValues('email'));
+      toast.success("Verification code sent to your email.");
+      updateField("email", form.getValues("email"));
     },
     onError: (error: any) => {
       const message =
-        error.response?.data?.message || 'An error occurred. Please try again.';
+        error.response?.data?.message || "An error occurred. Please try again.";
       toast.error(message);
     },
   });
@@ -82,7 +82,7 @@ const ForgotPassword: React.FC = () => {
             name="email"
             render={({ field }) => (
               <AuthFormInput
-                {...form.register('email')}
+                {...form.register("email")}
                 type="email"
                 placeholder="Enter Your Email"
                 value={field.value}

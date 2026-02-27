@@ -1,4 +1,5 @@
 export { default as AuthFormInput } from "./AuthFormInput";
+export { default as AuthModal } from "./AuthModal";
 export { default as BackupCodesDisplay } from "./BackupCodesDisplay";
 export { default as GoogleLoginButton } from "./GoogleLoginButton";
 export { default as H2 } from "./H2";

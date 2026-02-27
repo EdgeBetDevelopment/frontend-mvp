@@ -4,7 +4,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-import { handleFetchError } from "@/utils/error-handling";
+import { handleFetchError } from "@/shared/utils/error-handling";
 
 import authService from "../services";
 import { useAuth } from "../store";

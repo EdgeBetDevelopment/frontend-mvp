@@ -3,13 +3,12 @@
 import { useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
-import { useAuth } from '@/context/AuthContext';
-import authService from '@/services/auth';
+import { useAuth, authService } from '@/modules/auth';
 import { GeneralInformation } from './GeneralInformation';
 import { Subscription } from './Subscription';
 import SecuritySettings from './SecuritySettings';
 import PasswordSettings from './PasswordSettings';
-import { profileService } from '../services';
+import { userService } from '@/modules/profile/services';
 
 export function ProfileSection() {
   const { refreshToken, setTokens } = useAuth();
@@ -17,7 +16,7 @@ export function ProfileSection() {
 
   const { data: user } = useQuery({
     queryKey: ['user'],
-    queryFn: profileService.getMe,
+    queryFn: userService.getMe,
   });
 
   useEffect(() => {

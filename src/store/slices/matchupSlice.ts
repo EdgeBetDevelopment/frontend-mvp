@@ -1,49 +1,16 @@
-import { StateCreator } from 'zustand';
+import { StateCreator } from "zustand";
 
-import { IGameWithAI } from '@/types/game';
-import {
-  calcParlayOddsDecimal,
-  makeId,
-} from '@/utils/convertAmericanToDecimal';
+import { IGameWithAI } from "@/modules/game/types";
+import { BetPick, Ticket, IMatchupState } from "@/modules/matchup/types";
+import { calcParlayOddsDecimal, makeId } from "@/shared/utils";
 
-type Sport = 'nba';
+export type { BetPick, Ticket };
 
-export interface BetPick {
-  game_id: number;
-  odds: number;
-  selected_team_id: string;
-  selected_team_name: string;
-  description: string;
-  sport: Sport;
-  pid?: string;
-  market_type?: string;
-  bet_value?: number | null;
-  bet_over_under?: string | null;
-  bet_player?: string | null;
-}
-
-export interface Ticket {
-  amount: number;
-  win_amount: number;
-  bets: BetPick[];
-}
-
-interface IMatchupState {
-  trackedGame: null | IGameWithAI;
-  selectedGame: null | IGameWithAI;
-
-  isParlay: boolean;
-  isAmerican: boolean;
-  single: Ticket[];
-  parlayOdds: number;
-
-  parlay: Ticket;
+interface IMatchupSliceState extends IMatchupState {
   setIsAmerican: (val: boolean) => void;
-
   setTrackedGame: (g: null | IGameWithAI) => void;
   setSelectedGame: (g: null | IGameWithAI) => void;
   setIsParlay: (v: boolean) => void;
-
   upsertSingle: (pick: BetPick, index?: number) => void;
   setSingleAmount: (index: number, amount: number) => void;
   setSingleWin: (index: number, win: number) => void;
@@ -51,7 +18,6 @@ interface IMatchupState {
   clearSingle: () => void;
   removeSingleAndSyncParlay: (index: number) => void;
   removeParlayAndSyncSingle: (key: number | string) => void;
-
   upsertParlayPick: (pick: BetPick, index?: number) => void;
   removeParlayPick: (key: number | string) => void;
   setParlayAmount: (amount: number) => void;
@@ -65,7 +31,7 @@ const emptyTicket = (): Ticket => ({
   bets: [],
 });
 
-export const matchupSlice: StateCreator<IMatchupState> = (set) => ({
+export const matchupSlice: StateCreator<IMatchupSliceState> = (set) => ({
   trackedGame: null,
   selectedGame: null,
   isAmerican: true,
@@ -87,10 +53,10 @@ export const matchupSlice: StateCreator<IMatchupState> = (set) => ({
       const ticketFromPick: Ticket = {
         amount: next[index ?? -1]?.amount ?? 0,
         win_amount: next[index ?? -1]?.win_amount ?? 0,
-        bets: [{ ...pick, sport: 'nba' }],
+        bets: [{ ...pick, sport: "nba" }],
       };
 
-      if (typeof index === 'number' && next[index]) {
+      if (typeof index === "number" && next[index]) {
         next[index] = ticketFromPick;
         return { single: next };
       }
@@ -166,14 +132,14 @@ export const matchupSlice: StateCreator<IMatchupState> = (set) => ({
   removeParlayAndSyncSingle: (key) =>
     set((s) => {
       const parlayToRemove =
-        typeof key === 'number'
+        typeof key === "number"
           ? s.parlay.bets[key]
           : s.parlay.bets.find((b) => b.pid === key);
 
       if (!parlayToRemove) return s;
 
       const newParlayBets =
-        typeof key === 'number'
+        typeof key === "number"
           ? s.parlay.bets.filter((_, idx) => idx !== key)
           : s.parlay.bets.filter((b) => b.pid !== key);
 
@@ -202,12 +168,12 @@ export const matchupSlice: StateCreator<IMatchupState> = (set) => ({
 
       const normalized: BetPick = {
         ...pick,
-        sport: 'nba',
+        sport: "nba",
         pid: pick.pid ?? makeId(),
       };
-      const normDesc = (s?: string) => (s ?? '').trim().toLowerCase();
+      const normDesc = (s?: string) => (s ?? "").trim().toLowerCase();
 
-      if (typeof index === 'number' && parlay.bets[index]) {
+      if (typeof index === "number" && parlay.bets[index]) {
         parlay.bets[index] = normalized;
       } else {
         const j = pick.pid
@@ -235,7 +201,7 @@ export const matchupSlice: StateCreator<IMatchupState> = (set) => ({
   removeParlayPick: (key: number | string) =>
     set((s) => {
       const bets =
-        typeof key === 'number'
+        typeof key === "number"
           ? s.parlay.bets.filter((_, idx) => idx !== key)
           : s.parlay.bets.filter((b) => b.pid !== key);
 
