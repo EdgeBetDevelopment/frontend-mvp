@@ -1,10 +1,10 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Button } from '@/ui/button';
-import { Input } from '@/ui/input';
-import { Label } from '@/ui/label';
-import Loader from '@/ui/loader';
+import { Button } from '@/shared/components/button';
+import { Input } from '@/shared/components/input';
+import { Label } from '@/shared/components/label';
+import Loader from '@/shared/components/loader';
 
 interface TwoFactorBackupLoginProps {
   onVerify: (backupCode: string) => void;

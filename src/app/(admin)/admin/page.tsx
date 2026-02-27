@@ -1,12 +1,15 @@
-'use client';
+"use client";
 
-import { CircularProgress } from '@mui/material';
-import dynamic from 'next/dynamic';
+import { CircularProgress } from "@mui/material";
+import dynamic from "next/dynamic";
 
-const AdminApp = dynamic(() => import('../../../components/admin/AdminApp'), {
-  ssr: false,
-  loading: () => <CircularProgress />,
-});
+const AdminApp = dynamic(
+  () => import("../../../modules/admin/components/AdminApp"),
+  {
+    ssr: false,
+    loading: () => <CircularProgress />,
+  },
+);
 
 export default function AdminPage() {
   return <AdminApp />;

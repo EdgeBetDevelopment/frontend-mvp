@@ -50,7 +50,11 @@ export const TeamStatsChart: FC<TeamStatsChartProps> = ({ stats }) => {
   const chartData = generateDetailedChartData(stats);
 
   return (
+<<<<<<<< HEAD:src/modules/team/components/TeamStatsChart.tsx
+    <div className="bg-glass-gradient border-border w-full rounded-lg border p-4 pb-6 backdrop-blur-[20px]">
+========
     <div className="bg-graph-section w-full rounded-lg border border-border p-4 pb-6">
+>>>>>>>> dev:src/modules/nba/team/components/TeamStatsChart.tsx
       <h3 className="mb-2 text-lg font-semibold text-white">Team Overview</h3>
       <p className="mb-4 text-xs text-[#aaa]">Full season summary</p>
 

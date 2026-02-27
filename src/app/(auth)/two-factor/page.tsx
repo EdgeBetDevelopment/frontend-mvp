@@ -1,4 +1,4 @@
-import TwoFactorPage from '@/pages-components/auth/TwoFactorPage';
+import TwoFactorPage from "@/modules/auth/components/TwoFactorPage";
 
 const TwoFactor = () => {
   return <TwoFactorPage />;

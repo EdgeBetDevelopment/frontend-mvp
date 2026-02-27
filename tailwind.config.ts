@@ -74,6 +74,10 @@ export default {
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)',
       },
+      backgroundImage: {
+        'glass-gradient':
+          'linear-gradient(112.71deg, rgba(23, 23, 23, 0.6) 19.64%, rgba(105, 105, 105, 0.316464) 55.1%, rgba(125, 125, 125, 0.06) 92%)',
+      },
       keyframes: {
         'accordion-down': {
           from: {

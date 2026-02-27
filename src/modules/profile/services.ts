@@ -2,9 +2,21 @@ import {
   I2FAConfirmResponse,
   I2FAEnableResponse,
   I2FARecoveryResponse,
-} from '@/types/auth';
-import { axiosInstance } from '@/services/client';
-import { UpdateMeDto, ChangePasswordDto, ProfileUser } from './types';
+} from '@/modules/auth/types';
+import { axiosInstance } from '@/shared/lib';
+import { UpdateMeDto, ChangePasswordDto } from './types';
+
+export interface ProfileUser {
+  id: number;
+  email: string;
+  username: string;
+  is_active: boolean;
+  phone_number?: string;
+  two_fa?: {
+    id: number;
+    is_enabled: boolean;
+  };
+}
 
 export const profileService = {
   async getMe(): Promise<ProfileUser> {
@@ -58,3 +70,6 @@ export const profileService = {
     return res.data;
   },
 };
+
+// Alias for backward compatibility
+export const userService = profileService;

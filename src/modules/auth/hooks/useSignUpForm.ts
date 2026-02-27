@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 
-import { handleFetchError } from "@/utils/error-handling";
+import { handleFetchError } from "@/shared/utils/error-handling";
 
 import authService from "../services";
 import { useAuth } from "../store";
