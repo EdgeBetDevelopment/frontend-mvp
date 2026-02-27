@@ -8,21 +8,21 @@ import {
   FunctionField,
   useNotify,
   useUpdate,
-} from "react-admin";
+} from 'react-admin';
 
-import { DeleteGamePredictionButton } from "./DeteleGamePredictionButton";
+import { DeleteGamePredictionButton } from './DeteleGamePredictionButton';
 
 const StatusSelector = ({ record }: { record: any }) => {
   const notify = useNotify();
   const [update, { isLoading }] = useUpdate();
-  const status = record?.status || "pending";
+  const status = record?.status || 'pending';
   const colorMap: Record<string, string> = {
-    win: "#22c55e",
-    loss: "#ef4444",
-    pending: "rgb(245,158,11)",
-    canceled: "#94a3b8",
+    win: '#22c55e',
+    loss: '#ef4444',
+    pending: 'rgb(245,158,11)',
+    canceled: '#94a3b8',
   };
-  const normalizedStatus = status === "win" || status === "loss" ? status : "";
+  const normalizedStatus = status === 'win' || status === 'loss' ? status : '';
 
   return (
     <select
@@ -34,36 +34,36 @@ const StatusSelector = ({ record }: { record: any }) => {
       title={status}
       onChange={(e) => {
         update(
-          "pick_of_the_day",
+          'pick_of_the_day',
           { id: record.id, data: { status: e.target.value } },
           {
-            onSuccess: () => notify("Status updated"),
-            onError: () => notify("Failed to update status", { type: "error" }),
+            onSuccess: () => notify('Status updated'),
+            onError: () => notify('Failed to update status', { type: 'error' }),
           },
         );
       }}
       style={{
-        width: "100%",
+        width: '100%',
         height: 30,
         borderRadius: 3,
-        backgroundColor: colorMap[status] || "#94a3b8",
-        color: "transparent",
-        border: "1px solid rgba(255,255,255,0.15)",
-        padding: "0 8px",
-        appearance: "none",
-        cursor: "pointer",
+        backgroundColor: colorMap[status] || '#94a3b8',
+        color: 'transparent',
+        border: '1px solid rgba(255,255,255,0.15)',
+        padding: '0 8px',
+        appearance: 'none',
+        cursor: 'pointer',
       }}
     >
       <option value="" disabled hidden />
       <option
         value="win"
-        style={{ backgroundColor: "#22c55e", color: "#0b3d1a" }}
+        style={{ backgroundColor: '#22c55e', color: '#0b3d1a' }}
       >
         win
       </option>
       <option
         value="loss"
-        style={{ backgroundColor: "#ef4444", color: "#3b0a0a" }}
+        style={{ backgroundColor: '#ef4444', color: '#3b0a0a' }}
       >
         loss
       </option>
@@ -77,31 +77,31 @@ export const PickOfTheDayList = () => (
       bulkActionButtons={false}
       rowClick="show"
       sx={{
-        "& .pickoday-game-col": {
-          width: "24rem",
+        '& .pickoday-game-col': {
+          width: '24rem',
         },
-        "& .pickoday-game-col > div": {
-          width: "24rem",
+        '& .pickoday-game-col > div': {
+          width: '24rem',
         },
-        "& .RaDatagrid-headerCell": {
-          fontWeight: "bold",
-          backgroundColor: "rgba(255, 255, 255, 0.05)",
-          borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
+        '& .RaDatagrid-headerCell': {
+          fontWeight: 'bold',
+          backgroundColor: 'rgba(255, 255, 255, 0.05)',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
         },
-        "& .RaDatagrid-rowCell": {
-          padding: "12px 8px",
-          borderBottom: "1px solid rgba(255, 255, 255, 0.05)",
+        '& .RaDatagrid-rowCell': {
+          padding: '12px 8px',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
         },
-        "& .RaDatagrid-row:hover": {
-          backgroundColor: "rgba(255, 255, 255, 0.03)",
+        '& .RaDatagrid-row:hover': {
+          backgroundColor: 'rgba(255, 255, 255, 0.03)',
         },
       }}
     >
-      <TextField source="user_id" label="User" />
+      <TextField source="username" label="User" />
       <FunctionField
         label="Sport"
         render={(record: any) => (
-          <span style={{ textTransform: "uppercase" }}>{record?.sport}</span>
+          <span style={{ textTransform: 'uppercase' }}>{record?.sport}</span>
         )}
       />
       <FunctionField
@@ -110,7 +110,7 @@ export const PickOfTheDayList = () => (
         cellClassName="pickoday-game-col"
         render={(record: any) =>
           record.game?.home_team ? (
-            <div style={{ fontWeight: 500, display: "flex", gap: "4px" }}>
+            <div style={{ fontWeight: 500, display: 'flex', gap: '4px' }}>
               <div>{record.game?.home_team}</div>
               <div>vs {record.game?.away_team}</div>
             </div>
@@ -130,29 +130,29 @@ export const PickOfTheDayList = () => (
       <FunctionField
         label="Result"
         render={(record: any) => {
-          const sport = String(record?.sport || "").toLowerCase();
-          if (sport && sport !== "nba") {
+          const sport = String(record?.sport || '').toLowerCase();
+          if (sport && sport !== 'nba') {
             return <StatusSelector record={record} />;
           }
-          const status = record?.status || "pending";
+          const status = record?.status || 'pending';
           const colorMap: Record<string, string> = {
-            win: "#22c55e",
-            loss: "#ef4444",
-            pending: "#f59e0b",
-            canceled: "#94a3b8",
+            win: '#22c55e',
+            loss: '#ef4444',
+            pending: '#f59e0b',
+            canceled: '#94a3b8',
           };
-          const color = colorMap[status] || "#94a3b8";
+          const color = colorMap[status] || '#94a3b8';
 
           return (
             <span
               title={status}
               style={{
-                display: "inline-block",
-                width: "100%",
+                display: 'inline-block',
+                width: '100%',
                 height: 30,
                 borderRadius: 3,
                 backgroundColor: color,
-                boxShadow: "0 0 0 1px rgba(255, 255, 255, 0.1)",
+                boxShadow: '0 0 0 1px rgba(255, 255, 255, 0.1)',
               }}
             />
           );

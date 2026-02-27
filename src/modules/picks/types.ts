@@ -41,6 +41,7 @@ export interface ApiPick {
   status: string;
   is_premium: boolean;
   created_at: string;
+  username: string;
 }
 
 export interface PickOfDay {
