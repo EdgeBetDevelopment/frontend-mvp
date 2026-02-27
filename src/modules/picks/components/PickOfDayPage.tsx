@@ -38,10 +38,14 @@ const PickOfDayPage = () => {
   } = useQuery({
     queryKey: ['me'],
     queryFn: userService.getMe,
+    retry: false,
   });
 
+  const isAuthenticated = !isUserError && !!userData;
   const hasActiveSubscription =
-    userData?.subscriptions && userData.subscriptions.length > 0;
+    isAuthenticated &&
+    userData?.subscriptions &&
+    userData.subscriptions.length > 0;
 
   const {
     data: todayPicks = [],
@@ -77,6 +81,42 @@ const PickOfDayPage = () => {
         <Navigation />
         <main className="container mx-auto px-6 py-8">
           <div className="text-center text-muted-foreground">Loading...</div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navigation />
+        <main className="container mx-auto px-6 py-8">
+          <div className="flex min-h-[60vh] items-center justify-center">
+            <Card className="max-w-md">
+              <CardHeader>
+                <div className="mb-4 flex justify-center">
+                  <div className="rounded-full bg-primary/10 p-4">
+                    <Lock className="h-8 w-8 text-primary" />
+                  </div>
+                </div>
+                <CardTitle className="text-center text-2xl">
+                  Login Required
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <p className="text-center text-muted-foreground">
+                  Please login to access Pick of the Day feature.
+                </p>
+                <Button
+                  className="w-full"
+                  onClick={() => router.push('/login')}
+                >
+                  Login
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
         </main>
         <Footer />
       </div>
