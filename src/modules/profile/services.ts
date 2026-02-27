@@ -4,7 +4,7 @@ import {
   I2FARecoveryResponse,
 } from '@/modules/auth/types';
 import { axiosInstance } from '@/shared/lib';
-import { UpdateMeDto, ChangePasswordDto } from './types';
+import { UpdateMeDto, ChangePasswordDto, IUserSubscription } from './types';
 
 export interface ProfileUser {
   id: number;
@@ -12,6 +12,7 @@ export interface ProfileUser {
   username: string;
   is_active: boolean;
   phone_number?: string;
+  subscriptions?: IUserSubscription[];
   two_fa?: {
     id: number;
     is_enabled: boolean;

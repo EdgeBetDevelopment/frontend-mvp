@@ -2,19 +2,47 @@
 
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Crown } from 'lucide-react';
+import { Crown, Lock } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 import Navigation from '@/shared/components/Navigation';
 import Footer from '@/shared/components/Footer';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/shared/components/tabs';
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@/shared/components/tabs';
+import { Button } from '@/shared/components/button';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@/shared/components/card';
 import { picksApi } from '@/modules/picks';
+import { userService } from '@/modules/profile/services';
 
 import { ApiPickCard } from './ApiPickCard';
 import { ModeratorStats } from './ModeratorStats';
 import type { ApiPick } from '../types';
 
 const PickOfDayPage = () => {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState('today');
+
+  const {
+    data: userData,
+    isLoading: isUserLoading,
+    isError: isUserError,
+  } = useQuery({
+    queryKey: ['me'],
+    queryFn: userService.getMe,
+  });
+
+  const hasActiveSubscription =
+    userData?.subscriptions && userData.subscriptions.length > 0;
+
   const {
     data: todayPicks = [],
     isLoading: isTodayLoading,
@@ -22,6 +50,7 @@ const PickOfDayPage = () => {
   } = useQuery({
     queryKey: ['pick-of-day', 'today'],
     queryFn: () => picksApi.getPickOfTheDayToday(),
+    enabled: hasActiveSubscription,
   });
   const {
     data: weekPicks = [],
@@ -30,6 +59,7 @@ const PickOfDayPage = () => {
   } = useQuery({
     queryKey: ['pick-of-day', 'this-week'],
     queryFn: () => picksApi.getPickOfTheDayThisWeek(),
+    enabled: hasActiveSubscription,
   });
   const {
     data: allPicks = [],
@@ -38,7 +68,71 @@ const PickOfDayPage = () => {
   } = useQuery({
     queryKey: ['pick-of-day', 'all'],
     queryFn: () => picksApi.getPickOfTheDayList(),
+    enabled: hasActiveSubscription,
   });
+
+  if (isUserLoading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navigation />
+        <main className="container mx-auto px-6 py-8">
+          <div className="text-center text-muted-foreground">Loading...</div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (!hasActiveSubscription) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navigation />
+        <main className="container mx-auto px-6 py-8">
+          <div className="flex min-h-[60vh] items-center justify-center">
+            <Card className="max-w-md">
+              <CardHeader>
+                <div className="mb-4 flex justify-center">
+                  <div className="rounded-full bg-primary/10 p-4">
+                    <Lock className="h-8 w-8 text-primary" />
+                  </div>
+                </div>
+                <CardTitle className="text-center text-2xl">
+                  Premium Access Required
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <p className="text-center text-muted-foreground">
+                  Get access to expert picks from our top moderators with a
+                  premium subscription.
+                </p>
+                <div className="space-y-2">
+                  <div className="flex items-start gap-2">
+                    <Crown className="mt-0.5 h-4 w-4 text-primary" />
+                    <span className="text-sm">Daily expert picks</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <Crown className="mt-0.5 h-4 w-4 text-primary" />
+                    <span className="text-sm">Detailed analysis</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <Crown className="mt-0.5 h-4 w-4 text-primary" />
+                    <span className="text-sm">Track record & stats</span>
+                  </div>
+                </div>
+                <Button
+                  className="w-full"
+                  onClick={() => router.push('/pricing')}
+                >
+                  View Premium Plans
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">

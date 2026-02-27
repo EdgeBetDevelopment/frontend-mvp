@@ -7,6 +7,7 @@ import { CreditCard, Calendar, Loader2 } from 'lucide-react';
 import { paymentService } from '@/modules/pricing';
 import { authService, useAuth } from '@/modules/auth';
 import { userService } from '@/modules/profile/services';
+import type { IUserSubscription } from '@/modules/profile/types';
 import { Button } from '@/shared/components/button';
 import { Separator } from '@/shared/components/separator';
 import {
@@ -20,14 +21,6 @@ import { Badge } from '@/shared/components/badge';
 
 import { ModalProfile } from './Modal';
 
-type Sub = {
-  id: number;
-  type_id: number;
-  type?: { name?: string };
-  status: string;
-  created_at: string;
-};
-
 export const Subscription = () => {
   const qc = useQueryClient();
   const { refreshToken, setTokens } = useAuth();
@@ -37,7 +30,7 @@ export const Subscription = () => {
     isLoading,
     isError,
     refetch,
-  } = useQuery<Sub[]>({
+  } = useQuery<IUserSubscription[]>({
     queryKey: ['subscriptions'],
     queryFn: async () => {
       const me = await userService.getMe();
