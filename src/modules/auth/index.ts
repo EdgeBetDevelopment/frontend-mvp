@@ -24,6 +24,7 @@ export {
 
 export {
   AuthFormInput,
+  AuthModal,
   BackupCodesDisplay,
   GoogleLoginButton,
   H2,

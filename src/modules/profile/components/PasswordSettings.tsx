@@ -1,37 +1,33 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { useMutation } from '@tanstack/react-query';
-import { Button } from '@/ui/button';
-import { Card } from '@/ui/card';
-import { Input } from '@/ui/input';
-import { Label } from '@/ui/label';
-import Loader from '@/ui/loader';
-import { profileService } from '../services';
-import { toast } from 'sonner';
-import { handleFetchError } from '@/utils/error-handling';
+import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
+import { Button, Card, Input, Label, Loader } from "@/shared/components";
+import { userService } from '@/modules/profile/services';
+import { toast } from "sonner";
+import { handleFetchError } from "@/shared/utils";
 
 const PasswordSettings = () => {
-  const [currentPassword, setCurrentPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   const changePasswordMutation = useMutation({
     mutationFn: (data: {
       current_password: string;
       new_password: string;
       new_password_confirm: string;
-    }) => profileService.changePassword(data),
+    }) => userService.changePassword(data),
     onSuccess: () => {
-      toast.success('Password updated successfully!');
-      setCurrentPassword('');
-      setNewPassword('');
-      setConfirmPassword('');
+      toast.success("Password updated successfully!");
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
     },
     onError: (error: any) => {
       const errorMessage = handleFetchError(
         error,
-        'Failed to update password. Please check your current password.',
+        "Failed to update password. Please check your current password.",
       );
       toast.error(errorMessage);
     },
@@ -39,17 +35,17 @@ const PasswordSettings = () => {
 
   const handleSavePassword = () => {
     if (!currentPassword || !newPassword || !confirmPassword) {
-      toast.error('Please fill in all password fields');
+      toast.error("Please fill in all password fields");
       return;
     }
 
     if (newPassword !== confirmPassword) {
-      toast.error('New passwords do not match');
+      toast.error("New passwords do not match");
       return;
     }
 
     if (newPassword.length < 8) {
-      toast.error('New password must be at least 8 characters long');
+      toast.error("New password must be at least 8 characters long");
       return;
     }
 
@@ -129,7 +125,7 @@ const PasswordSettings = () => {
             onClick={handleSavePassword}
             disabled={changePasswordMutation.isPending}
           >
-            {changePasswordMutation.isPending ? <Loader /> : 'Update Password'}
+            {changePasswordMutation.isPending ? <Loader /> : "Update Password"}
           </Button>
         </div>
       </div>

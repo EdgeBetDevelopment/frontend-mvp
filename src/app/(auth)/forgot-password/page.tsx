@@ -1,6 +1,6 @@
-import ForgotPassword from '@/components/auth/reset-pass/ForgotPasswordForm';
-import Navigation from '@/components/Navigation';
-import Footer from '@/components/Footer';
+import { ForgotPasswordForm as ForgotPassword } from '@/modules/auth';
+import Navigation from '@/shared/components/Navigation';
+import Footer from '@/shared/components/Footer';
 
 const ResetPassword = () => {
   return (

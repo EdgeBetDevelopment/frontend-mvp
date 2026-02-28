@@ -4,23 +4,22 @@ import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { CreditCard, Calendar, Loader2 } from 'lucide-react';
 
-import paymentService from '@/services/payment';
-import authService from '@/services/auth';
-import { profileService } from '../services';
-import { useAuth } from '@/context/AuthContext';
-import { Button } from '@/ui/button';
-import { Separator } from '@/ui/separator';
+import { paymentService } from '@/modules/pricing';
+import { authService, useAuth } from '@/modules/auth';
+import { userService } from '@/modules/profile/services';
+import type { IUserSubscription } from '@/modules/profile/types';
+import { Button } from '@/shared/components/button';
+import { Separator } from '@/shared/components/separator';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/ui/card';
-import { Badge } from '@/ui/badge';
+} from '@/shared/components/card';
+import { Badge } from '@/shared/components/badge';
 
-import { ModalProfile } from './ModalProfile';
-import { Subscription as SubscriptionType } from '../types';
+import { ModalProfile } from './Modal';
 
 export const Subscription = () => {
   const qc = useQueryClient();
@@ -31,10 +30,10 @@ export const Subscription = () => {
     isLoading,
     isError,
     refetch,
-  } = useQuery<SubscriptionType[]>({
+  } = useQuery<IUserSubscription[]>({
     queryKey: ['subscriptions'],
     queryFn: async () => {
-      const me = await profileService.getMe();
+      const me = await userService.getMe();
       return me?.subscriptions ?? [];
     },
     staleTime: 0,

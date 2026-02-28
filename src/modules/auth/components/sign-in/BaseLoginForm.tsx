@@ -1,13 +1,13 @@
-import Link from 'next/link';
+import Link from "next/link";
 
 import { useLoginForm } from "../../hooks";
-import { ROUTES } from '@/routes';
-import { Button } from '@/ui/button';
-import { Form, FormField, FormMessage } from "@/ui/form";
-import Loader from "@/ui/loader";
-import AuthFormInput from '../AuthFormInput';
+import { ROUTES } from "@/shared/config/routes";
+import { Button } from "@/shared/components/button";
+import { Form, FormField, FormMessage } from "@/shared/components/form";
+import Loader from "@/shared/components/loader";
+import AuthFormInput from "../AuthFormInput";
 
-import ArrowRight from '@/assets/icons/arrow-right.svg';
+import ArrowRight from "@/assets/icons/arrow-right.svg";
 
 interface IBaseLoginForm {
   onSuccessLogin?: () => void;
@@ -94,7 +94,7 @@ const BaseLoginForm = ({ onSuccessLogin, on2FARequired }: IBaseLoginForm) => {
         </Button>
 
         <p className="text-center text-sm text-muted-foreground">
-          Don&apos;t have an account yet?{' '}
+          Don&apos;t have an account yet?{" "}
           <Link
             className="text-primary transition-colors hover:text-primary/80"
             href={ROUTES.AUTH.SIGN_UP}

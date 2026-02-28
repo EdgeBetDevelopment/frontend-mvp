@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import React, { Suspense } from 'react';
+import React, { Suspense } from "react";
 
-import MatchupPage from '@/pages-components/MatchupPage';
-import TanstackQueryProvider from '@/providers/QueryProvider';
+import { MatchupPage } from "@/modules/matchup";
+import TanstackQueryProvider from "@/shared/providers/QueryProvider";
 
 const Matchup = () => {
   return (

@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { useRouter } from 'next/navigation';
+import React from "react";
+import { useRouter } from "next/navigation";
 
-import { ROUTES } from '@/routes';
-import { Button } from '@/ui/button';
-import GoogleLoginButton from '../GoogleLoginButton';
-import H2 from '../H2';
+import { ROUTES } from "@/shared/config/routes";
+import { Button } from "@/shared/components/button";
+import GoogleLoginButton from "../GoogleLoginButton";
+import H2 from "../H2";
 
-import BaseLoginForm from './BaseLoginForm';
+import BaseLoginForm from "./BaseLoginForm";
 
 interface ILoginForm {
   title?: string;
@@ -20,7 +20,7 @@ interface ILoginForm {
 const API_URL = process.env.NEXT_PUBLIC_API_URL!;
 
 const LoginForm = ({
-  title = 'Welcome!',
+  title = "Welcome!",
   onSuccessLogin,
   onGoogleLoginSuccess,
   on2FARequired,

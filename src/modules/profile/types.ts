@@ -1,5 +1,3 @@
-import { IUser } from '@/types/auth';
-
 export interface UpdateMeDto {
   email?: string;
   username?: string;
@@ -11,14 +9,12 @@ export interface ChangePasswordDto {
   new_password_confirm: string;
 }
 
-export interface Subscription {
+export interface IUserSubscription {
   id: number;
   type_id: number;
-  type?: { name?: string };
+  type?: {
+    name?: string;
+  };
   status: string;
   created_at: string;
-}
-
-export interface ProfileUser extends IUser {
-  subscriptions?: Subscription[];
 }

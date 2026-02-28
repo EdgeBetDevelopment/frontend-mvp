@@ -1,27 +1,27 @@
-'use client';
+"use client";
 
-import React, { useEffect, useState } from 'react';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation } from '@tanstack/react-query';
-import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
-import { toast } from 'sonner';
-import { z } from 'zod';
+import React, { useEffect, useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
 
-import { ROUTES } from '@/routes';
+import { ROUTES } from "@/shared/config/routes";
 import authService from "../../services";
-import { useRecoveryStore } from '@/store/slices/resetPassSlice';
-import { Button } from '@/ui/button';
-import { Form, FormMessage } from '@/ui/form';
-import Loader from '@/ui/loader';
+import { useRecoveryStore } from "@/store/slices/resetPassSlice";
+import { Button } from "@/shared/components/button";
+import { Form, FormMessage } from "@/shared/components/form";
+import Loader from "@/shared/components/loader";
 
-import H2 from '../H2';
-import OtpCodeInput from './OtpCodeInput';
+import H2 from "../H2";
+import OtpCodeInput from "./OtpCodeInput";
 
-import ArrowRight from '@/assets/icons/arrow-right.svg';
+import ArrowRight from "@/assets/icons/arrow-right.svg";
 
 export const verifyCodeSchema = z.object({
-  code: z.string().regex(/^\d{6}$/, 'Code must be a 6-digit number'),
+  code: z.string().regex(/^\d{6}$/, "Code must be a 6-digit number"),
 });
 
 type VerifyCodeValues = z.infer<typeof verifyCodeSchema>;
@@ -33,7 +33,7 @@ const VerifyCodeForm = () => {
   const form = useForm<VerifyCodeValues>({
     resolver: zodResolver(verifyCodeSchema),
     defaultValues: {
-      code: '',
+      code: "",
     },
   });
 
@@ -45,14 +45,14 @@ const VerifyCodeForm = () => {
     mutationFn: authService.verificationCode,
     onSuccess: (data: any) => {
       if (!data.success) {
-        toast.error(data.reason || 'Something went wrong. Please try again.');
+        toast.error(data.reason || "Something went wrong. Please try again.");
         return;
       }
 
       if (data.success) {
-        toast.success('Code verified successfully!');
+        toast.success("Code verified successfully!");
         router.push(ROUTES.AUTH.RESET_PASS);
-        updateField('code', form.getValues('code'));
+        updateField("code", form.getValues("code"));
 
         return;
       }
@@ -60,7 +60,7 @@ const VerifyCodeForm = () => {
     onError: (error: any) => {
       toast.error(
         error.response?.data?.message ||
-          'Something went wrong. Please try again.',
+          "Something went wrong. Please try again.",
       );
     },
   });
@@ -72,7 +72,7 @@ const VerifyCodeForm = () => {
 
   const onSubmit = (values: VerifyCodeValues) => {
     if (!email) {
-      toast.error('Email is required');
+      toast.error("Email is required");
       router.push(ROUTES.AUTH.FORGOT_PASS);
       return;
     }
@@ -81,8 +81,8 @@ const VerifyCodeForm = () => {
   };
 
   useEffect(() => {
-    if (email === '') {
-      toast.error('Email is required');
+    if (email === "") {
+      toast.error("Email is required");
       router.replace(ROUTES.AUTH.FORGOT_PASS);
     }
   }, [email]);
@@ -151,13 +151,13 @@ const ResendButton = () => {
   const { mutate: resendForgotPassword, isPending: isResending } = useMutation({
     mutationFn: authService.forgotPassword,
     onSuccess: () => {
-      toast.success('Verification code resent to your email.');
+      toast.success("Verification code resent to your email.");
       setResendTimer(60);
     },
     onError: (error: any) => {
       toast.error(
         error.response?.data?.message ||
-          'Failed to resend code. Please try again.',
+          "Failed to resend code. Please try again.",
       );
     },
   });
@@ -181,8 +181,8 @@ const ResendButton = () => {
       {resendTimer > 0
         ? `Resend (${resendTimer}s)`
         : isResending
-          ? 'Resending...'
-          : 'Resend'}
+          ? "Resending..."
+          : "Resend"}
     </button>
   );
 };

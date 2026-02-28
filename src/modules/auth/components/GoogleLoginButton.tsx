@@ -7,8 +7,8 @@ import { toast } from 'sonner';
 
 import authService from "../services";
 import { useAuth } from "../store";
-import { Button } from '@/ui/button';
-import Loader from '@/ui/loader';
+import { Button } from '@/shared/components/button';
+import Loader from '@/shared/components/loader';
 
 import GoogleIcon from '@/assets/icons/google.svg';
 
