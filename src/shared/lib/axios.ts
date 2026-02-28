@@ -20,7 +20,6 @@ axiosInstance.interceptors.request.use(
     return config;
   },
   (error) => {
-    console.error('Request Error:', error);
     return Promise.reject(error);
   },
 );
@@ -28,19 +27,30 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
-    console.error('Response Error:', error);
-
     let errorMessage = 'Unknown error';
     let errorCode = 500;
 
     if (axios.isAxiosError(error)) {
       if (error.response) {
         errorCode = error.response.status;
-        errorMessage = error.response.data?.detail || 'Something went wrong';
+        const detail = error.response.data?.detail;
+        errorMessage = detail || 'Something went wrong';
+
+        if (typeof detail === 'string') {
+          const match = detail.match(/^(\d{3}):/);
+          if (match) {
+            const actualCode = parseInt(match[1], 10);
+            errorCode = actualCode;
+            errorMessage = detail;
+          }
+        }
 
         if (errorCode === 401) {
           localStorage.removeItem('accessToken');
           localStorage.removeItem('refreshToken');
+          errorMessage = errorMessage || 'Authentication required';
+        } else if (errorCode === 402) {
+          errorMessage = errorMessage || 'Active subscription required';
         }
       } else if (error.request) {
         errorMessage = 'Network error: No response received from server';
@@ -49,7 +59,6 @@ axiosInstance.interceptors.response.use(
       }
     }
 
-    console.error(`Error: ${errorMessage}, Status Code: ${errorCode}`);
     return Promise.reject({ message: errorMessage, code: errorCode });
   },
 );

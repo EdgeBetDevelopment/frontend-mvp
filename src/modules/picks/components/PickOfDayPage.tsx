@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Crown, Lock } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -21,7 +21,6 @@ import {
   CardTitle,
 } from '@/shared/components/card';
 import { picksApi } from '@/modules/picks';
-import { userService } from '@/modules/profile/services';
 
 import { ApiPickCard } from './ApiPickCard';
 import { ModeratorStats } from './ModeratorStats';
@@ -30,64 +29,56 @@ import type { ApiPick } from '../types';
 const PickOfDayPage = () => {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState('today');
-
-  const {
-    data: userData,
-    isLoading: isUserLoading,
-    isError: isUserError,
-  } = useQuery({
-    queryKey: ['me'],
-    queryFn: userService.getMe,
-    retry: false,
-  });
-
-  const isAuthenticated = !isUserError && !!userData;
-  const hasActiveSubscription =
-    isAuthenticated &&
-    userData?.subscriptions &&
-    userData.subscriptions.length > 0;
+  const [authError, setAuthError] = useState<401 | 402 | null>(null);
 
   const {
     data: todayPicks = [],
     isLoading: isTodayLoading,
     isError: isTodayError,
+    error: todayError,
   } = useQuery({
     queryKey: ['pick-of-day', 'today'],
     queryFn: () => picksApi.getPickOfTheDayToday(),
-    enabled: hasActiveSubscription,
+    retry: false,
   });
   const {
     data: weekPicks = [],
     isLoading: isWeekLoading,
     isError: isWeekError,
+    error: weekError,
   } = useQuery({
     queryKey: ['pick-of-day', 'this-week'],
     queryFn: () => picksApi.getPickOfTheDayThisWeek(),
-    enabled: hasActiveSubscription,
+    retry: false,
   });
   const {
     data: allPicks = [],
     isLoading: isAllLoading,
     isError: isAllError,
+    error: allError,
   } = useQuery({
     queryKey: ['pick-of-day', 'all'],
     queryFn: () => picksApi.getPickOfTheDayList(),
-    enabled: hasActiveSubscription,
+    retry: false,
   });
 
-  if (isUserLoading) {
-    return (
-      <div className="min-h-screen bg-background">
-        <Navigation />
-        <main className="container mx-auto px-6 py-8">
-          <div className="text-center text-muted-foreground">Loading...</div>
-        </main>
-        <Footer />
-      </div>
-    );
-  }
+  useEffect(() => {
+    const errors = [todayError, weekError, allError].filter(Boolean);
 
-  if (!isAuthenticated) {
+    for (const error of errors) {
+      const err = error as any;
+      if (err?.code === 401) {
+        setAuthError(401);
+        break;
+      } else if (err?.code === 402) {
+        setAuthError(402);
+        break;
+      }
+    }
+  }, [todayError, weekError, allError]);
+
+  // Show login screen for 401
+  if (authError === 401) {
     return (
       <div className="min-h-screen bg-background">
         <Navigation />
@@ -123,7 +114,8 @@ const PickOfDayPage = () => {
     );
   }
 
-  if (!hasActiveSubscription) {
+  // Show subscription screen for 402
+  if (authError === 402) {
     return (
       <div className="min-h-screen bg-background">
         <Navigation />
