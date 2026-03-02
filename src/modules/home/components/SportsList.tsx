@@ -14,6 +14,7 @@ import AmericanFootballIcon from "@/assets/icons/american-football.svg";
 import BaseballIcon from "@/assets/icons/baseball.svg";
 import FootbalIcon from "@/assets/icons/football.svg";
 import TennisIcon from "@/assets/icons/tenins.svg";
+import { MODAL_IDS } from "@/shared/constants";
 
 interface ISport {
   title: string;
@@ -105,7 +106,7 @@ const SportsList = () => {
     if (!!sport.link) {
       router.push(sport.link);
     } else {
-      openModal("coming-soon");
+      openModal(MODAL_IDS.COMING_SOON);
     }
   };
 
@@ -136,13 +137,13 @@ const SportsList = () => {
           </div>
         </div>
       </div>
-
       <ComingSoonModal
         title="Coming Soon"
         description="Predictions for this sport are not available yet"
-        isOpen={isModalOpen("coming-soon")}
-        onClose={() => closeModal("coming-soon")}
+        isOpen={isModalOpen(MODAL_IDS.COMING_SOON)}
+        onClose={() => closeModal(MODAL_IDS.COMING_SOON)}
       />
+      ;
     </>
   );
 };

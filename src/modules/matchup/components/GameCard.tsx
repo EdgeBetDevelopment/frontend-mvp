@@ -8,6 +8,7 @@ import { useAuth } from "@/context/AuthContext";
 import { useIsMobile } from "@/shared/hooks/useIsMobile";
 import useModalManager from "@/shared/hooks/useModalManager";
 import { ROUTES } from "@/shared/config/routes";
+import { MODAL_IDS } from "@/shared/constants";
 import { useStore } from "@/store";
 import { IGameWithAI, IBet } from "@/modules/game/types";
 import { Badge } from "@/shared/components/badge";
@@ -191,7 +192,7 @@ const GameBetsItem = ({
 
     upsertParlayPick(pick);
     upsertSingle(pick);
-    openModal("track-bet");
+    openModal(MODAL_IDS.TRACK_BET);
 
     if (isMobile) {
       toast.success("Bet successfully recorded in the tracker");
