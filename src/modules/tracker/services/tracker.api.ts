@@ -1,8 +1,12 @@
 import { axiosInstance } from '@/shared/lib';
-import { IGameTracker } from '../types';
+import {
+  IGameTracker,
+  CreateParlayBetPayload,
+  CreateSingleBetsPayload,
+} from '../types';
 
 export const trackerApi = {
-  async createBet(data: any): Promise<string> {
+  async createBet(data: CreateParlayBetPayload): Promise<string> {
     const response = await axiosInstance.post(
       `/bet/api/v1/bet/create_bet`,
       data,
@@ -10,7 +14,7 @@ export const trackerApi = {
     return response.data;
   },
 
-  async createSingleBets(data: any): Promise<string> {
+  async createSingleBets(data: CreateSingleBetsPayload): Promise<string> {
     const response = await axiosInstance.post(
       `/bet/api/v1/bet/create_single_bets`,
       data,

@@ -20,6 +20,7 @@ import { GameAnalysisModal } from "@/modules/game/components/analysis";
 import { IGameWithAI } from "@/modules/game/types";
 import { TrackBetsModal } from "@/modules/tracker";
 import { useAuth } from "@/context/AuthContext";
+import { useAuthGuard } from "@/modules/auth/hooks";
 import useModalManager from "@/shared/hooks/useModalManager";
 import { gameService } from "@/modules/game";
 import { useStore } from "@/store";
@@ -34,10 +35,14 @@ import Footer from "@/shared/components/Footer";
 import MatchupPageFilters from "./Filters";
 import GameCard from "./GameCard";
 import TrackBetsAside from "./TrackBetAside";
+import { MODAL_IDS } from "@/shared/constants";
 
 const MatchupPage = () => {
   const { isAuthenticated } = useAuth();
   const modalManager = useModalManager();
+  const { requireAuth } = useAuthGuard({
+    onUnauthenticated: () => modalManager.openModal(MODAL_IDS.AUTH),
+  });
   const storeManager = useStore();
 
   const modalManagerRef = useRef(modalManager);
@@ -114,28 +119,22 @@ const MatchupPage = () => {
   }, [handleIntersection]);
 
   const onClickTrackBet = (game: IGameWithAI) => {
-    if (!isAuthenticated) {
-      openModal("auth");
-      return;
-    }
+    if (!requireAuth()) return;
     setTrackedGame(game);
-    openModal("track-bet");
+    openModal(MODAL_IDS.TRACK_BET);
   };
 
   const onClickClearTrackBet = () => {
     setTrackedGame(null);
-    closeModal("track-bet");
+    closeModal(MODAL_IDS.TRACK_BET);
   };
 
   const onClickFullAnalysis = useCallback(
     (game: IGameWithAI) => {
-      if (!isAuthenticated) {
-        openModal("auth");
-        return;
-      }
+      if (!requireAuth()) return;
 
       setSelectedGame(game);
-      openModal("game-analysis");
+      openModal(MODAL_IDS.GAME_ANALYSIS);
 
       setTimeout(() => {
         const url = formUrlQuery({
@@ -146,18 +145,15 @@ const MatchupPage = () => {
         router.push(url);
       }, 100);
     },
-    [isAuthenticated, openModal, setSelectedGame, params, router],
+    [requireAuth, openModal, setSelectedGame, params, router],
   );
   const onOpenTrackBet = () => {
-    if (!isAuthenticated) {
-      openModal("auth");
-      return;
-    }
-    openModal("track-bet");
+    if (!requireAuth()) return;
+    openModal(MODAL_IDS.TRACK_BET);
   };
 
   const onClickCloseModal = useCallback(() => {
-    closeModal("game-analysis");
+    closeModal(MODAL_IDS.GAME_ANALYSIS);
 
     setTimeout(() => {
       setSelectedGame(null);
@@ -172,14 +168,14 @@ const MatchupPage = () => {
 
   useEffect(() => {
     if (!isAuthenticated && !authDismissed) {
-      openModal("auth");
+      openModal(MODAL_IDS.AUTH);
     }
     if (isAuthenticated && authDismissed) setAuthDismissed(false);
   }, [isAuthenticated, authDismissed, openModal]);
 
   const onCloseAuth = () => {
     setAuthDismissed(true);
-    closeModal("auth");
+    closeModal(MODAL_IDS.AUTH);
     router.push("/");
   };
 
@@ -191,9 +187,9 @@ const MatchupPage = () => {
     const { setSelectedGame } = storeManagerRef.current;
 
     if (!gameAnalysisParam) {
-      const modalOpen = isModalOpen("game-analysis");
+      const modalOpen = isModalOpen(MODAL_IDS.GAME_ANALYSIS);
       if (modalOpen) {
-        closeModal("game-analysis");
+        closeModal(MODAL_IDS.GAME_ANALYSIS);
         setTimeout(() => setSelectedGame(null), 100);
       }
       return;
@@ -208,8 +204,8 @@ const MatchupPage = () => {
         setSelectedGame(found);
       }
 
-      if (!isModalOpen("game-analysis")) {
-        openModal("game-analysis");
+      if (!isModalOpen(MODAL_IDS.GAME_ANALYSIS)) {
+        openModal(MODAL_IDS.GAME_ANALYSIS);
       }
     }
   }, [isAuthenticated, params, flatGames]);
@@ -275,18 +271,18 @@ const MatchupPage = () => {
 
       <Footer />
 
-      <AuthModal isOpen={isModalOpen("auth")} onClose={onCloseAuth} />
+      <AuthModal isOpen={isModalOpen(MODAL_IDS.AUTH)} onClose={onCloseAuth} />
 
       {/* <div className="block lg:hidden">
         <TrackBetsModal
-          isOpen={isModalOpen('track-bet')}
+          isOpen={isModalOpen(MODAL_IDS.TRACK_BET)}
           onClose={onClickClearTrackBet}
         />
       </div> */}
 
       {isAuthenticated && flatGames.length > 0 && (
         <GameAnalysisModal
-          open={isModalOpen("game-analysis")}
+          open={isModalOpen(MODAL_IDS.GAME_ANALYSIS)}
           onClose={onClickCloseModal}
         />
       )}
