@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import { useRouter } from "next/navigation";
+import { useRouter } from 'next/navigation';
 
-import H2 from "@/modules/auth/components/H2";
-import { ROUTES } from "@/shared/config/routes";
-import { Button } from "@/shared/components/button";
+import H2 from '@/modules/auth/components/H2';
+import { ROUTES } from '@/shared/config/routes';
+import { Button } from '@/shared/components/button';
 
-import ArrowRight from "@/assets/icons/arrow-right.svg";
+import ArrowRight from '@/assets/icons/arrow-right.svg';
 
 export default function SuccessfullyResetPassword() {
   const router = useRouter();
@@ -26,7 +26,7 @@ export default function SuccessfullyResetPassword() {
         onClick={() => router.push(ROUTES.AUTH.LOGIN)}
       >
         <span>Go to Login</span>
-        <ArrowRight />
+        <ArrowRight className="!h-6 !w-6" />
       </Button>
     </div>
   );
