@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import { useEffect } from "react";
+import { useEffect } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
-import authService from "../services";
-import { useAuth } from "../store";
+import authService from '../services';
+import { useAuth } from '../store';
 import { Button } from '@/shared/components/button';
 import Loader from '@/shared/components/loader';
 
@@ -102,13 +102,13 @@ const GoogleLoginButton = ({
     <Button
       onClick={handleGoogleLogin}
       disabled={isPending}
-      className="w-full items-center justify-center gap-2 rounded-xl border border-border bg-secondary p-4 text-xl font-bold tracking-normal text-foreground transition-all duration-200 hover:bg-secondary/80"
+      className="relative flex w-full items-center justify-center gap-2 rounded-xl border border-border bg-secondary text-xl font-bold tracking-normal text-foreground transition-all duration-200 hover:bg-secondary/80"
     >
       {isPending ? (
         <Loader size="h-8 w-8" />
       ) : (
         <>
-          <GoogleIcon />
+          <GoogleIcon className="!h-6 !w-6" />
           <span className="text-center">{text}</span>
         </>
       )}
