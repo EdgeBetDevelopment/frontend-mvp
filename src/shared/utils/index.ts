@@ -6,7 +6,13 @@ export {
   makeId,
 } from "./convertAmericanToDecimal";
 
-export { getFetchError, handleFetchError } from "./error-handling";
+export {
+  getFetchError,
+  handleFetchError,
+  getErrorMessage,
+  handleMutationError,
+  createMutationErrorHandler,
+} from "./error-handling";
 
 export { formatOddsWithSign, formatSpread } from "./formatOdds";
 

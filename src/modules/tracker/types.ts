@@ -1,4 +1,5 @@
-import { IGame } from '@/modules/game/types';
+import { IGame } from "@/modules/game/types";
+import type { MappedPick } from "./utils/mapPick";
 
 export interface ISelection {
   amount: number;
@@ -23,4 +24,20 @@ export interface IGameTracker {
   status: string;
   created_at: string;
   selections: ISelection[];
+}
+
+export interface CreateParlayBetPayload {
+  amount: number;
+  win_amount: number;
+  bets: MappedPick[];
+}
+
+export interface SingleBetTicket {
+  amount: number;
+  win_amount: number;
+  bets: MappedPick[];
+}
+
+export interface CreateSingleBetsPayload {
+  bets: SingleBetTicket[];
 }
