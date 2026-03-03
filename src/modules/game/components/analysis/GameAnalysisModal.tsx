@@ -67,7 +67,9 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
   }, []);
 
   useEffect(() => {
-    if (open && game?.game?.id) {
+    if (!open || !game?.game?.id) return;
+
+    const updateGameFromCache = () => {
       const gamesData = queryClient.getQueriesData<{ pages: IGameWithAI[][] }>({
         queryKey: ['games-feed'],
       });
@@ -85,7 +87,22 @@ const GameAnalysisModal = ({ open, onClose }: IGameAnalysisModal) => {
           }
         }
       }
-    }
+    };
+
+    updateGameFromCache();
+
+    const unsubscribe = queryClient.getQueryCache().subscribe((event) => {
+      if (
+        event?.type === 'updated' &&
+        event?.query.queryKey[0] === 'games-feed'
+      ) {
+        updateGameFromCache();
+      }
+    });
+
+    return () => {
+      unsubscribe();
+    };
   }, [open, game?.game?.id, queryClient, setSelectedGame]);
 
   const predictedWinnerInfo = React.useMemo(() => {
