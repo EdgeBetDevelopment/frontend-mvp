@@ -84,6 +84,7 @@ const MatchupPage = () => {
 
       return nextLastId;
     },
+    refetchInterval: 600000,
     retry: false,
   });
 

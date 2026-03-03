@@ -125,13 +125,16 @@ const BetTrackerTable = () => {
     queryFn: () =>
       trackerApi.getBetList({ filter: activeTab, sort: sortArray } as any),
     staleTime: 1000 * 60 * 2,
+    refetchInterval: 600000,
     refetchOnMount: 'always',
+    retry: 2,
     placeholderData: (prevData) => prevData,
   });
   const { data: allBetsData = [] } = useQuery({
     queryKey: ['betList', 'all'],
     queryFn: () => trackerApi.getBetList({ filter: 'all', sort: [] } as any),
     staleTime: 1000 * 60 * 2,
+    retry: 2,
   });
 
   const onChangeType = (value: string) => {
