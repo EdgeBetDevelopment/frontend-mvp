@@ -29,12 +29,6 @@ export const use2FALogin = ({ onSuccess, tempToken }: Use2FALoginProps) => {
         isSuperAdmin: data.is_super_admin,
       });
 
-      // Redirect to admin if user is admin or super admin
-      if (data.is_admin || data.is_super_admin) {
-        router.push('/admin');
-        return;
-      }
-
       if (onSuccess) {
         onSuccess();
       }
