@@ -12,7 +12,7 @@ import {
 } from '@mui/material';
 import { useNotify } from 'react-admin';
 
-import { userService } from '@/modules/profile';
+import { profileApi } from '@/modules/profile/services/profile.api';
 
 interface User {
   id: number;
@@ -40,7 +40,7 @@ export const ModeratorAdd = () => {
 
     setLoading(true);
     try {
-      const data = await userService.getUsersByEmail(email);
+      const data = await profileApi.getUsersByEmail(email);
 
       if (data && data.length > 0) {
         setUser(data[0]);
@@ -63,7 +63,7 @@ export const ModeratorAdd = () => {
 
     setAdding(true);
     try {
-      await userService.updateModeratorPermissions(user.id, {
+      await profileApi.updateModeratorPermissions(user.id, {
         is_admin: isAdmin,
         is_super_admin: isSuperAdmin,
       });

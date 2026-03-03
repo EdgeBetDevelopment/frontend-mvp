@@ -1,22 +1,22 @@
-import { DataProvider } from "react-admin";
+import { DataProvider } from 'react-admin';
 
-import { axiosInstance } from "@/shared/lib";
-import { userService } from "@/modules/profile";
+import { axiosInstance } from '@/shared/lib';
+import { profileApi } from '@/modules/profile/services/profile.api';
 
 export const customDataProvider: DataProvider = {
   getList: async (resource, params) => {
     let response;
 
-    if (resource === "users") {
-      response = await axiosInstance.get("/user/api/v1/user/all");
+    if (resource === 'users') {
+      response = await axiosInstance.get('/user/api/v1/user/all');
       return {
         data: response.data,
         total: response.data.length,
       };
     }
 
-    if (resource === "usersWithBets") {
-      response = await axiosInstance.get("/user/api/v1/user/all/bets");
+    if (resource === 'usersWithBets') {
+      response = await axiosInstance.get('/user/api/v1/user/all/bets');
       const users = response.data.map((user: any) => ({
         ...user,
         totalBets: user.bets?.length || 0,
@@ -27,8 +27,8 @@ export const customDataProvider: DataProvider = {
       };
     }
 
-    if (resource === "review") {
-      response = await axiosInstance.get("/review/api/v1/review/get_reviews");
+    if (resource === 'review') {
+      response = await axiosInstance.get('/review/api/v1/review/get_reviews');
       console.log(response.data.reviews);
       return {
         data: response.data.reviews,
@@ -36,24 +36,24 @@ export const customDataProvider: DataProvider = {
       };
     }
 
-    if (resource === "pick_of_the_day") {
-      response = await axiosInstance.get("/nba/api/v1/pick_of_the_day/");
+    if (resource === 'pick_of_the_day') {
+      response = await axiosInstance.get('/nba/api/v1/pick_of_the_day/');
       return {
         data: response.data,
         total: response.data.length,
       };
     }
 
-    if (resource === "subscribers") {
-      response = await axiosInstance.get("/subscribe/api/v1/subscriber/");
+    if (resource === 'subscribers') {
+      response = await axiosInstance.get('/subscribe/api/v1/subscriber/');
       return {
         data: response.data,
         total: response.data.length,
       };
     }
 
-    if (resource === "moderators") {
-      response = { data: await userService.getModerators() };
+    if (resource === 'moderators') {
+      response = { data: await profileApi.getModerators() };
       return {
         data: response.data,
         total: response.data.length,
@@ -68,21 +68,21 @@ export const customDataProvider: DataProvider = {
   },
 
   getOne: async (resource, params) => {
-    if (resource === "users") {
+    if (resource === 'users') {
       const { data } = await axiosInstance.get(
         `/user/api/v1/user/${params.id}`,
       );
       return { data };
     }
 
-    if (resource === "usersWithBets") {
+    if (resource === 'usersWithBets') {
       const { data } = await axiosInstance.get(
         `/user/api/v1/user/${params.id}/bets`,
       );
       return { data };
     }
 
-    if (resource === "review") {
+    if (resource === 'review') {
       const { data } = await axiosInstance.get(
         `/review/api/v1/review/get_review_by_id/${params.id}`,
       );
@@ -90,22 +90,22 @@ export const customDataProvider: DataProvider = {
       return { data };
     }
 
-    if (resource === "pick_of_the_day") {
+    if (resource === 'pick_of_the_day') {
       const { data } = await axiosInstance.get(
         `/nba/api/v1/pick_of_the_day/${params.id}`,
       );
       return { data };
     }
 
-    if (resource === "subscribers") {
+    if (resource === 'subscribers') {
       const { data } = await axiosInstance.get(
         `/subscribe/api/v1/subscriber/${params.id}`,
       );
       return { data };
     }
 
-    if (resource === "moderators") {
-      const data = await userService.getModerator(params.id as number);
+    if (resource === 'moderators') {
+      const data = await profileApi.getModerator(params.id as number);
       return { data };
     }
 
@@ -116,7 +116,7 @@ export const customDataProvider: DataProvider = {
   },
 
   create: async (resource, params) => {
-    if (resource === "users" || resource === "usersWithBets") {
+    if (resource === 'users' || resource === 'usersWithBets') {
       const { data } = await axiosInstance.post(
         `/user/api/v1/user`,
         params.data,
@@ -124,7 +124,7 @@ export const customDataProvider: DataProvider = {
       return { data };
     }
 
-    if (resource === "review") {
+    if (resource === 'review') {
       const { data } = await axiosInstance.post(
         `/review/api/v1/review/create_review`,
         params.data,
@@ -132,17 +132,17 @@ export const customDataProvider: DataProvider = {
       return { data };
     }
 
-    if (resource === "pick_of_the_day") {
-      const sport = String(params.data?.sport || "").toLowerCase();
+    if (resource === 'pick_of_the_day') {
+      const sport = String(params.data?.sport || '').toLowerCase();
       const url =
-        sport && sport !== "nba"
+        sport && sport !== 'nba'
           ? `/nba/api/v1/pick_of_the_day/create_other_sport`
           : `/nba/api/v1/pick_of_the_day/`;
       const { data } = await axiosInstance.post(url, params.data);
       return { data };
     }
 
-    if (resource === "subscribers") {
+    if (resource === 'subscribers') {
       const { data } = await axiosInstance.post(
         `/subscribe/api/v1/subscriber/`,
         params.data,
@@ -158,7 +158,7 @@ export const customDataProvider: DataProvider = {
   },
 
   update: async (resource, params) => {
-    if (resource === "users" || resource === "usersWithBets") {
+    if (resource === 'users' || resource === 'usersWithBets') {
       const { data } = await axiosInstance.put(
         `/user/api/v1/user/${params.id}`,
         params.data,
@@ -166,7 +166,7 @@ export const customDataProvider: DataProvider = {
       return { data };
     }
 
-    if (resource === "review") {
+    if (resource === 'review') {
       const { data } = await axiosInstance.patch(
         `/review/api/v1/review/update_review/${params.id}`,
         params.data,
@@ -174,8 +174,8 @@ export const customDataProvider: DataProvider = {
       return { data };
     }
 
-    if (resource === "pick_of_the_day") {
-      console.log("DataProvider update - pick_of_the_day:", {
+    if (resource === 'pick_of_the_day') {
+      console.log('DataProvider update - pick_of_the_day:', {
         id: params.id,
         data: params.data,
       });
@@ -184,15 +184,15 @@ export const customDataProvider: DataProvider = {
           `/nba/api/v1/pick_of_the_day/${params.id}`,
           params.data,
         );
-        console.log("DataProvider update - response:", data);
+        console.log('DataProvider update - response:', data);
         return { data };
       } catch (error) {
-        console.error("DataProvider update - error:", error);
+        console.error('DataProvider update - error:', error);
         throw error;
       }
     }
 
-    if (resource === "subscribers") {
+    if (resource === 'subscribers') {
       const { data } = await axiosInstance.patch(
         `/subscribe/api/v1/subscriber/${params.id}`,
         params.data,
@@ -200,8 +200,8 @@ export const customDataProvider: DataProvider = {
       return { data };
     }
 
-    if (resource === "moderators") {
-      const data = await userService.updateModeratorPermissions(
+    if (resource === 'moderators') {
+      const data = await profileApi.updateModeratorPermissions(
         params.id as number,
         params.data,
       );
@@ -216,24 +216,24 @@ export const customDataProvider: DataProvider = {
   },
 
   delete: async (resource, params) => {
-    if (resource === "users" || resource === "usersWithBets") {
+    if (resource === 'users' || resource === 'usersWithBets') {
       await axiosInstance.delete(`/user/api/v1/user/${params.id}`);
       return { data: { id: params.id } };
     }
 
-    if (resource === "review") {
+    if (resource === 'review') {
       await axiosInstance.delete(
         `/review/api/v1/review/delete_review/${params.id}`,
       );
       return { data: { id: params.id } };
     }
 
-    if (resource === "pick_of_the_day") {
+    if (resource === 'pick_of_the_day') {
       await axiosInstance.delete(`/nba/api/v1/pick_of_the_day/${params.id}`);
       return { data: { id: params.id } };
     }
 
-    if (resource === "subscribers") {
+    if (resource === 'subscribers') {
       await axiosInstance.delete(`/subscribe/api/v1/subscriber/${params.id}`);
       return { data: { id: params.id } };
     }
