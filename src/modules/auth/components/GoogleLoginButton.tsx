@@ -50,12 +50,6 @@ const GoogleLoginButton = ({
 
       toast.success('Logged in with Google!');
 
-      // Redirect to admin if user is admin or super admin
-      if (data.is_admin || data.is_super_admin) {
-        router.push('/admin');
-        return;
-      }
-
       if (onSuccess) {
         onSuccess();
       }

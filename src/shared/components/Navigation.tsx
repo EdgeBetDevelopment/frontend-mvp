@@ -1,19 +1,19 @@
-"use client";
+'use client';
 
-import { Calendar, LogOut, Settings, Target, User } from "lucide-react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { Calendar, LogOut, Send, Settings, Target, User } from 'lucide-react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
-import { Button } from "./button";
+import { Button } from './button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "./dropdown-menu";
+} from './dropdown-menu';
 
-import edgebetIcon from "@/assets/edgebet-icon.png";
-import { useAuth } from "@/modules/auth";
+import edgebetIcon from '@/assets/edgebet-icon.png';
+import { useAuth } from '@/modules/auth';
 
 interface NavigationProps {
   isLoggedIn?: boolean;
@@ -25,7 +25,7 @@ const Navigation = ({
   onLogout,
 }: NavigationProps) => {
   const router = useRouter();
-  const { isAuthenticated, clearTokens } = useAuth();
+  const { isAuthenticated, clearTokens, isAdmin, isSuperAdmin } = useAuth();
 
   const isLoggedIn = isLoggedInProp ?? isAuthenticated;
 
@@ -34,7 +34,7 @@ const Navigation = ({
     if (onLogout) {
       onLogout();
     }
-    router.push("/login");
+    router.push('/login');
   };
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur-sm">
@@ -112,6 +112,20 @@ const Navigation = ({
                   My Account
                 </Link>
               </DropdownMenuItem>
+              {(isAdmin || isSuperAdmin) && (
+                <DropdownMenuItem
+                  asChild
+                  className="border-b border-t border-border/50"
+                >
+                  <Link
+                    href="/admin#/pick_of_the_day/create"
+                    className="flex cursor-pointer items-center gap-2 !bg-amber-400/15 !text-amber-400 hover:!bg-amber-400/25"
+                  >
+                    <Send className="h-4 w-4" />
+                    Submit Pick of the Day
+                  </Link>
+                </DropdownMenuItem>
+              )}
               <DropdownMenuItem
                 onClick={handleLogout}
                 className="flex cursor-pointer items-center gap-2 text-destructive focus:text-destructive"
@@ -124,7 +138,7 @@ const Navigation = ({
         ) : (
           <Button
             className="bg-primary text-primary-foreground hover:bg-primary/90"
-            onClick={() => router.push("/login")}
+            onClick={() => router.push('/login')}
           >
             Get Started
           </Button>

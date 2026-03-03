@@ -4,6 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { FaRegUser } from 'react-icons/fa';
+import { Send } from 'lucide-react';
 
 import { useAuth } from '@/modules/auth';
 import { ROUTES } from '@/shared/config/routes';
@@ -33,7 +34,7 @@ const UnauthorizedUser = () => {
 };
 
 const AuthorizedUser = () => {
-  const { clearTokens } = useAuth();
+  const { clearTokens, isAdmin, isSuperAdmin } = useAuth();
   const router = useRouter();
   const onLogOut = () => {
     clearTokens();
@@ -61,6 +62,23 @@ const AuthorizedUser = () => {
         <Link className="cursor-pointer" href={ROUTES.PROFILE.TRACKER}>
           <DropdownMenuItem>Tracker Page</DropdownMenuItem>
         </Link>
+
+        {(isAdmin || isSuperAdmin) && (
+          <DropdownMenuItem
+            asChild
+            className="border-b border-t border-border/50"
+          >
+            <Link
+              href="/admin#/pick_of_the_day/create"
+              className="flex cursor-pointer items-center gap-2 !bg-amber-400/15 !text-amber-400 hover:!bg-amber-400/25"
+            >
+              <Send className="h-4 w-4" />
+              Submit Pick of the Day
+            </Link>
+          </DropdownMenuItem>
+        )}
+
+        <DropdownMenuSeparator />
 
         <DropdownMenuItem variant="destructive" onClick={onLogOut}>
           Log Out

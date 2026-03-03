@@ -1,36 +1,36 @@
-"use client";
+'use client';
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
-import { toast } from "sonner";
-import { z } from "zod";
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+import { z } from 'zod';
 
-import { handleFetchError } from "@/shared/utils/error-handling";
+import { handleFetchError } from '@/shared/utils/error-handling';
 
-import authService from "../services";
-import { useAuth } from "../store";
+import authService from '../services';
+import { useAuth } from '../store';
 
 const signUpSchema = z
   .object({
     name: z
       .string()
-      .min(2, "Name is too short")
-      .max(30, "Name is too long")
-      .regex(/^[a-zA-Zа-яА-ЯёЁіІїЇєЄ\s-]+$/, "Invalid characters in name"),
-    email: z.string().email("Invalid email format"),
-    phone: z.string().regex(/^\+?\d{10,15}$/, "Invalid phone number"),
+      .min(2, 'Name is too short')
+      .max(30, 'Name is too long')
+      .regex(/^[a-zA-Zа-яА-ЯёЁіІїЇєЄ\s-]+$/, 'Invalid characters in name'),
+    email: z.string().email('Invalid email format'),
+    phone: z.string().regex(/^\+?\d{10,15}$/, 'Invalid phone number'),
     password: z
       .string()
-      .min(8, "Password must be at least 8 characters")
-      .regex(/\d/, "Password must include at least one number")
-      .regex(/[a-zA-Z]/, "Password must include at least one letter"),
+      .min(8, 'Password must be at least 8 characters')
+      .regex(/\d/, 'Password must include at least one number')
+      .regex(/[a-zA-Z]/, 'Password must include at least one letter'),
     confirmPassword: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords do not match",
-    path: ["confirmPassword"],
+    message: 'Passwords do not match',
+    path: ['confirmPassword'],
   });
 
 export type SignUpFormValues = z.infer<typeof signUpSchema>;
@@ -46,11 +46,11 @@ export const useSignUpForm = ({ onSuccessSignUp }: UseSignUpFormProps = {}) => {
   const form = useForm<SignUpFormValues>({
     resolver: zodResolver(signUpSchema),
     defaultValues: {
-      name: "",
-      email: "",
-      phone: "",
-      password: "",
-      confirmPassword: "",
+      name: '',
+      email: '',
+      phone: '',
+      password: '',
+      confirmPassword: '',
     },
   });
 
@@ -68,12 +68,6 @@ export const useSignUpForm = ({ onSuccessSignUp }: UseSignUpFormProps = {}) => {
         isSuperAdmin: data.is_super_admin,
       });
 
-      // Redirect to admin if user is admin or super admin
-      if (data.is_admin || data.is_super_admin) {
-        router.push("/admin");
-        return;
-      }
-
       if (onSuccessSignUp) {
         onSuccessSignUp();
       }
@@ -81,7 +75,7 @@ export const useSignUpForm = ({ onSuccessSignUp }: UseSignUpFormProps = {}) => {
     onError: (error: any) => {
       const errorMessage =
         error &&
-        handleFetchError(error, "Sign up failed. Please check your data.");
+        handleFetchError(error, 'Sign up failed. Please check your data.');
 
       toast.error(errorMessage);
     },
@@ -97,7 +91,7 @@ export const useSignUpForm = ({ onSuccessSignUp }: UseSignUpFormProps = {}) => {
   };
 
   const errorMessage =
-    error && handleFetchError(error, "Sign up failed. Please check your data.");
+    error && handleFetchError(error, 'Sign up failed. Please check your data.');
 
   return {
     form,

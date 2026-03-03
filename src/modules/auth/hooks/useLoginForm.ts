@@ -1,20 +1,20 @@
-"use client";
+'use client';
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
-import { toast } from "sonner";
-import { z } from "zod";
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+import { z } from 'zod';
 
-import { handleFetchError } from "@/shared/utils/error-handling";
+import { handleFetchError } from '@/shared/utils/error-handling';
 
-import authService from "../services";
-import { useAuth } from "../store";
+import authService from '../services';
+import { useAuth } from '../store';
 
 const loginSchema = z.object({
-  email: z.string().email("Invalid email format"),
-  password: z.string().regex(/\d/, "Password must include at least one number"),
+  email: z.string().email('Invalid email format'),
+  password: z.string().regex(/\d/, 'Password must include at least one number'),
 });
 
 export type LoginFormValues = z.infer<typeof loginSchema>;
@@ -54,12 +54,6 @@ export const useLoginForm = ({
         isSuperAdmin: data.is_super_admin,
       });
 
-      // Redirect to admin if user is admin or super admin
-      if (data.is_admin || data.is_super_admin) {
-        router.push("/admin");
-        return;
-      }
-
       if (onSuccessLogin) {
         onSuccessLogin();
       }
@@ -67,7 +61,7 @@ export const useLoginForm = ({
     onError: (error: any) => {
       const errorMessage = handleFetchError(
         error,
-        "Login failed. Please check your credentials.",
+        'Login failed. Please check your credentials.',
       );
       toast.error(errorMessage);
     },
@@ -76,8 +70,8 @@ export const useLoginForm = ({
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      email: "",
-      password: "",
+      email: '',
+      password: '',
     },
   });
 
@@ -90,7 +84,7 @@ export const useLoginForm = ({
 
   const errorMessage =
     error &&
-    handleFetchError(error, "Login failed. Please check your credentials.");
+    handleFetchError(error, 'Login failed. Please check your credentials.');
 
   return {
     form,
