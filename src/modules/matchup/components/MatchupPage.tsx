@@ -13,24 +13,26 @@ import {
   useRouter,
   useSearchParams,
 } from 'next/navigation';
+import { Lock, Crown } from 'lucide-react';
 
-import EmptyPlaceholder from '@/shared/components/EmptyPlaceholder';
-import { AuthModal } from '@/modules/auth';
 import { GameAnalysisModal } from '@/modules/game/components/analysis';
 import { IGameWithAI } from '@/modules/game/types';
-import { TrackBetsModal } from '@/modules/tracker';
 import { useAuth } from '@/context/AuthContext';
-import { useAuthGuard } from '@/modules/auth/hooks';
 import useModalManager from '@/shared/hooks/useModalManager';
 import { gameService } from '@/modules/game';
 import { useStore } from '@/store';
 import { Button } from '@/shared/components/button';
-import { ScrollArea } from '@/shared/components/scroll-area';
 import { Skeleton } from '@/shared/components/skeleton';
 import { formUrlQuery } from '@/shared/utils';
 import { ListRenderer } from '@/shared/components';
 import Navigation from '@/shared/components/Navigation';
 import Footer from '@/shared/components/Footer';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@/shared/components/card';
 
 import MatchupPageFilters from './Filters';
 import GameCard from './GameCard';
@@ -40,9 +42,6 @@ import { MODAL_IDS } from '@/shared/constants';
 const MatchupPage = () => {
   const { isAuthenticated } = useAuth();
   const modalManager = useModalManager();
-  const { requireAuth } = useAuthGuard({
-    onUnauthenticated: () => modalManager.openModal(MODAL_IDS.AUTH),
-  });
   const storeManager = useStore();
 
   const modalManagerRef = useRef(modalManager);
@@ -60,7 +59,7 @@ const MatchupPage = () => {
   const type = params.get('type');
   const router = useRouter();
 
-  const [authDismissed, setAuthDismissed] = useState(false);
+  const [authError, setAuthError] = useState<402 | null>(null);
 
   const {
     data,
@@ -69,6 +68,7 @@ const MatchupPage = () => {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
+    error,
   } = useInfiniteQuery<IGameWithAI[], Error>({
     queryKey: ['games-feed'],
     queryFn: ({ pageParam }) =>
@@ -86,7 +86,17 @@ const MatchupPage = () => {
     },
     refetchInterval: 300000,
     retry: false,
+    enabled: isAuthenticated,
   });
+
+  useEffect(() => {
+    if (error) {
+      const err = error as { code?: number };
+      if (err?.code === 402) {
+        setAuthError(402);
+      }
+    }
+  }, [error]);
 
   const flatGames: IGameWithAI[] = useMemo(() => {
     return data ? data.pages.flatMap((page) => page) : [];
@@ -120,7 +130,7 @@ const MatchupPage = () => {
   }, [handleIntersection]);
 
   const onClickTrackBet = (game: IGameWithAI) => {
-    if (!requireAuth()) return;
+    if (!isAuthenticated) return;
     setTrackedGame(game);
     openModal(MODAL_IDS.TRACK_BET);
   };
@@ -132,7 +142,7 @@ const MatchupPage = () => {
 
   const onClickFullAnalysis = useCallback(
     (game: IGameWithAI) => {
-      if (!requireAuth()) return;
+      if (!isAuthenticated) return;
 
       setSelectedGame(game);
       openModal(MODAL_IDS.GAME_ANALYSIS);
@@ -146,10 +156,10 @@ const MatchupPage = () => {
         router.push(url);
       }, 100);
     },
-    [requireAuth, openModal, setSelectedGame, params, router],
+    [isAuthenticated, openModal, setSelectedGame, params, router],
   );
   const onOpenTrackBet = () => {
-    if (!requireAuth()) return;
+    if (!isAuthenticated) return;
     openModal(MODAL_IDS.TRACK_BET);
   };
 
@@ -166,19 +176,6 @@ const MatchupPage = () => {
       router.push(url);
     }, 150);
   }, [closeModal, setSelectedGame, params, router]);
-
-  useEffect(() => {
-    if (!isAuthenticated && !authDismissed) {
-      openModal(MODAL_IDS.AUTH);
-    }
-    if (isAuthenticated && authDismissed) setAuthDismissed(false);
-  }, [isAuthenticated, authDismissed, openModal]);
-
-  const onCloseAuth = () => {
-    setAuthDismissed(true);
-    closeModal(MODAL_IDS.AUTH);
-    router.push('/');
-  };
 
   useEffect(() => {
     if (!isAuthenticated) return;
@@ -210,6 +207,95 @@ const MatchupPage = () => {
       }
     }
   }, [isAuthenticated, params, flatGames]);
+
+  // Show login screen if not authenticated
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navigation />
+        <main className="container mx-auto px-6 py-8">
+          <div className="flex min-h-[60vh] items-center justify-center">
+            <Card className="max-w-md">
+              <CardHeader>
+                <div className="mb-4 flex justify-center">
+                  <div className="rounded-full bg-primary/10 p-4">
+                    <Lock className="h-8 w-8 text-primary" />
+                  </div>
+                </div>
+                <CardTitle className="text-center text-2xl">
+                  Login Required
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <p className="text-center text-muted-foreground">
+                  Please login to access the matchup analysis feature.
+                </p>
+                <Button
+                  className="w-full"
+                  onClick={() => router.push('/login')}
+                >
+                  Login
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  // Show subscription screen for 402 (from backend)
+  if (authError === 402) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navigation />
+        <main className="container mx-auto px-6 py-8">
+          <div className="flex min-h-[60vh] items-center justify-center">
+            <Card className="max-w-md">
+              <CardHeader>
+                <div className="mb-4 flex justify-center">
+                  <div className="rounded-full bg-primary/10 p-4">
+                    <Crown className="h-8 w-8 text-primary" />
+                  </div>
+                </div>
+                <CardTitle className="text-center text-2xl">
+                  Premium Access Required
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <p className="text-center text-muted-foreground">
+                  Get access to detailed matchup analysis and AI-powered
+                  insights with a premium subscription.
+                </p>
+                <div className="space-y-2">
+                  <div className="flex items-start gap-2">
+                    <Crown className="mt-0.5 h-4 w-4 text-primary" />
+                    <span className="text-sm">Full game analysis</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <Crown className="mt-0.5 h-4 w-4 text-primary" />
+                    <span className="text-sm">AI-powered predictions</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <Crown className="mt-0.5 h-4 w-4 text-primary" />
+                    <span className="text-sm">Real-time matchup data</span>
+                  </div>
+                </div>
+                <Button
+                  className="w-full"
+                  onClick={() => router.push('/pricing')}
+                >
+                  View Premium Plans
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -271,8 +357,6 @@ const MatchupPage = () => {
       </div>
 
       <Footer />
-
-      <AuthModal isOpen={isModalOpen(MODAL_IDS.AUTH)} onClose={onCloseAuth} />
 
       {/* <div className="block lg:hidden">
         <TrackBetsModal

@@ -5,6 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Crown, Lock } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
+import { useAuth } from '@/context/AuthContext';
 import Navigation from '@/shared/components/Navigation';
 import Footer from '@/shared/components/Footer';
 import {
@@ -28,8 +29,9 @@ import type { ApiPick } from '../types';
 
 const PickOfDayPage = () => {
   const router = useRouter();
+  const { isAuthenticated } = useAuth();
   const [activeTab, setActiveTab] = useState('today');
-  const [authError, setAuthError] = useState<401 | 402 | null>(null);
+  const [authError, setAuthError] = useState<402 | null>(null);
 
   const {
     data: todayPicks = [],
@@ -40,6 +42,7 @@ const PickOfDayPage = () => {
     queryKey: ['pick-of-day', 'today'],
     queryFn: () => picksApi.getPickOfTheDayToday(),
     retry: false,
+    enabled: isAuthenticated,
   });
   const {
     data: weekPicks = [],
@@ -50,6 +53,7 @@ const PickOfDayPage = () => {
     queryKey: ['pick-of-day', 'this-week'],
     queryFn: () => picksApi.getPickOfTheDayThisWeek(),
     retry: false,
+    enabled: isAuthenticated,
   });
   const {
     data: allPicks = [],
@@ -60,6 +64,7 @@ const PickOfDayPage = () => {
     queryKey: ['pick-of-day', 'all'],
     queryFn: () => picksApi.getPickOfTheDayList(),
     retry: false,
+    enabled: isAuthenticated,
   });
 
   useEffect(() => {
@@ -67,18 +72,15 @@ const PickOfDayPage = () => {
 
     for (const error of errors) {
       const err = error as any;
-      if (err?.code === 401) {
-        setAuthError(401);
-        break;
-      } else if (err?.code === 402) {
+      if (err?.code === 402) {
         setAuthError(402);
         break;
       }
     }
   }, [todayError, weekError, allError]);
 
-  // Show login screen for 401
-  if (authError === 401) {
+  // Show login screen if not authenticated
+  if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-background">
         <Navigation />
@@ -114,7 +116,7 @@ const PickOfDayPage = () => {
     );
   }
 
-  // Show subscription screen for 402
+  // Show subscription screen for 402 (from backend)
   if (authError === 402) {
     return (
       <div className="min-h-screen bg-background">
