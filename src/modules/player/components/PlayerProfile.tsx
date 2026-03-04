@@ -1,18 +1,19 @@
-"use client";
+'use client';
 
-import { useMemo, useState } from "react";
-import React from "react";
-import { Outfit } from "next/font/google";
-import { useParams, useRouter } from "next/navigation";
+import { useMemo, useState, useEffect } from 'react';
+import React from 'react';
+import { Outfit } from 'next/font/google';
+import { useParams, useRouter } from 'next/navigation';
 
-import { usePlayer } from "@/modules/player/hooks";
-import Loader from "@/shared/components/loader";
-import { EmptyPlaceholder } from "@/shared/components";
+import { useAuth } from '@/context/AuthContext';
+import { usePlayer } from '@/modules/player/hooks';
+import Loader from '@/shared/components/loader';
+import { EmptyPlaceholder } from '@/shared/components';
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
-} from "@/shared/components/avatar";
+} from '@/shared/components/avatar';
 import {
   ArrowLeft,
   Calendar,
@@ -20,23 +21,25 @@ import {
   TrendingUp,
   Trophy,
   User,
-} from "lucide-react";
-import Navigation from "@/shared/components/Navigation";
+  Lock,
+  Crown,
+} from 'lucide-react';
+import Navigation from '@/shared/components/Navigation';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/shared/components/card";
-import { Button } from "@/shared/components/button";
+} from '@/shared/components/card';
+import { Button } from '@/shared/components/button';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/shared/components/select";
+} from '@/shared/components/select';
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -45,8 +48,8 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/shared/components/dropdown-menu";
-import { Checkbox } from "@/shared/components/checkbox";
+} from '@/shared/components/dropdown-menu';
+import { Checkbox } from '@/shared/components/checkbox';
 import {
   Table,
   TableBody,
@@ -54,7 +57,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/shared/components/table";
+} from '@/shared/components/table';
 
 import {
   LineChart,
@@ -65,92 +68,94 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-} from "recharts";
-import { Badge } from "@/shared/components/badge";
-import Footer from "@/shared/components/Footer";
+} from 'recharts';
+import { Badge } from '@/shared/components/badge';
+import Footer from '@/shared/components/Footer';
 
 const outfit = Outfit({
-  subsets: ["latin"],
-  weight: ["400", "600", "700"],
-  display: "swap",
+  subsets: ['latin'],
+  weight: ['400', '600', '700'],
+  display: 'swap',
 });
 
-type TimelineFilter = "7days" | "30days" | "season";
+type TimelineFilter = '7days' | '30days' | 'season';
 type PropKey =
-  | "Points"
-  | "Assists"
-  | "Rebounds"
-  | "Blocks"
-  | "Steals"
-  | "Turnovers"
-  | "Minutes"
-  | "3PM"
-  | "3PA"
-  | "3P%"
-  | "FGM"
-  | "FGA"
-  | "FG%"
-  | "FTM"
-  | "FTA"
-  | "FT%"
-  | "OREB"
-  | "DREB"
-  | "Personal Fouls"
-  | "Games Played"
-  | "Games Started";
+  | 'Points'
+  | 'Assists'
+  | 'Rebounds'
+  | 'Blocks'
+  | 'Steals'
+  | 'Turnovers'
+  | 'Minutes'
+  | '3PM'
+  | '3PA'
+  | '3P%'
+  | 'FGM'
+  | 'FGA'
+  | 'FG%'
+  | 'FTM'
+  | 'FTA'
+  | 'FT%'
+  | 'OREB'
+  | 'DREB'
+  | 'Personal Fouls'
+  | 'Games Played'
+  | 'Games Started';
 
 const propColors: Record<PropKey, string> = {
-  Points: "hsl(270, 90%, 65%)",
-  Assists: "hsl(180, 100%, 50%)",
-  Rebounds: "hsl(35, 90%, 55%)",
-  Blocks: "hsl(145, 70%, 50%)",
-  Steals: "hsl(320, 70%, 60%)",
-  Turnovers: "hsl(0, 70%, 60%)",
-  Minutes: "hsl(200, 70%, 60%)",
-  "3PM": "hsl(280, 70%, 60%)",
-  "3PA": "hsl(285, 60%, 55%)",
-  "3P%": "hsl(290, 70%, 60%)",
-  FGM: "hsl(60, 70%, 60%)",
-  FGA: "hsl(65, 60%, 55%)",
-  "FG%": "hsl(70, 70%, 60%)",
-  FTM: "hsl(120, 70%, 60%)",
-  FTA: "hsl(125, 60%, 55%)",
-  "FT%": "hsl(130, 70%, 60%)",
-  OREB: "hsl(30, 70%, 60%)",
-  DREB: "hsl(40, 70%, 60%)",
-  "Personal Fouls": "hsl(350, 70%, 60%)",
-  "Games Played": "hsl(210, 70%, 60%)",
-  "Games Started": "hsl(220, 70%, 60%)",
+  Points: 'hsl(270, 90%, 65%)',
+  Assists: 'hsl(180, 100%, 50%)',
+  Rebounds: 'hsl(35, 90%, 55%)',
+  Blocks: 'hsl(145, 70%, 50%)',
+  Steals: 'hsl(320, 70%, 60%)',
+  Turnovers: 'hsl(0, 70%, 60%)',
+  Minutes: 'hsl(200, 70%, 60%)',
+  '3PM': 'hsl(280, 70%, 60%)',
+  '3PA': 'hsl(285, 60%, 55%)',
+  '3P%': 'hsl(290, 70%, 60%)',
+  FGM: 'hsl(60, 70%, 60%)',
+  FGA: 'hsl(65, 60%, 55%)',
+  'FG%': 'hsl(70, 70%, 60%)',
+  FTM: 'hsl(120, 70%, 60%)',
+  FTA: 'hsl(125, 60%, 55%)',
+  'FT%': 'hsl(130, 70%, 60%)',
+  OREB: 'hsl(30, 70%, 60%)',
+  DREB: 'hsl(40, 70%, 60%)',
+  'Personal Fouls': 'hsl(350, 70%, 60%)',
+  'Games Played': 'hsl(210, 70%, 60%)',
+  'Games Started': 'hsl(220, 70%, 60%)',
 };
 
 const propLabels: PropKey[] = [
-  "Points",
-  "Assists",
-  "Rebounds",
-  "Blocks",
-  "Steals",
-  "Turnovers",
-  "Minutes",
-  "3PM",
-  "3PA",
-  "3P%",
-  "FGM",
-  "FGA",
-  "FG%",
-  "FTM",
-  "FTA",
-  "FT%",
-  "OREB",
-  "DREB",
-  "Personal Fouls",
-  "Games Played",
-  "Games Started",
+  'Points',
+  'Assists',
+  'Rebounds',
+  'Blocks',
+  'Steals',
+  'Turnovers',
+  'Minutes',
+  '3PM',
+  '3PA',
+  '3P%',
+  'FGM',
+  'FGA',
+  'FG%',
+  'FTM',
+  'FTA',
+  'FT%',
+  'OREB',
+  'DREB',
+  'Personal Fouls',
+  'Games Played',
+  'Games Started',
 ];
 
 const PlayerProfile = () => {
   const [isLastGames, setIsLastGames] = useState(false);
   const params = useParams();
   const playerId = params?.id as string;
+  const [authError, setAuthError] = useState<402 | null>(null);
+  const { isAuthenticated } = useAuth();
 
   const {
     data: player,
@@ -158,44 +163,57 @@ const PlayerProfile = () => {
     playerSeason,
     error,
     isLoading,
-  } = usePlayer(playerId as string);
+    errors,
+  } = usePlayer(playerId as string, isAuthenticated);
+
+  useEffect(() => {
+    if (errors && errors.length > 0) {
+      for (const err of errors) {
+        const e = err as { code?: number };
+        if (e?.code === 402) {
+          setAuthError(402);
+          break;
+        }
+      }
+    }
+  }, [errors]);
 
   const { profile } = playerNameData || {};
 
   const router = useRouter();
-  const [timelineFilter, setTimelineFilter] = useState<TimelineFilter>("7days");
+  const [timelineFilter, setTimelineFilter] = useState<TimelineFilter>('7days');
   const [selectedProps, setSelectedProps] = useState<PropKey[]>([
-    "Points",
-    "Assists",
-    "Rebounds",
+    'Points',
+    'Assists',
+    'Rebounds',
   ]);
 
   const seasonText = (() => {
-    if (playerNameData?.season_stats?.SEASON_ID?.includes("-"))
-      return playerNameData?.season_stats?.SEASON_ID?.replace("-", " - ");
+    if (playerNameData?.season_stats?.SEASON_ID?.includes('-'))
+      return playerNameData?.season_stats?.SEASON_ID?.replace('-', ' - ');
     const currentYear = new Date().getFullYear();
     return `${currentYear}`;
   })();
 
   const statOrder: { key: string; label: string }[] = [
-    { key: "PPG", label: "PPG" },
-    { key: "RPG", label: "RPG" },
-    { key: "APG", label: "APG" },
-    { key: "SPG", label: "SPG" },
-    { key: "BPG", label: "BPG" },
-    { key: "FG%", label: "FG%" },
-    { key: "FT%", label: "FT%" },
-    { key: "TS%", label: "TS%" },
-    { key: "3P%", label: "3P%" },
-    { key: "MPG", label: "MPG" },
+    { key: 'PPG', label: 'PPG' },
+    { key: 'RPG', label: 'RPG' },
+    { key: 'APG', label: 'APG' },
+    { key: 'SPG', label: 'SPG' },
+    { key: 'BPG', label: 'BPG' },
+    { key: 'FG%', label: 'FG%' },
+    { key: 'FT%', label: 'FT%' },
+    { key: 'TS%', label: 'TS%' },
+    { key: '3P%', label: '3P%' },
+    { key: 'MPG', label: 'MPG' },
   ];
 
   const normalize = (v: string | number | undefined, isPercentage = false) => {
-    if (v === undefined || v === null) return "-";
-    const n = typeof v === "string" ? Number(v) : v;
+    if (v === undefined || v === null) return '-';
+    const n = typeof v === 'string' ? Number(v) : v;
     if (!Number.isFinite(n)) return String(v);
     // Percentages in season_stats are already formatted (e.g., "48.5")
-    return typeof v === "string" ? v : n.toFixed(1);
+    return typeof v === 'string' ? v : n.toFixed(1);
   };
 
   // const playerInfo = playerId ? player[playerId] : null;
@@ -218,7 +236,7 @@ const PlayerProfile = () => {
     return player.player_stats
       .map((season: any) => {
         return {
-          season: season.SEASON_ID || "",
+          season: season.SEASON_ID || '',
           points: season.PTS ? Number(season.PTS) : 0,
           assists: season.AST ? Number(season.AST) : 0,
           rebounds: season.REB ? Number(season.REB) : 0,
@@ -250,9 +268,9 @@ const PlayerProfile = () => {
 
     let filtered = [...playerSeason];
 
-    if (timelineFilter === "7days") {
+    if (timelineFilter === '7days') {
       filtered = filtered.slice(0, 7);
-    } else if (timelineFilter === "30days") {
+    } else if (timelineFilter === '30days') {
       filtered = filtered.slice(0, 30);
     }
 
@@ -269,17 +287,17 @@ const PlayerProfile = () => {
     const order: string[] = [];
 
     for (const g of filteredGames) {
-      if (!g || typeof g !== "object") continue;
+      if (!g || typeof g !== 'object') continue;
 
-      const key = (g.title && String(g.title)) || "Unknown";
+      const key = (g.title && String(g.title)) || 'Unknown';
       if (!map.has(key)) {
         map.set(key, { title: key, games: [] });
         order.push(key);
       }
       const group = map.get(key)!;
 
-      const dateStr = (g.date ?? "").toString().trim().toLowerCase();
-      const isAverage = dateStr === "average";
+      const dateStr = (g.date ?? '').toString().trim().toLowerCase();
+      const isAverage = dateStr === 'average';
 
       if (isAverage) group.average = g;
       else group.games.push(g);
@@ -329,6 +347,97 @@ const PlayerProfile = () => {
         size="h-14 w-14"
         className="flex h-[70vh] w-full items-center justify-center"
       />
+    );
+  }
+
+  // Show login screen if not authenticated
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navigation />
+        <main className="container mx-auto px-6 py-8">
+          <div className="flex min-h-[60vh] items-center justify-center">
+            <Card className="max-w-md">
+              <CardHeader>
+                <div className="mb-4 flex justify-center">
+                  <div className="rounded-full bg-primary/10 p-4">
+                    <Lock className="h-8 w-8 text-primary" />
+                  </div>
+                </div>
+                <CardTitle className="text-center text-2xl">
+                  Login Required
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <p className="text-center text-muted-foreground">
+                  Please login to access player profiles and statistics.
+                </p>
+                <Button
+                  className="w-full"
+                  onClick={() => router.push('/login')}
+                >
+                  Login
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  // Show subscription screen for 402 (from backend)
+  if (authError === 402) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navigation />
+        <main className="container mx-auto px-6 py-8">
+          <div className="flex min-h-[60vh] items-center justify-center">
+            <Card className="max-w-md">
+              <CardHeader>
+                <div className="mb-4 flex justify-center">
+                  <div className="rounded-full bg-primary/10 p-4">
+                    <Crown className="h-8 w-8 text-primary" />
+                  </div>
+                </div>
+                <CardTitle className="text-center text-2xl">
+                  Premium Access Required
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <p className="text-center text-muted-foreground">
+                  Get access to detailed player statistics and performance
+                  insights with a premium subscription.
+                </p>
+                <div className="space-y-2">
+                  <div className="flex items-start gap-2">
+                    <Crown className="mt-0.5 h-4 w-4 text-primary" />
+                    <span className="text-sm">Complete player statistics</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <Crown className="mt-0.5 h-4 w-4 text-primary" />
+                    <span className="text-sm">Season-by-season data</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <Crown className="mt-0.5 h-4 w-4 text-primary" />
+                    <span className="text-sm">
+                      Performance trends & analysis
+                    </span>
+                  </div>
+                </div>
+                <Button
+                  className="w-full"
+                  onClick={() => router.push('/pricing')}
+                >
+                  View Premium Plans
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </main>
+        <Footer />
+      </div>
     );
   }
 
@@ -382,9 +491,9 @@ const PlayerProfile = () => {
               <AvatarImage src={undefined} alt={player.full_name} />
               <AvatarFallback className="bg-primary/10 text-4xl font-bold text-primary">
                 {player.full_name
-                  .split(" ")
+                  .split(' ')
                   .map((n: any) => n[0])
-                  .join("")}
+                  .join('')}
               </AvatarFallback>
             </Avatar>
 
@@ -393,7 +502,7 @@ const PlayerProfile = () => {
                 {player.full_name}
               </h1>
               <p className="mb-4 text-lg text-muted-foreground">
-                {playerNameData?.team_details?.[0]?.full_name || "N/A"}
+                {playerNameData?.team_details?.[0]?.full_name || 'N/A'}
               </p>
               <Badge variant="outline" className="border-primary text-primary">
                 NBA
@@ -404,7 +513,7 @@ const PlayerProfile = () => {
                 <span className="text-sm font-semibold text-primary">
                   {player?.POSITION ||
                     playerNameData?.profile?.Position ||
-                    "N/A"}
+                    'N/A'}
                 </span>
                 <p className="mt-1 text-xs text-muted-foreground">Position</p>
               </div>
@@ -429,11 +538,11 @@ const PlayerProfile = () => {
                     <span className="text-sm font-semibold text-primary">
                       {player?.BIRTH_DATE
                         ? new Date(player.BIRTH_DATE).toLocaleDateString(
-                            "en-US",
+                            'en-US',
                             {
-                              month: "short",
-                              day: "numeric",
-                              year: "numeric",
+                              month: 'short',
+                              day: 'numeric',
+                              year: 'numeric',
                             },
                           )
                         : birthDateKey}
@@ -549,13 +658,13 @@ const PlayerProfile = () => {
                             </TableCell>
                             <TableCell></TableCell>
                             <TableCell className="text-right font-semibold text-primary">
-                              {group.average?.PTS ?? "-"}
+                              {group.average?.PTS ?? '-'}
                             </TableCell>
                             <TableCell className="text-right font-semibold text-primary">
-                              {group.average?.REB ?? "-"}
+                              {group.average?.REB ?? '-'}
                             </TableCell>
                             <TableCell className="text-right font-semibold text-primary">
-                              {group.average?.AST ?? "-"}
+                              {group.average?.AST ?? '-'}
                             </TableCell>
                           </TableRow>
                           {/* Games */}
@@ -565,30 +674,30 @@ const PlayerProfile = () => {
                               className="border-border"
                             >
                               <TableCell className="text-foreground">
-                                {game?.date ?? "-"}
+                                {game?.date ?? '-'}
                               </TableCell>
                               <TableCell className="text-muted-foreground">
-                                {game?.opponent ?? "-"}
+                                {game?.opponent ?? '-'}
                               </TableCell>
                               <TableCell
                                 className={
-                                  (game?.result ?? "").startsWith("W")
-                                    ? "text-[#34D399]"
-                                    : (game?.result ?? "").startsWith("L")
-                                      ? "text-[#DC2626]"
-                                      : "text-white"
+                                  (game?.result ?? '').startsWith('W')
+                                    ? 'text-[#34D399]'
+                                    : (game?.result ?? '').startsWith('L')
+                                      ? 'text-[#DC2626]'
+                                      : 'text-white'
                                 }
                               >
-                                {game?.result ?? "-"}
+                                {game?.result ?? '-'}
                               </TableCell>
                               <TableCell className="text-right text-foreground">
-                                {game?.PTS ?? "-"}
+                                {game?.PTS ?? '-'}
                               </TableCell>
                               <TableCell className="text-right text-foreground">
-                                {game?.REB ?? "-"}
+                                {game?.REB ?? '-'}
                               </TableCell>
                               <TableCell className="text-right text-foreground">
-                                {game?.AST ?? "-"}
+                                {game?.AST ?? '-'}
                               </TableCell>
                             </TableRow>
                           ))}
@@ -699,223 +808,223 @@ const PlayerProfile = () => {
                   <XAxis
                     dataKey="season"
                     stroke="#9CA3AF"
-                    style={{ fontSize: "12px" }}
+                    style={{ fontSize: '12px' }}
                   />
-                  <YAxis stroke="#9CA3AF" style={{ fontSize: "12px" }} />
+                  <YAxis stroke="#9CA3AF" style={{ fontSize: '12px' }} />
                   <Tooltip
                     contentStyle={{
-                      backgroundColor: "#1F2937",
-                      border: "1px solid #374151",
-                      borderRadius: "8px",
+                      backgroundColor: '#1F2937',
+                      border: '1px solid #374151',
+                      borderRadius: '8px',
                     }}
-                    labelStyle={{ color: "#F3F4F6" }}
+                    labelStyle={{ color: '#F3F4F6' }}
                   />
-                  <Legend wrapperStyle={{ fontSize: "12px" }} />
-                  {selectedProps.includes("Points") && (
+                  <Legend wrapperStyle={{ fontSize: '12px' }} />
+                  {selectedProps.includes('Points') && (
                     <Line
                       type="monotone"
                       dataKey="points"
-                      stroke={propColors["Points"]}
+                      stroke={propColors['Points']}
                       strokeWidth={2}
                       name="Points"
                       dot={{ r: 3 }}
                     />
                   )}
-                  {selectedProps.includes("Assists") && (
+                  {selectedProps.includes('Assists') && (
                     <Line
                       type="monotone"
                       dataKey="assists"
-                      stroke={propColors["Assists"]}
+                      stroke={propColors['Assists']}
                       strokeWidth={2}
                       name="Assists"
                       dot={{ r: 3 }}
                     />
                   )}
-                  {selectedProps.includes("Rebounds") && (
+                  {selectedProps.includes('Rebounds') && (
                     <Line
                       type="monotone"
                       dataKey="rebounds"
-                      stroke={propColors["Rebounds"]}
+                      stroke={propColors['Rebounds']}
                       strokeWidth={2}
                       name="Rebounds"
                       dot={{ r: 3 }}
                     />
                   )}
-                  {selectedProps.includes("Blocks") && (
+                  {selectedProps.includes('Blocks') && (
                     <Line
                       type="monotone"
                       dataKey="blocks"
-                      stroke={propColors["Blocks"]}
+                      stroke={propColors['Blocks']}
                       strokeWidth={2}
                       name="Blocks"
                       dot={{ r: 3 }}
                     />
                   )}
-                  {selectedProps.includes("Steals") && (
+                  {selectedProps.includes('Steals') && (
                     <Line
                       type="monotone"
                       dataKey="steals"
-                      stroke={propColors["Steals"]}
+                      stroke={propColors['Steals']}
                       strokeWidth={2}
                       name="Steals"
                       dot={{ r: 3 }}
                     />
                   )}
-                  {selectedProps.includes("Turnovers") && (
+                  {selectedProps.includes('Turnovers') && (
                     <Line
                       type="monotone"
                       dataKey="turnovers"
-                      stroke={propColors["Turnovers"]}
+                      stroke={propColors['Turnovers']}
                       strokeWidth={2}
                       name="Turnovers"
                       dot={{ r: 3 }}
                     />
                   )}
-                  {selectedProps.includes("Minutes") && (
+                  {selectedProps.includes('Minutes') && (
                     <Line
                       type="monotone"
                       dataKey="minutes"
-                      stroke={propColors["Minutes"]}
+                      stroke={propColors['Minutes']}
                       strokeWidth={2}
                       name="Minutes"
                       dot={{ r: 3 }}
                     />
                   )}
-                  {selectedProps.includes("3PM") && (
+                  {selectedProps.includes('3PM') && (
                     <Line
                       type="monotone"
                       dataKey="threePointsMade"
-                      stroke={propColors["3PM"]}
+                      stroke={propColors['3PM']}
                       strokeWidth={2}
                       name="3PM"
                       dot={{ r: 3 }}
                     />
                   )}
-                  {selectedProps.includes("3PA") && (
+                  {selectedProps.includes('3PA') && (
                     <Line
                       type="monotone"
                       dataKey="threePointsAttempted"
-                      stroke={propColors["3PA"]}
+                      stroke={propColors['3PA']}
                       strokeWidth={2}
                       name="3PA"
                       dot={{ r: 3 }}
                     />
                   )}
-                  {selectedProps.includes("3P%") && (
+                  {selectedProps.includes('3P%') && (
                     <Line
                       type="monotone"
                       dataKey="threePointPct"
-                      stroke={propColors["3P%"]}
+                      stroke={propColors['3P%']}
                       strokeWidth={2}
                       name="3P%"
                       dot={{ r: 3 }}
                     />
                   )}
-                  {selectedProps.includes("FGM") && (
+                  {selectedProps.includes('FGM') && (
                     <Line
                       type="monotone"
                       dataKey="fieldGoalsMade"
-                      stroke={propColors["FGM"]}
+                      stroke={propColors['FGM']}
                       strokeWidth={2}
                       name="FGM"
                       dot={{ r: 3 }}
                     />
                   )}
-                  {selectedProps.includes("FGA") && (
+                  {selectedProps.includes('FGA') && (
                     <Line
                       type="monotone"
                       dataKey="fieldGoalsAttempted"
-                      stroke={propColors["FGA"]}
+                      stroke={propColors['FGA']}
                       strokeWidth={2}
                       name="FGA"
                       dot={{ r: 3 }}
                     />
                   )}
-                  {selectedProps.includes("FG%") && (
+                  {selectedProps.includes('FG%') && (
                     <Line
                       type="monotone"
                       dataKey="fieldGoalPct"
-                      stroke={propColors["FG%"]}
+                      stroke={propColors['FG%']}
                       strokeWidth={2}
                       name="FG%"
                       dot={{ r: 3 }}
                     />
                   )}
-                  {selectedProps.includes("FTM") && (
+                  {selectedProps.includes('FTM') && (
                     <Line
                       type="monotone"
                       dataKey="freeThrowsMade"
-                      stroke={propColors["FTM"]}
+                      stroke={propColors['FTM']}
                       strokeWidth={2}
                       name="FTM"
                       dot={{ r: 3 }}
                     />
                   )}
-                  {selectedProps.includes("FTA") && (
+                  {selectedProps.includes('FTA') && (
                     <Line
                       type="monotone"
                       dataKey="freeThrowsAttempted"
-                      stroke={propColors["FTA"]}
+                      stroke={propColors['FTA']}
                       strokeWidth={2}
                       name="FTA"
                       dot={{ r: 3 }}
                     />
                   )}
-                  {selectedProps.includes("FT%") && (
+                  {selectedProps.includes('FT%') && (
                     <Line
                       type="monotone"
                       dataKey="freeThrowPct"
-                      stroke={propColors["FT%"]}
+                      stroke={propColors['FT%']}
                       strokeWidth={2}
                       name="FT%"
                       dot={{ r: 3 }}
                     />
                   )}
-                  {selectedProps.includes("OREB") && (
+                  {selectedProps.includes('OREB') && (
                     <Line
                       type="monotone"
                       dataKey="offensiveRebounds"
-                      stroke={propColors["OREB"]}
+                      stroke={propColors['OREB']}
                       strokeWidth={2}
                       name="OREB"
                       dot={{ r: 3 }}
                     />
                   )}
-                  {selectedProps.includes("DREB") && (
+                  {selectedProps.includes('DREB') && (
                     <Line
                       type="monotone"
                       dataKey="defensiveRebounds"
-                      stroke={propColors["DREB"]}
+                      stroke={propColors['DREB']}
                       strokeWidth={2}
                       name="DREB"
                       dot={{ r: 3 }}
                     />
                   )}
-                  {selectedProps.includes("Personal Fouls") && (
+                  {selectedProps.includes('Personal Fouls') && (
                     <Line
                       type="monotone"
                       dataKey="personalFouls"
-                      stroke={propColors["Personal Fouls"]}
+                      stroke={propColors['Personal Fouls']}
                       strokeWidth={2}
                       name="Personal Fouls"
                       dot={{ r: 3 }}
                     />
                   )}
-                  {selectedProps.includes("Games Played") && (
+                  {selectedProps.includes('Games Played') && (
                     <Line
                       type="monotone"
                       dataKey="gamesPlayed"
-                      stroke={propColors["Games Played"]}
+                      stroke={propColors['Games Played']}
                       strokeWidth={2}
                       name="Games Played"
                       dot={{ r: 3 }}
                     />
                   )}
-                  {selectedProps.includes("Games Started") && (
+                  {selectedProps.includes('Games Started') && (
                     <Line
                       type="monotone"
                       dataKey="gamesStarted"
-                      stroke={propColors["Games Started"]}
+                      stroke={propColors['Games Started']}
                       strokeWidth={2}
                       name="Games Started"
                       dot={{ r: 3 }}

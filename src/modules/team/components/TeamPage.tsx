@@ -1,7 +1,8 @@
-"use client";
+'use client';
 
-import { useQuery } from "@tanstack/react-query";
-import { useParams, useRouter } from "next/navigation";
+import { useQuery } from '@tanstack/react-query';
+import { useParams, useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
 import {
   BarChart,
   Bar,
@@ -11,13 +12,14 @@ import {
   Tooltip,
   ResponsiveContainer,
   Cell,
-} from "recharts";
+} from 'recharts';
 
-import { ROUTES } from "@/shared/config/routes";
-import { teamApi } from "@/modules/team";
-import { Button } from "@/shared/components/button";
-import Loader from "@/shared/components/loader";
-import Navigation from "@/shared/components/Navigation";
+import { useAuth } from '@/context/AuthContext';
+import { ROUTES } from '@/shared/config/routes';
+import { teamApi } from '@/modules/team';
+import { Button } from '@/shared/components/button';
+import Loader from '@/shared/components/loader';
+import Navigation from '@/shared/components/Navigation';
 import {
   AlertTriangle,
   ArrowLeft,
@@ -27,21 +29,23 @@ import {
   TrendingUp,
   Trophy,
   Users,
-} from "lucide-react";
-import Footer from "@/shared/components/Footer";
+  Lock,
+  Crown,
+} from 'lucide-react';
+import Footer from '@/shared/components/Footer';
 
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-} from "@/shared/components/card";
+} from '@/shared/components/card';
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "@/shared/components/tabs";
+} from '@/shared/components/tabs';
 import {
   Table,
   TableBody,
@@ -49,24 +53,36 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/shared/components/table";
-import { Badge } from "@/shared/components/badge";
+} from '@/shared/components/table';
+import { Badge } from '@/shared/components/badge';
 
 const TeamPage = () => {
   const params = useParams();
   const teamId = params?.id as string;
   const router = useRouter();
+  const { isAuthenticated } = useAuth();
+  const [authError, setAuthError] = useState<402 | null>(null);
 
   const {
     data: team,
     error,
     isLoading,
   } = useQuery({
-    queryKey: ["team", teamId],
+    queryKey: ['team', teamId],
     queryFn: () => teamApi.getTeamById(teamId),
     staleTime: 1000 * 60 * 5,
-    retry: 2,
+    retry: false,
+    enabled: isAuthenticated,
   });
+
+  useEffect(() => {
+    if (error) {
+      const err = error as any;
+      if (err?.code === 402) {
+        setAuthError(402);
+      }
+    }
+  }, [error]);
 
   const winPct = team?.overall_stats
     ? (
@@ -79,66 +95,66 @@ const TeamPage = () => {
   const chartData = team
     ? [
         {
-          name: "PPG",
+          name: 'PPG',
           value: parseFloat(
             (
               (team?.team_statistics?.PTS || 0) /
               (team?.team_statistics?.GP || 1)
             ).toFixed(1),
           ),
-          color: "hsl(var(--chart-1))",
+          color: 'hsl(var(--chart-1))',
         },
         {
-          name: "RPG",
+          name: 'RPG',
           value: parseFloat(
             (
               (team?.team_statistics?.REB || 0) /
               (team?.team_statistics?.GP || 1)
             ).toFixed(1),
           ),
-          color: "hsl(var(--chart-3))",
+          color: 'hsl(var(--chart-3))',
         },
         {
-          name: "APG",
+          name: 'APG',
           value: parseFloat(
             (
               (team?.team_statistics?.AST || 0) /
               (team?.team_statistics?.GP || 1)
             ).toFixed(1),
           ),
-          color: "hsl(var(--chart-4))",
+          color: 'hsl(var(--chart-4))',
         },
         {
-          name: "FG%",
+          name: 'FG%',
           value: parseFloat(
             ((team?.team_statistics?.FG_PCT || 0) * 100).toFixed(1),
           ),
-          color: "hsl(var(--chart-5))",
+          color: 'hsl(var(--chart-5))',
         },
         {
-          name: "3P%",
+          name: '3P%',
           value: parseFloat(
             ((team?.team_statistics?.FG3_PCT || 0) * 100).toFixed(1),
           ),
-          color: "hsl(var(--chart-1))",
+          color: 'hsl(var(--chart-1))',
         },
         {
-          name: "FT%",
+          name: 'FT%',
           value: parseFloat(
             ((team?.team_statistics?.FT_PCT || 0) * 100).toFixed(1),
           ),
-          color: "hsl(var(--chart-2))",
+          color: 'hsl(var(--chart-2))',
         },
       ]
     : [];
 
   const injuries = team?.player_statistics?.filter(
-    (p) => p?.status !== "healthy",
+    (p) => p?.status !== 'healthy',
   );
 
   const getStatusBadge = (status: string) => {
     switch (status?.toLowerCase()) {
-      case "out":
+      case 'out':
         return (
           <Badge
             variant="outline"
@@ -147,7 +163,7 @@ const TeamPage = () => {
             Out
           </Badge>
         );
-      case "questionable":
+      case 'questionable':
         return (
           <Badge
             variant="outline"
@@ -156,7 +172,7 @@ const TeamPage = () => {
             Questionable
           </Badge>
         );
-      case "day-to-day":
+      case 'day-to-day':
         return (
           <Badge
             variant="outline"
@@ -183,6 +199,95 @@ const TeamPage = () => {
         size="h-14 w-14"
         className="flex h-[70vh] w-full items-center justify-center"
       />
+    );
+  }
+
+  // Show login screen if not authenticated
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navigation />
+        <main className="container mx-auto px-6 py-8">
+          <div className="flex min-h-[60vh] items-center justify-center">
+            <Card className="max-w-md">
+              <CardHeader>
+                <div className="mb-4 flex justify-center">
+                  <div className="rounded-full bg-primary/10 p-4">
+                    <Lock className="h-8 w-8 text-primary" />
+                  </div>
+                </div>
+                <CardTitle className="text-center text-2xl">
+                  Login Required
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <p className="text-center text-muted-foreground">
+                  Please login to access team details and statistics.
+                </p>
+                <Button
+                  className="w-full"
+                  onClick={() => router.push('/login')}
+                >
+                  Login
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  // Show subscription screen for 402 (from backend)
+  if (authError === 402) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navigation />
+        <main className="container mx-auto px-6 py-8">
+          <div className="flex min-h-[60vh] items-center justify-center">
+            <Card className="max-w-md">
+              <CardHeader>
+                <div className="mb-4 flex justify-center">
+                  <div className="rounded-full bg-primary/10 p-4">
+                    <Crown className="h-8 w-8 text-primary" />
+                  </div>
+                </div>
+                <CardTitle className="text-center text-2xl">
+                  Premium Access Required
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <p className="text-center text-muted-foreground">
+                  Get access to detailed team statistics and insights with a
+                  premium subscription.
+                </p>
+                <div className="space-y-2">
+                  <div className="flex items-start gap-2">
+                    <Crown className="mt-0.5 h-4 w-4 text-primary" />
+                    <span className="text-sm">Complete team statistics</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <Crown className="mt-0.5 h-4 w-4 text-primary" />
+                    <span className="text-sm">Player performance data</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <Crown className="mt-0.5 h-4 w-4 text-primary" />
+                    <span className="text-sm">Injury reports & updates</span>
+                  </div>
+                </div>
+                <Button
+                  className="w-full"
+                  onClick={() => router.push('/pricing')}
+                >
+                  View Premium Plans
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </main>
+        <Footer />
+      </div>
     );
   }
 
@@ -215,8 +320,8 @@ const TeamPage = () => {
             <div
               className="flex h-24 w-24 items-center justify-center rounded-2xl text-4xl font-bold"
               style={{
-                backgroundColor: "#1e293b20",
-                border: "2px solid #1e293b",
+                backgroundColor: '#1e293b20',
+                border: '2px solid #1e293b',
               }}
             >
               {team?.abbreviation}
@@ -382,22 +487,22 @@ const TeamPage = () => {
                         >
                           <div>
                             <div className="font-medium">
-                              {game?.home_team_id === team?.id ? "vs" : "@"}{" "}
+                              {game?.home_team_id === team?.id ? 'vs' : '@'}{' '}
                               {game?.opponent}
                             </div>
                             <div className="text-sm text-muted-foreground">
                               {new Date(game?.date).toLocaleDateString(
-                                "en-US",
+                                'en-US',
                                 {
-                                  month: "short",
-                                  day: "numeric",
-                                  year: "numeric",
+                                  month: 'short',
+                                  day: 'numeric',
+                                  year: 'numeric',
                                 },
                               )}
                             </div>
                           </div>
                           <Badge variant="outline">
-                            {game?.home_team_id === team?.id ? "Home" : "Away"}
+                            {game?.home_team_id === team?.id ? 'Home' : 'Away'}
                           </Badge>
                         </div>
                       ))}
@@ -423,33 +528,33 @@ const TeamPage = () => {
                 {team?.recent_games && team?.recent_games.length > 0 ? (
                   <div className="flex flex-wrap gap-4">
                     {team?.recent_games?.map((game) => {
-                      const isWin = game?.result === "W";
+                      const isWin = game?.result === 'W';
                       return (
                         <div
                           key={game?.game_id}
                           className={`flex min-w-[180px] flex-col rounded-lg border p-4 ${
                             isWin
-                              ? "border-emerald-500/30 bg-emerald-500/10"
-                              : "border-red-500/30 bg-red-500/10"
+                              ? 'border-emerald-500/30 bg-emerald-500/10'
+                              : 'border-red-500/30 bg-red-500/10'
                           }`}
                         >
                           <div className="mb-2 text-xs text-muted-foreground">
-                            {new Date(game?.date).toLocaleDateString("en-US", {
-                              month: "short",
-                              day: "numeric",
+                            {new Date(game?.date).toLocaleDateString('en-US', {
+                              month: 'short',
+                              day: 'numeric',
                             })}
                           </div>
                           <div className="flex flex-1 items-center gap-3">
                             <div
                               className={`text-2xl font-bold ${
-                                isWin ? "text-emerald-400" : "text-red-400"
+                                isWin ? 'text-emerald-400' : 'text-red-400'
                               }`}
                             >
                               {game?.result}
                             </div>
                             <div className="flex-1">
                               <div className="font-medium">
-                                {game?.home_team_id === team?.id ? "vs" : "@"}{" "}
+                                {game?.home_team_id === team?.id ? 'vs' : '@'}{' '}
                                 {game?.opponent}
                               </div>
                               <div className="text-sm text-muted-foreground">
@@ -549,17 +654,17 @@ const TeamPage = () => {
                         >
                           <div>
                             <div className="text-lg font-medium">
-                              {game?.home_team_id === team?.id ? "vs" : "@"}{" "}
+                              {game?.home_team_id === team?.id ? 'vs' : '@'}{' '}
                               {game?.opponent}
                             </div>
                             <div className="text-muted-foreground">
                               {new Date(game?.date).toLocaleDateString(
-                                "en-US",
+                                'en-US',
                                 {
-                                  weekday: "short",
-                                  month: "short",
-                                  day: "numeric",
-                                  year: "numeric",
+                                  weekday: 'short',
+                                  month: 'short',
+                                  day: 'numeric',
+                                  year: 'numeric',
                                 },
                               )}
                             </div>
@@ -568,7 +673,7 @@ const TeamPage = () => {
                             variant="outline"
                             className="px-4 py-1 text-base"
                           >
-                            {game?.home_team_id === team?.id ? "Home" : "Away"}
+                            {game?.home_team_id === team?.id ? 'Home' : 'Away'}
                           </Badge>
                         </div>
                       ))}
@@ -589,28 +694,28 @@ const TeamPage = () => {
                   {team?.recent_games && team?.recent_games?.length > 0 ? (
                     <div className="space-y-3">
                       {team?.recent_games?.map((game) => {
-                        const isWin = game?.result === "W";
+                        const isWin = game?.result === 'W';
                         return (
                           <div
                             key={game?.game_id}
                             className={`flex items-center justify-between rounded-lg border p-4 ${
                               isWin
-                                ? "border-emerald-500/30 bg-emerald-500/10"
-                                : "border-red-500/30 bg-red-500/10"
+                                ? 'border-emerald-500/30 bg-emerald-500/10'
+                                : 'border-red-500/30 bg-red-500/10'
                             }`}
                           >
                             <div className="flex-1">
                               <div className="text-lg font-medium">
-                                {game?.home_team_id === team?.id ? "vs" : "@"}{" "}
+                                {game?.home_team_id === team?.id ? 'vs' : '@'}{' '}
                                 {game?.opponent}
                               </div>
                               <div className="text-muted-foreground">
                                 {new Date(game?.date).toLocaleDateString(
-                                  "en-US",
+                                  'en-US',
                                   {
-                                    weekday: "short",
-                                    month: "short",
-                                    day: "numeric",
+                                    weekday: 'short',
+                                    month: 'short',
+                                    day: 'numeric',
                                   },
                                 )}
                               </div>
@@ -627,7 +732,7 @@ const TeamPage = () => {
                             <div className="text-right">
                               <div
                                 className={`text-xl font-bold ${
-                                  isWin ? "text-emerald-400" : "text-red-400"
+                                  isWin ? 'text-emerald-400' : 'text-red-400'
                                 }`}
                               >
                                 {game?.result}
@@ -672,9 +777,9 @@ const TeamPage = () => {
                       <YAxis stroke="hsl(var(--muted-foreground))" />
                       <Tooltip
                         contentStyle={{
-                          backgroundColor: "hsl(var(--card))",
-                          border: "1px solid hsl(var(--border))",
-                          borderRadius: "8px",
+                          backgroundColor: 'hsl(var(--card))',
+                          border: '1px solid hsl(var(--border))',
+                          borderRadius: '8px',
                         }}
                       />
                       <Bar dataKey="value" radius={[4, 4, 0, 0]}>
