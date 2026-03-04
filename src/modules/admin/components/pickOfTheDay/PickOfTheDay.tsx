@@ -21,8 +21,7 @@ const FieldIf = ({
     .split('.')
     .reduce((acc: any, key) => (acc ? acc[key] : undefined), record);
 
-  const isEmptyString =
-    typeof value === 'string' && value.trim().length === 0;
+  const isEmptyString = typeof value === 'string' && value.trim().length === 0;
   const isNullString =
     typeof value === 'string' &&
     (value.trim().toLowerCase() === 'null' ||

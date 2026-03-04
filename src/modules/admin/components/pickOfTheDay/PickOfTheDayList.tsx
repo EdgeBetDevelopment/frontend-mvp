@@ -2,15 +2,12 @@ import {
   BooleanField,
   Datagrid,
   DateField,
-  EditButton,
   List,
   TextField,
   FunctionField,
   useNotify,
   useUpdate,
 } from 'react-admin';
-
-import { DeleteGamePredictionButton } from './DeteleGamePredictionButton';
 
 const StatusSelector = ({ record }: { record: any }) => {
   const notify = useNotify();
@@ -75,7 +72,7 @@ export const PickOfTheDayList = () => (
   <List>
     <Datagrid
       bulkActionButtons={false}
-      rowClick="show"
+      rowClick="edit"
       sx={{
         '& .pickoday-game-col': {
           width: '24rem',
@@ -158,8 +155,6 @@ export const PickOfTheDayList = () => (
           );
         }}
       />
-      <EditButton />
-      <DeleteGamePredictionButton />
     </Datagrid>
   </List>
 );
