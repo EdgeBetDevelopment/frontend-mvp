@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, {
   useCallback,
@@ -6,36 +6,36 @@ import React, {
   useMemo,
   useRef,
   useState,
-} from "react";
-import { useInfiniteQuery } from "@tanstack/react-query";
+} from 'react';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import {
   ReadonlyURLSearchParams,
   useRouter,
   useSearchParams,
-} from "next/navigation";
+} from 'next/navigation';
 
-import EmptyPlaceholder from "@/shared/components/EmptyPlaceholder";
-import { AuthModal } from "@/modules/auth";
-import { GameAnalysisModal } from "@/modules/game/components/analysis";
-import { IGameWithAI } from "@/modules/game/types";
-import { TrackBetsModal } from "@/modules/tracker";
-import { useAuth } from "@/context/AuthContext";
-import { useAuthGuard } from "@/modules/auth/hooks";
-import useModalManager from "@/shared/hooks/useModalManager";
-import { gameService } from "@/modules/game";
-import { useStore } from "@/store";
-import { Button } from "@/shared/components/button";
-import { ScrollArea } from "@/shared/components/scroll-area";
-import { Skeleton } from "@/shared/components/skeleton";
-import { formUrlQuery } from "@/shared/utils";
-import { ListRenderer } from "@/shared/components";
-import Navigation from "@/shared/components/Navigation";
-import Footer from "@/shared/components/Footer";
+import EmptyPlaceholder from '@/shared/components/EmptyPlaceholder';
+import { AuthModal } from '@/modules/auth';
+import { GameAnalysisModal } from '@/modules/game/components/analysis';
+import { IGameWithAI } from '@/modules/game/types';
+import { TrackBetsModal } from '@/modules/tracker';
+import { useAuth } from '@/context/AuthContext';
+import { useAuthGuard } from '@/modules/auth/hooks';
+import useModalManager from '@/shared/hooks/useModalManager';
+import { gameService } from '@/modules/game';
+import { useStore } from '@/store';
+import { Button } from '@/shared/components/button';
+import { ScrollArea } from '@/shared/components/scroll-area';
+import { Skeleton } from '@/shared/components/skeleton';
+import { formUrlQuery } from '@/shared/utils';
+import { ListRenderer } from '@/shared/components';
+import Navigation from '@/shared/components/Navigation';
+import Footer from '@/shared/components/Footer';
 
-import MatchupPageFilters from "./Filters";
-import GameCard from "./GameCard";
-import TrackBetsAside from "./TrackBetAside";
-import { MODAL_IDS } from "@/shared/constants";
+import MatchupPageFilters from './Filters';
+import GameCard from './GameCard';
+import TrackBetsAside from './TrackBetAside';
+import { MODAL_IDS } from '@/shared/constants';
 
 const MatchupPage = () => {
   const { isAuthenticated } = useAuth();
@@ -57,7 +57,7 @@ const MatchupPage = () => {
   const { setTrackedGame, setSelectedGame } = storeManager;
 
   const params = useSearchParams() as ReadonlyURLSearchParams;
-  const type = params.get("type");
+  const type = params.get('type');
   const router = useRouter();
 
   const [authDismissed, setAuthDismissed] = useState(false);
@@ -70,7 +70,7 @@ const MatchupPage = () => {
     hasNextPage,
     isFetchingNextPage,
   } = useInfiniteQuery<IGameWithAI[], Error>({
-    queryKey: ["games-feed"],
+    queryKey: ['games-feed'],
     queryFn: ({ pageParam }) =>
       gameService.getGames(pageParam as number | undefined),
     initialPageParam: undefined as number | undefined,
@@ -84,6 +84,7 @@ const MatchupPage = () => {
 
       return nextLastId;
     },
+    refetchInterval: 300000,
     retry: false,
   });
 
@@ -106,7 +107,7 @@ const MatchupPage = () => {
   useEffect(() => {
     const observer = new IntersectionObserver(handleIntersection, {
       root: null,
-      rootMargin: "200px",
+      rootMargin: '200px',
       threshold: 0,
     });
 
@@ -139,7 +140,7 @@ const MatchupPage = () => {
       setTimeout(() => {
         const url = formUrlQuery({
           params: params.toString(),
-          key: "game-analysis",
+          key: 'game-analysis',
           value: game?.game?.id?.toString(),
         });
         router.push(url);
@@ -160,7 +161,7 @@ const MatchupPage = () => {
 
       const url = formUrlQuery({
         params: params.toString(),
-        keysToRemove: ["game-analysis"],
+        keysToRemove: ['game-analysis'],
       });
       router.push(url);
     }, 150);
@@ -176,13 +177,13 @@ const MatchupPage = () => {
   const onCloseAuth = () => {
     setAuthDismissed(true);
     closeModal(MODAL_IDS.AUTH);
-    router.push("/");
+    router.push('/');
   };
 
   useEffect(() => {
     if (!isAuthenticated) return;
 
-    const gameAnalysisParam = params.get("game-analysis");
+    const gameAnalysisParam = params.get('game-analysis');
     const { openModal, closeModal, isModalOpen } = modalManagerRef.current;
     const { setSelectedGame } = storeManagerRef.current;
 

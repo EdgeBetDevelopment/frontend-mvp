@@ -1,31 +1,31 @@
-"use client";
+'use client';
 
-import { useParams, useRouter } from "next/navigation";
-import { useQuery } from "@tanstack/react-query";
+import { useParams, useRouter } from 'next/navigation';
+import { useQuery } from '@tanstack/react-query';
 import {
   ArrowLeft,
   Calendar,
   MapPin,
   Trophy,
   TrendingDown,
-} from "lucide-react";
+} from 'lucide-react';
 
-import Navigation from "@/shared/components/Navigation";
-import Footer from "@/shared/components/Footer";
-import { Button } from "@/shared/components/button";
+import Navigation from '@/shared/components/Navigation';
+import Footer from '@/shared/components/Footer';
+import { Button } from '@/shared/components/button';
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-} from "@/shared/components/card";
-import { Badge } from "@/shared/components/badge";
+} from '@/shared/components/card';
+import { Badge } from '@/shared/components/badge';
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "@/shared/components/tabs";
+} from '@/shared/components/tabs';
 import {
   Table,
   TableBody,
@@ -33,11 +33,11 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/shared/components/table";
-import Loader from "@/shared/components/loader";
-import EmptyPlaceholder from "@/shared/components/EmptyPlaceholder";
-import { gameService } from "@/modules/game";
-import { formatUtcToLocalDate, formatUtcToLocalTimeAmPm } from "@/shared/utils";
+} from '@/shared/components/table';
+import Loader from '@/shared/components/loader';
+import EmptyPlaceholder from '@/shared/components/EmptyPlaceholder';
+import { gameService } from '@/modules/game';
+import { formatUtcToLocalDate, formatUtcToLocalTimeAmPm } from '@/shared/utils';
 
 interface PlayerStats {
   status: string;
@@ -247,7 +247,7 @@ const GameBreakdownPage = () => {
     error,
     isLoading,
   } = useQuery<GameDetailsData>({
-    queryKey: ["game", gameId],
+    queryKey: ['game', gameId],
     queryFn: () => gameService.getGameById(gameId),
     staleTime: 1000 * 60 * 5,
     retry: 2,
@@ -299,7 +299,7 @@ const GameBreakdownPage = () => {
 
   const extractMinutes = (timeString: string): string => {
     const match = timeString?.match(/PT(\d+)M/);
-    return match ? match[1] : "0";
+    return match ? match[1] : '0';
   };
 
   const PlayerStatsTable = ({
@@ -402,13 +402,13 @@ const GameBreakdownPage = () => {
               <TableCell
                 className={`text-center font-medium ${
                   player.statistics.plusMinusPoints > 0
-                    ? "text-emerald-400"
+                    ? 'text-emerald-400'
                     : player.statistics.plusMinusPoints < 0
-                      ? "text-red-400"
-                      : "text-muted-foreground"
+                      ? 'text-red-400'
+                      : 'text-muted-foreground'
                 }`}
               >
-                {player.statistics.plusMinusPoints > 0 ? "+" : ""}
+                {player.statistics.plusMinusPoints > 0 ? '+' : ''}
                 {player.statistics.plusMinusPoints}
               </TableCell>
             </TableRow>
@@ -460,8 +460,8 @@ const GameBreakdownPage = () => {
                 <div
                   className={`text-4xl font-bold md:text-5xl ${
                     awayTeam.score > homeTeam.score
-                      ? "text-foreground"
-                      : "text-muted-foreground"
+                      ? 'text-foreground'
+                      : 'text-muted-foreground'
                   }`}
                 >
                   {awayTeam.score}
@@ -497,8 +497,8 @@ const GameBreakdownPage = () => {
                 <div
                   className={`text-4xl font-bold md:text-5xl ${
                     homeTeam.score > awayTeam.score
-                      ? "text-foreground"
-                      : "text-muted-foreground"
+                      ? 'text-foreground'
+                      : 'text-muted-foreground'
                   }`}
                 >
                   {homeTeam.score}
@@ -681,62 +681,62 @@ const GameBreakdownPage = () => {
                 <div className="space-y-4">
                   {[
                     {
-                      label: "Field Goal %",
+                      label: 'Field Goal %',
                       home: homeTeam.statistics.fieldGoalsPercentage,
                       away: awayTeam.statistics.fieldGoalsPercentage,
-                      format: (val: number) => val.toFixed(1) + "%",
+                      format: (val: number) => val.toFixed(1) + '%',
                     },
                     {
-                      label: "3-Point %",
+                      label: '3-Point %',
                       home: homeTeam.statistics.threePointersPercentage,
                       away: awayTeam.statistics.threePointersPercentage,
-                      format: (val: number) => val.toFixed(1) + "%",
+                      format: (val: number) => val.toFixed(1) + '%',
                     },
                     {
-                      label: "Free Throw %",
+                      label: 'Free Throw %',
                       home: homeTeam.statistics.freeThrowsPercentage,
                       away: awayTeam.statistics.freeThrowsPercentage,
-                      format: (val: number) => val.toFixed(1) + "%",
+                      format: (val: number) => val.toFixed(1) + '%',
                     },
                     {
-                      label: "Rebounds",
+                      label: 'Rebounds',
                       home: homeTeam.statistics.reboundsTotal,
                       away: awayTeam.statistics.reboundsTotal,
                       format: (val: number) => val.toString(),
                     },
                     {
-                      label: "Assists",
+                      label: 'Assists',
                       home: homeTeam.statistics.assists,
                       away: awayTeam.statistics.assists,
                       format: (val: number) => val.toString(),
                     },
                     {
-                      label: "Turnovers",
+                      label: 'Turnovers',
                       home: homeTeam.statistics.turnoversTotal,
                       away: awayTeam.statistics.turnoversTotal,
                       format: (val: number) => val.toString(),
                       inverse: true,
                     },
                     {
-                      label: "Steals",
+                      label: 'Steals',
                       home: homeTeam.statistics.steals,
                       away: awayTeam.statistics.steals,
                       format: (val: number) => val.toString(),
                     },
                     {
-                      label: "Blocks",
+                      label: 'Blocks',
                       home: homeTeam.statistics.blocks,
                       away: awayTeam.statistics.blocks,
                       format: (val: number) => val.toString(),
                     },
                     {
-                      label: "Points in Paint",
+                      label: 'Points in Paint',
                       home: homeTeam.statistics.pointsInThePaint,
                       away: awayTeam.statistics.pointsInThePaint,
                       format: (val: number) => val.toString(),
                     },
                     {
-                      label: "Fast Break Points",
+                      label: 'Fast Break Points',
                       home: homeTeam.statistics.pointsFastBreak,
                       away: awayTeam.statistics.pointsFastBreak,
                       format: (val: number) => val.toString(),
@@ -756,8 +756,8 @@ const GameBreakdownPage = () => {
                         <div
                           className={`text-right font-medium ${
                             homeWins
-                              ? "text-emerald-400"
-                              : "text-muted-foreground"
+                              ? 'text-emerald-400'
+                              : 'text-muted-foreground'
                           }`}
                         >
                           {stat.format(stat.home)}
@@ -768,8 +768,8 @@ const GameBreakdownPage = () => {
                         <div
                           className={`text-left font-medium ${
                             awayWins
-                              ? "text-emerald-400"
-                              : "text-muted-foreground"
+                              ? 'text-emerald-400'
+                              : 'text-muted-foreground'
                           }`}
                         >
                           {stat.format(stat.away)}
