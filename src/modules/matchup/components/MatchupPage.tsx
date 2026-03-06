@@ -37,6 +37,7 @@ import {
 import MatchupPageFilters from './Filters';
 import GameCard from './GameCard';
 import TrackBetsAside from './TrackBetAside';
+import MobileBetSlip from './MobileBetSlip';
 import { MODAL_IDS } from '@/shared/constants';
 
 const MatchupPage = () => {
@@ -53,7 +54,7 @@ const MatchupPage = () => {
   });
 
   const { openModal, closeModal, isModalOpen } = modalManager;
-  const { setTrackedGame, setSelectedGame } = storeManager;
+  const { setSelectedGame } = storeManager;
 
   const params = useSearchParams() as ReadonlyURLSearchParams;
   const type = params.get('type');
@@ -129,17 +130,6 @@ const MatchupPage = () => {
     };
   }, [handleIntersection]);
 
-  const onClickTrackBet = (game: IGameWithAI) => {
-    if (!isAuthenticated) return;
-    setTrackedGame(game);
-    openModal(MODAL_IDS.TRACK_BET);
-  };
-
-  const onClickClearTrackBet = () => {
-    setTrackedGame(null);
-    closeModal(MODAL_IDS.TRACK_BET);
-  };
-
   const onClickFullAnalysis = useCallback(
     (game: IGameWithAI) => {
       if (!isAuthenticated) return;
@@ -158,10 +148,6 @@ const MatchupPage = () => {
     },
     [isAuthenticated, openModal, setSelectedGame, params, router],
   );
-  const onOpenTrackBet = () => {
-    if (!isAuthenticated) return;
-    openModal(MODAL_IDS.TRACK_BET);
-  };
 
   const onClickCloseModal = useCallback(() => {
     closeModal(MODAL_IDS.GAME_ANALYSIS);
@@ -303,12 +289,6 @@ const MatchupPage = () => {
       <div className="container mx-auto px-6 py-24">
         <MatchupPageFilters />
 
-        <div className="mt-8 block lg:hidden">
-          <Button variant="default" className="w-full" onClick={onOpenTrackBet}>
-            Track bet
-          </Button>
-        </div>
-
         {/* Main Content */}
         <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-4">
           {/* Matchups Grid */}
@@ -349,8 +329,8 @@ const MatchupPage = () => {
             )}
           </div>
 
-          {/* Track Bet Sidebar */}
-          <div className="lg:col-span-1">
+          {/* Track Bet Sidebar - Desktop Only */}
+          <div className="hidden lg:col-span-1 lg:block">
             <TrackBetsAside />
           </div>
         </div>
@@ -358,12 +338,8 @@ const MatchupPage = () => {
 
       <Footer />
 
-      {/* <div className="block lg:hidden">
-        <TrackBetsModal
-          isOpen={isModalOpen(MODAL_IDS.TRACK_BET)}
-          onClose={onClickClearTrackBet}
-        />
-      </div> */}
+      {/* Mobile Bet Slip */}
+      <MobileBetSlip />
 
       {isAuthenticated && flatGames.length > 0 && (
         <GameAnalysisModal
