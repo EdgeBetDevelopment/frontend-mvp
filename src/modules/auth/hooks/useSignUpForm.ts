@@ -8,6 +8,7 @@ import { toast } from 'sonner';
 import { z } from 'zod';
 
 import { handleFetchError } from '@/shared/utils/error-handling';
+import { applyPromotekitReferral } from '@/shared/utils';
 
 import authService from '../services';
 import { useAuth } from '../store';
@@ -60,13 +61,15 @@ export const useSignUpForm = ({ onSuccessSignUp }: UseSignUpFormProps = {}) => {
     error,
   } = useMutation({
     mutationFn: authService.signUp,
-    onSuccess: (data) => {
+    onSuccess: (data, variables) => {
       setTokens({
         accessToken: data.access_token,
         refreshToken: data.refresh_token,
         isAdmin: data.is_admin,
         isSuperAdmin: data.is_super_admin,
       });
+
+      applyPromotekitReferral(variables.email);
 
       if (onSuccessSignUp) {
         onSuccessSignUp();

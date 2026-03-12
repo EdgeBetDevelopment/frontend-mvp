@@ -4,7 +4,7 @@ export {
   convertEuropeanToAmerican,
   calcParlayOddsDecimal,
   makeId,
-} from "./convertAmericanToDecimal";
+} from './convertAmericanToDecimal';
 
 export {
   getFetchError,
@@ -12,15 +12,15 @@ export {
   getErrorMessage,
   handleMutationError,
   createMutationErrorHandler,
-} from "./error-handling";
+} from './error-handling';
 
-export { formatOddsWithSign, formatSpread } from "./formatOdds";
+export { formatOddsWithSign, formatSpread } from './formatOdds';
 
-export { getStatusColor } from "./status";
+export { getStatusColor } from './status';
 
-export { getTeamInfoByName } from "./team";
+export { getTeamInfoByName } from './team';
 
-export { truncateText } from "./text";
+export { truncateText } from './text';
 
 export {
   convertUTCToLocal,
@@ -31,8 +31,14 @@ export {
   formatUtcToLocalTimeAmPm,
   convertUTCToLocalWithAmPm,
   isTimeInPast,
-} from "./time";
+} from './time';
 
-export { cn } from "./helper";
+export { cn } from './helper';
 
-export { formUrlQuery } from "./url";
+export { formUrlQuery } from './url';
+
+export {
+  getPromotekitReferral,
+  applyPromotekitReferral,
+  hasPromotekitReferral,
+} from './promotekit';

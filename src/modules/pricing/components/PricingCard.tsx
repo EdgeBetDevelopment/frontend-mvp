@@ -10,6 +10,7 @@ import {
 import { paymentService } from "../services";
 import { Check } from "lucide-react";
 import { useState } from "react";
+import { getPromotekitReferral } from "@/shared/utils";
 
 interface PricingCardProps {
   id: number;
@@ -41,7 +42,8 @@ export const PricingCard = ({
   const handleCheckout = async () => {
     try {
       setLoading(true);
-      const url = await paymentService.subscribe(id);
+      const referral = getPromotekitReferral();
+      const url = await paymentService.subscribe(id, referral);
       window.location.href = url;
     } catch (error) {
       console.error("Stripe checkout error:", error);

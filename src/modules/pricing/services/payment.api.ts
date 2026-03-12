@@ -1,8 +1,8 @@
-import { axiosInstance } from "@/shared/lib";
-import type { ISubscriptionType, IUpdateSubscriptionPayload } from "../types";
+import { axiosInstance } from '@/shared/lib';
+import type { ISubscriptionType, IUpdateSubscriptionPayload } from '../types';
 
 const API_HEADERS = {
-  "x-api-key": process.env.NEXT_PUBLIC_PAYMENT_API_KEY || "",
+  'x-api-key': 'dSdnXN4q0dW1c8WIlPgvqUNAAnvv7qWt5PEetPjnk4KI30eHWi',
 };
 
 const paymentService = {
@@ -13,10 +13,19 @@ const paymentService = {
     return response.data;
   },
 
-  async subscribe(subscriptionId: number): Promise<string> {
-    const response = await axiosInstance.get(
-      `/payment/api/v1/stripe/${subscriptionId}`,
-    );
+  async subscribe(
+    subscriptionId: number,
+    promotekitReferral?: string,
+  ): Promise<string> {
+    const params = new URLSearchParams();
+    if (promotekitReferral) {
+      params.append('promotekit_referral', promotekitReferral);
+    }
+
+    const queryString = params.toString();
+    const url = `/payment/api/v1/stripe/${subscriptionId}${queryString ? `?${queryString}` : ''}`;
+
+    const response = await axiosInstance.get(url);
     return response.data.stripe_checkout_url;
   },
 
@@ -32,7 +41,7 @@ const paymentService = {
   async cancelSubscription(subscriptionId: number, typeId: number) {
     return this.updateSubscription({
       subscription_id: subscriptionId,
-      status: "canceled",
+      status: 'canceled',
     });
   },
 };
