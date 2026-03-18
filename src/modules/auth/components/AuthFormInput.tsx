@@ -1,12 +1,11 @@
 "use client";
 
 import React, { useState } from "react";
-import { LuEye } from 'react-icons/lu';
-import { LuEyeClosed } from 'react-icons/lu';
+import { LuEye, LuEyeClosed, LuPhone } from 'react-icons/lu';
 
 interface IAuthFormInputProps {
   placeholder: string;
-  type: 'text' | 'password' | 'email' | 'number' | 'tel';
+  type: 'text' | 'password' | 'email' | 'number' | 'tel' | 'phone';
   name?: string;
   value: string;
   handleChange: (value: string) => void;
@@ -15,6 +14,12 @@ interface IAuthFormInputProps {
   maxLength?: number;
   passwordToggle?: boolean;
 }
+
+const filterPhone = (raw: string): string => {
+  const hasPlus = raw.startsWith('+');
+  const digits = raw.replace(/\D/g, '');
+  return hasPlus ? '+' + digits : digits;
+};
 
 const AuthFormInput: React.FC<IAuthFormInputProps> = ({
   placeholder,
@@ -29,24 +34,39 @@ const AuthFormInput: React.FC<IAuthFormInputProps> = ({
 }) => {
   const [showPassword, setShowPassword] = useState(false);
 
-  const inputType =
-    passwordToggle && type === 'password'
+  const isPhone = type === 'phone';
+
+  const inputType = isPhone
+    ? 'tel'
+    : passwordToggle && type === 'password'
       ? showPassword
         ? 'text'
         : 'password'
       : type;
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const raw = e.target.value;
+    handleChange(isPhone ? filterPhone(raw) : raw);
+  };
+
   return (
     <div className="w-full max-w-[800px] transition-all">
       <div className="relative">
+        {isPhone && (
+          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-xl text-muted-foreground pointer-events-none">
+            <LuPhone />
+          </span>
+        )}
+
         <input
           disabled={disabled}
-          className="w-full rounded-xl border border-border bg-secondary px-5 py-4 text-base transition-all placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+          className={`w-full rounded-xl border border-border bg-secondary py-4 text-base transition-all placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary ${isPhone ? 'pl-11 pr-5' : 'px-5'}`}
           type={inputType}
+          inputMode={isPhone ? 'numeric' : undefined}
           value={value}
           maxLength={maxLength}
           name={name}
-          onChange={(e) => handleChange(e.target.value)}
+          onChange={handleInputChange}
           placeholder={placeholder}
         />
 
