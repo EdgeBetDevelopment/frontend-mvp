@@ -67,7 +67,7 @@ const BaseSignUpForm = ({ onSuccessSignUp }: IBaseSignUpForm) => {
               <AuthFormInput
                 {...field}
                 handleChange={field.onChange}
-                type="tel"
+                type="phone"
                 placeholder="Enter Your Phone"
                 error={errors.phone?.message}
                 disabled={isPending}
