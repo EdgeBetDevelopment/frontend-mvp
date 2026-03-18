@@ -97,6 +97,7 @@ const BaseSignUpForm = ({ onSuccessSignUp }: IBaseSignUpForm) => {
             render={({ field }) => (
               <AuthFormInput
                 {...field}
+                passwordToggle
                 handleChange={field.onChange}
                 type="password"
                 placeholder="Confirm Password"
