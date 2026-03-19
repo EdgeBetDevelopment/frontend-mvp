@@ -12,6 +12,7 @@ export interface ProfileUser {
   username: string;
   is_active: boolean;
   phone_number?: string;
+  discord_user_id?: string | null;
   subscriptions?: IUserSubscription[];
   two_fa?: {
     id: number;
@@ -69,6 +70,17 @@ export const profileService = {
       `/user/api/v1/user/2fa/recovery?backup_code=${backupCode}`,
     );
     return res.data;
+  },
+
+  async getDiscordOAuthLink(): Promise<{ url: string }> {
+    const res = await axiosInstance.get(`/user/api/v1/discord/oauth-link`);
+    return res.data;
+  },
+
+  async discordCallback(code: string, state: string): Promise<void> {
+    await axiosInstance.get(`/user/api/v1/discord/callback`, {
+      params: { code, state },
+    });
   },
 };
 
