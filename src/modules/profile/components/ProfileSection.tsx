@@ -8,6 +8,7 @@ import { GeneralInformation } from './GeneralInformation';
 import { Subscription } from './Subscription';
 import SecuritySettings from './SecuritySettings';
 import PasswordSettings from './PasswordSettings';
+import { DiscordConnect } from './DiscordConnect';
 import { userService } from '@/modules/profile/services';
 
 export function ProfileSection() {
@@ -43,6 +44,7 @@ export function ProfileSection() {
     <div className="space-y-6">
       <Subscription />
       <GeneralInformation />
+      <DiscordConnect discordUserId={user?.discord_user_id} />
       <PasswordSettings />
       {user && <SecuritySettings user={user} />}
     </div>
