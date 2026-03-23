@@ -47,7 +47,7 @@ export default function RootLayout({
         <Script
           async
           src="https://cdn.promotekit.com/pk.js"
-          data-promotekit={process.env.NEXT_PUBLIC_PROMOTEKIT_ID || ''}
+          data-promotekit="dcfed7d1-a734-43ff-b166-ff98c9c580f6"
           strategy="afterInteractive"
         />
       </head>
