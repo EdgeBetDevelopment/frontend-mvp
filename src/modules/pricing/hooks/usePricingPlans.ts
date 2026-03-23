@@ -1,9 +1,10 @@
 'use client';
 
-import { useEffect, useState } from "react";
-import { paymentService } from "../services";
-import type { ISubscriptionType, MappedPlan, UiConfig } from "../types";
-import { UI_CONFIGS, DEFAULT_UI_CONFIG } from "../constants";
+import { useEffect, useState } from 'react';
+import { paymentService } from '../services';
+import type { ISubscriptionType, MappedPlan, UiConfig } from '../types';
+import { UI_CONFIGS, DEFAULT_UI_CONFIG } from '../constants';
+import { getPromotekitReferral } from '@/shared/utils';
 
 const getUiConfig = (name: string): UiConfig => {
   return UI_CONFIGS[name] || { ...DEFAULT_UI_CONFIG, displayName: name };
@@ -32,7 +33,8 @@ export const usePricingPlans = () => {
   const handleCheckout = async (subId: number) => {
     try {
       setLoadingId(subId);
-      const url = await paymentService.subscribe(subId);
+      const referral = getPromotekitReferral();
+      const url = await paymentService.subscribe(subId, referral);
       window.location.href = url;
     } catch (error) {
       console.error('Stripe checkout error:', error);

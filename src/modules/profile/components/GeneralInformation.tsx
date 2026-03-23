@@ -7,7 +7,9 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Mail, Trash2, User } from "lucide-react";
 
+import { useAuth } from '@/modules/auth/store';
 import { userService } from '@/modules/profile/services';
+import { ROUTES } from '@/shared/config/routes';
 import { Button } from "@/shared/components/button";
 import { Input } from "@/shared/components/input";
 import { Label } from "@/shared/components/label";
@@ -20,6 +22,7 @@ import {
 } from "@/shared/components/card";
 
 import { ModalProfile } from "./Modal";
+import { toast } from "sonner";
 
 const Schema = z.object({
   username: z.string().min(2, "Must be at least 2 characters"),
@@ -31,6 +34,7 @@ type FormData = z.infer<typeof Schema>;
 const API_URL = process.env.NEXT_PUBLIC_API_URL!;
 
 export const GeneralInformation = () => {
+  const { clearTokens } = useAuth();
   const [isDelete, setIsDelete] = useState(false);
   const [isEmail, setIsEmail] = useState(false);
   const [isEmailUpdated, setIsEmailUpdated] = useState(false);
@@ -81,8 +85,10 @@ export const GeneralInformation = () => {
 
   const handleDelete = async () => {
     try {
-      const res = await userService.deleteMe();
-      console.log("deleteMe:", res);
+      await userService.deleteMe();
+      clearTokens();
+      router.push(ROUTES.AUTH.LOGIN);
+      toast.success("Your account has been deleted.");
     } catch (e) {
       console.error("deleteMe error:", e);
     }

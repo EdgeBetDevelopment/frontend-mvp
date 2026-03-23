@@ -441,16 +441,59 @@ const PlayerProfile = () => {
     );
   }
 
-  if (error) {
+  if (player && typeof player === 'object' && 'error' in player) {
+    const errorMessage = (player as { error: string }).error;
+    const isPlayerNotFound = errorMessage.includes('Player not found');
+
     return (
-      <>
+      <div className="min-h-screen bg-background">
         <Navigation />
-        <EmptyPlaceholder
-          title="Something went wrong"
-          subtitle="We couldn't load this player. Please try again later."
-        />
+        <div className="container mx-auto px-6 py-24 text-center">
+          <h1 className="mb-4 text-2xl font-bold">
+            {isPlayerNotFound ? 'Player not found' : 'Something went wrong'}
+          </h1>
+          <p className="mb-6 text-muted-foreground">
+            {isPlayerNotFound
+              ? "We couldn't find this player. Please check the player ID or try searching for a different player."
+              : errorMessage ||
+                "We couldn't load this player. Please try again later."}
+          </p>
+          <Button onClick={() => router.back()}>
+            <ArrowLeft className="mr-2 h-4 w-4" /> Go Back
+          </Button>
+        </div>
         <Footer />
-      </>
+      </div>
+    );
+  }
+
+  if (error) {
+    const errorMessage =
+      (error as { response?: { data?: { error?: string } }; message?: string })
+        ?.response?.data?.error ||
+      (error as { message?: string })?.message ||
+      '';
+
+    const isPlayerNotFound = errorMessage.includes('Player not found');
+
+    return (
+      <div className="min-h-screen bg-background">
+        <Navigation />
+        <div className="container mx-auto px-6 py-24 text-center">
+          <h1 className="mb-4 text-2xl font-bold">
+            {isPlayerNotFound ? 'Player not found' : 'Something went wrong'}
+          </h1>
+          <p className="mb-6 text-muted-foreground">
+            {isPlayerNotFound
+              ? "We couldn't find this player. Please check the player ID or try searching for a different player."
+              : "We couldn't load this player. Please try again later."}
+          </p>
+          <Button onClick={() => router.back()}>
+            <ArrowLeft className="mr-2 h-4 w-4" /> Go Back
+          </Button>
+        </div>
+        <Footer />
+      </div>
     );
   }
 
@@ -460,6 +503,10 @@ const PlayerProfile = () => {
         <Navigation />
         <div className="container mx-auto px-6 py-24 text-center">
           <h1 className="mb-4 text-2xl font-bold">Player not found</h1>
+          <p className="mb-6 text-muted-foreground">
+            We couldn't find this player. Please check the player ID or try
+            searching for a different player.
+          </p>
           <Button onClick={() => router.back()}>
             <ArrowLeft className="mr-2 h-4 w-4" /> Go Back
           </Button>
@@ -488,18 +535,20 @@ const PlayerProfile = () => {
           {/* Profile Info */}
           <div className="flex flex-col items-center gap-6 lg:items-start">
             <Avatar className="h-32 w-32 border-4 border-primary/30 shadow-lg">
-              <AvatarImage src={undefined} alt={player.full_name} />
+              <AvatarImage src={undefined} alt={player?.full_name} />
               <AvatarFallback className="bg-primary/10 text-4xl font-bold text-primary">
-                {player.full_name
-                  .split(' ')
-                  .map((n: any) => n[0])
-                  .join('')}
+                {player?.full_name
+                  ? player.full_name
+                      .split(' ')
+                      .map((n: any) => n[0])
+                      .join('')
+                  : 'N/A'}
               </AvatarFallback>
             </Avatar>
 
             <div className="text-center lg:text-left">
               <h1 className="mb-2 font-display text-3xl font-bold text-foreground lg:text-4xl">
-                {player.full_name}
+                {player?.full_name || 'Unknown Player'}
               </h1>
               <p className="mb-4 text-lg text-muted-foreground">
                 {playerNameData?.team_details?.[0]?.full_name || 'N/A'}
@@ -537,7 +586,7 @@ const PlayerProfile = () => {
                   <div className="rounded-lg border border-primary/30 bg-primary/10 p-3 text-center">
                     <span className="text-sm font-semibold text-primary">
                       {player?.BIRTH_DATE
-                        ? new Date(player.BIRTH_DATE).toLocaleDateString(
+                        ? new Date(player?.BIRTH_DATE).toLocaleDateString(
                             'en-US',
                             {
                               month: 'short',

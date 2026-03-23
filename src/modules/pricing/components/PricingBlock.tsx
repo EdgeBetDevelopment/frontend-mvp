@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react';
 import PageTitle from '@/shared/components/PageTitle';
 import { paymentService } from '../services';
 import type { ISubscriptionType } from '../types';
+import { getPromotekitReferral } from '@/shared/utils';
 import { Button } from '@/shared/components/button';
 import { Separator } from '@/shared/components/separator';
 
@@ -72,7 +73,8 @@ const PricingCardSimple = ({ sub }: { sub: ISubscriptionType }) => {
   const handleCheckout = async () => {
     try {
       setLoading(true);
-      const url = await paymentService.subscribe(sub.id);
+      const referral = getPromotekitReferral();
+      const url = await paymentService.subscribe(sub.id, referral);
       window.location.href = url;
     } catch (error) {
       console.error('Stripe checkout error:', error);

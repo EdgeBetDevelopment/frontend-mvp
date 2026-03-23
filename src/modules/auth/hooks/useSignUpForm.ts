@@ -8,6 +8,7 @@ import { toast } from 'sonner';
 import { z } from 'zod';
 
 import { handleFetchError } from '@/shared/utils/error-handling';
+import { applyPromotekitReferral } from '@/shared/utils';
 
 import authService from '../services';
 import { useAuth } from '../store';
@@ -16,17 +17,25 @@ const signUpSchema = z
   .object({
     name: z
       .string()
+      .min(1, 'Field is required')
       .min(2, 'Name is too short')
       .max(30, 'Name is too long')
-      .regex(/^[a-zA-Zа-яА-ЯёЁіІїЇєЄ\s-]+$/, 'Invalid characters in name'),
-    email: z.string().email('Invalid email format'),
-    phone: z.string().regex(/^\+?\d{10,15}$/, 'Invalid phone number'),
+      .regex(/^[a-zA-Z\s-]+$/, 'Invalid characters in name'),
+    email: z
+      .string()
+      .min(1, 'Field is required')
+      .email('Invalid email format'),
+    phone: z
+      .string()
+      .min(1, 'Field is required')
+      .regex(/^\+?\d{10,15}$/, 'Invalid phone number'),
     password: z
       .string()
+      .min(1, 'Field is required')
       .min(8, 'Password must be at least 8 characters')
       .regex(/\d/, 'Password must include at least one number')
       .regex(/[a-zA-Z]/, 'Password must include at least one letter'),
-    confirmPassword: z.string(),
+    confirmPassword: z.string().min(1, 'Field is required'),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: 'Passwords do not match',
@@ -60,13 +69,15 @@ export const useSignUpForm = ({ onSuccessSignUp }: UseSignUpFormProps = {}) => {
     error,
   } = useMutation({
     mutationFn: authService.signUp,
-    onSuccess: (data) => {
+    onSuccess: (data, variables) => {
       setTokens({
         accessToken: data.access_token,
         refreshToken: data.refresh_token,
         isAdmin: data.is_admin,
         isSuperAdmin: data.is_super_admin,
       });
+
+      applyPromotekitReferral(variables.email);
 
       if (onSuccessSignUp) {
         onSuccessSignUp();
