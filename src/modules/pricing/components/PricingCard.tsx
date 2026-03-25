@@ -10,7 +10,8 @@ import {
 import { paymentService } from "../services";
 import { Check } from "lucide-react";
 import { useState } from "react";
-import { getPromotekitReferral } from "@/shared/utils";
+import { getPromotekitReferral, getErrorMessage } from "@/shared/utils";
+import { toast } from "sonner";
 
 interface PricingCardProps {
   id: number;
@@ -47,6 +48,11 @@ export const PricingCard = ({
       window.location.href = url;
     } catch (error) {
       console.error("Stripe checkout error:", error);
+      const errorMessage = getErrorMessage(
+        error,
+        'Failed to process subscription. Please try again.'
+      );
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }

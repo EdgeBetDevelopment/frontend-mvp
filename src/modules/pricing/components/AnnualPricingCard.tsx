@@ -8,7 +8,8 @@ import {
 import { Button } from '@/shared/components/button';
 import { paymentService } from '../services';
 import { useState } from 'react';
-import { getPromotekitReferral } from '@/shared/utils';
+import { getPromotekitReferral, getErrorMessage } from '@/shared/utils';
+import { toast } from 'sonner';
 
 interface AnnualPlanCardProps {
   id: number;
@@ -35,6 +36,11 @@ export const AnnualPlanCard = ({
       window.location.href = url;
     } catch (error) {
       console.error('Stripe checkout error:', error);
+      const errorMessage = getErrorMessage(
+        error,
+        'Failed to process subscription. Please try again.'
+      );
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
