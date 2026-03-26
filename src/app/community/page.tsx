@@ -13,8 +13,11 @@ import {
   CardTitle,
 } from "@/shared/components/card";
 import { FREE_FEATURES, PREMIUM_FEATURES } from "@/modules/community";
+import { useDiscordConnect } from "@/shared/hooks/useDiscordConnect";
 
 const Community = () => {
+  const { handleConnect, isLoading } = useDiscordConnect();
+
   return (
     <div className="bg-background min-h-screen">
       <Navigation />
@@ -31,16 +34,10 @@ const Community = () => {
             Join our Discord server and become part of a community dedicated to
             making informed betting decisions. Server access is completely free!
           </p>
-          <Link
-            href={`${process.env.NEXT_PUBLIC_DISCORD_INVITE}`}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Button size="lg" className="gap-2 px-8 py-6 text-lg">
-              <MessageCircle className="h-5 w-5" />
-              Join Our Discord
-            </Button>
-          </Link>
+          <Button size="lg" className="gap-2 px-8 py-6 text-lg" onClick={handleConnect} disabled={isLoading}>
+            <MessageCircle className="h-5 w-5" />
+            Join Our Discord
+          </Button>
         </div>
         <div className="mx-auto grid max-w-4xl gap-8 md:grid-cols-2">
           <Card className="border-border/50 bg-card/50 backdrop-blur">
@@ -108,16 +105,10 @@ const Community = () => {
           <p className="text-muted-foreground mb-4">
             Ready to join thousands of smart bettors?
           </p>
-          <Link
-            href={`${process.env.NEXT_PUBLIC_DISCORD_INVITE}`}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Button size="lg" variant="outline" className="gap-2">
-              <MessageCircle className="h-5 w-5" />
-              Join Discord Server
-            </Button>
-          </Link>
+          <Button size="lg" variant="outline" className="gap-2" onClick={handleConnect} disabled={isLoading}>
+            <MessageCircle className="h-5 w-5" />
+            Join Discord Server
+          </Button>
         </div>
       </div>
 

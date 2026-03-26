@@ -1,13 +1,17 @@
+'use client';
+
 import Image from 'next/image';
 
 import PageTitle from '@/shared/components/PageTitle';
 import { Button } from '@/shared/components/button';
+import { useDiscordConnect } from '@/shared/hooks/useDiscordConnect';
 
 import DiscordImage from '@/assets/discord.png';
 import GridBgImage from '@/assets/gridBg.png';
 import ArrowRightIcon from '@/assets/icons/arrow-right.svg';
 
 export const DiscordBlock = () => {
+  const { handleConnect, isLoading } = useDiscordConnect();
   return (
     <div
       style={{
@@ -44,6 +48,8 @@ export const DiscordBlock = () => {
       <Button
         className="w-full text-center align-middle text-base font-bold tracking-normal sm:w-auto sm:text-2xl"
         variant="gradient"
+        onClick={handleConnect}
+        disabled={isLoading}
       >
         Join Our Discord Server <ArrowRightIcon className="!h-6 !w-6" />
       </Button>
