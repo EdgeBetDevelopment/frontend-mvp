@@ -1,35 +1,44 @@
-import { redirect } from 'next/navigation';
+'use client';
 
+import { useEffect, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+
+import { profileService } from '@/modules/profile/services';
 import { ROUTES } from '@/shared/config/routes';
+import Loader from '@/shared/components/loader';
 
-interface PageProps {
-  searchParams: Promise<{ code?: string; state?: string }>;
-}
+export default function DiscordCallbackPage() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [error, setError] = useState<string | null>(null);
 
-export default async function DiscordCallbackPage({ searchParams }: PageProps) {
-  const { code, state } = await searchParams;
+  useEffect(() => {
+    const code = searchParams.get('code');
+    const state = searchParams.get('state');
 
-  if (!code || !state) {
+    if (!code || !state) {
+      setError('Missing OAuth parameters.');
+      return;
+    }
+
+    profileService
+      .discordCallback(code, state)
+      .then(() => router.push(ROUTES.PROFILE.PROFILE))
+      .catch(() => setError('Failed to connect Discord. Please try again.'));
+  }, [router, searchParams]);
+
+  if (error) {
     return (
       <div className="flex min-h-screen items-center justify-center">
-        <p className="text-destructive">Missing OAuth parameters.</p>
+        <p className="text-destructive">{error}</p>
       </div>
     );
   }
 
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-  const res = await fetch(
-    `${apiUrl}/user/api/v1/discord/callback?code=${encodeURIComponent(code)}&state=${encodeURIComponent(state)}`,
-    { cache: 'no-store' },
+  return (
+    <div className="flex min-h-screen flex-col items-center justify-center gap-4">
+      <Loader />
+      <p className="text-muted-foreground">Connecting Discord…</p>
+    </div>
   );
-
-  if (!res.ok) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <p className="text-destructive">Failed to connect Discord. Please try again.</p>
-      </div>
-    );
-  }
-
-  redirect(ROUTES.PROFILE.PROFILE);
 }

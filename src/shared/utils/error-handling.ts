@@ -10,6 +10,7 @@ interface AxiosErrorResponse {
     data?: {
       message?: string;
       error?: string;
+      detail?: string;
     };
     status?: number;
   };
@@ -44,12 +45,20 @@ export const handleFetchError = (
  */
 export const getErrorMessage = (
   error: unknown,
-  defaultMessage: string = 'An error occurred'
+  defaultMessage: string = 'An error occurred',
 ): string => {
   if (!error) return defaultMessage;
+  if (typeof error === 'object' && error !== null && 'message' in error) {
+    const transformedError = error as { message?: string; code?: number };
+    if (transformedError.message) {
+      return transformedError.message;
+    }
+  }
 
-  // Handle Axios errors
   const axiosError = error as AxiosErrorResponse;
+  if (axiosError?.response?.data?.detail) {
+    return axiosError.response.data.detail;
+  }
   if (axiosError?.response?.data?.message) {
     return axiosError.response.data.message;
   }
@@ -75,7 +84,7 @@ export const getErrorMessage = (
  */
 export const handleMutationError = (
   error: unknown,
-  defaultMessage: string = 'An error occurred'
+  defaultMessage: string = 'An error occurred',
 ): void => {
   const message = getErrorMessage(error, defaultMessage);
   toast.error(message);

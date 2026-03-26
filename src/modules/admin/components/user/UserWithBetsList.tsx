@@ -5,7 +5,7 @@ export const UserWithBetsList = () => (
     <Datagrid bulkActionButtons={false}>
       <TextField source="id" />
       <TextField source="username" />
-      <NumberField source="phone_number" />
+      <TextField source="phone_number" />
       <TextField source="email" />
       <NumberField source="totalBets" />
     </Datagrid>

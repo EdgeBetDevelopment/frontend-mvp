@@ -53,6 +53,16 @@ const PasswordSettings = () => {
       return;
     }
 
+    if (!/\d/.test(newPassword)) {
+      toast.error('Password must include at least one number');
+      return;
+    }
+
+    if (!/[a-zA-Z]/.test(newPassword)) {
+      toast.error('Password must include at least one letter');
+      return;
+    }
+
     changePasswordMutation.mutate({
       current_password: currentPassword,
       new_password: newPassword,

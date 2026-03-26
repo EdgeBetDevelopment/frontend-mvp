@@ -56,6 +56,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       localStorage.setItem("accessToken", accessToken);
       localStorage.setItem("isAdmin", String(admin || false));
       localStorage.setItem("isSuperAdmin", String(superAdmin || false));
+      document.cookie = `accessToken=${accessToken}; path=/; SameSite=Lax; max-age=${60 * 60 * 24 * 7}`;
 
       if (refreshToken) {
         setRefreshToken(refreshToken);
@@ -76,6 +77,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       localStorage.removeItem("refreshToken");
       localStorage.removeItem("isAdmin");
       localStorage.removeItem("isSuperAdmin");
+      document.cookie = 'accessToken=; path=/; max-age=0';
     }
   };
 
