@@ -1,9 +1,7 @@
 'use client';
 
-import { useState } from 'react';
 import { SiDiscord } from 'react-icons/si';
 
-import { profileService } from '@/modules/profile/services';
 import { Button } from '@/shared/components/button';
 import {
   Card,
@@ -12,24 +10,14 @@ import {
   CardTitle,
 } from '@/shared/components/card';
 import Loader from '@/shared/components/loader';
+import { useDiscordConnect } from '@/shared/hooks/useDiscordConnect';
 
 interface DiscordConnectProps {
   discordUserId?: string | null;
 }
 
 export function DiscordConnect({ discordUserId }: DiscordConnectProps) {
-  const [isLoading, setIsLoading] = useState(false);
-
-  const handleConnect = async () => {
-    setIsLoading(true);
-    try {
-      const { url } = await profileService.getDiscordOAuthLink();
-      window.location.href = url;
-    } catch (e) {
-      console.error('Discord OAuth link error:', e);
-      setIsLoading(false);
-    }
-  };
+  const { handleConnect, isLoading } = useDiscordConnect();
 
   return (
     <Card className="border-border bg-card">
