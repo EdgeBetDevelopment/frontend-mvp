@@ -9,6 +9,8 @@ import {
   useUpdate,
 } from 'react-admin';
 
+import { convertUTCToLocalWithAmPm } from '@/shared/utils';
+
 const StatusSelector = ({ record }: { record: any }) => {
   const notify = useNotify();
   const [update, { isLoading }] = useUpdate();
@@ -119,9 +121,9 @@ export const PickOfTheDayList = () => (
       <FunctionField
         label="Start Time"
         render={(record: any) =>
-          record.game?.start_time ? (
-            <DateField source="game.start_time" showTime />
-          ) : null
+          record.game?.start_time
+            ? convertUTCToLocalWithAmPm(record.game.start_time)
+            : null
         }
       />
       <FunctionField
