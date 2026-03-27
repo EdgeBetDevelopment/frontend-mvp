@@ -319,7 +319,7 @@ export const PickOfTheDayFormFields = () => {
         source="odds"
         label="Odds"
         type="text"
-        validate={validateOdds}
+        validate={[required(), validateOdds]}
         parse={parseOdds}
         format={formatOdds}
       />
