@@ -79,7 +79,6 @@ const PickOfDayPage = () => {
     }
   }, [todayError, weekError, allError]);
 
-  // Show login screen if not authenticated
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-background">
@@ -116,7 +115,20 @@ const PickOfDayPage = () => {
     );
   }
 
-  // Show subscription screen for 402 (from backend)
+  if (isTodayLoading || isWeekLoading || isAllLoading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navigation />
+        <main className="container mx-auto px-6 py-8">
+          <div className="flex min-h-[60vh] items-center justify-center">
+            <div className="text-muted-foreground">Loading...</div>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
   if (authError === 402) {
     return (
       <div className="min-h-screen bg-background">
@@ -187,7 +199,6 @@ const PickOfDayPage = () => {
           </p>
         </div>
 
-        {/* <NotificationBanner /> */}
         <ModeratorStats />
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-8">
