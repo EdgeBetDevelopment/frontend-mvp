@@ -45,9 +45,9 @@ export const GeneralInformation = () => {
   const {
     register,
     handleSubmit,
-    setValue,
+    reset,
     watch,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, dirtyFields },
   } = useForm<FormData>({ resolver: zodResolver(Schema), mode: "onBlur" });
 
   const email = watch("email") ?? "";
@@ -57,13 +57,12 @@ export const GeneralInformation = () => {
       try {
         const me = await userService.getMe();
         console.log("ME:", me);
-        setValue("username", me?.username ?? "");
-        setValue("email", me?.email ?? "");
+        reset({ username: me?.username ?? "", email: me?.email ?? "" });
       } catch (e) {
         console.error("getMe error:", e);
       }
     })();
-  }, [setValue]);
+  }, [reset]);
 
   useEffect(() => {
     const confirmed = searchParams.get("confirmed");
@@ -75,8 +74,16 @@ export const GeneralInformation = () => {
 
   const handleUpdate = async (data: FormData) => {
     try {
-      setIsEmail(true);
-      const res = await userService.updateMe(data);
+      const payload: Partial<FormData> = {};
+      if (dirtyFields.username) payload.username = data.username;
+      if (dirtyFields.email) payload.email = data.email;
+
+      if (Object.keys(payload).length === 0) return;
+
+      if (dirtyFields.email) setIsEmail(true);
+
+      const res = await userService.updateMe(payload);
+      reset(data);
       console.log("updateMe:", res);
     } catch (e) {
       console.error("updateMe error:", e);
