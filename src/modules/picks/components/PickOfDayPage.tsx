@@ -29,7 +29,7 @@ import type { ApiPick } from '../types';
 
 const PickOfDayPage = () => {
   const router = useRouter();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isPremium } = useAuth();
   const [activeTab, setActiveTab] = useState('today');
   const [authError, setAuthError] = useState<402 | null>(null);
 
@@ -186,10 +186,12 @@ const PickOfDayPage = () => {
 
       <main className="container mx-auto px-6 py-8">
         <div className="mb-10 text-center">
-          <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2">
-            <Crown className="h-5 w-5 text-primary" />
-            <span className="font-medium text-primary">Premium Access</span>
-          </div>
+          {isPremium && (
+            <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2">
+              <Crown className="h-5 w-5 text-primary" />
+              <span className="font-medium text-primary">Premium Access</span>
+            </div>
+          )}
           <h1 className="mb-4 font-display text-4xl font-bold md:text-5xl">
             Pick of the <span className="text-primary">Day</span>
           </h1>

@@ -2,12 +2,16 @@
 
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 
+import { userService } from "@/modules/profile/services";
+import { hasPremiumSubscription } from "@/modules/profile/types";
+
 interface AuthContextType {
   accessToken: string | null;
   refreshToken: string | null;
   isAuthenticated: boolean;
   isAdmin: boolean;
   isSuperAdmin: boolean;
+  isPremium: boolean;
   setTokens: (tokens: {
     accessToken: string;
     refreshToken?: string;
@@ -26,6 +30,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [refreshToken, setRefreshToken] = useState<string | null>(null);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [isSuperAdmin, setIsSuperAdmin] = useState<boolean>(false);
+  const [isPremium, setIsPremium] = useState<boolean>(false);
   const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
@@ -37,6 +42,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       setIsInitialized(true);
     }
   }, []);
+
+  useEffect(() => {
+    if (!accessToken) {
+      setIsPremium(false);
+      return;
+    }
+    userService.getMe().then((me) => {
+      setIsPremium(hasPremiumSubscription(me?.subscriptions));
+    }).catch(() => {
+      setIsPremium(false);
+    });
+  }, [accessToken]);
 
   const setTokens = ({
     accessToken,
@@ -70,6 +87,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     setRefreshToken(null);
     setIsAdmin(false);
     setIsSuperAdmin(false);
+    setIsPremium(false);
     if (typeof window !== "undefined") {
       localStorage.removeItem("accessToken");
       localStorage.removeItem("token");
@@ -95,6 +113,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         isAuthenticated,
         isAdmin,
         isSuperAdmin,
+        isPremium,
         setTokens,
         clearTokens,
       }}
