@@ -38,6 +38,7 @@ export const GeneralInformation = () => {
   const [isDelete, setIsDelete] = useState(false);
   const [isEmail, setIsEmail] = useState(false);
   const [isEmailUpdated, setIsEmailUpdated] = useState(false);
+  const [confirmedEmail, setConfirmedEmail] = useState("");
 
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -67,6 +68,9 @@ export const GeneralInformation = () => {
   useEffect(() => {
     const confirmed = searchParams.get("confirmed");
     if (confirmed === "true") {
+      const pending = localStorage.getItem("pendingEmail") ?? "";
+      setConfirmedEmail(pending);
+      localStorage.removeItem("pendingEmail");
       setIsEmailUpdated(true);
       router.replace("/profile", { scroll: false });
     }
@@ -80,7 +84,10 @@ export const GeneralInformation = () => {
 
       if (Object.keys(payload).length === 0) return;
 
-      if (dirtyFields.email) setIsEmail(true);
+      if (dirtyFields.email) {
+        localStorage.setItem("pendingEmail", data.email);
+        setIsEmail(true);
+      }
 
       const res = await userService.updateMe(payload);
       reset(data);
@@ -212,7 +219,7 @@ export const GeneralInformation = () => {
       <ModalProfile
         title="Email Updated"
         firstColor="white"
-        desciption={`Your email address has been successfully updated to ${email}.`}
+        desciption={`Your email address has been successfully updated to ${confirmedEmail}.`}
         onClose={() => setIsEmailUpdated(false)}
         firstOnClick={() => setIsEmailUpdated(false)}
         open={isEmailUpdated}
