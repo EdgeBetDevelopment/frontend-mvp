@@ -36,7 +36,6 @@ export const handleFetchError = (
 ) => {
   if (!error) return null;
 
-  console.error(error);
   return getFetchError(error, defaultMessage);
 };
 

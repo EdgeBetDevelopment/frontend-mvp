@@ -7,7 +7,7 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
-import { handleFetchError } from '@/shared/utils/error-handling';
+import { getErrorMessage, handleFetchError } from '@/shared/utils/error-handling';
 
 import authService from '../services';
 import { useAuth } from '../store';
@@ -37,6 +37,9 @@ export const useLoginForm = ({
     isPending: loginIsLoading,
   } = useMutation({
     mutationFn: authService.login,
+    onError: (error: unknown) => {
+      toast.error(getErrorMessage(error, 'Login failed. Please check your credentials.'));
+    },
     onSuccess: (data) => {
       // Check if 2FA is required
       if (data.requires_2fa && data.temp_token) {
@@ -57,13 +60,6 @@ export const useLoginForm = ({
       if (onSuccessLogin) {
         onSuccessLogin();
       }
-    },
-    onError: (error: any) => {
-      const errorMessage = handleFetchError(
-        error,
-        'Login failed. Please check your credentials.',
-      );
-      toast.error(errorMessage);
     },
   });
 

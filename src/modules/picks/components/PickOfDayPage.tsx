@@ -29,7 +29,7 @@ import type { ApiPick } from '../types';
 
 const PickOfDayPage = () => {
   const router = useRouter();
-  const { isAuthenticated, isPremium } = useAuth();
+  const { isAuthenticated, isPremium, isPremiumLoading } = useAuth();
   const [activeTab, setActiveTab] = useState('today');
   const [authError, setAuthError] = useState<402 | null>(null);
 
@@ -42,7 +42,7 @@ const PickOfDayPage = () => {
     queryKey: ['pick-of-day', 'today'],
     queryFn: () => picksApi.getPickOfTheDayToday(),
     retry: false,
-    enabled: isAuthenticated,
+    enabled: isAuthenticated && !isPremiumLoading && isPremium,
   });
   const {
     data: weekPicks = [],
@@ -53,7 +53,7 @@ const PickOfDayPage = () => {
     queryKey: ['pick-of-day', 'this-week'],
     queryFn: () => picksApi.getPickOfTheDayThisWeek(),
     retry: false,
-    enabled: isAuthenticated,
+    enabled: isAuthenticated && !isPremiumLoading && isPremium,
   });
   const {
     data: allPicks = [],
@@ -64,7 +64,7 @@ const PickOfDayPage = () => {
     queryKey: ['pick-of-day', 'all'],
     queryFn: () => picksApi.getPickOfTheDayList(),
     retry: false,
-    enabled: isAuthenticated,
+    enabled: isAuthenticated && !isPremiumLoading && isPremium,
   });
 
   useEffect(() => {
@@ -115,7 +115,7 @@ const PickOfDayPage = () => {
     );
   }
 
-  if (isTodayLoading || isWeekLoading || isAllLoading) {
+  if (isPremiumLoading) {
     return (
       <div className="min-h-screen bg-background">
         <Navigation />
@@ -129,7 +129,7 @@ const PickOfDayPage = () => {
     );
   }
 
-  if (authError === 402) {
+  if (!isPremium || authError === 402) {
     return (
       <div className="min-h-screen bg-background">
         <Navigation />

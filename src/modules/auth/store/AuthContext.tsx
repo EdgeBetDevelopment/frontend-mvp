@@ -12,6 +12,7 @@ interface AuthContextType {
   isAdmin: boolean;
   isSuperAdmin: boolean;
   isPremium: boolean;
+  isPremiumLoading: boolean;
   setTokens: (tokens: {
     accessToken: string;
     refreshToken?: string;
@@ -31,6 +32,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [isSuperAdmin, setIsSuperAdmin] = useState<boolean>(false);
   const [isPremium, setIsPremium] = useState<boolean>(false);
+  const [isPremiumLoading, setIsPremiumLoading] = useState<boolean>(false);
   const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
@@ -46,12 +48,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     if (!accessToken) {
       setIsPremium(false);
+      setIsPremiumLoading(false);
       return;
     }
+    setIsPremiumLoading(true);
     userService.getMe().then((me) => {
       setIsPremium(hasPremiumSubscription(me?.subscriptions));
     }).catch(() => {
       setIsPremium(false);
+    }).finally(() => {
+      setIsPremiumLoading(false);
     });
   }, [accessToken]);
 
@@ -114,6 +120,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         isAdmin,
         isSuperAdmin,
         isPremium,
+        isPremiumLoading,
         setTokens,
         clearTokens,
       }}
