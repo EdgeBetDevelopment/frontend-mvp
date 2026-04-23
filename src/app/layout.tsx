@@ -4,6 +4,7 @@ import { Suspense } from 'react';
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import Script from 'next/script';
+import edgebetLogo from '@/assets/edgebet-logo.png';
 
 import { AuthProvider } from '@/context/AuthContext';
 import TanstackQueryProvider from '@/shared/providers/QueryProvider';
@@ -21,7 +22,21 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: 'Edgebet',
-  description: 'Data-driven sports betting picks and analytics',
+  description: 'Transforming sports betting from a game of chance to a data-driven investment strategy',
+  openGraph: {
+    title: 'Edgebet',
+    description: 'Transforming sports betting from a game of chance to a data-driven investment strategy',
+    url: 'https://www.edgebet.ai/',
+    siteName: 'Edgebet',
+    images: [
+      {
+        url: edgebetLogo.src,
+        width: 516,
+        height: 160,
+      },
+    ],
+    type: 'website',
+  },
   icons: {
     icon: [
       { url: '/favicon.ico', sizes: 'any' },
