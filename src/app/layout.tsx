@@ -21,6 +21,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://www.edgebet.ai'),
   title: 'Edgebet',
   description: 'Transforming sports betting from a game of chance to a data-driven investment strategy',
   openGraph: {
