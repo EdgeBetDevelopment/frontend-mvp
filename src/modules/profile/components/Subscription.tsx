@@ -23,7 +23,7 @@ import { ModalProfile } from './Modal';
 
 export const Subscription = () => {
   const qc = useQueryClient();
-  const { refreshToken, setTokens } = useAuth();
+  const { refreshToken, setTokens, isAuthenticated } = useAuth();
 
   const {
     data: subscriptions,
@@ -36,6 +36,7 @@ export const Subscription = () => {
       const me = await userService.getMe();
       return me?.subscriptions ?? [];
     },
+    enabled: isAuthenticated,
     staleTime: 0,
     refetchOnMount: 'always',
     refetchOnWindowFocus: true,
