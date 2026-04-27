@@ -12,12 +12,13 @@ import { DiscordConnect } from './DiscordConnect';
 import { userService } from '@/modules/profile/services';
 
 export function ProfileSection() {
-  const { refreshToken, setTokens } = useAuth();
+  const { refreshToken, setTokens, isAuthenticated } = useAuth();
   const searchParams = useSearchParams();
 
   const { data: user } = useQuery({
     queryKey: ['user'],
     queryFn: userService.getMe,
+    enabled: isAuthenticated,
   });
 
   useEffect(() => {

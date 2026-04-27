@@ -19,6 +19,7 @@ import {
 
 import { useTableSort } from '@/shared/hooks/useTableSort';
 import { trackerApi } from '@/modules/tracker';
+import { useAuth } from '@/context/AuthContext';
 import { Badge } from '@/shared/components/badge';
 import { Card } from '@/shared/components/card';
 import {
@@ -111,6 +112,7 @@ const BetTrackerTable = () => {
   const sortParam = params.get('sort') || '';
   const [activeTab, setActiveTab] = useState(type);
   const { sortArray, currentSort, handleSort } = useTableSort();
+  const { isAuthenticated } = useAuth();
 
   React.useEffect(() => {
     setActiveTab(type);
@@ -124,6 +126,7 @@ const BetTrackerTable = () => {
     queryKey: ['betList', activeTab, sortParam],
     queryFn: () =>
       trackerApi.getBetList({ filter: activeTab, sort: sortArray } as any),
+    enabled: isAuthenticated,
     staleTime: 1000 * 60 * 2,
     refetchInterval: 300000,
     refetchOnMount: 'always',
@@ -133,6 +136,7 @@ const BetTrackerTable = () => {
   const { data: allBetsData = [] } = useQuery({
     queryKey: ['betList', 'all'],
     queryFn: () => trackerApi.getBetList({ filter: 'all', sort: [] } as any),
+    enabled: isAuthenticated,
     staleTime: 1000 * 60 * 2,
     retry: 2,
   });

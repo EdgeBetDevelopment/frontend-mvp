@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 
 import { Card, CardContent } from '@/shared/components/card';
 import { picksApi } from '@/modules/picks';
+import { useAuth } from '@/context/AuthContext';
 
 type PickOfDayUserStats = {
   username: string;
@@ -34,6 +35,7 @@ const formatYtd = (value: number) => {
 };
 
 export const ModeratorStats = () => {
+  const { isAuthenticated } = useAuth();
   const {
     data: users = [],
     isLoading,
@@ -43,6 +45,7 @@ export const ModeratorStats = () => {
     queryKey: ['pick-of-day', 'users'],
     queryFn: () => picksApi.getPickOfTheDayUsers(),
     retry: false,
+    enabled: isAuthenticated,
   });
 
   if (isError && error) {

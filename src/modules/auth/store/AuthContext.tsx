@@ -54,8 +54,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     setIsPremiumLoading(true);
     userService.getMe().then((me) => {
       setIsPremium(hasPremiumSubscription(me?.subscriptions));
-    }).catch(() => {
+    }).catch((error) => {
       setIsPremium(false);
+      if (error?.code === 401) {
+        clearTokens();
+      }
     }).finally(() => {
       setIsPremiumLoading(false);
     });
