@@ -17,14 +17,11 @@ export {
   StatisticsBlock,
   UserReviews,
   WhopAuthHandler,
+  GoogleAuthHandler,
 } from './components';
 
 export { useReviews, type Review } from './hooks';
 
-export {
-  EVENTS_TABLE_DATA,
-  STATISTICS,
-  TESTIMONIAL_DATA,
-} from './constants';
+export { EVENTS_TABLE_DATA, STATISTICS, TESTIMONIAL_DATA } from './constants';
 
 export { searchApi } from './services';

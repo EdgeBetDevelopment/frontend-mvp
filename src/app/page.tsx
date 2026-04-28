@@ -11,6 +11,7 @@ import {
   CTA,
   SearchSection,
   WhopAuthHandler,
+  GoogleAuthHandler,
 } from '@/modules/home';
 import { gameService } from '@/modules/game';
 
@@ -100,6 +101,7 @@ export default function Home() {
     <div className="min-h-screen bg-background">
       <Navigation />
       <WhopAuthHandler />
+      <GoogleAuthHandler />
       <section className="container mx-auto px-6 py-16 md:py-24">
         <SearchSection
           searchQuery={searchQuery}

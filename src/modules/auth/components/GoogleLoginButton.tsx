@@ -1,13 +1,13 @@
 'use client';
 
 import { Button } from '@/shared/components/button';
-
 import GoogleIcon from '@/assets/icons/google.svg';
 
 const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
 
 const GoogleLoginButton = ({
   text = 'Sign in with Google',
+  onSuccess: _onSuccess,
 }: {
   text?: string;
   onSuccess?: () => void;
@@ -21,11 +21,9 @@ const GoogleLoginButton = ({
     const nonce = crypto.randomUUID();
     sessionStorage.setItem('google_oauth_nonce', nonce);
 
-    const redirectUri = `${window.location.origin}/google-callback`;
-
     const params = new URLSearchParams({
       client_id: clientId,
-      redirect_uri: redirectUri,
+      redirect_uri: window.location.origin,
       response_type: 'id_token',
       scope: 'openid email profile',
       nonce,
