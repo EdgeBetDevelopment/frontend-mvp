@@ -1,111 +1,46 @@
 'use client';
 
-import { useEffect } from 'react';
-import { useMutation } from '@tanstack/react-query';
-import { useRouter } from 'next/navigation';
-import { toast } from 'sonner';
-
-import authService from '../services';
-import { useAuth } from '../store';
 import { Button } from '@/shared/components/button';
-import Loader from '@/shared/components/loader';
 
 import GoogleIcon from '@/assets/icons/google.svg';
-
-declare global {
-  interface Window {
-    google: {
-      accounts: {
-        id: {
-          initialize: (config: any) => void;
-          prompt: (callback?: (notification: any) => void) => void;
-          cancel: () => void;
-        };
-      };
-    };
-  }
-}
 
 const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
 
 const GoogleLoginButton = ({
   text = 'Sign in with Google',
-  onSuccess,
 }: {
   text?: string;
   onSuccess?: () => void;
 }) => {
-  const { setTokens } = useAuth();
-  const router = useRouter();
-
-  const { mutate: loginGoogle, isPending } = useMutation({
-    mutationFn: (body: { token: string }) => authService.loginGoogle(body),
-    onSuccess: (data) => {
-      setTokens({
-        accessToken: data.access_token,
-        refreshToken: data.refresh_token,
-        isAdmin: data.is_admin,
-        isSuperAdmin: data.is_super_admin,
-      });
-
-      toast.success('Logged in with Google!');
-
-      if (onSuccess) {
-        onSuccess();
-      }
-    },
-    onError: (error: any) => {
-      toast.error(error?.response?.data?.message || 'Google login failed');
-      window.google?.accounts?.id?.cancel();
-    },
-  });
-
-  useEffect(() => {
+  const handleGoogleLogin = () => {
     if (!clientId) {
       console.error('Google Client ID is not configured');
       return;
     }
 
-    window.google.accounts.id.initialize({
-      client_id: clientId,
-      callback: (response: { credential: string }) => {
-        if (response.credential) {
-          loginGoogle({ token: response.credential });
-        } else {
-          toast.error('No credential received from Google');
-        }
-      },
-      auto_select: false,
-      cancel_on_tap_outside: true,
-      ux_mode: 'popup',
-      use_fedcm_for_prompt: true,
-      button_auto_select: true,
-    });
-  }, [loginGoogle]);
+    const nonce = crypto.randomUUID();
+    sessionStorage.setItem('google_oauth_nonce', nonce);
 
-  const handleGoogleLogin = () => {
-    try {
-      window.google.accounts.id.prompt();
-    } catch (error) {
-      console.error('Error during Google Sign-In:', error);
-      toast.error('An error occurred during Google Sign-In. Please try again.');
-    }
+    const redirectUri = `${window.location.origin}/google-callback`;
+
+    const params = new URLSearchParams({
+      client_id: clientId,
+      redirect_uri: redirectUri,
+      response_type: 'id_token',
+      scope: 'openid email profile',
+      nonce,
+    });
+
+    window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;
   };
 
   return (
     <Button
       onClick={handleGoogleLogin}
-      disabled={isPending}
       className="relative flex w-full items-center justify-center gap-2 rounded-xl border border-border bg-secondary text-xl font-bold tracking-normal text-foreground transition-all duration-200 hover:bg-secondary/80"
     >
-      {isPending ? (
-        <Loader size="h-8 w-8" />
-      ) : (
-        <>
-          <GoogleIcon className="!h-6 !w-6" />
-          <span className="text-center">{text}</span>
-        </>
-      )}
+      <GoogleIcon className="!h-6 !w-6" />
+      <span className="text-center">{text}</span>
     </Button>
   );
 };
