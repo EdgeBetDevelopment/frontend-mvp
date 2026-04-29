@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { toast } from 'sonner';
 
 import { profileService } from '@/modules/profile/services';
 import { ROUTES } from '@/shared/config/routes';
@@ -13,6 +14,14 @@ export default function DiscordCallbackPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    const oauthError = searchParams.get('error');
+
+    if (oauthError) {
+      toast.info('Discord connection cancelled.');
+      router.replace(ROUTES.PROFILE.PROFILE);
+      return;
+    }
+
     const code = searchParams.get('code');
     const state = searchParams.get('state');
 
