@@ -20,6 +20,7 @@ export enum SubscriptionPlan {
 }
 
 export const PREMIUM_PLANS = new Set<string>([
+  SubscriptionPlan.Pro,
   SubscriptionPlan.Premium,
   SubscriptionPlan.AnnualPlan,
   SubscriptionPlan.WhopWeekly,

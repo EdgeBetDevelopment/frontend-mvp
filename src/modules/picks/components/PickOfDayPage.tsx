@@ -1,26 +1,15 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Crown, Lock } from 'lucide-react';
-import { useRouter } from 'next/navigation';
-
-import { useAuth } from '@/context/AuthContext';
-import Navigation from '@/shared/components/Navigation';
-import Footer from '@/shared/components/Footer';
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
 } from '@/shared/components/tabs';
-import { Button } from '@/shared/components/button';
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from '@/shared/components/card';
+import Navigation from '@/shared/components/Navigation';
+import Footer from '@/shared/components/Footer';
 import { picksApi } from '@/modules/picks';
 
 import { ApiPickCard } from './ApiPickCard';
@@ -28,157 +17,35 @@ import { ModeratorStats } from './ModeratorStats';
 import type { ApiPick } from '../types';
 
 const PickOfDayPage = () => {
-  const router = useRouter();
-  const { isAuthenticated, isPremium, isPremiumLoading } = useAuth();
   const [activeTab, setActiveTab] = useState('today');
-  const [authError, setAuthError] = useState<402 | null>(null);
 
   const {
     data: todayPicks = [],
     isLoading: isTodayLoading,
     isError: isTodayError,
-    error: todayError,
   } = useQuery({
     queryKey: ['pick-of-day', 'today'],
     queryFn: () => picksApi.getPickOfTheDayToday(),
     retry: false,
-    enabled: isAuthenticated && !isPremiumLoading && isPremium,
   });
   const {
     data: weekPicks = [],
     isLoading: isWeekLoading,
     isError: isWeekError,
-    error: weekError,
   } = useQuery({
     queryKey: ['pick-of-day', 'this-week'],
     queryFn: () => picksApi.getPickOfTheDayThisWeek(),
     retry: false,
-    enabled: isAuthenticated && !isPremiumLoading && isPremium,
   });
   const {
     data: allPicks = [],
     isLoading: isAllLoading,
     isError: isAllError,
-    error: allError,
   } = useQuery({
     queryKey: ['pick-of-day', 'all'],
     queryFn: () => picksApi.getPickOfTheDayList(),
     retry: false,
-    enabled: isAuthenticated && !isPremiumLoading && isPremium,
   });
-
-  useEffect(() => {
-    const errors = [todayError, weekError, allError].filter(Boolean);
-
-    for (const error of errors) {
-      const err = error as any;
-      if (err?.code === 402) {
-        setAuthError(402);
-        break;
-      }
-    }
-  }, [todayError, weekError, allError]);
-
-  if (!isAuthenticated) {
-    return (
-      <div className="min-h-screen bg-background">
-        <Navigation />
-        <main className="container mx-auto px-6 py-8">
-          <div className="flex min-h-[60vh] items-center justify-center">
-            <Card className="max-w-md">
-              <CardHeader>
-                <div className="mb-4 flex justify-center">
-                  <div className="rounded-full bg-primary/10 p-4">
-                    <Lock className="h-8 w-8 text-primary" />
-                  </div>
-                </div>
-                <CardTitle className="text-center text-2xl">
-                  Login Required
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <p className="text-center text-muted-foreground">
-                  Please login to access Pick of the Day feature.
-                </p>
-                <Button
-                  className="w-full"
-                  onClick={() => router.push('/login')}
-                >
-                  Login
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
-        </main>
-        <Footer />
-      </div>
-    );
-  }
-
-  if (isPremiumLoading) {
-    return (
-      <div className="min-h-screen bg-background">
-        <Navigation />
-        <main className="container mx-auto px-6 py-8">
-          <div className="flex min-h-[60vh] items-center justify-center">
-            <div className="text-muted-foreground">Loading...</div>
-          </div>
-        </main>
-        <Footer />
-      </div>
-    );
-  }
-
-  if (!isPremium || authError === 402) {
-    return (
-      <div className="min-h-screen bg-background">
-        <Navigation />
-        <main className="container mx-auto px-6 py-8">
-          <div className="flex min-h-[60vh] items-center justify-center">
-            <Card className="max-w-md">
-              <CardHeader>
-                <div className="mb-4 flex justify-center">
-                  <div className="rounded-full bg-primary/10 p-4">
-                    <Lock className="h-8 w-8 text-primary" />
-                  </div>
-                </div>
-                <CardTitle className="text-center text-2xl">
-                  Premium Access Required
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <p className="text-center text-muted-foreground">
-                  Get access to expert picks from our top moderators with a
-                  premium subscription.
-                </p>
-                <div className="space-y-2">
-                  <div className="flex items-start gap-2">
-                    <Crown className="mt-0.5 h-4 w-4 text-primary" />
-                    <span className="text-sm">Daily expert picks</span>
-                  </div>
-                  <div className="flex items-start gap-2">
-                    <Crown className="mt-0.5 h-4 w-4 text-primary" />
-                    <span className="text-sm">Detailed analysis</span>
-                  </div>
-                  <div className="flex items-start gap-2">
-                    <Crown className="mt-0.5 h-4 w-4 text-primary" />
-                    <span className="text-sm">Track record & stats</span>
-                  </div>
-                </div>
-                <Button
-                  className="w-full"
-                  onClick={() => router.push('/pricing')}
-                >
-                  View Premium Plans
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
-        </main>
-        <Footer />
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -186,12 +53,6 @@ const PickOfDayPage = () => {
 
       <main className="container mx-auto px-6 py-8">
         <div className="mb-10 text-center">
-          {isPremium && (
-            <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2">
-              <Crown className="h-5 w-5 text-primary" />
-              <span className="font-medium text-primary">Premium Access</span>
-            </div>
-          )}
           <h1 className="mb-4 font-display text-4xl font-bold md:text-5xl">
             Pick of the <span className="text-primary">Day</span>
           </h1>
