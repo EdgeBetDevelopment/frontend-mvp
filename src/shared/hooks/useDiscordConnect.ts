@@ -12,8 +12,6 @@ export function useDiscordConnect() {
   const { isAuthenticated } = useAuth();
   const router = useRouter();
 
-  // When the user presses Back from the Discord OAuth page, the browser restores
-  // this page from bfcache with isLoading still frozen to true. Reset it.
   useEffect(() => {
     const handlePageShow = (event: PageTransitionEvent) => {
       if (event.persisted) {
