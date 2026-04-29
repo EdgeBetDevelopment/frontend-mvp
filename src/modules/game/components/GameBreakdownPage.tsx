@@ -37,6 +37,7 @@ import {
 import Loader from '@/shared/components/loader';
 import EmptyPlaceholder from '@/shared/components/EmptyPlaceholder';
 import { gameService } from '@/modules/game';
+import { useAuth } from '@/modules/auth';
 import { formatUtcToLocalDate, formatUtcToLocalTimeAmPm } from '@/shared/utils';
 
 interface PlayerStats {
@@ -241,6 +242,7 @@ const GameBreakdownPage = () => {
   const params = useParams();
   const gameId = params?.id as string;
   const router = useRouter();
+  const { isAuthenticated } = useAuth();
 
   const {
     data: gameData,
@@ -251,6 +253,7 @@ const GameBreakdownPage = () => {
     queryFn: () => gameService.getGameById(gameId),
     staleTime: 1000 * 60 * 5,
     retry: 2,
+    enabled: isAuthenticated && !!gameId,
   });
 
   if (isLoading) {
