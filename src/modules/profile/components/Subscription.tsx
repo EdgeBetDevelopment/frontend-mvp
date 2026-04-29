@@ -45,6 +45,7 @@ export const Subscription = () => {
   const [open, setOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [selectedTypeId, setSelectedTypeId] = useState<number | null>(null);
+  const [isCancelling, setIsCancelling] = useState(false);
 
   const handleRefresh = async () => {
     await refetch();
@@ -71,7 +72,6 @@ export const Subscription = () => {
           if (response.token) {
             setTokens({ accessToken: response.token });
           }
-          console.log(response.token);
         } catch (error) {
           console.error('Failed to refresh token:', error);
         }
@@ -81,6 +81,7 @@ export const Subscription = () => {
       qc.invalidateQueries({ queryKey: ['me'] });
     },
     onSettled: () => {
+      setIsCancelling(false);
       setOpen(false);
       setSelectedId(null);
       setSelectedTypeId(null);
@@ -94,11 +95,13 @@ export const Subscription = () => {
   };
 
   const onConfirmCancel = () => {
-    if (selectedId && selectedTypeId)
+    if (selectedId && selectedTypeId) {
+      setIsCancelling(true);
       cancelMutation.mutate({ selectedId, selectedTypeId });
+    }
   };
 
-  if (isLoading) {
+  if (isLoading || isCancelling) {
     return (
       <Card className="border-border bg-card">
         <CardHeader>
