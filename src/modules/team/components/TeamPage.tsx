@@ -1,7 +1,7 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import {
   BarChart,
@@ -60,6 +60,8 @@ const TeamPage = () => {
   const params = useParams();
   const teamId = params?.id as string;
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const activeTab = searchParams.get('tab') ?? 'overview';
   const { isAuthenticated } = useAuth();
   const [authError, setAuthError] = useState<402 | null>(null);
 
@@ -389,7 +391,13 @@ const TeamPage = () => {
             </CardContent>
           </Card>
         </div>
-        <Tabs defaultValue="overview" className="mt-4 space-y-6">
+        <Tabs
+          value={activeTab}
+          onValueChange={(tab) =>
+            router.replace(`/team/${teamId}?tab=${tab}`, { scroll: false })
+          }
+          className="mt-4 space-y-6"
+        >
           <TabsList className="grid w-full grid-cols-4 lg:inline-grid lg:w-auto">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="roster">Roster</TabsTrigger>
