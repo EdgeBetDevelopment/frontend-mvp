@@ -1,22 +1,27 @@
 import { useQuery } from '@tanstack/react-query';
 import { picksApi } from '@/modules/picks';
+import { useAuth } from '@/modules/auth';
 
-export const usePicksData = () => {
+export const usePicksData = (isPremium: boolean) => {
+  const { accessToken } = useAuth();
+
   const today = useQuery({
-    queryKey: ['pick-of-day', 'today'],
+    queryKey: ['pick-of-day', 'today', accessToken],
     queryFn: () => picksApi.getPickOfTheDayToday(),
     retry: false,
   });
 
   const week = useQuery({
-    queryKey: ['pick-of-day', 'this-week'],
+    queryKey: ['pick-of-day', 'this-week', accessToken],
     queryFn: () => picksApi.getPickOfTheDayThisWeek(),
+    enabled: isPremium,
     retry: false,
   });
 
   const all = useQuery({
-    queryKey: ['pick-of-day', 'all'],
+    queryKey: ['pick-of-day', 'all', accessToken],
     queryFn: () => picksApi.getPickOfTheDayList(),
+    enabled: isPremium,
     retry: false,
   });
 

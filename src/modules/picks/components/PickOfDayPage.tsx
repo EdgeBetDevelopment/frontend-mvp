@@ -1,7 +1,9 @@
 'use client';
 
 import { useState } from 'react';
+import { Lock } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/shared/components/tabs';
+import { Button } from '@/shared/components/button';
 import Navigation from '@/shared/components/Navigation';
 import Footer from '@/shared/components/Footer';
 import { useAuth } from '@/modules/auth';
@@ -11,12 +13,29 @@ import { FreeMemberBanner } from './FreeMemberBanner';
 import { PaywallModal } from './PaywallModal';
 import { PicksList } from './PicksList';
 import { usePicksData } from '../hooks/usePicksData';
+import { useStartingPrice } from '../hooks/useStartingPrice';
 
 const PickOfDayPage = () => {
   const [activeTab, setActiveTab] = useState('today');
   const [paywallOpen, setPaywallOpen] = useState(false);
-  const { isPremium, isPremiumLoading } = useAuth();
-  const { today, week, all } = usePicksData();
+  const { isSubscribed, isPremiumLoading } = useAuth();
+  const { today, week, all } = usePicksData(isSubscribed);
+  const { startingPrice, isLoading: isPriceLoading } = useStartingPrice();
+
+  const openPaywall = () => setPaywallOpen(true);
+
+  const lockedTab = (message: string) => (
+    <div className="text-center py-12 text-muted-foreground">
+      <Lock className="h-8 w-8 mx-auto mb-3 opacity-50" />
+      <p>{message}</p>
+      <Button
+        onClick={openPaywall}
+        className="mt-4 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white"
+      >
+        Upgrade to Premium
+      </Button>
+    </div>
+  );
 
   return (
     <div className="min-h-screen bg-background">
@@ -33,8 +52,8 @@ const PickOfDayPage = () => {
           </p>
         </div>
 
-        {!isPremium && !isPremiumLoading && (
-          <FreeMemberBanner onUpgrade={() => setPaywallOpen(true)} />
+        {!isSubscribed && !isPremiumLoading && (
+          <FreeMemberBanner onUpgrade={openPaywall} />
         )}
 
         <ModeratorStats />
@@ -47,22 +66,35 @@ const PickOfDayPage = () => {
           </TabsList>
 
           <TabsContent value="today" className="mt-6">
-            <PicksList {...today} emptyMessage="No picks for today yet." onUnlock={() => setPaywallOpen(true)} />
+            <PicksList
+              {...today}
+              isLoading={today.isLoading || isPremiumLoading}
+              emptyMessage="No picks for today yet."
+              onUnlock={openPaywall}
+            />
           </TabsContent>
 
           <TabsContent value="week" className="mt-6">
-            <PicksList {...week} emptyMessage="No picks for this week yet." onUnlock={() => setPaywallOpen(true)} />
+            {isPremiumLoading
+              ? <div className="text-center text-muted-foreground py-12">Loading...</div>
+              : isSubscribed
+                ? <PicksList {...week} emptyMessage="No picks for this week yet." onUnlock={openPaywall} />
+                : lockedTab('Premium members see all picks from the past 7 days.')}
           </TabsContent>
 
           <TabsContent value="history" className="mt-6">
-            <PicksList {...all} emptyMessage="No picks yet." onUnlock={() => setPaywallOpen(true)} />
+            {isPremiumLoading
+              ? <div className="text-center text-muted-foreground py-12">Loading...</div>
+              : isSubscribed
+                ? <PicksList {...all} emptyMessage="No picks yet." onUnlock={openPaywall} />
+                : lockedTab('Full pick history with results and ROI tracking.')}
           </TabsContent>
         </Tabs>
       </main>
 
       <Footer />
 
-      <PaywallModal open={paywallOpen} onClose={() => setPaywallOpen(false)} />
+      <PaywallModal open={paywallOpen} onClose={() => setPaywallOpen(false)} startingPrice={startingPrice} isPriceLoading={isPriceLoading} />
     </div>
   );
 };

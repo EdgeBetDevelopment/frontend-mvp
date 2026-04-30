@@ -19,9 +19,11 @@ const FEATURES = [
 interface PaywallModalProps {
   open: boolean;
   onClose: () => void;
+  startingPrice: number | null;
+  isPriceLoading: boolean;
 }
 
-export const PaywallModal = ({ open, onClose }: PaywallModalProps) => (
+export const PaywallModal = ({ open, onClose, startingPrice, isPriceLoading }: PaywallModalProps) => (
   <Dialog open={open} onOpenChange={onClose}>
     <DialogContent className="max-w-lg bg-card border-border/50">
       <DialogHeader>
@@ -49,9 +51,14 @@ export const PaywallModal = ({ open, onClose }: PaywallModalProps) => (
 
       <div className="bg-gradient-to-r from-primary/10 to-primary/5 border border-primary/20 rounded-lg p-4 text-center">
         <p className="text-sm text-muted-foreground mb-1">Starting at</p>
-        <p className="text-3xl font-bold text-foreground">
-          $29<span className="text-base font-normal text-muted-foreground">/month</span>
-        </p>
+        {isPriceLoading ? (
+          <div className="h-9 w-24 mx-auto rounded-md bg-muted animate-pulse" />
+        ) : (
+          <p className="text-3xl font-bold text-foreground">
+            ${startingPrice}
+            <span className="text-base font-normal text-muted-foreground">/month</span>
+          </p>
+        )}
         <p className="text-xs text-muted-foreground mt-1">Cancel anytime</p>
       </div>
 

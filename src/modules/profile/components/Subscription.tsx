@@ -23,7 +23,7 @@ import { ModalProfile } from './Modal';
 
 export const Subscription = () => {
   const qc = useQueryClient();
-  const { refreshToken, setTokens, isAuthenticated } = useAuth();
+  const { refreshToken, setTokens, isAuthenticated, refreshSubscriptionStatus } = useAuth();
 
   const {
     data: subscriptions,
@@ -79,6 +79,8 @@ export const Subscription = () => {
 
       qc.invalidateQueries({ queryKey: ['subscriptions'] });
       qc.invalidateQueries({ queryKey: ['me'] });
+      qc.removeQueries({ queryKey: ['pick-of-day'] });
+      await refreshSubscriptionStatus();
     },
     onSettled: () => {
       setIsCancelling(false);
