@@ -44,3 +44,8 @@ export const hasPremiumSubscription = (
   !!subscriptions?.some(
     (s) => s.status === 'active' && PREMIUM_PLANS.has(s.type?.name ?? ''),
   );
+
+export const hasAnySubscription = (
+  subscriptions?: IUserSubscription[],
+): boolean =>
+  !!subscriptions?.some((s) => s.status === 'active');
