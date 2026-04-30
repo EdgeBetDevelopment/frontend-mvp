@@ -12,7 +12,7 @@ import { DiscordConnect } from './DiscordConnect';
 import { userService } from '@/modules/profile/services';
 
 export function ProfileSection() {
-  const { refreshToken, setTokens, isAuthenticated } = useAuth();
+  const { refreshToken, setTokens, isAuthenticated, refreshSubscriptionStatus } = useAuth();
   const searchParams = useSearchParams();
   const qc = useQueryClient();
 
@@ -32,9 +32,11 @@ export function ProfileSection() {
           const response = await authService.refreshToken(refreshToken);
           if (response.token) {
             setTokens({ accessToken: response.token });
-            qc.invalidateQueries({ queryKey: ['subscriptions'] });
-            qc.invalidateQueries({ queryKey: ['user'] });
           }
+          qc.invalidateQueries({ queryKey: ['subscriptions'] });
+          qc.invalidateQueries({ queryKey: ['user'] });
+          qc.removeQueries({ queryKey: ['pick-of-day'] });
+          await refreshSubscriptionStatus();
         } catch (error) {
           console.error('Failed to refresh token after subscription:', error);
         }
