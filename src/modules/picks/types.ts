@@ -40,6 +40,7 @@ export interface ApiPick {
   analysis: string;
   status: string;
   is_premium: boolean;
+  to_hide: boolean;
   created_at: string;
   username: string;
 }
