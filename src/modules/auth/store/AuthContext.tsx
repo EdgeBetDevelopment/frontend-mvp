@@ -51,6 +51,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   useEffect(() => {
+    const handleTokenRefreshed = (e: Event) => {
+      const token = (e as CustomEvent<{ token: string }>).detail.token;
+      setAccessToken(token);
+      localStorage.setItem('accessToken', token);
+    };
+
+    const handleLogout = () => {
+      clearTokens();
+    };
+
+    window.addEventListener('auth:tokenRefreshed', handleTokenRefreshed);
+    window.addEventListener('auth:logout', handleLogout);
+
+    return () => {
+      window.removeEventListener('auth:tokenRefreshed', handleTokenRefreshed);
+      window.removeEventListener('auth:logout', handleLogout);
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
     if (!accessToken) {
       setIsPremium(false);
       setIsSubscribed(false);
