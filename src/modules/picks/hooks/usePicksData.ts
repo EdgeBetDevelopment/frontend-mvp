@@ -25,9 +25,16 @@ export const usePicksData = (isPremium: boolean) => {
     retry: false,
   });
 
+  const users = useQuery({
+    queryKey: ['pick-of-day', 'users'],
+    queryFn: () => picksApi.getPickOfTheDayUsers(),
+    retry: false,
+  });
+
   return {
     today: { picks: today.data ?? [], isLoading: today.isLoading, isError: today.isError },
     week: { picks: week.data ?? [], isLoading: week.isLoading, isError: week.isError },
     all: { picks: all.data ?? [], isLoading: all.isLoading, isError: all.isError },
+    users: users.data ?? [],
   };
 };

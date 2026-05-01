@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAuth, authService } from '@/modules/auth';
 import { GeneralInformation } from './GeneralInformation';
@@ -15,6 +15,7 @@ export function ProfileSection() {
   const { refreshToken, setTokens, isAuthenticated, refreshSubscriptionStatus } = useAuth();
   const searchParams = useSearchParams();
   const qc = useQueryClient();
+  const router = useRouter();
 
   const { data: user } = useQuery({
     queryKey: ['user'],
@@ -35,8 +36,24 @@ export function ProfileSection() {
           }
           qc.invalidateQueries({ queryKey: ['subscriptions'] });
           qc.invalidateQueries({ queryKey: ['user'] });
-          qc.removeQueries({ queryKey: ['pick-of-day'] });
-          await refreshSubscriptionStatus();
+
+          const MAX_ATTEMPTS = 6;
+          const DELAY_MS = 1500;
+          let found = false;
+          for (let i = 0; i < MAX_ATTEMPTS; i++) {
+            const subscribed = await refreshSubscriptionStatus();
+            if (subscribed) {
+              found = true;
+              break;
+            }
+            if (i < MAX_ATTEMPTS - 1) {
+              await new Promise(resolve => setTimeout(resolve, DELAY_MS));
+            }
+          }
+          if (found) {
+            qc.removeQueries({ queryKey: ['pick-of-day'] });
+            router.replace('/profile');
+          }
         } catch (error) {
           console.error('Failed to refresh token after subscription:', error);
         }
@@ -44,7 +61,7 @@ export function ProfileSection() {
     };
 
     handleTokenRefresh();
-  }, [searchParams, refreshToken, setTokens, qc]);
+  }, [searchParams, refreshToken, setTokens, qc, refreshSubscriptionStatus, router]);
 
   return (
     <div className="space-y-6">
