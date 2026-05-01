@@ -3,7 +3,7 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 
 import { userService } from "@/modules/profile/services";
-import { hasPremiumSubscription } from "@/modules/profile/types";
+import { hasPremiumSubscription, hasAnySubscription } from "@/modules/profile/types";
 
 interface AuthContextType {
   accessToken: string | null;
@@ -12,7 +12,9 @@ interface AuthContextType {
   isAdmin: boolean;
   isSuperAdmin: boolean;
   isPremium: boolean;
+  isSubscribed: boolean;
   isPremiumLoading: boolean;
+  refreshSubscriptionStatus: () => Promise<void>;
   setTokens: (tokens: {
     accessToken: string;
     refreshToken?: string;
@@ -32,12 +34,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [isSuperAdmin, setIsSuperAdmin] = useState<boolean>(false);
   const [isPremium, setIsPremium] = useState<boolean>(false);
+  const [isSubscribed, setIsSubscribed] = useState<boolean>(false);
   const [isPremiumLoading, setIsPremiumLoading] = useState<boolean>(false);
   const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      setAccessToken(localStorage.getItem("accessToken"));
+      const token = localStorage.getItem("accessToken");
+      if (token) setIsPremiumLoading(true);
+      setAccessToken(token);
       setRefreshToken(localStorage.getItem("refreshToken"));
       setIsAdmin(localStorage.getItem("isAdmin") === "true");
       setIsSuperAdmin(localStorage.getItem("isSuperAdmin") === "true");
@@ -48,14 +53,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     if (!accessToken) {
       setIsPremium(false);
+      setIsSubscribed(false);
       setIsPremiumLoading(false);
       return;
     }
     setIsPremiumLoading(true);
     userService.getMe().then((me) => {
       setIsPremium(hasPremiumSubscription(me?.subscriptions));
+      setIsSubscribed(hasAnySubscription(me?.subscriptions));
     }).catch((error) => {
       setIsPremium(false);
+      setIsSubscribed(false);
       if (error?.code === 401) {
         clearTokens();
       }
@@ -63,6 +71,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       setIsPremiumLoading(false);
     });
   }, [accessToken]);
+
+  const refreshSubscriptionStatus = async () => {
+    if (!accessToken) return;
+    setIsPremiumLoading(true);
+    try {
+      const me = await userService.getMe();
+      setIsPremium(hasPremiumSubscription(me?.subscriptions));
+      setIsSubscribed(hasAnySubscription(me?.subscriptions));
+    } catch {
+      setIsPremium(false);
+      setIsSubscribed(false);
+    } finally {
+      setIsPremiumLoading(false);
+    }
+  };
 
   const setTokens = ({
     accessToken,
@@ -97,6 +120,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     setIsAdmin(false);
     setIsSuperAdmin(false);
     setIsPremium(false);
+    setIsSubscribed(false);
     if (typeof window !== "undefined") {
       localStorage.removeItem("accessToken");
       localStorage.removeItem("token");
@@ -123,7 +147,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         isAdmin,
         isSuperAdmin,
         isPremium,
+        isSubscribed,
         isPremiumLoading,
+        refreshSubscriptionStatus,
         setTokens,
         clearTokens,
       }}

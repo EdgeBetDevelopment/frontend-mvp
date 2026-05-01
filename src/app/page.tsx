@@ -11,17 +11,21 @@ import {
   CTA,
   SearchSection,
   WhopAuthHandler,
+  GoogleAuthHandler,
 } from '@/modules/home';
 import { gameService } from '@/modules/game';
+import { useAuth } from '@/modules/auth';
 
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState('');
   const router = useRouter();
+  const { isAuthenticated } = useAuth();
 
   const { data: nbaGames, isLoading: isLoadingGames } = useQuery({
     queryKey: ['nbaGamesCount'],
     queryFn: () => gameService.getGames(),
     staleTime: 1000 * 60 * 5,
+    enabled: isAuthenticated,
   });
 
   const nbaGamesCount = nbaGames?.length || 0;
@@ -100,6 +104,7 @@ export default function Home() {
     <div className="min-h-screen bg-background">
       <Navigation />
       <WhopAuthHandler />
+      <GoogleAuthHandler />
       <section className="container mx-auto px-6 py-16 md:py-24">
         <SearchSection
           searchQuery={searchQuery}

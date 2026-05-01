@@ -23,10 +23,12 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.edgebet.ai'),
   title: 'Edgebet',
-  description: 'Transforming sports betting from a game of chance to a data-driven investment strategy',
+  description:
+    'Transforming sports betting from a game of chance to a data-driven investment strategy',
   openGraph: {
     title: 'Edgebet',
-    description: 'Transforming sports betting from a game of chance to a data-driven investment strategy',
+    description:
+      'Transforming sports betting from a game of chance to a data-driven investment strategy',
     url: 'https://www.edgebet.ai/',
     siteName: 'Edgebet',
     images: [
@@ -56,10 +58,6 @@ export default function RootLayout({
   return (
     <html lang="en" className="!scroll-smooth" suppressHydrationWarning>
       <head>
-        <Script
-          src="https://accounts.google.com/gsi/client"
-          strategy="beforeInteractive"
-        />
         <Script
           async
           src="https://cdn.promotekit.com/pk.js"

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { profileService } from '@/modules/profile/services';
@@ -11,6 +11,16 @@ export function useDiscordConnect() {
   const [isLoading, setIsLoading] = useState(false);
   const { isAuthenticated } = useAuth();
   const router = useRouter();
+
+  useEffect(() => {
+    const handlePageShow = (event: PageTransitionEvent) => {
+      if (event.persisted) {
+        setIsLoading(false);
+      }
+    };
+    window.addEventListener('pageshow', handlePageShow);
+    return () => window.removeEventListener('pageshow', handlePageShow);
+  }, []);
 
   const handleConnect = async () => {
     if (!isAuthenticated) {

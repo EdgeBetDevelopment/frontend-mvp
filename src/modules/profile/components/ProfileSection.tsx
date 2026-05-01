@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAuth, authService } from '@/modules/auth';
 import { GeneralInformation } from './GeneralInformation';
 import { Subscription } from './Subscription';
@@ -12,8 +12,9 @@ import { DiscordConnect } from './DiscordConnect';
 import { userService } from '@/modules/profile/services';
 
 export function ProfileSection() {
-  const { refreshToken, setTokens, isAuthenticated } = useAuth();
+  const { refreshToken, setTokens, isAuthenticated, refreshSubscriptionStatus } = useAuth();
   const searchParams = useSearchParams();
+  const qc = useQueryClient();
 
   const { data: user } = useQuery({
     queryKey: ['user'],
@@ -32,6 +33,10 @@ export function ProfileSection() {
           if (response.token) {
             setTokens({ accessToken: response.token });
           }
+          qc.invalidateQueries({ queryKey: ['subscriptions'] });
+          qc.invalidateQueries({ queryKey: ['user'] });
+          qc.removeQueries({ queryKey: ['pick-of-day'] });
+          await refreshSubscriptionStatus();
         } catch (error) {
           console.error('Failed to refresh token after subscription:', error);
         }
@@ -39,7 +44,7 @@ export function ProfileSection() {
     };
 
     handleTokenRefresh();
-  }, [searchParams, refreshToken, setTokens]);
+  }, [searchParams, refreshToken, setTokens, qc]);
 
   return (
     <div className="space-y-6">
