@@ -1,15 +1,16 @@
-import type { ApiPick } from '../types';
+import type { ApiPick, PickOfDayUser } from '../types';
 import { ApiPickCard } from './ApiPickCard';
 
 interface PicksListProps {
   picks: ApiPick[];
+  users: PickOfDayUser[];
   isLoading: boolean;
   isError: boolean;
   emptyMessage: string;
   onUnlock: () => void;
 }
 
-export const PicksList = ({ picks, isLoading, isError, emptyMessage, onUnlock }: PicksListProps) => {
+export const PicksList = ({ picks, users, isLoading, isError, emptyMessage, onUnlock }: PicksListProps) => {
   if (isLoading) {
     return <div className="text-center text-muted-foreground">Loading...</div>;
   }
@@ -22,7 +23,12 @@ export const PicksList = ({ picks, isLoading, isError, emptyMessage, onUnlock }:
   return (
     <div className="space-y-6">
       {picks.map((pick) => (
-        <ApiPickCard key={pick.id} pick={pick} onUnlock={onUnlock} />
+        <ApiPickCard
+          key={pick.id}
+          pick={pick}
+          userStats={users.find((u) => u.username === pick.username)}
+          onUnlock={onUnlock}
+        />
       ))}
     </div>
   );

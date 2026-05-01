@@ -62,6 +62,11 @@ export default {
           border: 'hsl(var(--sidebar-border))',
           ring: 'hsl(var(--sidebar-ring))',
         },
+        cta: {
+          DEFAULT: 'hsl(var(--cta))',
+          foreground: 'hsl(var(--cta-foreground))',
+          glow: 'hsl(var(--cta-glow))',
+        },
         nba: 'hsl(var(--nba))',
         nfl: 'hsl(var(--nfl))',
         ncaaf: 'hsl(var(--ncaaf))',

@@ -38,6 +38,11 @@ All colors MUST be HSL.
 
     --radius: 0.75rem;
 
+    /* CTA accent (high-contrast against cyan theme) */
+    --cta: 30 95% 55%;
+    --cta-foreground: 0 0% 100%;
+    --cta-glow: 25 100% 60%;
+
     /* Sport-specific colors */
     --nba: 25 95% 55%;
     --nfl: 210 85% 55%;

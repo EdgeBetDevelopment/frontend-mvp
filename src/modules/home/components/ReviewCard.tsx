@@ -10,7 +10,7 @@ interface ReviewCardProps {
 
 const ReviewCard = ({ name, rating, review }: ReviewCardProps) => {
   return (
-    <Card className="p-6 bg-card border-border">
+    <Card className="p-6 bg-card border-border flex flex-col flex-1 max-h-80">
       <div className="flex items-center gap-4 mb-4">
         <Avatar>
           <AvatarFallback className="bg-primary/20 text-primary">
@@ -26,7 +26,7 @@ const ReviewCard = ({ name, rating, review }: ReviewCardProps) => {
           </div>
         </div>
       </div>
-      <p className="text-muted-foreground">{review}</p>
+      <p className="text-muted-foreground flex-1 overflow-y-auto min-h-0">{review}</p>
     </Card>
   );
 };
