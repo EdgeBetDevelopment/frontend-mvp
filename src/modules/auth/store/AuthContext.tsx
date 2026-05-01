@@ -14,7 +14,7 @@ interface AuthContextType {
   isPremium: boolean;
   isSubscribed: boolean;
   isPremiumLoading: boolean;
-  refreshSubscriptionStatus: () => Promise<void>;
+  refreshSubscriptionStatus: () => Promise<boolean>;
   setTokens: (tokens: {
     accessToken: string;
     refreshToken?: string;
@@ -51,6 +51,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   useEffect(() => {
+    const handleTokenRefreshed = (e: Event) => {
+      const token = (e as CustomEvent<{ token: string }>).detail.token;
+      setAccessToken(token);
+      localStorage.setItem('accessToken', token);
+    };
+
+    const handleLogout = () => {
+      clearTokens();
+    };
+
+    window.addEventListener('auth:tokenRefreshed', handleTokenRefreshed);
+    window.addEventListener('auth:logout', handleLogout);
+
+    return () => {
+      window.removeEventListener('auth:tokenRefreshed', handleTokenRefreshed);
+      window.removeEventListener('auth:logout', handleLogout);
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
     if (!accessToken) {
       setIsPremium(false);
       setIsSubscribed(false);
@@ -72,16 +93,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     });
   }, [accessToken]);
 
-  const refreshSubscriptionStatus = async () => {
-    if (!accessToken) return;
+  const refreshSubscriptionStatus = async (): Promise<boolean> => {
+    if (!accessToken) return false;
     setIsPremiumLoading(true);
     try {
       const me = await userService.getMe();
-      setIsPremium(hasPremiumSubscription(me?.subscriptions));
-      setIsSubscribed(hasAnySubscription(me?.subscriptions));
+      const premium = hasPremiumSubscription(me?.subscriptions);
+      const subscribed = hasAnySubscription(me?.subscriptions);
+      setIsPremium(premium);
+      setIsSubscribed(subscribed);
+      return subscribed;
     } catch {
       setIsPremium(false);
       setIsSubscribed(false);
+      return false;
     } finally {
       setIsPremiumLoading(false);
     }

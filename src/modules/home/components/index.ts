@@ -10,6 +10,5 @@ export { default as SportsCard, EmptyCard } from './SportCard';
 export { default as SportCardRedesigned } from './SportCardRedesigned';
 export { default as SportsList, sports } from './SportsList';
 export { default as StatisticsBlock } from './StatisticsBlock';
-export { UserReviews } from './UserReviews';
 export { default as WhopAuthHandler } from './WhopAuthHandler';
 export { default as GoogleAuthHandler } from './GoogleAuthHandler';

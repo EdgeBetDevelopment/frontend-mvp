@@ -3,13 +3,14 @@
 import React, { useState } from 'react';
 import { Button } from '@/shared/components/button';
 import { Card } from '@/shared/components/card';
-import { TwoFactorSetup, BackupCodesDisplay, use2FAManagement, IUser } from '@/modules/auth';
+import { TwoFactorSetup, BackupCodesDisplay, use2FAManagement } from '@/modules/auth';
+import type { ProfileUser } from '@/modules/profile/services';
 import { Input } from '@/shared/components/input';
 import { Label } from '@/shared/components/label';
 import Loader from '@/shared/components/loader';
 
 interface SecuritySettingsProps {
-  user: IUser;
+  user: ProfileUser;
 }
 
 type SetupStep = 'idle' | 'qr-code' | 'backup-codes' | 'disable' | 'recovery';

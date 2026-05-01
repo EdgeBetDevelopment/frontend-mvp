@@ -19,7 +19,7 @@ const PickOfDayPage = () => {
   const [activeTab, setActiveTab] = useState('today');
   const [paywallOpen, setPaywallOpen] = useState(false);
   const { isPremium, isSubscribed, isPremiumLoading } = useAuth();
-  const { today, week, all } = usePicksData(isPremium);
+  const { today, week, all, users } = usePicksData(isPremium);
   const { startingPrice, isLoading: isPriceLoading } = useStartingPrice();
 
   const openPaywall = () => setPaywallOpen(true);
@@ -68,6 +68,7 @@ const PickOfDayPage = () => {
           <TabsContent value="today" className="mt-6">
             <PicksList
               {...today}
+              users={users}
               isLoading={today.isLoading || isPremiumLoading}
               emptyMessage="No picks for today yet."
               onUnlock={openPaywall}
@@ -78,7 +79,7 @@ const PickOfDayPage = () => {
             {isPremiumLoading
               ? <div className="text-center text-muted-foreground py-12">Loading...</div>
               : isPremium
-                ? <PicksList {...week} emptyMessage="No picks for this week yet." onUnlock={openPaywall} />
+                ? <PicksList {...week} users={users} emptyMessage="No picks for this week yet." onUnlock={openPaywall} />
                 : lockedTab('Premium members see all picks from the past 7 days.')}
           </TabsContent>
 
@@ -86,7 +87,7 @@ const PickOfDayPage = () => {
             {isPremiumLoading
               ? <div className="text-center text-muted-foreground py-12">Loading...</div>
               : isPremium
-                ? <PicksList {...all} emptyMessage="No picks yet." onUnlock={openPaywall} />
+                ? <PicksList {...all} users={users} emptyMessage="No picks yet." onUnlock={openPaywall} />
                 : lockedTab('Full pick history with results and ROI tracking.')}
           </TabsContent>
         </Tabs>

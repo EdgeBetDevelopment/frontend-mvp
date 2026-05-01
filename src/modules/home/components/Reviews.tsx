@@ -7,6 +7,7 @@ import {
 } from "@/shared/components/carousel";
 import { useReviews, type Review } from "../hooks";
 import ReviewCard from "./ReviewCard";
+import { ReviewsSkeleton } from "./ReviewsSkeleton";
 
 export const Reviews = () => {
   const { data, isLoading } = useReviews();
@@ -25,16 +26,14 @@ export const Reviews = () => {
       </div>
 
       {isLoading ? (
-        <div className="py-12 text-center">
-          <p className="text-muted-foreground">Loading reviews...</p>
-        </div>
+        <ReviewsSkeleton />
       ) : data ? (
         <Carousel className="mx-auto max-w-5xl">
-          <CarouselContent>
+          <CarouselContent className={data.length <= 2 ? "justify-center" : ""}>
             {data.map((review: Review) => (
               <CarouselItem
                 key={review.id}
-                className="md:basis-1/2 lg:basis-1/3"
+                className="md:basis-1/2 lg:basis-1/3 flex flex-col"
               >
                 <ReviewCard
                   name={review.name}

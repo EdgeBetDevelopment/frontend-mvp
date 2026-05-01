@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { toast } from "sonner";
-import { Calendar, Clock, ChevronRight } from "lucide-react";
+import { Calendar, Clock, ChevronRight, BarChart3 } from "lucide-react";
 
 import { useAuth } from "@/context/AuthContext";
 import { useIsMobile } from "@/shared/hooks/useIsMobile";
@@ -19,6 +19,7 @@ import {
   formatUtcToLocalDate,
   formatUtcToLocalTimeAmPm,
 } from "@/shared/utils";
+import { Button } from "@/shared/components";
 
 interface IGameCard {
   game: IGameWithAI;
@@ -51,6 +52,14 @@ const GameCard = ({ game, onClickFullAnalysis, type }: IGameCard) => {
               {game?.game?.away_team}
             </Link>
           </h3>
+        <Button
+            size="sm"
+            onClick={onClickFullAnalysis}
+            className="bg-gradient-to-r from-cta to-cta-glow text-cta-foreground font-semibold shadow-[0_0_20px_-5px_hsl(var(--cta)/0.6)] hover:shadow-[0_0_28px_-3px_hsl(var(--cta)/0.85)] hover:scale-105 hover:brightness-110 transition-all"
+          >
+            <BarChart3 className="h-4 w-4" />
+            Full Analysis
+          </Button>
         </div>
         <div className="flex items-center gap-4 text-sm text-muted-foreground">
           <span className="flex items-center gap-1">
@@ -78,13 +87,7 @@ const GameCard = ({ game, onClickFullAnalysis, type }: IGameCard) => {
             {game?.scoreboard?.label || "Regular Season Game"}
           </span>
         </div>
-        <button
-          className="mt-2 flex items-center gap-1 text-sm font-medium text-foreground transition-colors hover:text-primary"
-          onClick={onClickFullAnalysis}
-        >
-          Full analysis
-          <ChevronRight className="h-4 w-4" />
-        </button>
+        
       </div>
 
       {/* Bets Section */}

@@ -1,7 +1,6 @@
-import { Clock, Crown, Lock, Star } from 'lucide-react';
+import { Clock, Crown, Lock, Star, TrendingUp } from 'lucide-react';
 
 import { Card, CardContent, CardHeader } from '@/shared/components/card';
-import { Badge } from '@/shared/components/badge';
 import { Button } from '@/shared/components/button';
 
 import type { ApiPick } from '@/modules/picks/types';
@@ -22,9 +21,11 @@ const ApiConfidenceBadge = ({
 
 export const ApiPickCard = ({
   pick,
+  userStats,
   onUnlock,
 }: {
   pick: ApiPick;
+  userStats?: { wins: number; losses: number; win_rate: number };
   onUnlock?: () => void;
 }) => {
   const gameLabel =
@@ -48,9 +49,13 @@ export const ApiPickCard = ({
                   <Crown className="h-4 w-4 text-amber-400" />
                 ) : null}
               </div>
-              <div className="text-sm text-muted-foreground">
-                {pick.sport?.toUpperCase()}
-              </div>
+              {userStats && (
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <TrendingUp className="h-3 w-3 text-emerald-400" />
+                  <span>{userStats.wins}-{userStats.losses}</span>
+                  <span className="text-emerald-400">{userStats.win_rate.toFixed(1)}%</span>
+                </div>
+              )}
             </div>
           </div>
           <div className="flex flex-col items-end gap-2">
@@ -68,9 +73,6 @@ export const ApiPickCard = ({
       <CardContent className="space-y-4 relative">
         <div className="rounded-lg border border-border/50 bg-background/50 p-4">
           <div className="mb-2 flex items-center justify-between">
-            <Badge variant="outline" className="text-xs">
-              {pick.sport?.toUpperCase()}
-            </Badge>
             {!isLocked && (
               <span className="text-sm text-primary">
                 {pick.units} Unit{pick.units > 1 ? 's' : ''}
