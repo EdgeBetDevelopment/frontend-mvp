@@ -52,13 +52,6 @@ const GameCard = ({ game, onClickFullAnalysis, type }: IGameCard) => {
               {game?.game?.away_team}
             </Link>
           </h3>
-          {/* <button
-          className="mt-2 flex items-center gap-1 text-sm font-medium text-foreground transition-colors hover:text-primary"
-          onClick={onClickFullAnalysis}
-        >
-          Full analysis
-          <ChevronRight className="h-4 w-4" />
-        </button> */}
         <Button
             size="sm"
             onClick={onClickFullAnalysis}

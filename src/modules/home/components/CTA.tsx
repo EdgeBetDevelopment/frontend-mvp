@@ -1,7 +1,12 @@
+'use client";'
+
 import Link from "next/link";
 import { Button } from "@/shared/components/button";
+import { useAuth } from "@/modules/auth";
 
 export const CTA = () => {
+  const { isAuthenticated } = useAuth();
+
   return (
     <section className="container mx-auto px-6 py-16 border-t border-border">
       <div className="text-center max-w-3xl mx-auto bg-gradient-to-r from-card to-card/50 rounded-2xl p-12 border border-border">
@@ -14,14 +19,16 @@ export const CTA = () => {
           platform helps you make informed decisions and maximize your winning
           potential
         </p>
-        <Link href="/sign-up">
-          <Button
-            size="lg"
-            className="bg-primary hover:bg-primary/90 text-primary-foreground"
-          >
-            Sign Up
-          </Button>
-        </Link>
+        {!isAuthenticated && (
+          <Link href="/sign-up">
+            <Button
+              size="lg"
+              className="bg-primary hover:bg-primary/90 text-primary-foreground"
+            >
+              Sign Up
+            </Button>
+          </Link>
+        )}
       </div>
     </section>
   );

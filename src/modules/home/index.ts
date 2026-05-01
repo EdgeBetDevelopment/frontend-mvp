@@ -15,7 +15,6 @@ export {
   SportsList,
   sports,
   StatisticsBlock,
-  UserReviews,
   WhopAuthHandler,
   GoogleAuthHandler,
 } from './components';
