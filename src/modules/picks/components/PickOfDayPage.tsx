@@ -18,8 +18,8 @@ import { useStartingPrice } from '../hooks/useStartingPrice';
 const PickOfDayPage = () => {
   const [activeTab, setActiveTab] = useState('today');
   const [paywallOpen, setPaywallOpen] = useState(false);
-  const { isPremium, isSubscribed, isPremiumLoading } = useAuth();
-  const { today, week, all, users } = usePicksData(isPremium);
+  const { isSubscribed, isPremiumLoading } = useAuth();
+  const { today, week, all, users } = usePicksData(isSubscribed);
   const { startingPrice, isLoading: isPriceLoading } = useStartingPrice();
 
   const openPaywall = () => setPaywallOpen(true);
@@ -78,7 +78,7 @@ const PickOfDayPage = () => {
           <TabsContent value="week" className="mt-6">
             {isPremiumLoading
               ? <div className="text-center text-muted-foreground py-12">Loading...</div>
-              : isPremium
+              : isSubscribed
                 ? <PicksList {...week} users={users} emptyMessage="No picks for this week yet." onUnlock={openPaywall} />
                 : lockedTab('Premium members see all picks from the past 7 days.')}
           </TabsContent>
@@ -86,7 +86,7 @@ const PickOfDayPage = () => {
           <TabsContent value="history" className="mt-6">
             {isPremiumLoading
               ? <div className="text-center text-muted-foreground py-12">Loading...</div>
-              : isPremium
+              : isSubscribed
                 ? <PicksList {...all} users={users} emptyMessage="No picks yet." onUnlock={openPaywall} />
                 : lockedTab('Full pick history with results and ROI tracking.')}
           </TabsContent>
