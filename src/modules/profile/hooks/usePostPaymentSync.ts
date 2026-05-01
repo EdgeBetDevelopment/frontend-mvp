@@ -39,6 +39,8 @@ export function usePostPaymentSync() {
             }
           }
           if (found) {
+            qc.invalidateQueries({ queryKey: ['subscriptions'] });
+            qc.invalidateQueries({ queryKey: ['user'] });
             qc.removeQueries({ queryKey: ['pick-of-day'] });
             router.replace('/profile');
           }
