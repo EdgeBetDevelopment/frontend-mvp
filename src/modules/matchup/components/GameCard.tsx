@@ -62,7 +62,7 @@ const GameCard = ({ game, onClickFullAnalysis, type }: IGameCard) => {
         <Button
             size="sm"
             onClick={onClickFullAnalysis}
-            className="bg-primary text-primary-foreground hover:bg-primary/90 shrink-0 gap-1.5 bg-gradient-to-r from-cta to-cta-glow text-cta-foreground font-semibold shadow-[0_0_20px_-5px_hsl(var(--cta)/0.6)] hover:shadow-[0_0_28px_-3px_hsl(var(--cta)/0.85)] hover:scale-105 hover:brightness-110 transition-all"
+            className="bg-gradient-to-r from-cta to-cta-glow text-cta-foreground font-semibold shadow-[0_0_20px_-5px_hsl(var(--cta)/0.6)] hover:shadow-[0_0_28px_-3px_hsl(var(--cta)/0.85)] hover:scale-105 hover:brightness-110 transition-all"
           >
             <BarChart3 className="h-4 w-4" />
             Full Analysis
