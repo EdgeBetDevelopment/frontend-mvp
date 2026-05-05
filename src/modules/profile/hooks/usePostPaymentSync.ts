@@ -1,54 +1,54 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useQueryClient } from '@tanstack/react-query';
-import { useAuth, authService } from '@/modules/auth';
+import { useAuth } from '@/modules/auth';
+import { paymentService } from '@/modules/pricing';
 
 export function usePostPaymentSync() {
-  const { refreshToken, setTokens, refreshSubscriptionStatus } = useAuth();
+  const { refreshSubscriptionStatus } = useAuth();
   const searchParams = useSearchParams();
   const qc = useQueryClient();
   const router = useRouter();
 
+  const [successOpen, setSuccessOpen] = useState(false);
+  const [failedOpen, setFailedOpen] = useState(false);
+
   useEffect(() => {
-    const handleTokenRefresh = async () => {
-      const success = searchParams.get('success');
-      const sessionId = searchParams.get('session_id');
+    const sessionId = searchParams.get('session_id');
+    const cancel = searchParams.get('cancel');
 
-      if ((success === 'true' || sessionId) && refreshToken) {
-        try {
-          const MAX_ATTEMPTS = 6;
-          const DELAY_MS = 1500;
+    if (!sessionId && cancel !== 'true') return;
 
-          for (let i = 0; i < MAX_ATTEMPTS; i++) {
-            // Refresh token on each attempt — backend may encode subscription in JWT claims
-            const response = await authService.refreshToken(refreshToken);
-            if (response.token) {
-              setTokens({ accessToken: response.token });
-            }
+    router.replace('/profile');
 
-            const subscribed = await refreshSubscriptionStatus();
-            if (subscribed) {
-              qc.invalidateQueries({ queryKey: ['subscriptions'] });
-              qc.invalidateQueries({ queryKey: ['user'] });
-              qc.removeQueries({ queryKey: ['pick-of-day'] });
-              router.replace('/profile');
-              return;
-            }
+    if (cancel === 'true') {
+      setFailedOpen(true);
+      return;
+    }
 
-            if (i < MAX_ATTEMPTS - 1) {
-              await new Promise(resolve => setTimeout(resolve, DELAY_MS));
-            }
-          }
-
-          router.replace('/profile');
-        } catch (error) {
-          console.error('Failed to refresh token after subscription:', error);
+    if (sessionId) {
+      paymentService.getPaymentStatus(sessionId).then((res) => {
+        if (res.status === 'paid') {
+          qc.invalidateQueries({ queryKey: ['user'] });
+          qc.invalidateQueries({ queryKey: ['subscriptions'] });
+          qc.removeQueries({ queryKey: ['pick-of-day'] });
+          refreshSubscriptionStatus();
+          setSuccessOpen(true);
+        } else {
+          setFailedOpen(true);
         }
-      }
-    };
+      }).catch(() => {
+        setFailedOpen(true);
+      });
+    }
+  }, [searchParams, router, qc, refreshSubscriptionStatus]);
 
-    handleTokenRefresh();
-  }, [searchParams, refreshToken, setTokens, qc, refreshSubscriptionStatus, router]);
+  return {
+    successOpen,
+    failedOpen,
+    closeSuccess: () => setSuccessOpen(false),
+    closeFailed: () => setFailedOpen(false),
+  };
 }
