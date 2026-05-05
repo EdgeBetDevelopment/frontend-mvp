@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Lock } from 'lucide-react';
+import { Crown, Lock } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/shared/components/tabs';
 import { Button } from '@/shared/components/button';
 import Navigation from '@/shared/components/Navigation';
@@ -40,9 +40,18 @@ const PickOfDayPage = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
+     
 
       <main className="container mx-auto px-6 py-8">
         <div className="mb-10 text-center">
+          
+          {isSubscribed && (
+          <div className="inline-flex items-center gap-2 bg-primary/10 px-4 py-2 rounded-full mb-4">
+            <Crown className="h-5 w-5 text-primary" />
+            <span className="text-primary font-medium">Premium Access</span>
+          </div>
+          )}
+           
           <h1 className="mb-4 font-display text-4xl font-bold md:text-5xl">
             Pick of the <span className="text-primary">Day</span>
           </h1>
