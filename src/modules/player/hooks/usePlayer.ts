@@ -33,6 +33,7 @@ export const usePlayer = (
   return {
     ...playerQuery,
     playerNameData: playerNameQuery.data,
+    isLoadingSeason: playerSeasonQuery.isLoading,
     isLoadingFull:
       playerQuery.isLoading &&
       playerNameQuery.isLoading &&

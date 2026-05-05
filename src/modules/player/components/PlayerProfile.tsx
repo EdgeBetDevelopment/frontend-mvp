@@ -18,6 +18,7 @@ import {
   ArrowLeft,
   Calendar,
   Filter,
+  Loader2,
   TrendingUp,
   Trophy,
   User,
@@ -163,6 +164,7 @@ const PlayerProfile = () => {
     playerSeason,
     error,
     isLoading,
+    isLoadingSeason,
     errors,
   } = usePlayer(playerId as string, isAuthenticated);
 
@@ -665,7 +667,11 @@ const PlayerProfile = () => {
               </div>
             </CardHeader>
             <CardContent>
-              {groupedGames.length === 0 ? (
+              {isLoadingSeason ? (
+                <div className="flex items-center justify-center py-8">
+                  <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                </div>
+              ) : groupedGames.length === 0 ? (
                 <div className="px-4 py-6 text-center text-[14px] text-[#BDBDBD]">
                   No games to display yet.
                 </div>
