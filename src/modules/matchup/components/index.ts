@@ -1,4 +1,5 @@
 export { default as MatchupPage } from './MatchupPage';
+export { default as TosDisclaimerDialog } from './TosDisclaimerDialog';
 export { default as GameCard } from './GameCard';
 export { default as TrackGameCard } from './TrackGameCard';
 export { default as TrackBetAside } from './TrackBetAside';
