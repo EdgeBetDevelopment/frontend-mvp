@@ -55,7 +55,7 @@ const TosDisclaimerDialog = () => {
         }}
       >
         <DialogContent
-          className="sm:max-w-lg"
+          className="sm:max-w-lg [&>button:last-child]:hidden"
           onPointerDownOutside={(e) => e.preventDefault()}
           onEscapeKeyDown={(e) => e.preventDefault()}
         >

@@ -204,7 +204,6 @@ const TeamPage = () => {
     );
   }
 
-  // Show login screen if not authenticated
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-background">
@@ -240,8 +239,6 @@ const TeamPage = () => {
       </div>
     );
   }
-
-  // Show subscription screen for 402 (from backend)
   if (authError === 402) {
     return (
       <div className="min-h-screen bg-background">
