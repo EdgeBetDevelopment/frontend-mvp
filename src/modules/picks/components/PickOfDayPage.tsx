@@ -78,6 +78,7 @@ const PickOfDayPage = () => {
           <FreeMemberBanner onUpgrade={openPaywall} />
         )}
 
+
           <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-8">
             <TabsList className="border border-border/50 bg-card/50">
               <TabsTrigger value="today">Today's Picks</TabsTrigger>
