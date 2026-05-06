@@ -24,7 +24,7 @@ import AuthGuard from '@/app/profile/AuthGuard';
 const PickOfDayPage = () => {
   const [activeTab, setActiveTab] = useState('today');
   const [paywallOpen, setPaywallOpen] = useState(false);
-  const { isSubscribed, isPremiumLoading } = useAuth();
+  const { isSubscribed, isPremiumLoading, isSubscriptionLoaded } = useAuth();
   const { today, week, all, users } = usePicksData(isSubscribed);
   const { startingPrice, isLoading: isPriceLoading } = useStartingPrice();
 
@@ -66,10 +66,9 @@ const PickOfDayPage = () => {
             </p>
           </div>
 
-          {!isSubscribed && !isPremiumLoading && (
+          {isSubscriptionLoaded && !isSubscribed && (
             <FreeMemberBanner onUpgrade={openPaywall} />
           )}
-
           <ModeratorStats />
 
           <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-8">

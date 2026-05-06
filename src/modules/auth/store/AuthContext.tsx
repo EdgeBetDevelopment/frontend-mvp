@@ -14,6 +14,7 @@ interface AuthContextType {
   isPremium: boolean;
   isSubscribed: boolean;
   isPremiumLoading: boolean;
+  isSubscriptionLoaded: boolean;
   refreshSubscriptionStatus: () => Promise<boolean>;
   setTokens: (tokens: {
     accessToken: string;
@@ -36,6 +37,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [isPremium, setIsPremium] = useState<boolean>(false);
   const [isSubscribed, setIsSubscribed] = useState<boolean>(false);
   const [isPremiumLoading, setIsPremiumLoading] = useState<boolean>(false);
+  const [isSubscriptionLoaded, setIsSubscriptionLoaded] = useState<boolean>(false);
   const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
@@ -72,16 +74,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   useEffect(() => {
+    if (!isInitialized) return;
+
     if (!accessToken) {
       setIsPremium(false);
       setIsSubscribed(false);
       setIsPremiumLoading(false);
+      setIsSubscriptionLoaded(true);
       return;
     }
     setIsPremiumLoading(true);
+    setIsSubscriptionLoaded(false);
     userService.getMe().then((me) => {
       setIsPremium(hasPremiumSubscription(me?.subscriptions));
       setIsSubscribed(hasAnySubscription(me?.subscriptions));
+      setIsSubscriptionLoaded(true);
     }).catch((error) => {
       setIsPremium(false);
       setIsSubscribed(false);
@@ -91,17 +98,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }).finally(() => {
       setIsPremiumLoading(false);
     });
-  }, [accessToken]);
+  }, [accessToken, isInitialized]);
 
   const refreshSubscriptionStatus = async (): Promise<boolean> => {
     if (!accessToken) return false;
     setIsPremiumLoading(true);
+    setIsSubscriptionLoaded(false);
     try {
       const me = await userService.getMe();
       const premium = hasPremiumSubscription(me?.subscriptions);
       const subscribed = hasAnySubscription(me?.subscriptions);
       setIsPremium(premium);
       setIsSubscribed(subscribed);
+      setIsSubscriptionLoaded(true);
       return subscribed;
     } catch {
       setIsPremium(false);
@@ -174,6 +183,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         isPremium,
         isSubscribed,
         isPremiumLoading,
+        isSubscriptionLoaded,
         refreshSubscriptionStatus,
         setTokens,
         clearTokens,
