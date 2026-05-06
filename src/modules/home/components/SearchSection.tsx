@@ -118,8 +118,6 @@ export const SearchSection = ({
           )}
         </div>
       </div>
-
-      {/* Login Required Dialog */}
       <Dialog open={authError === 401} onOpenChange={() => setAuthError(null)}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>

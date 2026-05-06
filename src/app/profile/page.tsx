@@ -1,25 +1,28 @@
 import Footer from '@/shared/components/Footer';
 import Navigation from '@/shared/components/Navigation';
 import { ProfileSection } from '@/modules/profile';
+import AuthGuard from './AuthGuard';
 
 export default function Profile() {
   return (
-    <div className="min-h-screen bg-background">
-      <Navigation />
+    <AuthGuard message="Please login to access your profile.">
+      <div className="min-h-screen bg-background">
+        <Navigation />
 
-      <main className="container mx-auto max-w-4xl px-6 py-12">
-        <div className="mb-8">
-          <h1 className="mb-2 font-display text-3xl font-bold md:text-4xl">
-            My Account
-          </h1>
-          <p className="text-muted-foreground">
-            Manage your subscription and account settings
-          </p>
-        </div>
+        <main className="container mx-auto max-w-4xl px-6 py-12">
+          <div className="mb-8">
+            <h1 className="mb-2 font-display text-3xl font-bold md:text-4xl">
+              My Account
+            </h1>
+            <p className="text-muted-foreground">
+              Manage your subscription and account settings
+            </p>
+          </div>
 
-        <ProfileSection />
-      </main>
-      <Footer />
-    </div>
+          <ProfileSection />
+        </main>
+        <Footer />
+      </div>
+    </AuthGuard>
   );
 }
