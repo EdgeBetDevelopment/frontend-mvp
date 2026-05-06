@@ -6,6 +6,7 @@ export interface ILogin {
 export interface ISignUp extends ILogin {
   username: string;
   phone_number: string;
+  read_disclaimer: boolean;
 }
 
 export interface IUser {
