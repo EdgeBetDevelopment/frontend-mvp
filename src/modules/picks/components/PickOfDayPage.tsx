@@ -66,18 +66,10 @@ const PickOfDayPage = () => {
             </p>
           </div>
 
-          {!isSubscribed && !isPremiumLoading && (
+          {isSubscriptionLoaded && !isSubscribed && (
             <FreeMemberBanner onUpgrade={openPaywall} />
           )}
-
-        {isSubscriptionLoaded && !isSubscribed && (
-          <FreeMemberBanner onUpgrade={openPaywall} />
-        )}
           <ModeratorStats />
-        {isSubscriptionLoaded && !isSubscribed && (
-          <FreeMemberBanner onUpgrade={openPaywall} />
-        )}
-
 
           <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-8">
             <TabsList className="border border-border/50 bg-card/50">
