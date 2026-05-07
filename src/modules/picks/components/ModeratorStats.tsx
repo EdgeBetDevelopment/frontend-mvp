@@ -74,7 +74,7 @@ export const ModeratorStats = () => {
   }
 
   return (
-    <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-3">
+    <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-2">
       {users.map((user: PickOfDayUserStats, index) => {
         const winRate = formatWinRate(user.win_rate);
         const ytd = formatYtd(user.ytd);

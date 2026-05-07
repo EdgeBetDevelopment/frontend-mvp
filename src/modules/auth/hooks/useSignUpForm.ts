@@ -21,10 +21,7 @@ const signUpSchema = z
       .min(2, 'Name is too short')
       .max(30, 'Name is too long')
       .regex(/^[a-zA-Z\s-]+$/, 'Invalid characters in name'),
-    email: z
-      .string()
-      .min(1, 'Field is required')
-      .email('Invalid email format'),
+    email: z.string().min(1, 'Field is required').email('Invalid email format'),
     phone: z
       .string()
       .min(1, 'Field is required')
@@ -98,6 +95,7 @@ export const useSignUpForm = ({ onSuccessSignUp }: UseSignUpFormProps = {}) => {
       password: values.password,
       username: values.name,
       phone_number: values.phone,
+      read_disclaimer: localStorage.getItem('tos_accepted') === 'true',
     });
   };
 

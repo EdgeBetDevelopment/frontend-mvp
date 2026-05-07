@@ -9,7 +9,7 @@ import { useAuth } from '@/modules/auth/store';
 
 export default function GoogleAuthHandler() {
   const router = useRouter();
-  const { setTokens } = useAuth();
+  const { setTokens, setAuthLoading } = useAuth();
   const didRun = useRef(false);
 
   useEffect(() => {
@@ -25,11 +25,13 @@ export default function GoogleAuthHandler() {
     if (!idToken && !error) return;
 
     didRun.current = true;
+    setAuthLoading(true);
 
     history.replaceState(null, '', window.location.pathname);
 
     if (error || !idToken) {
       toast.error('Google sign-in was cancelled or failed');
+      setAuthLoading(false);
       return;
     }
 
@@ -47,8 +49,11 @@ export default function GoogleAuthHandler() {
       .catch((err: unknown) => {
         const e = err as { response?: { data?: { message?: string } } };
         toast.error(e?.response?.data?.message || 'Google login failed');
+      })
+      .finally(() => {
+        setAuthLoading(false);
       });
-  }, [router, setTokens]);
+  }, [router, setTokens, setAuthLoading]);
 
   return null;
 }

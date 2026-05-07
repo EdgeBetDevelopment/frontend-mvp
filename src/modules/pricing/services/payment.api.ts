@@ -44,6 +44,13 @@ const paymentService = {
       status: 'canceled',
     });
   },
+
+  async getPaymentStatus(sessionId: string): Promise<{ status: 'paid' | 'pending' }> {
+    const response = await axiosInstance.get(
+      `/payment/api/v1/stripe/payments/status?session_id=${sessionId}`,
+    );
+    return response.data;
+  },
 };
 
 export default paymentService;
