@@ -1,9 +1,12 @@
-"use client";
+'use client';
 
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 
-import { userService } from "@/modules/profile/services";
-import { hasPremiumSubscription, hasAnySubscription } from "@/modules/profile/types";
+import { userService } from '@/modules/profile/services';
+import {
+  hasPremiumSubscription,
+  hasAnySubscription,
+} from '@/modules/profile/types';
 
 interface AuthContextType {
   accessToken: string | null;
@@ -15,6 +18,8 @@ interface AuthContextType {
   isSubscribed: boolean;
   isPremiumLoading: boolean;
   isSubscriptionLoaded: boolean;
+  isAuthLoading: boolean;
+  setAuthLoading: (loading: boolean) => void;
   refreshSubscriptionStatus: () => Promise<boolean>;
   setTokens: (tokens: {
     accessToken: string;
@@ -37,17 +42,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [isPremium, setIsPremium] = useState<boolean>(false);
   const [isSubscribed, setIsSubscribed] = useState<boolean>(false);
   const [isPremiumLoading, setIsPremiumLoading] = useState<boolean>(false);
-  const [isSubscriptionLoaded, setIsSubscriptionLoaded] = useState<boolean>(false);
+  const [isSubscriptionLoaded, setIsSubscriptionLoaded] =
+    useState<boolean>(false);
+  const [isAuthLoading, setAuthLoading] = useState<boolean>(false);
   const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const token = localStorage.getItem("accessToken");
+    if (typeof window !== 'undefined') {
+      const token = localStorage.getItem('accessToken');
       if (token) setIsPremiumLoading(true);
       setAccessToken(token);
-      setRefreshToken(localStorage.getItem("refreshToken"));
-      setIsAdmin(localStorage.getItem("isAdmin") === "true");
-      setIsSuperAdmin(localStorage.getItem("isSuperAdmin") === "true");
+      setRefreshToken(localStorage.getItem('refreshToken'));
+      setIsAdmin(localStorage.getItem('isAdmin') === 'true');
+      setIsSuperAdmin(localStorage.getItem('isSuperAdmin') === 'true');
       setIsInitialized(true);
     }
   }, []);
@@ -70,7 +77,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       window.removeEventListener('auth:tokenRefreshed', handleTokenRefreshed);
       window.removeEventListener('auth:logout', handleLogout);
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -85,19 +91,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
     setIsPremiumLoading(true);
     setIsSubscriptionLoaded(false);
-    userService.getMe().then((me) => {
-      setIsPremium(hasPremiumSubscription(me?.subscriptions));
-      setIsSubscribed(hasAnySubscription(me?.subscriptions));
-      setIsSubscriptionLoaded(true);
-    }).catch((error) => {
-      setIsPremium(false);
-      setIsSubscribed(false);
-      if (error?.code === 401) {
-        clearTokens();
-      }
-    }).finally(() => {
-      setIsPremiumLoading(false);
-    });
+    userService
+      .getMe()
+      .then((me) => {
+        setIsPremium(hasPremiumSubscription(me?.subscriptions));
+        setIsSubscribed(hasAnySubscription(me?.subscriptions));
+        setIsSubscriptionLoaded(true);
+      })
+      .catch((error) => {
+        setIsPremium(false);
+        setIsSubscribed(false);
+        if (error?.code === 401) {
+          clearTokens();
+        }
+      })
+      .finally(() => {
+        setIsPremiumLoading(false);
+      });
   }, [accessToken, isInitialized]);
 
   const refreshSubscriptionStatus = async (): Promise<boolean> => {
@@ -135,15 +145,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     setAccessToken(accessToken);
     setIsAdmin(admin || false);
     setIsSuperAdmin(superAdmin || false);
-    if (typeof window !== "undefined") {
-      localStorage.setItem("accessToken", accessToken);
-      localStorage.setItem("isAdmin", String(admin || false));
-      localStorage.setItem("isSuperAdmin", String(superAdmin || false));
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('accessToken', accessToken);
+      localStorage.setItem('isAdmin', String(admin || false));
+      localStorage.setItem('isSuperAdmin', String(superAdmin || false));
       document.cookie = `accessToken=${accessToken}; path=/; SameSite=Lax; max-age=${60 * 60 * 24 * 7}`;
 
       if (refreshToken) {
         setRefreshToken(refreshToken);
-        localStorage.setItem("refreshToken", refreshToken);
+        localStorage.setItem('refreshToken', refreshToken);
       }
     }
   };
@@ -155,13 +165,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     setIsSuperAdmin(false);
     setIsPremium(false);
     setIsSubscribed(false);
-    if (typeof window !== "undefined") {
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("token");
-      localStorage.removeItem("userId");
-      localStorage.removeItem("refreshToken");
-      localStorage.removeItem("isAdmin");
-      localStorage.removeItem("isSuperAdmin");
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('token');
+      localStorage.removeItem('userId');
+      localStorage.removeItem('refreshToken');
+      localStorage.removeItem('isAdmin');
+      localStorage.removeItem('isSuperAdmin');
       document.cookie = 'accessToken=; path=/; max-age=0';
     }
   };
@@ -184,6 +194,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         isSubscribed,
         isPremiumLoading,
         isSubscriptionLoaded,
+        isAuthLoading,
+        setAuthLoading,
         refreshSubscriptionStatus,
         setTokens,
         clearTokens,
@@ -197,7 +209,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider");
+    throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
 };

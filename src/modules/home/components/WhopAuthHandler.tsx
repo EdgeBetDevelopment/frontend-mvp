@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { toast } from 'sonner';
 
 import { useAuth } from '@/modules/auth';
 
@@ -10,7 +11,7 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL!;
 export default function WhopAuthHandler() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const { setTokens } = useAuth();
+  const { setTokens, setAuthLoading } = useAuth();
   const didRun = useRef(false);
 
   useEffect(() => {
@@ -21,6 +22,8 @@ export default function WhopAuthHandler() {
     const state = searchParams.get('state');
 
     if (!code || (state && state !== 'whop')) return;
+
+    setAuthLoading(true);
 
     (async () => {
       try {
@@ -35,6 +38,8 @@ export default function WhopAuthHandler() {
 
         if (!resp.ok) {
           console.error('Whop callback failed', resp.status);
+          toast.error('Whop login failed');
+          setAuthLoading(false);
           return;
         }
 
@@ -55,13 +60,17 @@ export default function WhopAuthHandler() {
 
         if (accessToken) {
           setTokens({ accessToken, refreshToken: refreshToken ?? undefined });
+          toast.success('Logged in with Whop!');
         }
         router.replace(window.location.pathname);
       } catch (e) {
         console.error('Whop callback error', e);
+        toast.error('Whop login failed');
+      } finally {
+        setAuthLoading(false);
       }
     })();
-  }, [searchParams, router, setTokens]);
+  }, [searchParams, router, setTokens, setAuthLoading]);
 
   return null;
 }

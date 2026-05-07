@@ -18,7 +18,9 @@ import {
 } from '../dropdown-menu';
 
 const Profile = () => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isAuthLoading } = useAuth();
+
+  if (isAuthLoading) return null;
 
   return <>{isAuthenticated ? <AuthorizedUser /> : <UnauthorizedUser />}</>;
 };

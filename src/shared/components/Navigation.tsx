@@ -25,7 +25,8 @@ const Navigation = ({
   onLogout,
 }: NavigationProps) => {
   const router = useRouter();
-  const { isAuthenticated, clearTokens, isAdmin, isSuperAdmin } = useAuth();
+  const { isAuthenticated, clearTokens, isAdmin, isSuperAdmin, isAuthLoading } =
+    useAuth();
 
   const isLoggedIn = isLoggedInProp ?? isAuthenticated;
 
@@ -135,7 +136,7 @@ const Navigation = ({
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-        ) : (
+        ) : isAuthLoading ? null : (
           <Button
             className="bg-primary text-primary-foreground hover:bg-primary/90"
             onClick={() => router.push('/login')}
