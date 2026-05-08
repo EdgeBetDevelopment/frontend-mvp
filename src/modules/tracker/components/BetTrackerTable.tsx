@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   ReadonlyURLSearchParams,
   usePathname,
@@ -13,6 +13,7 @@ import {
   Clock,
   DollarSign,
   Loader2,
+  Trash2,
   TrendingDown,
   TrendingUp,
 } from 'lucide-react';
@@ -113,6 +114,16 @@ const BetTrackerTable = () => {
   const [activeTab, setActiveTab] = useState(type);
   const { sortArray, currentSort, handleSort } = useTableSort();
   const { isAuthenticated } = useAuth();
+  const queryClient = useQueryClient();
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+
+  const { mutate: deleteHistory, isPending: isDeleting } = useMutation({
+    mutationFn: () => trackerApi.deleteHistory(),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['betList'] });
+      setShowDeleteConfirm(false);
+    },
+  });
 
   React.useEffect(() => {
     setActiveTab(type);
@@ -371,19 +382,62 @@ const BetTrackerTable = () => {
           </Card>
         </div>
 
-        {/* Tabs */}
+        {showDeleteConfirm && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+            <div className="mx-4 w-full max-w-sm rounded-xl border border-border bg-card p-6 shadow-xl">
+              <h2 className="mb-2 font-display text-lg font-bold text-foreground">
+                Delete Bet History
+              </h2>
+              <p className="mb-6 text-sm text-muted-foreground">
+                Are you sure you want to delete all your bet history? This
+                action cannot be undone.
+              </p>
+              <div className="flex justify-end gap-3">
+                <button
+                  onClick={() => setShowDeleteConfirm(false)}
+                  className="rounded-lg border border-border px-4 py-2 text-sm font-medium text-foreground hover:bg-secondary"
+                  disabled={isDeleting}
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => deleteHistory()}
+                  disabled={isDeleting}
+                  className="flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-60"
+                >
+                  {isDeleting ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Trash2 className="h-4 w-4" />
+                  )}
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         <Tabs value={activeTab} onValueChange={onChangeType} className="w-full">
-          <TabsList className="mb-6">
-            <TabsTrigger value="active" className="px-6">
-              Active Bets ({activeBets.length})
-            </TabsTrigger>
-            <TabsTrigger value="completed" className="px-6">
-              Completed Bets ({completedBets.length})
-            </TabsTrigger>
-            <TabsTrigger value="all" className="px-6">
-              All Bets ({allTrackedBets.length})
-            </TabsTrigger>
-          </TabsList>
+          <div className="mb-6 flex items-center justify-between">
+            <TabsList>
+              <TabsTrigger value="active" className="px-6">
+                Active Bets ({activeBets.length})
+              </TabsTrigger>
+              <TabsTrigger value="completed" className="px-6">
+                Completed Bets ({completedBets.length})
+              </TabsTrigger>
+              <TabsTrigger value="all" className="px-6">
+                All Bets ({allTrackedBets.length})
+              </TabsTrigger>
+            </TabsList>
+            <button
+              onClick={() => setShowDeleteConfirm(true)}
+              className="flex items-center gap-2 rounded-lg border border-red-600/50 px-4 py-2 text-sm font-medium text-red-500 hover:border-red-600 hover:bg-red-600/10"
+            >
+              <Trash2 className="h-4 w-4" />
+              Delete History
+            </button>
+          </div>
 
           <TabsContent value={activeTab} className="mt-0">
             {isLoading ? (
