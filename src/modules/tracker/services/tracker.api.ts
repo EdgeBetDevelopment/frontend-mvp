@@ -29,4 +29,11 @@ export const trackerApi = {
     const response = await axiosInstance.post(`/bet/api/v1/bet/bet_list`, body);
     return response.data;
   },
+
+  async deleteHistory(): Promise<string> {
+    const response = await axiosInstance.delete(
+      `/bet/api/v1/bet/delete_history`,
+    );
+    return response.data;
+  },
 };
