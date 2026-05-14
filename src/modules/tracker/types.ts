@@ -1,5 +1,5 @@
-import { IGame } from "@/modules/game/types";
-import type { MappedPick } from "./utils/mapPick";
+import { IGame } from '@/modules/game/types';
+import type { MappedPick } from './utils/mapPick';
 
 export interface ISelection {
   amount: number;
@@ -40,4 +40,30 @@ export interface SingleBetTicket {
 
 export interface CreateSingleBetsPayload {
   bets: SingleBetTicket[];
+}
+
+export type BetStatus = 'pending' | 'won' | 'lost';
+
+export interface BetLeg {
+  id: number;
+  sport: string;
+  homeTeam: string;
+  awayTeam: string;
+  description: string;
+  odds: string;
+  date: string;
+  time: string;
+  status: BetStatus;
+  amount: number;
+}
+
+export interface TrackedBet {
+  id: number;
+  type: 'single' | 'parlay';
+  status: BetStatus;
+  createdAt: string;
+  riskAmount: number;
+  potentialPayout: number;
+  actualPayout?: number;
+  legs: BetLeg[];
 }

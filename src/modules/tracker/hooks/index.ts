@@ -1,1 +1,2 @@
-export { useBetSubmission } from "./useBetSubmission";
+export { useBetSubmission } from './useBetSubmission';
+export { useBetTracker } from './useBetTracker';
