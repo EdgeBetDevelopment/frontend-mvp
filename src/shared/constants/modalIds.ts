@@ -1,8 +1,9 @@
 export const MODAL_IDS = {
-  AUTH: "auth",
-  TRACK_BET: "track-bet",
-  GAME_ANALYSIS: "game-analysis",
-  COMING_SOON: "coming-soon",
+  AUTH: 'auth',
+  TRACK_BET: 'track-bet',
+  GAME_ANALYSIS: 'game-analysis',
+  COMING_SOON: 'coming-soon',
+  GAME_ANALYSIS_DETAILED: 'GAME_ANALYSIS',
 } as const;
 
 export type ModalId = (typeof MODAL_IDS)[keyof typeof MODAL_IDS];

@@ -1,29 +1,12 @@
 'use client';
 
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
-import { useInfiniteQuery } from '@tanstack/react-query';
-import {
-  ReadonlyURLSearchParams,
-  useRouter,
-  useSearchParams,
-} from 'next/navigation';
-import { Lock, Crown } from 'lucide-react';
+import { useState } from 'react';
+import { Crown } from 'lucide-react';
 
 import { GameAnalysisModal } from '@/modules/game/components/analysis';
 import { IGameWithAI } from '@/modules/game/types';
-import { useAuth } from '@/context/AuthContext';
-import useModalManager from '@/shared/hooks/useModalManager';
-import { gameService } from '@/modules/game';
-import { useStore } from '@/store';
 import { Button } from '@/shared/components/button';
 import { Skeleton } from '@/shared/components/skeleton';
-import { formUrlQuery } from '@/shared/utils';
 import { ListRenderer } from '@/shared/components';
 import Navigation from '@/shared/components/Navigation';
 import Footer from '@/shared/components/Footer';
@@ -39,161 +22,34 @@ import MatchupPageFilters from './Filters';
 import GameCard from './GameCard';
 import TrackBetsAside from './TrackBetAside';
 import MobileBetSlip from './MobileBetSlip';
+import TennisFullAnalysis from './TennisFullAnalysis';
+import { SPORT_CONFIGS } from '../config';
+import { useMatchupPage } from '../hooks/useMatchupPage';
 import { MODAL_IDS } from '@/shared/constants';
+import { tennisMatchups } from '../data/tennisMatchups';
 
 const MatchupPage = () => {
-  const { isAuthenticated } = useAuth();
-  const modalManager = useModalManager();
-  const storeManager = useStore();
+  const [selectedTennisId, setSelectedTennisId] = useState<string | null>(null);
+  const [tennisAnalysisOpen, setTennisAnalysisOpen] = useState(false);
 
-  const modalManagerRef = useRef(modalManager);
-  const storeManagerRef = useRef(storeManager);
-
-  useEffect(() => {
-    modalManagerRef.current = modalManager;
-    storeManagerRef.current = storeManager;
-  });
-
-  const { openModal, closeModal, isModalOpen } = modalManager;
-  const { setSelectedGame } = storeManager;
-
-  const params = useSearchParams() as ReadonlyURLSearchParams;
-  const type = params.get('type');
-  const router = useRouter();
-
-  const [authError, setAuthError] = useState<402 | null>(null);
+  const onSelectTennisGame = (id: string) => {
+    setSelectedTennisId(id);
+    setTennisAnalysisOpen(true);
+  };
 
   const {
-    data,
+    isAuthenticated,
+    authError,
+    type,
+    router,
+    isAmerican,
     isLoading,
     isError,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-    error,
-  } = useInfiniteQuery<IGameWithAI[], Error>({
-    queryKey: ['games-feed'],
-    queryFn: ({ pageParam }) =>
-      gameService.getGames(pageParam as number | undefined),
-    initialPageParam: undefined as number | undefined,
-    getNextPageParam: (lastPage) => {
-      if (!lastPage || lastPage.length === 0) {
-        return undefined;
-      }
-
-      const lastGame = lastPage[lastPage.length - 1];
-      const nextLastId = Number(lastGame?.game?.id);
-
-      return nextLastId;
-    },
-    refetchInterval: 300000,
-    retry: false,
-    enabled: isAuthenticated,
-  });
-
-  useEffect(() => {
-    if (error) {
-      const err = error as { code?: number };
-      if (err?.code === 402) {
-        setAuthError(402);
-      }
-    }
-  }, [error]);
-
-  const flatGames: IGameWithAI[] = useMemo(() => {
-    return data ? data.pages.flatMap((page) => page) : [];
-  }, [data]);
-
-  const loadMoreRef = useRef<HTMLDivElement | null>(null);
-
-  const handleIntersection = useCallback(
-    (entries: IntersectionObserverEntry[]) => {
-      const first = entries[0];
-      if (first.isIntersecting && hasNextPage && !isFetchingNextPage) {
-        fetchNextPage();
-      }
-    },
-    [fetchNextPage, hasNextPage, isFetchingNextPage],
-  );
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(handleIntersection, {
-      root: null,
-      rootMargin: '200px',
-      threshold: 0,
-    });
-
-    const current = loadMoreRef.current;
-    if (current) observer.observe(current);
-
-    return () => {
-      if (current) observer.unobserve(current);
-    };
-  }, [handleIntersection]);
-
-  const onClickFullAnalysis = useCallback(
-    (game: IGameWithAI) => {
-      if (!isAuthenticated) return;
-
-      setSelectedGame(game);
-      openModal(MODAL_IDS.GAME_ANALYSIS);
-
-      setTimeout(() => {
-        const url = formUrlQuery({
-          params: params.toString(),
-          key: 'game-analysis',
-          value: game?.game?.id?.toString(),
-        });
-        router.push(url);
-      }, 100);
-    },
-    [isAuthenticated, openModal, setSelectedGame, params, router],
-  );
-
-  const onClickCloseModal = useCallback(() => {
-    closeModal(MODAL_IDS.GAME_ANALYSIS);
-
-    setTimeout(() => {
-      setSelectedGame(null);
-
-      const url = formUrlQuery({
-        params: params.toString(),
-        keysToRemove: ['game-analysis'],
-      });
-      router.push(url);
-    }, 150);
-  }, [closeModal, setSelectedGame, params, router]);
-
-  useEffect(() => {
-    if (!isAuthenticated) return;
-
-    const gameAnalysisParam = params.get('game-analysis');
-    const { openModal, closeModal, isModalOpen } = modalManagerRef.current;
-    const { setSelectedGame } = storeManagerRef.current;
-
-    if (!gameAnalysisParam) {
-      const modalOpen = isModalOpen(MODAL_IDS.GAME_ANALYSIS);
-      if (modalOpen) {
-        closeModal(MODAL_IDS.GAME_ANALYSIS);
-        setTimeout(() => setSelectedGame(null), 100);
-      }
-      return;
-    }
-
-    const gameId = Number(gameAnalysisParam);
-    const found = flatGames.find((g) => g?.game?.id === gameId);
-
-    if (found) {
-      const currentGame = useStore.getState().selectedGame;
-      if (!currentGame || currentGame?.game?.id !== found?.game?.id) {
-        setSelectedGame(found);
-      }
-
-      if (!isModalOpen(MODAL_IDS.GAME_ANALYSIS)) {
-        openModal(MODAL_IDS.GAME_ANALYSIS);
-      }
-    }
-  }, [isAuthenticated, params, flatGames]);
+    flatGames,
+    isModalOpen,
+    onClickFullAnalysis,
+    onClickCloseModal,
+  } = useMatchupPage();
 
   if (!isAuthenticated) {
     return (
@@ -203,7 +59,6 @@ const MatchupPage = () => {
     );
   }
 
-  // Show subscription screen for 402 (from backend)
   if (authError === 402) {
     return (
       <div className="min-h-screen bg-background">
@@ -255,68 +110,81 @@ const MatchupPage = () => {
     );
   }
 
+  const oddsFormat = isAmerican ? 'american' : 'european';
+  const currentSport =
+    SPORT_CONFIGS.find((s) => s.value === type) ?? SPORT_CONFIGS[0];
+
+  const renderMatchups = () => {
+    if (currentSport.dataSource === 'mock' && currentSport.renderGrid) {
+      return currentSport.renderGrid({
+        oddsFormat,
+        onSelectGame: onSelectTennisGame,
+      });
+    }
+
+    return (
+      <ListRenderer
+        isLoading={isLoading}
+        data={flatGames}
+        isError={isError}
+        errorComponent={<div>Error load games</div>}
+        loadingComponent={<GamesLoading />}
+        emptyComponent={
+          <div className="flex h-64 items-center justify-center rounded-lg border border-border bg-card">
+            <p className="text-lg text-muted-foreground">
+              No games scheduled for the next 24 hours
+            </p>
+          </div>
+        }
+      >
+        {(games) => (
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            {games.map((game: IGameWithAI, idx: number) => {
+              const key =
+                game?.game?.id ??
+                `${game?.game?.home_team}-${game?.game?.away_team}-${game?.game?.start_time}-${idx}`;
+              return (
+                <GameCard
+                  key={String(key)}
+                  type={type}
+                  game={game}
+                  onClickFullAnalysis={() => onClickFullAnalysis(game)}
+                />
+              );
+            })}
+          </div>
+        )}
+      </ListRenderer>
+    );
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
       <div className="container mx-auto px-6 py-24">
         <MatchupPageFilters />
-
-        {/* Main Content */}
         <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-4">
-          {/* Matchups Grid */}
           <div className="lg:col-span-3">
-            {isAuthenticated && (
-              <ListRenderer
-                isLoading={isLoading}
-                data={flatGames}
-                isError={isError}
-                errorComponent={<div>Error load games</div>}
-                loadingComponent={<GamesLoading />}
-                emptyComponent={
-                  <div className="flex h-64 items-center justify-center rounded-lg border border-border bg-card">
-                    <p className="text-lg text-muted-foreground">
-                      No games scheduled for the next 24 hours
-                    </p>
-                  </div>
-                }
-              >
-                {(games) => (
-                  <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                    {games.map((game: IGameWithAI, idx: number) => {
-                      const key =
-                        game?.game?.id ??
-                        `${game?.game?.home_team}-${game?.game?.away_team}-${game?.game?.start_time}-${idx}`;
-                      return (
-                        <GameCard
-                          key={String(key)}
-                          type={type}
-                          game={game}
-                          onClickFullAnalysis={() => onClickFullAnalysis(game)}
-                        />
-                      );
-                    })}
-                  </div>
-                )}
-              </ListRenderer>
-            )}
+            {isAuthenticated && renderMatchups()}
           </div>
-
-          {/* Track Bet Sidebar - Desktop Only */}
           <div className="hidden lg:col-span-1 lg:block">
             <TrackBetsAside />
           </div>
         </div>
       </div>
-
       <Footer />
-
-      {/* Mobile Bet Slip */}
       <MobileBetSlip />
-
       {isAuthenticated && flatGames.length > 0 && (
         <GameAnalysisModal
           open={isModalOpen(MODAL_IDS.GAME_ANALYSIS)}
           onClose={onClickCloseModal}
+        />
+      )}
+      {selectedTennisId && (
+        <TennisFullAnalysis
+          open={tennisAnalysisOpen}
+          onOpenChange={setTennisAnalysisOpen}
+          matchup={tennisMatchups.find((m) => m.id === selectedTennisId)!}
         />
       )}
     </div>
@@ -325,12 +193,10 @@ const MatchupPage = () => {
 
 export default MatchupPage;
 
-const GamesLoading = () => {
-  return (
-    <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-      {Array.from({ length: 4 }).map((_, index) => (
-        <Skeleton key={index} className="h-[400px] w-full rounded-lg" />
-      ))}
-    </div>
-  );
-};
+const GamesLoading = () => (
+  <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+    {Array.from({ length: 4 }).map((_, index) => (
+      <Skeleton key={index} className="h-[400px] w-full rounded-lg" />
+    ))}
+  </div>
+);
