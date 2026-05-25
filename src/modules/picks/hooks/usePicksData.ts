@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { picksApi } from '@/modules/picks';
 import { useAuth } from '@/modules/auth';
 
-export const usePicksData = (isSubscribed: boolean) => {
+export const usePicksData = (hasAccess: boolean) => {
   const { accessToken } = useAuth();
 
   const today = useQuery({
@@ -14,14 +14,14 @@ export const usePicksData = (isSubscribed: boolean) => {
   const week = useQuery({
     queryKey: ['pick-of-day', 'this-week', accessToken],
     queryFn: () => picksApi.getPickOfTheDayThisWeek(),
-    enabled: isSubscribed,
+    enabled: hasAccess,
     retry: false,
   });
 
   const all = useQuery({
     queryKey: ['pick-of-day', 'all', accessToken],
     queryFn: () => picksApi.getPickOfTheDayList(),
-    enabled: isSubscribed,
+    enabled: hasAccess,
     retry: false,
   });
 
@@ -32,9 +32,21 @@ export const usePicksData = (isSubscribed: boolean) => {
   });
 
   return {
-    today: { picks: today.data ?? [], isLoading: today.isLoading, isError: today.isError },
-    week: { picks: week.data ?? [], isLoading: week.isLoading, isError: week.isError },
-    all: { picks: all.data ?? [], isLoading: all.isLoading, isError: all.isError },
+    today: {
+      picks: today.data ?? [],
+      isLoading: today.isLoading,
+      isError: today.isError,
+    },
+    week: {
+      picks: week.data ?? [],
+      isLoading: week.isLoading,
+      isError: week.isError,
+    },
+    all: {
+      picks: all.data ?? [],
+      isLoading: all.isLoading,
+      isError: all.isError,
+    },
     users: users.data ?? [],
   };
 };

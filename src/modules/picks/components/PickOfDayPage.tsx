@@ -24,8 +24,9 @@ import AuthGuard from '@/app/profile/AuthGuard';
 const PickOfDayPage = () => {
   const [activeTab, setActiveTab] = useState('today');
   const [paywallOpen, setPaywallOpen] = useState(false);
-  const { isSubscribed, isPremiumLoading, isSubscriptionLoaded } = useAuth();
-  const { today, week, all, users } = usePicksData(isSubscribed);
+  const { isSubscribed, isPremiumLoading, isSubscriptionLoaded, isAdmin } =
+    useAuth();
+  const { today, week, all, users } = usePicksData(isSubscribed || isAdmin);
   const { startingPrice, isLoading: isPriceLoading } = useStartingPrice();
 
   const openPaywall = () => setPaywallOpen(true);
@@ -66,7 +67,7 @@ const PickOfDayPage = () => {
             </p>
           </div>
 
-          {isSubscriptionLoaded && !isSubscribed && (
+          {isSubscriptionLoaded && !isSubscribed && !isAdmin && (
             <FreeMemberBanner onUpgrade={openPaywall} />
           )}
           <ModeratorStats />
@@ -93,7 +94,7 @@ const PickOfDayPage = () => {
                 <div className="py-12 text-center text-muted-foreground">
                   Loading...
                 </div>
-              ) : isSubscribed ? (
+              ) : isSubscribed || isAdmin ? (
                 <PicksList
                   {...week}
                   users={users}
@@ -110,7 +111,7 @@ const PickOfDayPage = () => {
                 <div className="py-12 text-center text-muted-foreground">
                   Loading...
                 </div>
-              ) : isSubscribed ? (
+              ) : isSubscribed || isAdmin ? (
                 <PicksList
                   {...all}
                   users={users}
