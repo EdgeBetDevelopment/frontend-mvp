@@ -141,7 +141,8 @@ const TennisMatchupCard = ({
                   onClick={() => onSelectBet?.(m)}
                   className="w-full rounded-lg bg-primary/90 px-4 py-2.5 text-center text-sm font-medium text-primary-foreground transition-colors hover:bg-primary"
                 >
-                  {m.label} ({fmtOdds(m.odds, oddsFormat)})
+                  {m.label}
+                  {m.odds ? ` (${fmtOdds(m.odds, oddsFormat)})` : ''}
                 </button>
               ))
             ) : (
@@ -164,7 +165,8 @@ const TennisMatchupCard = ({
                   onClick={() => onSelectBet?.(m)}
                   className="w-full rounded-lg bg-primary/90 px-4 py-2.5 text-center text-sm font-medium text-primary-foreground transition-colors hover:bg-primary"
                 >
-                  {m.label} ({fmtOdds(m.odds, oddsFormat)})
+                  {m.label}
+                  {m.odds ? ` (${fmtOdds(m.odds, oddsFormat)})` : ''}
                 </button>
               ))
             ) : (

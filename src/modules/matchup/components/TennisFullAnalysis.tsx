@@ -36,6 +36,7 @@ interface Props {
 const TennisFullAnalysis = ({ open, onOpenChange, matchup }: Props) => {
   const { player1: p1, player2: p2 } = matchup;
 
+  const apiH2hScore = matchup.h2hScore;
   const h2h = [
     {
       year: 2024,
@@ -73,6 +74,9 @@ const TennisFullAnalysis = ({ open, onOpenChange, matchup }: Props) => {
 
   const p1Wins = h2h.filter((m) => m.winner === p1.name).length;
   const p2Wins = h2h.filter((m) => m.winner === p2.name).length;
+  const h2hLabel = apiH2hScore
+    ? `${p1.name} ${apiH2hScore} ${p2.name}`
+    : `${p1.name} ${p1Wins}–${p2Wins} ${p2.name}`;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -140,12 +144,8 @@ const TennisFullAnalysis = ({ open, onOpenChange, matchup }: Props) => {
                     <Activity className="h-4 w-4 text-primary" /> Match Overview
                   </h4>
                   <p className="text-sm leading-relaxed text-muted-foreground">
-                    A high-stakes {matchup.round} clash at {matchup.tournament}{' '}
-                    on {matchup.surface.toLowerCase()}. {matchup.aiPick} enters
-                    as the model-favored side, supported by superior recent form
-                    and a favorable surface profile. Expect a{' '}
-                    {matchup.format.toLowerCase()} contest with elevated
-                    baseline rallies and break-point leverage.
+                    {matchup.overview ||
+                      `A high-stakes ${matchup.round} clash at ${matchup.tournament} on ${matchup.surface.toLowerCase()}. ${matchup.aiPick} enters as the model-favored side, supported by superior recent form and a favorable surface profile. Expect a ${matchup.format.toLowerCase()} contest with elevated baseline rallies and break-point leverage.`}
                   </p>
                 </Card>
               </TabsContent>
@@ -186,7 +186,7 @@ const TennisFullAnalysis = ({ open, onOpenChange, matchup }: Props) => {
               <TabsContent value="h2h" className="space-y-3">
                 <Card className="p-4">
                   <h4 className="mb-3 font-semibold">
-                    Head-to-Head: {p1.name} {p1Wins}–{p2Wins} {p2.name}
+                    Head-to-Head: {h2hLabel}
                   </h4>
                   <div className="space-y-2">
                     {h2h.map((m, i) => (
@@ -220,28 +220,45 @@ const TennisFullAnalysis = ({ open, onOpenChange, matchup }: Props) => {
                   <div className="mb-2 flex items-center gap-2">
                     <Zap className="h-4 w-4 text-primary" />
                     <h4 className="font-semibold">AI Pick: {matchup.aiPick}</h4>
-                    <Badge variant="outline" className="ml-auto">
-                      Lean
-                    </Badge>
+                    {(matchup.winProbabilityPlayer1 ||
+                      matchup.winProbabilityPlayer2) && (
+                      <Badge variant="outline" className="ml-auto">
+                        {matchup.aiPick === matchup.player1.name
+                          ? `${matchup.winProbabilityPlayer1}%`
+                          : `${matchup.winProbabilityPlayer2}%`}
+                      </Badge>
+                    )}
+                    {!matchup.winProbabilityPlayer1 &&
+                      !matchup.winProbabilityPlayer2 && (
+                        <Badge variant="outline" className="ml-auto">
+                          Lean
+                        </Badge>
+                      )}
                   </div>
-                  <ul className="list-inside list-disc space-y-2 text-sm text-muted-foreground">
-                    <li>
-                      Surface ELO clearly favors {matchup.aiPick} on{' '}
-                      {matchup.surface.toLowerCase()}.
-                    </li>
-                    <li>
-                      Recent form differential leans toward {matchup.aiPick}{' '}
-                      across the last 5 matches.
-                    </li>
-                    <li>
-                      Service hold profile on {matchup.surface.toLowerCase()}{' '}
-                      favors {matchup.aiPick}.
-                    </li>
-                    <li>
-                      Historical edge in {matchup.format.toLowerCase()} formats
-                      due to stamina profile.
-                    </li>
-                  </ul>
+                  {matchup.analysis ? (
+                    <p className="text-sm leading-relaxed text-muted-foreground">
+                      {matchup.analysis}
+                    </p>
+                  ) : (
+                    <ul className="list-inside list-disc space-y-2 text-sm text-muted-foreground">
+                      <li>
+                        Surface ELO clearly favors {matchup.aiPick} on{' '}
+                        {matchup.surface.toLowerCase()}.
+                      </li>
+                      <li>
+                        Recent form differential leans toward {matchup.aiPick}{' '}
+                        across the last 5 matches.
+                      </li>
+                      <li>
+                        Service hold profile on {matchup.surface.toLowerCase()}{' '}
+                        favors {matchup.aiPick}.
+                      </li>
+                      <li>
+                        Historical edge in {matchup.format.toLowerCase()}{' '}
+                        formats due to stamina profile.
+                      </li>
+                    </ul>
+                  )}
                 </Card>
               </TabsContent>
               <TabsContent value="bets" className="space-y-2">
@@ -256,12 +273,14 @@ const TennisFullAnalysis = ({ open, onOpenChange, matchup }: Props) => {
                       </div>
                       <div className="font-medium">{m.label}</div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <TrendingUp className="h-4 w-4 text-emerald-400" />
-                      <span className="font-mono font-bold text-primary">
-                        {m.odds}
-                      </span>
-                    </div>
+                    {m.odds && (
+                      <div className="flex items-center gap-2">
+                        <TrendingUp className="h-4 w-4 text-emerald-400" />
+                        <span className="font-mono font-bold text-primary">
+                          {m.odds}
+                        </span>
+                      </div>
+                    )}
                   </Card>
                 ))}
               </TabsContent>

@@ -23,17 +23,19 @@ import GameCard from './GameCard';
 import TrackBetsAside from './TrackBetAside';
 import MobileBetSlip from './MobileBetSlip';
 import TennisFullAnalysis from './TennisFullAnalysis';
+import TennisGrid from './TennisGrid';
 import { SPORT_CONFIGS } from '../config';
 import { useMatchupPage } from '../hooks/useMatchupPage';
 import { MODAL_IDS } from '@/shared/constants';
-import { tennisMatchups } from '../data/tennisMatchups';
+import type { TennisMatchup } from '../data/tennisMatchups';
 
 const MatchupPage = () => {
-  const [selectedTennisId, setSelectedTennisId] = useState<string | null>(null);
+  const [selectedTennisMatchup, setSelectedTennisMatchup] =
+    useState<TennisMatchup | null>(null);
   const [tennisAnalysisOpen, setTennisAnalysisOpen] = useState(false);
 
-  const onSelectTennisGame = (id: string) => {
-    setSelectedTennisId(id);
+  const onSelectTennisGame = (matchup: TennisMatchup) => {
+    setSelectedTennisMatchup(matchup);
     setTennisAnalysisOpen(true);
   };
 
@@ -115,11 +117,10 @@ const MatchupPage = () => {
     SPORT_CONFIGS.find((s) => s.value === type) ?? SPORT_CONFIGS[0];
 
   const renderMatchups = () => {
-    if (currentSport.dataSource === 'mock' && currentSport.renderGrid) {
-      return currentSport.renderGrid({
-        oddsFormat,
-        onSelectGame: onSelectTennisGame,
-      });
+    if (currentSport.value === 'tennis') {
+      return (
+        <TennisGrid oddsFormat={oddsFormat} onSelectGame={onSelectTennisGame} />
+      );
     }
 
     return (
@@ -180,11 +181,11 @@ const MatchupPage = () => {
           onClose={onClickCloseModal}
         />
       )}
-      {selectedTennisId && (
+      {selectedTennisMatchup && (
         <TennisFullAnalysis
           open={tennisAnalysisOpen}
           onOpenChange={setTennisAnalysisOpen}
-          matchup={tennisMatchups.find((m) => m.id === selectedTennisId)!}
+          matchup={selectedTennisMatchup}
         />
       )}
     </div>

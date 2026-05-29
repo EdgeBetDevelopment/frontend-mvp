@@ -8,7 +8,7 @@ export type Sportsbook =
 
 export interface TennisMarket {
   label: string;
-  odds: string;
+  odds?: string;
   books: Sportsbook[];
 }
 
@@ -42,6 +42,12 @@ export interface TennisMatchup {
   markets: TennisMarketExtended[];
   valueBets: TennisMarket[];
   conservativeBets: TennisMarket[];
+  // API-sourced fields (optional, present when data comes from the real API)
+  overview?: string;
+  analysis?: string;
+  h2hScore?: string;
+  winProbabilityPlayer1?: number;
+  winProbabilityPlayer2?: number;
 }
 
 const ALL_BOOKS: Sportsbook[] = [
