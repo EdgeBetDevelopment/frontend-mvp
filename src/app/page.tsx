@@ -41,6 +41,13 @@ export default function Home() {
       isLoadingMatches: isLoadingGames,
     },
     {
+      id: 'tennis',
+      name: 'Tennis',
+      icon: '🎾',
+      color: 'tennis',
+      description: 'WTA / ATP Events',
+    },
+    {
       id: 'nfl',
       name: 'NFL',
       icon: '🏈',
@@ -70,14 +77,6 @@ export default function Home() {
       icon: '⚾',
       color: 'mlb',
       description: 'US Baseball',
-      comingSoon: true,
-    },
-    {
-      id: 'tennis',
-      name: 'Tennis',
-      icon: '🎾',
-      color: 'tennis',
-      description: 'WTA / ATP Events',
       comingSoon: true,
     },
   ];
