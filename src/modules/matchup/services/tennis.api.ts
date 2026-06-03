@@ -17,6 +17,15 @@ export interface TennisApiTournament {
   event_type: string;
 }
 
+export interface TennisApiBet {
+  market_type: string;
+  bet_name: string;
+  selection: string;
+  line: number | null;
+  coefficient: number;
+  description: string;
+}
+
 export interface TennisApiPrediction {
   win_probability_first_player: number;
   win_probability_second_player: number;
@@ -25,8 +34,8 @@ export interface TennisApiPrediction {
   moneyline_first_player: number;
   moneyline_second_player: number;
   predicted_winner: string;
-  value_bets: string[];
-  conservative_bets: string[];
+  value_bets: TennisApiBet[];
+  conservative_bets: TennisApiBet[];
   analysis: string;
   overview: string;
   h2h_score: string;
@@ -60,6 +69,7 @@ export const tennisApiService = {
 };
 
 const getSurface = (s: string): TennisMatchup['surface'] => {
+  if (!s) return 'Hard Court';
   const lower = s.toLowerCase();
   if (lower.includes('clay')) return 'Clay';
   if (lower.includes('grass')) return 'Grass';
@@ -130,14 +140,14 @@ export const mapTennisApiGame = (game: TennisApiGame): TennisMatchup => {
         odds: fmtMoneyline(pred.moneyline_second_player),
       },
     ],
-    valueBets: pred.value_bets.slice(0, 3).map((label) => ({
-      label,
-      odds: '',
+    valueBets: pred.value_bets.slice(0, 3).map((bet) => ({
+      label: bet.bet_name,
+      odds: bet.coefficient ? String(bet.coefficient) : '',
       books: [],
     })),
-    conservativeBets: pred.conservative_bets.slice(0, 3).map((label) => ({
-      label,
-      odds: '',
+    conservativeBets: pred.conservative_bets.slice(0, 3).map((bet) => ({
+      label: bet.bet_name,
+      odds: bet.coefficient ? String(bet.coefficient) : '',
       books: [],
     })),
     overview: pred.overview,
