@@ -1,8 +1,11 @@
 'use client';
 
-import { useRef, useCallback, useEffect } from 'react';
+import { useRef, useCallback, useEffect, useState } from 'react';
 
 import { Skeleton } from '@/shared/components/skeleton';
+import { PaywallModal } from '@/modules/picks/components/PaywallModal';
+import { useStartingPrice } from '@/modules/picks/hooks/useStartingPrice';
+import { useAuth } from '@/modules/auth';
 
 import TennisMatchupCard from './TennisMatchupCard';
 import { useTennisGames } from '../hooks/useTennisGames';
@@ -18,10 +21,23 @@ const TennisGrid = ({ oddsFormat, onSelectGame }: Props) => {
     flatGames,
     isLoading,
     isError,
+    is402Error,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
   } = useTennisGames();
+  const { isSubscribed, isSubscriptionLoaded } = useAuth();
+  const { startingPrice, isLoading: isPriceLoading } = useStartingPrice();
+  const [paywallOpen, setPaywallOpen] = useState(false);
+
+  const shouldShowPaywall =
+    is402Error || (isSubscriptionLoaded && !isSubscribed);
+
+  useEffect(() => {
+    if (shouldShowPaywall) {
+      setPaywallOpen(true);
+    }
+  }, [shouldShowPaywall]);
 
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
 
@@ -55,6 +71,32 @@ const TennisGrid = ({ oddsFormat, onSelectGame }: Props) => {
           <Skeleton key={i} className="h-[400px] w-full rounded-lg" />
         ))}
       </div>
+    );
+  }
+
+  if (is402Error || (isSubscriptionLoaded && !isSubscribed)) {
+    return (
+      <>
+        <div className="flex h-64 items-center justify-center rounded-lg border border-border bg-card">
+          <div className="text-center">
+            <p className="mb-4 text-lg text-muted-foreground">
+              A subscription is required to view tennis predictions.
+            </p>
+            <button
+              onClick={() => setPaywallOpen(true)}
+              className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
+            >
+              Upgrade to Premium
+            </button>
+          </div>
+        </div>
+        <PaywallModal
+          open={paywallOpen}
+          onClose={() => setPaywallOpen(false)}
+          startingPrice={startingPrice}
+          isPriceLoading={isPriceLoading}
+        />
+      </>
     );
   }
 
@@ -92,6 +134,12 @@ const TennisGrid = ({ oddsFormat, onSelectGame }: Props) => {
           ))}
         </div>
       )}
+      <PaywallModal
+        open={paywallOpen}
+        onClose={() => setPaywallOpen(false)}
+        startingPrice={startingPrice}
+        isPriceLoading={isPriceLoading}
+      />
     </>
   );
 };

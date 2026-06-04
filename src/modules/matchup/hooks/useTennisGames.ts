@@ -13,6 +13,7 @@ export const useTennisGames = () => {
     data,
     isLoading,
     isError,
+    error,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
@@ -29,6 +30,9 @@ export const useTennisGames = () => {
     retry: false,
   });
 
+  const is402Error =
+    isError && (error as unknown as { code?: number })?.code === 402;
+
   const flatGames: TennisMatchup[] = useMemo(
     () =>
       data ? data.pages.flatMap((page) => page.map(mapTennisApiGame)) : [],
@@ -39,6 +43,7 @@ export const useTennisGames = () => {
     flatGames,
     isLoading,
     isError,
+    is402Error,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
