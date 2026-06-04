@@ -82,7 +82,11 @@ export default function Home() {
   ];
 
   const handleSportClick = (sportId: string) => {
-    router.push(`/matchup?sport=${sportId}`);
+    if (sportId === 'nba') {
+      router.push('/matchup');
+    } else {
+      router.push(`/matchup?type=${sportId}`);
+    }
   };
 
   const handlePlayerSelect = (player: { id: string; name: string }) => {

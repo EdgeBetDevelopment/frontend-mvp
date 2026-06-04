@@ -24,9 +24,15 @@ const MatchupPageFilters = () => {
     if (disabled) return;
     if (value === type) return;
 
+    const cleanParams = formUrlQuery({
+      params: params.toString(),
+      keysToRemove: ['sport'],
+    });
+    const cleanSearch = cleanParams.split('?')[1] ?? '';
+
     const url = value
-      ? formUrlQuery({ params: params.toString(), key: 'type', value })
-      : formUrlQuery({ params: params.toString(), keysToRemove: ['type'] });
+      ? formUrlQuery({ params: cleanSearch, key: 'type', value })
+      : formUrlQuery({ params: cleanSearch, keysToRemove: ['type'] });
 
     router.push(url);
   };
