@@ -8,6 +8,11 @@ import { useStartingPrice } from '@/modules/picks/hooks/useStartingPrice';
 import { useAuth } from '@/modules/auth';
 
 import TennisMatchupCard from './TennisMatchupCard';
+import { useStore } from '@/store';
+import useModalManager from '@/shared/hooks/useModalManager';
+import { MODAL_IDS } from '@/shared/constants';
+import { toast } from 'sonner';
+import { useIsMobile } from '@/shared/hooks/useIsMobile';
 import { useTennisGames } from '../hooks/useTennisGames';
 import type { TennisMatchup } from '../data/tennisMatchups';
 
@@ -40,6 +45,10 @@ const TennisGrid = ({ oddsFormat, onSelectGame }: Props) => {
   }, [shouldShowPaywall]);
 
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
+
+  const { setTrackedGame, upsertSingle, upsertParlayPick } = useStore();
+  const { openModal } = useModalManager();
+  const isMobile = useIsMobile();
 
   const handleIntersection = useCallback(
     (entries: IntersectionObserverEntry[]) => {
@@ -117,14 +126,47 @@ const TennisGrid = ({ oddsFormat, onSelectGame }: Props) => {
   return (
     <>
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-        {flatGames.map((matchup) => (
-          <TennisMatchupCard
-            key={matchup.id}
-            matchup={matchup}
-            oddsFormat={oddsFormat}
-            onSelectGame={() => onSelectGame?.(matchup)}
-          />
-        ))}
+        {flatGames.map((matchup) => {
+          const handleSelectBet = (market: any) => {
+            setTrackedGame(matchup as any);
+
+            const name1 = matchup.player1?.name ?? '';
+            const name2 = matchup.player2?.name ?? '';
+            const label = market?.label ?? '';
+
+            let selectedName = '';
+            if (label.includes(name1)) selectedName = name1;
+            else if (label.includes(name2)) selectedName = name2;
+
+            const pick = {
+              game_id: matchup.id,
+              odds: market?.odds ?? '-',
+              selected_team_id: '',
+              selected_team_name: selectedName,
+              description: label,
+              sport: 'tennis' as const,
+              market_type: market?.label ?? '',
+              bet_value: null,
+              bet_over_under: null,
+              bet_player: null,
+            };
+
+            upsertParlayPick(pick as any);
+            upsertSingle(pick as any);
+            openModal(MODAL_IDS.TRACK_BET);
+            if (isMobile) toast.success('Bet successfully recorded in the tracker');
+          };
+
+          return (
+            <TennisMatchupCard
+              key={matchup.id}
+              matchup={matchup}
+              oddsFormat={oddsFormat}
+              onSelectGame={() => onSelectGame?.(matchup)}
+              onSelectBet={handleSelectBet}
+            />
+          );
+        })}
       </div>
       <div ref={loadMoreRef} />
       {isFetchingNextPage && (

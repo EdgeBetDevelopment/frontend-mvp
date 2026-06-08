@@ -1,8 +1,8 @@
-import { StateCreator } from "zustand";
+import { StateCreator } from 'zustand';
 
-import { IGameWithAI } from "@/modules/game/types";
-import { BetPick, Ticket, IMatchupState } from "@/modules/matchup/types";
-import { calcParlayOddsDecimal, makeId } from "@/shared/utils";
+import { IGameWithAI } from '@/modules/game/types';
+import { BetPick, Ticket, IMatchupState } from '@/modules/matchup/types';
+import { calcParlayOddsDecimal, makeId } from '@/shared/utils';
 
 export type { BetPick, Ticket };
 
@@ -53,10 +53,10 @@ export const matchupSlice: StateCreator<IMatchupSliceState> = (set) => ({
       const ticketFromPick: Ticket = {
         amount: next[index ?? -1]?.amount ?? 0,
         win_amount: next[index ?? -1]?.win_amount ?? 0,
-        bets: [{ ...pick, sport: "nba" }],
+        bets: [{ ...pick, sport: (pick as any)?.sport ?? 'nba' }],
       };
 
-      if (typeof index === "number" && next[index]) {
+      if (typeof index === 'number' && next[index]) {
         next[index] = ticketFromPick;
         return { single: next };
       }
@@ -89,7 +89,6 @@ export const matchupSlice: StateCreator<IMatchupSliceState> = (set) => ({
 
   clearSingle: () => set({ single: [] }),
 
-  // Sync remove single and parlay (remove from parlay if no duplicates in single)
   removeSingleAndSyncParlay: (index) =>
     set((s) => {
       const singleToRemove = s.single[index];
@@ -128,18 +127,17 @@ export const matchupSlice: StateCreator<IMatchupSliceState> = (set) => ({
       };
     }),
 
-  // Sync remove parlay and single (remove all single picks if delete from parlay)
   removeParlayAndSyncSingle: (key) =>
     set((s) => {
       const parlayToRemove =
-        typeof key === "number"
+        typeof key === 'number'
           ? s.parlay.bets[key]
           : s.parlay.bets.find((b) => b.pid === key);
 
       if (!parlayToRemove) return s;
 
       const newParlayBets =
-        typeof key === "number"
+        typeof key === 'number'
           ? s.parlay.bets.filter((_, idx) => idx !== key)
           : s.parlay.bets.filter((b) => b.pid !== key);
 
@@ -161,19 +159,18 @@ export const matchupSlice: StateCreator<IMatchupSliceState> = (set) => ({
       };
     }),
 
-  /* PARLAY */
   upsertParlayPick: (pick, index) =>
     set((state) => {
       const parlay = { ...state.parlay };
 
       const normalized: BetPick = {
         ...pick,
-        sport: "nba",
+        sport: (pick as any)?.sport ?? 'nba',
         pid: pick.pid ?? makeId(),
       };
-      const normDesc = (s?: string) => (s ?? "").trim().toLowerCase();
+      const normDesc = (s?: string) => (s ?? '').trim().toLowerCase();
 
-      if (typeof index === "number" && parlay.bets[index]) {
+      if (typeof index === 'number' && parlay.bets[index]) {
         parlay.bets[index] = normalized;
       } else {
         const j = pick.pid
@@ -201,7 +198,7 @@ export const matchupSlice: StateCreator<IMatchupSliceState> = (set) => ({
   removeParlayPick: (key: number | string) =>
     set((s) => {
       const bets =
-        typeof key === "number"
+        typeof key === 'number'
           ? s.parlay.bets.filter((_, idx) => idx !== key)
           : s.parlay.bets.filter((b) => b.pid !== key);
 
