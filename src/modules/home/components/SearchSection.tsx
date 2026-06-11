@@ -20,7 +20,7 @@ import { useClickOutside } from '@/shared/hooks/useClickOutside';
 interface SearchSectionProps {
   searchQuery: string;
   setSearchQuery: (query: string) => void;
-  onPlayerSelect: (player: { id: string; name: string }) => void;
+  onPlayerSelect: (player: { id: string; name: string; sport?: string }) => void;
   onTeamSelect: (team: { id: string; name: string }) => void;
 }
 
@@ -68,7 +68,7 @@ export const SearchSection = ({
     }
   }, [searchQuery, debouncedSearch]);
 
-  const handlePlayerSelect = (player: { id: string; name: string }) => {
+  const handlePlayerSelect = (player: { id: string; name: string; sport?: string }) => {
     setShowDropdown(false);
     setSearchQuery('');
     onPlayerSelect(player);

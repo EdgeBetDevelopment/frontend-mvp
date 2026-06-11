@@ -28,4 +28,18 @@ export const playerApi = {
     );
     return response.data;
   },
+
+  async searchTennisPlayer(query: string): Promise<any[]> {
+    const response = await axiosInstance.get(
+      `/nba/api/v1/tenis/players/search/${query}`,
+    );
+    return response.data?.players ?? [];
+  },
+
+  async getTennisPlayerById(playerId: string): Promise<any> {
+    const response = await axiosInstance.get(
+      `/nba/api/v1/tenis/players/${playerId}`,
+    );
+    return response.data;
+  },
 };

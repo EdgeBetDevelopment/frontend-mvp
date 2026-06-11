@@ -89,9 +89,9 @@ export default function Home() {
     }
   };
 
-  const handlePlayerSelect = (player: { id: string; name: string }) => {
+  const handlePlayerSelect = (player: { id: string; name: string; sport?: string }) => {
     setSearchQuery('');
-    router.push(`/player/${player.id}`);
+    router.push(`/player/${player.sport === 'Tennis' ? `tennis-${player.id}` : player.id}`);
   };
 
   const handleTeamSelect = (team: { id: string; name: string }) => {

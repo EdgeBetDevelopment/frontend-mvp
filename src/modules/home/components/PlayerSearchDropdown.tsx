@@ -5,7 +5,7 @@ interface PlayerSearchDropdownProps {
   searchQuery: string;
   searchResults?: any[];
   isLoading?: boolean;
-  onPlayerSelect?: (player: { id: string; name: string }) => void;
+  onPlayerSelect?: (player: { id: string; name: string; sport?: string }) => void;
   onTeamSelect?: (team: { id: string; name: string }) => void;
 }
 
@@ -100,6 +100,7 @@ const PlayerSearchDropdown = ({
                 onPlayerSelect?.({
                   id: player.id,
                   name: player.full_name || player.name,
+                  sport: player.sport,
                 })
               }
               className="flex cursor-pointer items-center gap-4 border-b border-border p-4 transition-colors last:border-b-0 hover:bg-muted/50"

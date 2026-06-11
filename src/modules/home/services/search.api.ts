@@ -3,9 +3,10 @@ import { playerApi } from "@/modules/player";
 
 export const searchApi = {
   async searchTeamsAndPlayers(query: string): Promise<any[]> {
-    const [teams, players] = await Promise.all([
+    const [teams, players, tennisPlayers] = await Promise.all([
       teamApi.searchTeam(query),
       playerApi.searchPlayer(query),
+      playerApi.searchTennisPlayer(query).catch(() => []),
     ]);
 
     const normalizedTeams = teams.map((team: any) => ({
@@ -18,6 +19,16 @@ export const searchApi = {
       ...player,
       type: "player",
       full_name: player.full_name,
+    }));
+
+    const normalizedTennisPlayers = tennisPlayers.map((player: any) => ({
+      id: player.player_id,
+      full_name: player.full_name,
+      type: "player",
+      sport: "Tennis",
+      position: player.country,
+      ranking: player.ranking,
+      gender: player.gender,
     }));
 
     if (normalizedPlayers.length === 0 && normalizedTeams.length > 0) {
@@ -37,9 +48,9 @@ export const searchApi = {
           });
         }
       });
-      return [...normalizedTeams, ...teamPlayers];
+      return [...normalizedTeams, ...teamPlayers, ...normalizedTennisPlayers];
     }
 
-    return [...normalizedTeams, ...normalizedPlayers];
+    return [...normalizedTeams, ...normalizedPlayers, ...normalizedTennisPlayers];
   },
 };
