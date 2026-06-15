@@ -31,7 +31,7 @@ const MobileBetSlip = () => {
     onUnauthenticated: () => openModal(MODAL_IDS.AUTH),
   });
 
-  const { submitBet, isPending, hasItems } = useBetSubmission();
+  const { submitBet, isPending, hasItems, isValidAmount } = useBetSubmission();
 
   const onClickFullAnalysis = (game: IGameWithAI) => {
     if (!requireAuth()) return;
@@ -116,7 +116,7 @@ const MobileBetSlip = () => {
 
                     {hasItems && (
                       <Button
-                        disabled={isPending}
+                        disabled={isPending || !isValidAmount}
                         onClick={submitBet}
                         className="w-full"
                       >

@@ -40,9 +40,14 @@ export const useBetSubmission = (options: UseBetSubmissionOptions = {}) => {
     },
   });
 
+  const isValidAmount = isParlay
+    ? (parlay?.amount ?? 0) > 0
+    : single.length > 0 && single.every((ticket) => (ticket.amount ?? 0) > 0);
+
   const submitBet = () => {
     if (isParlay) {
       if (!parlay || parlay?.bets?.length === 0) return;
+      if (!isValidAmount) return;
 
       const payload: CreateParlayBetPayload = {
         amount: parlay.amount ?? 0,
@@ -55,6 +60,7 @@ export const useBetSubmission = (options: UseBetSubmissionOptions = {}) => {
     }
 
     if (!single || single.length === 0) return;
+    if (!isValidAmount) return;
 
     const payload: CreateSingleBetsPayload = {
       bets: single.map((ticket) => ({
@@ -73,5 +79,6 @@ export const useBetSubmission = (options: UseBetSubmissionOptions = {}) => {
     submitBet,
     isPending,
     hasItems,
+    isValidAmount,
   };
 };
