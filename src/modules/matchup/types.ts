@@ -1,6 +1,6 @@
 import { IGameWithAI } from '@/modules/game/types';
 
-export type Sport = 'nba';
+export type Sport = 'nba' | 'tennis';
 
 export interface BetPick {
   game_id: number;

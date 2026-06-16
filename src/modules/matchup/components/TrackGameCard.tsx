@@ -24,9 +24,6 @@ interface ITrackGameCard {
 }
 
 const TrackGameCard = ({ game, index }: ITrackGameCard) => {
-  const formattedDate = formatUtcToLocalDate(game?.game?.start_time);
-  const formattedTime = formatUtcToLocalTimeAmPm(game?.game?.start_time);
-
   const {
     isParlay,
     single,
@@ -44,12 +41,31 @@ const TrackGameCard = ({ game, index }: ITrackGameCard) => {
   } = useStore();
 
   function formatDescription(desc: string) {
-    // Since description now comes clean from backend, just return it
     return desc;
   }
 
   const currentTicket = isParlay ? parlay : single[index];
   const currentPick = isParlay ? parlay.bets[index] : single[index]?.bets?.[0];
+
+  const isTennis = !!(game as any)?.player1;
+
+  const displayName1 = isTennis ? ((game as any)?.player1?.name ?? '') : (game?.game?.home_team ?? '');
+  const displayName2 = isTennis ? ((game as any)?.player2?.name ?? '') : (game?.game?.away_team ?? '');
+  const formattedDate = isTennis
+    ? ((game as any)?.date ?? '')
+    : formatUtcToLocalDate(game?.game?.start_time);
+  const formattedTime = isTennis
+    ? ((game as any)?.time ?? '')
+    : formatUtcToLocalTimeAmPm(game?.game?.start_time);
+  const sportAbbr = isTennis
+    ? ((game as any)?.tournamentType?.split(' ')[0]?.toUpperCase()?.slice(0, 3) ?? 'TEN')
+    : 'NBA';
+  const sportBadge = isTennis
+    ? ((game as any)?.tournamentType ?? 'Tennis')
+    : 'NBA';
+  const leagueLabel = isTennis
+    ? ((game as any)?.round ?? '')
+    : (game?.scoreboard?.label ?? 'Regular Season Game');
 
   const computeSingleWin = (amount: number, decimalOdds: number) =>
     +(amount * decimalOdds).toFixed(2);
@@ -125,11 +141,11 @@ const TrackGameCard = ({ game, index }: ITrackGameCard) => {
         <div className="mb-3">
           <div className="flex items-center gap-2">
             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted">
-              <span className="text-xs font-bold">NBA</span>
+              <span className="text-xs font-bold">{sportAbbr}</span>
             </div>
             <div>
               <p className="text-sm font-semibold text-foreground">
-                {game?.game?.home_team} vs {game?.game?.away_team}
+                {displayName1} vs {displayName2}
               </p>
               <div className="flex items-center gap-2 text-xs text-muted-foreground">
                 <span className="flex items-center gap-1">
@@ -149,11 +165,11 @@ const TrackGameCard = ({ game, index }: ITrackGameCard) => {
               variant="outline"
               className="border-primary/30 bg-primary/20 text-xs text-primary"
             >
-              NBA
+              {sportBadge}
             </Badge>
             <ChevronRight className="h-3 w-3 text-muted-foreground" />
             <span className="text-xs text-muted-foreground">
-              {game?.scoreboard?.label || "Regular Season Game"}
+              {leagueLabel}
             </span>
           </div>
         </div>
