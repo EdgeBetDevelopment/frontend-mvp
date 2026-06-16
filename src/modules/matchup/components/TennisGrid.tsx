@@ -14,6 +14,7 @@ import { MODAL_IDS } from '@/shared/constants';
 import { toast } from 'sonner';
 import { useIsMobile } from '@/shared/hooks/useIsMobile';
 import { useTennisGames } from '../hooks/useTennisGames';
+import { convertEuropeanToAmerican } from '@/shared/utils';
 import type { TennisMatchup } from '../data/tennisMatchups';
 
 interface Props {
@@ -140,7 +141,7 @@ const TennisGrid = ({ oddsFormat, onSelectGame }: Props) => {
 
             const pick = {
               game_id: matchup.id,
-              odds: market?.odds ?? '-',
+              odds: market?.odds ? convertEuropeanToAmerican(parseFloat(market.odds)) : 0,
               selected_team_id: '',
               selected_team_name: selectedName,
               description: label,

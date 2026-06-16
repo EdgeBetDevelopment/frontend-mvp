@@ -21,14 +21,17 @@ interface Props {
   onSelectBet?: (market: TennisMarket) => void;
 }
 
-const toDecimal = (american: string) => {
-  const n = parseInt(american.replace('+', ''));
-  if (isNaN(n)) return american;
-  return (n > 0 ? n / 100 + 1 : 100 / Math.abs(n) + 1).toFixed(2);
+const toAmerican = (decimalStr: string) => {
+  const n = parseFloat(decimalStr);
+  if (isNaN(n) || n <= 1) return decimalStr;
+  if (n >= 2.0) {
+    return `+${Math.round((n - 1) * 100)}`;
+  }
+  return `${Math.round(-100 / (n - 1))}`;
 };
 
 const fmtOdds = (o: string, f: 'american' | 'european') =>
-  f === 'european' ? toDecimal(o) : o;
+  f === 'american' ? toAmerican(o) : o;
 
 const surfaceColor: Record<string, string> = {
   Clay: 'bg-orange-500/20 text-orange-400 border-orange-500/40',
