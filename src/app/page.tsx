@@ -14,6 +14,7 @@ import {
   GoogleAuthHandler,
 } from '@/modules/home';
 import { gameService } from '@/modules/game';
+import { tennisApiService } from '@/modules/matchup/services/tennis.api';
 import { useAuth } from '@/modules/auth';
 
 export default function Home() {
@@ -28,7 +29,15 @@ export default function Home() {
     enabled: isAuthenticated,
   });
 
+  const { data: tennisGames, isLoading: isLoadingTennisGames } = useQuery({
+    queryKey: ['tennisGamesCount'],
+    queryFn: () => tennisApiService.getTennisGames(),
+    staleTime: 1000 * 60 * 5,
+    enabled: isAuthenticated,
+  });
+
   const nbaGamesCount = nbaGames?.length || 0;
+  const tennisGamesCount = tennisGames?.length || 0;
 
   const sports = [
     {
@@ -45,7 +54,9 @@ export default function Home() {
       name: 'Tennis',
       icon: '🎾',
       color: 'tennis',
+      matches: tennisGamesCount,
       description: 'WTA / ATP Events',
+      isLoadingMatches: isLoadingTennisGames,
     },
     {
       id: 'nfl',
