@@ -7,6 +7,10 @@ import {
   TrendingUp,
 } from 'lucide-react';
 import React from 'react';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+
+dayjs.extend(utc);
 
 import { Badge } from '@/shared/components/badge';
 import { Card } from '@/shared/components/card';
@@ -79,13 +83,7 @@ export const BetSlip = ({ bet }: BetSlipProps) => {
               </Badge>
             </div>
             <p className="mt-1 text-xs text-muted-foreground">
-              {new Date(bet.createdAt).toLocaleString('en-US', {
-                month: 'short',
-                day: 'numeric',
-                hour: 'numeric',
-                minute: '2-digit',
-                hour12: true,
-              })}
+              {dayjs.utc(bet.createdAt).local().format('MMM D, h:mm A')}
             </p>
           </div>
         </div>
