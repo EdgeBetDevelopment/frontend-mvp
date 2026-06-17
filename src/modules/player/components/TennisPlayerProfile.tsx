@@ -15,13 +15,22 @@ import TennisRecentGames from './tennis/TennisRecentGames';
 import TennisSeasonStats from './tennis/TennisSeasonStats';
 import TennisCareerChart from './tennis/TennisCareerChart';
 
+function parseMoney(value: string | number | null | undefined): number {
+  if (!value) return 0;
+  return parseInt(String(value).replace(/[$,]/g, ''), 10) || 0;
+}
+
 function mapApiToPlayer(data: any): TennisPlayer {
   const last5Raw = Array.isArray(data.last_5_matches)
     ? data.last_5_matches
-    : Object.values(data.last_5_matches ?? {});
+    : data.last_5_matches && typeof data.last_5_matches === 'object'
+      ? Object.values(data.last_5_matches)
+      : [];
 
   const singleStats = data.season_stats_single ?? {};
-  const careerRaw = data.career_stats_single ?? {};
+  const serviceStats = data.stats?.Career?.ALL?.ServiceRecordStats ?? {};
+  const returnStats = data.stats?.Career?.ALL?.ReturnRecordStats ?? {};
+  const yearStats: Record<string, any> = data.stats?.Year ?? {};
 
   const recentGames: TennisRecentGame[] = last5Raw.map((m: any) => ({
     date: m.date ?? '',
@@ -36,27 +45,31 @@ function mapApiToPlayer(data: any): TennisPlayer {
     aces: m.aces ?? 0,
   }));
 
+  const wins = singleStats.wins ?? 0;
+  const losses = singleStats.losses ?? 0;
+  const winPct = wins + losses > 0 ? Math.round((wins / (wins + losses)) * 100) : 0;
+
   const seasonStats: TennisSeasonStatsType = {
-    wins: singleStats.wins ?? 0,
-    losses: singleStats.losses ?? 0,
+    wins,
+    losses,
     titles: singleStats.titles ?? 0,
-    aces: singleStats.aces ?? 0,
-    firstServePct: singleStats.first_serve_pct ?? singleStats.firstServePct ?? 0,
-    winPct: singleStats.win_pct ?? singleStats.winPct ?? 0,
-    ranking: data.ranking ?? 0,
-    prizeMoney: singleStats.prize_money ?? singleStats.prizeMoney ?? 0,
-    breakPtsWon: singleStats.break_pts_won ?? singleStats.breakPtsWon ?? 0,
-    tieBreaksWon: singleStats.tie_breaks_won ?? singleStats.tieBreaksWon ?? 0,
+    aces: serviceStats.Aces ?? 0,
+    firstServePct: serviceStats.FirstServePercentage ?? 0,
+    winPct,
+    ranking: data.ranking_sgl ?? 0,
+    prizeMoney: parseMoney(singleStats.prize_money),
+    breakPtsWon: returnStats.BreakPointsConvertedPercentage ?? 0,
+    tieBreaksWon: 0,
   };
 
-  const careerProgression: TennisCareerSeason[] = Array.isArray(careerRaw)
-    ? careerRaw.map((s: any) => ({
-        year: String(s.year ?? ''),
-        wins: s.wins ?? 0,
-        titles: s.titles ?? 0,
-        aces: s.aces ?? 0,
-      }))
-    : [];
+  const careerProgression: TennisCareerSeason[] = Object.entries(yearStats).map(
+    ([year, yd]: [string, any]) => ({
+      year,
+      wins: 0,
+      titles: 0,
+      aces: yd?.ALL?.ServiceRecordStats?.Aces ?? 0,
+    }),
+  );
 
   return {
     id: data.player_id,
@@ -70,8 +83,9 @@ function mapApiToPlayer(data: any): TennisPlayer {
     weight: `${data.weight_kg ?? data.weight_lb ?? ''}${data.weight_kg ? 'kg' : 'lbs'}`,
     experience: `Age ${data.age ?? ''}`,
     achievements: [
-      ...(data.ranking ? [{ label: `Ranking #${data.ranking}` }] : []),
-      ...(data.points ? [{ label: `${data.points} pts` }] : []),
+      ...(data.ranking_sgl ? [{ label: `SGL #${data.ranking_sgl}` }] : []),
+      ...(data.ranking_dbl ? [{ label: `DBL #${data.ranking_dbl}` }] : []),
+      ...(data.points_sgl ? [{ label: `${data.points_sgl} pts` }] : []),
     ],
     recentGames,
     seasonStats,
