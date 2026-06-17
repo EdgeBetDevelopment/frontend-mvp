@@ -34,7 +34,7 @@ const TennisCareerChart = ({ data }: Props) => (
             Career Progression
           </CardTitle>
           <CardDescription className="text-muted-foreground">
-            Wins, ranking, and aces per season
+            Aces, service win % and return win % per season
           </CardDescription>
         </div>
       </div>
@@ -62,7 +62,7 @@ const TennisCareerChart = ({ data }: Props) => (
             dataKey="wins"
             stroke="hsl(145, 70%, 50%)"
             strokeWidth={2}
-            name="Wins"
+            name="Srv Win%"
             dot={{ r: 4 }}
           />
           <Line
@@ -70,7 +70,7 @@ const TennisCareerChart = ({ data }: Props) => (
             dataKey="titles"
             stroke="hsl(45, 90%, 55%)"
             strokeWidth={2}
-            name="Titles"
+            name="Ret Win%"
             dot={{ r: 4 }}
           />
           <Line

@@ -9,7 +9,12 @@ import Footer from '@/shared/components/Footer';
 import { Button } from '@/shared/components/button';
 
 import { playerApi } from '../services';
-import type { TennisPlayer, TennisRecentGame, TennisCareerSeason, TennisSeasonStats as TennisSeasonStatsType } from '../data/tennisPlayers';
+import type {
+  TennisPlayer,
+  TennisRecentGame,
+  TennisCareerSeason,
+  TennisSeasonStats as TennisSeasonStatsType,
+} from '../data/tennisPlayers';
 import TennisPlayerHeader from './tennis/TennisPlayerHeader';
 import TennisRecentGames from './tennis/TennisRecentGames';
 import TennisSeasonStats from './tennis/TennisSeasonStats';
@@ -28,9 +33,13 @@ function mapApiToPlayer(data: any): TennisPlayer {
       : [];
 
   const singleStats = data.season_stats_single ?? {};
-  const serviceStats = data.stats?.Career?.ALL?.ServiceRecordStats ?? {};
-  const returnStats = data.stats?.Career?.ALL?.ReturnRecordStats ?? {};
   const yearStats: Record<string, any> = data.stats?.Year ?? {};
+
+  const yearKeys = Object.keys(yearStats).sort();
+  const latestYearKey = yearKeys[yearKeys.length - 1];
+  const latestYearAll = yearStats[latestYearKey]?.ALL ?? {};
+  const latestService = latestYearAll.ServiceRecordStats ?? {};
+  const latestReturn = latestYearAll.ReturnRecordStats ?? {};
 
   const recentGames: TennisRecentGame[] = last5Raw.map((m: any) => ({
     date: m.date ?? '',
@@ -47,29 +56,33 @@ function mapApiToPlayer(data: any): TennisPlayer {
 
   const wins = singleStats.wins ?? 0;
   const losses = singleStats.losses ?? 0;
-  const winPct = wins + losses > 0 ? Math.round((wins / (wins + losses)) * 100) : 0;
+  const winPct =
+    wins + losses > 0 ? Math.round((wins / (wins + losses)) * 100) : 0;
 
   const seasonStats: TennisSeasonStatsType = {
     wins,
     losses,
     titles: singleStats.titles ?? 0,
-    aces: serviceStats.Aces ?? 0,
-    firstServePct: serviceStats.FirstServePercentage ?? 0,
+    aces: latestService.Aces ?? 0,
+    firstServePct: latestService.FirstServePercentage ?? 0,
     winPct,
     ranking: data.ranking_sgl ?? 0,
     prizeMoney: parseMoney(singleStats.prize_money),
-    breakPtsWon: returnStats.BreakPointsConvertedPercentage ?? 0,
+    breakPtsWon: latestReturn.BreakPointsConvertedPercentage ?? 0,
     tieBreaksWon: 0,
   };
 
-  const careerProgression: TennisCareerSeason[] = Object.entries(yearStats).map(
-    ([year, yd]: [string, any]) => ({
+  const careerProgression: TennisCareerSeason[] = yearKeys.map((year) => {
+    const yd = yearStats[year]?.ALL ?? {};
+    const svc = yd.ServiceRecordStats ?? {};
+    const ret = yd.ReturnRecordStats ?? {};
+    return {
       year,
-      wins: 0,
-      titles: 0,
-      aces: yd?.ALL?.ServiceRecordStats?.Aces ?? 0,
-    }),
-  );
+      wins: svc.ServiceGamesWonPercentage ?? 0,
+      titles: ret.ReturnGamesWonPercentage ?? 0,
+      aces: svc.Aces ?? 0,
+    };
+  });
 
   return {
     id: data.player_id,
@@ -166,3 +179,4 @@ const TennisPlayerProfile = () => {
 };
 
 export default TennisPlayerProfile;
+
