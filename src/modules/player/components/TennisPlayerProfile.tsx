@@ -20,87 +20,124 @@ import TennisRecentGames from './tennis/TennisRecentGames';
 import TennisSeasonStats from './tennis/TennisSeasonStats';
 import TennisCareerChart from './tennis/TennisCareerChart';
 
-function parseMoney(value: string | number | null | undefined): number {
+type R = Record<string, unknown>;
+
+const r = (v: unknown): R => (v && typeof v === 'object' ? (v as R) : {});
+const n = (v: unknown): number => (typeof v === 'number' ? v : 0);
+const s = (v: unknown): string => (typeof v === 'string' ? v : String(v ?? ''));
+
+function parseMoney(value: unknown): number {
   if (!value) return 0;
   return parseInt(String(value).replace(/[$,]/g, ''), 10) || 0;
 }
 
-function mapApiToPlayer(data: any): TennisPlayer {
-  const last5Raw = Array.isArray(data.last_5_matches)
-    ? data.last_5_matches
-    : data.last_5_matches && typeof data.last_5_matches === 'object'
-      ? Object.values(data.last_5_matches)
-      : [];
+function mapApiGames(data: unknown): TennisRecentGame[] {
+  const raw: unknown[] = Array.isArray(data)
+    ? data
+    : Array.isArray(r(data).games)
+      ? (r(data).games as unknown[])
+      : data && typeof data === 'object'
+        ? Object.values(r(data))
+        : [];
 
-  const singleStats = data.season_stats_single ?? {};
-  const yearStats: Record<string, any> = data.stats?.Year ?? {};
+  return raw.map((m) => {
+    const g = r(m);
+    return {
+      date: s(g.date),
+      tournament: s(g.tournament ?? g.tournament_name),
+      city: s(g.city ?? g.location),
+      surface: (s(g.surface) || 'Hard') as TennisRecentGame['surface'],
+      round: s(g.round),
+      opponentName: s(g.opponent ?? g.opponent_name),
+      opponentRank: n(g.opponent_rank),
+      result: (g.result === 'W' || g.won === true ? 'W' : 'L') as 'W' | 'L',
+      score: s(g.score),
+      aces: n(g.aces),
+    };
+  });
+}
+
+function mapApiStats(data: unknown): TennisCareerSeason[] {
+  const raw = r(data);
+  const stats: unknown[] = Array.isArray(raw.api_stats)
+    ? (raw.api_stats as unknown[])
+    : [];
+
+  console.log('[mapApiStats] total:', stats.length, 'sample:', stats[0]);
+
+  const result = stats
+    .filter((item) => s(r(item).type) === 'singles')
+    .map((item): TennisCareerSeason => {
+      const g = r(item);
+      return {
+        year: s(g.season),
+        wins: parseInt(s(g.matches_won), 10) || 0,
+        titles: parseInt(s(g.titles), 10) || 0,
+        aces: parseInt(s(g.matches_lost), 10) || 0,
+      };
+    })
+    .sort((a, b) => a.year.localeCompare(b.year));
+
+  return result;
+}
+
+function mapApiToPlayer(data: R): TennisPlayer {
+  const singleStats = r(data.season_stats_single);
+  const yearStats = r(r(data.stats).Year) as Record<string, R>;
 
   const yearKeys = Object.keys(yearStats).sort();
   const latestYearKey = yearKeys[yearKeys.length - 1];
-  const latestYearAll = yearStats[latestYearKey]?.ALL ?? {};
-  const latestService = latestYearAll.ServiceRecordStats ?? {};
-  const latestReturn = latestYearAll.ReturnRecordStats ?? {};
+  const latestYearAll = r(r(yearStats[latestYearKey]).ALL);
+  const latestService = r(latestYearAll.ServiceRecordStats);
+  const latestReturn = r(latestYearAll.ReturnRecordStats);
 
-  const recentGames: TennisRecentGame[] = last5Raw.map((m: any) => ({
-    date: m.date ?? '',
-    tournament: m.tournament ?? m.tournament_name ?? '',
-    city: m.city ?? m.location ?? '',
-    surface: m.surface ?? 'Hard',
-    round: m.round ?? '',
-    opponentName: m.opponent ?? m.opponent_name ?? '',
-    opponentRank: m.opponent_rank ?? 0,
-    result: m.result === 'W' || m.won === true ? 'W' : 'L',
-    score: m.score ?? '',
-    aces: m.aces ?? 0,
-  }));
-
-  const wins = singleStats.wins ?? 0;
-  const losses = singleStats.losses ?? 0;
+  const wins = n(singleStats.wins);
+  const losses = n(singleStats.losses);
   const winPct =
     wins + losses > 0 ? Math.round((wins / (wins + losses)) * 100) : 0;
 
   const seasonStats: TennisSeasonStatsType = {
     wins,
     losses,
-    titles: singleStats.titles ?? 0,
-    aces: latestService.Aces ?? 0,
-    firstServePct: latestService.FirstServePercentage ?? 0,
+    titles: n(singleStats.titles),
+    aces: n(latestService.Aces),
+    firstServePct: n(latestService.FirstServePercentage),
     winPct,
-    ranking: data.ranking_sgl ?? 0,
+    ranking: n(data.ranking_sgl),
     prizeMoney: parseMoney(singleStats.prize_money),
-    breakPtsWon: latestReturn.BreakPointsConvertedPercentage ?? 0,
+    breakPtsWon: n(latestReturn.BreakPointsConvertedPercentage),
     tieBreaksWon: 0,
   };
 
   const careerProgression: TennisCareerSeason[] = yearKeys.map((year) => {
-    const yd = yearStats[year]?.ALL ?? {};
-    const svc = yd.ServiceRecordStats ?? {};
-    const ret = yd.ReturnRecordStats ?? {};
+    const yd = r(r(yearStats[year]).ALL);
+    const svc = r(yd.ServiceRecordStats);
+    const ret = r(yd.ReturnRecordStats);
     return {
       year,
-      wins: svc.ServiceGamesWonPercentage ?? 0,
-      titles: ret.ReturnGamesWonPercentage ?? 0,
-      aces: svc.Aces ?? 0,
+      wins: n(svc.ServiceGamesWonPercentage),
+      titles: n(ret.ReturnGamesWonPercentage),
+      aces: n(svc.Aces),
     };
   });
 
   return {
-    id: data.player_id,
-    name: data.full_name,
-    country: data.country ?? '',
-    position: data.plays || 'Singles Player',
-    birthday: data.birth_date ?? '',
+    id: s(data.player_id),
+    name: s(data.full_name),
+    country: s(data.country),
+    position: s(data.plays) || 'Singles Player',
+    birthday: s(data.birth_date),
     height: data.height_ft
-      ? `${data.height_ft} (${data.height_cm}cm)`
-      : `${data.height_cm ?? ''}cm`,
-    weight: `${data.weight_kg ?? data.weight_lb ?? ''}${data.weight_kg ? 'kg' : 'lbs'}`,
-    experience: `Age ${data.age ?? ''}`,
+      ? `${s(data.height_ft)} (${s(data.height_cm)}cm)`
+      : `${s(data.height_cm)}cm`,
+    weight: `${s(data.weight_kg ?? data.weight_lb)}${data.weight_kg ? 'kg' : 'lbs'}`,
+    experience: `Age ${s(data.age)}`,
     achievements: [
-      ...(data.ranking_sgl ? [{ label: `SGL #${data.ranking_sgl}` }] : []),
-      ...(data.ranking_dbl ? [{ label: `DBL #${data.ranking_dbl}` }] : []),
-      ...(data.points_sgl ? [{ label: `${data.points_sgl} pts` }] : []),
+      ...(data.ranking_sgl ? [{ label: `SGL #${s(data.ranking_sgl)}` }] : []),
+      ...(data.ranking_dbl ? [{ label: `DBL #${s(data.ranking_dbl)}` }] : []),
+      ...(data.points_sgl ? [{ label: `${s(data.points_sgl)} pts` }] : []),
     ],
-    recentGames,
+    recentGames: [],
     seasonStats,
     careerProgression,
   };
@@ -116,6 +153,12 @@ const TennisPlayerProfile = () => {
   const { data, isLoading, isError } = useQuery({
     queryKey: ['tennis-player', playerId],
     queryFn: () => playerApi.getTennisPlayerById(playerId),
+    enabled: !!playerId,
+  });
+
+  const { data: gamesData, isLoading: gamesLoading } = useQuery({
+    queryKey: ['tennis-player-games', playerId],
+    queryFn: () => playerApi.getTennisPlayerGames(playerId),
     enabled: !!playerId,
   });
 
@@ -149,7 +192,9 @@ const TennisPlayerProfile = () => {
     );
   }
 
-  const player = mapApiToPlayer(data);
+  const player = mapApiToPlayer(data as R);
+  const recentGames = gamesLoading ? [] : mapApiGames(gamesData);
+  const careerProgression = mapApiStats(data);
 
   return (
     <div className="min-h-screen bg-background">
@@ -166,11 +211,11 @@ const TennisPlayerProfile = () => {
 
         <div className="mb-8 flex flex-col gap-8 lg:flex-row">
           <TennisPlayerHeader player={player} />
-          <TennisRecentGames games={player.recentGames} />
+          <TennisRecentGames games={recentGames} />
         </div>
 
         <TennisSeasonStats stats={player.seasonStats} year={currentYear} />
-        <TennisCareerChart data={player.careerProgression} />
+        <TennisCareerChart data={careerProgression} />
       </main>
 
       <Footer />

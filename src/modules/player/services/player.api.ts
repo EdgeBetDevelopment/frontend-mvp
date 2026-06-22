@@ -42,4 +42,11 @@ export const playerApi = {
     );
     return response.data;
   },
+
+  async getTennisPlayerGames(playerId: string): Promise<unknown> {
+    const response = await axiosInstance.get(
+      `/nba/api/v1/tenis/players/${playerId}/games`,
+    );
+    return response.data;
+  },
 };
