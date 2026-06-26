@@ -127,33 +127,33 @@ export const mapTennisApiGame = (game: TennisApiGame): TennisMatchup => {
     round: game.tournament.round,
     surface: getSurface(game.surface_type),
     format: 'Best of 3',
-    aiPick: pred.predicted_winner,
+    aiPick: pred?.predicted_winner ?? null,
     markets: [
       {
         category: 'Match Winner',
         label: `${game.player1.full_name} to Win`,
-        odds: fmtMoneyline(pred.moneyline_first_player),
+        odds: fmtMoneyline(pred?.moneyline_first_player),
       },
       {
         category: 'Match Winner',
         label: `${game.player2.full_name} to Win`,
-        odds: fmtMoneyline(pred.moneyline_second_player),
+        odds: fmtMoneyline(pred?.moneyline_second_player),
       },
     ],
-    valueBets: pred.value_bets.slice(0, 3).map((bet) => ({
+    valueBets: (pred?.value_bets ?? []).slice(0, 3).map((bet) => ({
       label: bet.bet_name,
       odds: bet.coefficient ? String(bet.coefficient) : '',
       books: [],
     })),
-    conservativeBets: pred.conservative_bets.slice(0, 3).map((bet) => ({
+    conservativeBets: (pred?.conservative_bets ?? []).slice(0, 3).map((bet) => ({
       label: bet.bet_name,
       odds: bet.coefficient ? String(bet.coefficient) : '',
       books: [],
     })),
-    overview: pred.overview,
-    analysis: pred.analysis,
-    h2hScore: pred.h2h_score,
-    winProbabilityPlayer1: pred.win_probability_first_player,
-    winProbabilityPlayer2: pred.win_probability_second_player,
+    overview: pred?.overview ?? null,
+    analysis: pred?.analysis ?? null,
+    h2hScore: pred?.h2h_score ?? null,
+    winProbabilityPlayer1: pred?.win_probability_first_player ?? null,
+    winProbabilityPlayer2: pred?.win_probability_second_player ?? null,
   };
 };
