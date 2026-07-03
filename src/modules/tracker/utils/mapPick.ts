@@ -1,4 +1,4 @@
-import { BetPick } from "@/modules/matchup/types";
+import { BetPick, TennisDescription } from "@/modules/matchup/types";
 
 export interface BetDescription {
   market_type: string;
@@ -18,11 +18,22 @@ export interface MappedPick {
   odds: number;
   selected_team_id: string;
   selected_team_name: string;
-  description: BetDescription;
+  description: BetDescription | TennisDescription;
   sport: string;
 }
 
 export const mapPick = (bet: BetPick): MappedPick => {
+  if (bet.sport === "tennis" && bet.tennis_description) {
+    return {
+      game_id: bet.game_id,
+      odds: bet.odds,
+      selected_team_id: bet.selected_team_id || "",
+      selected_team_name: bet.selected_team_name,
+      description: bet.tennis_description,
+      sport: bet.sport,
+    };
+  }
+
   const description = bet.description || "";
 
   let marketType = bet.market_type || "";

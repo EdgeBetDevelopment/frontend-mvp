@@ -10,6 +10,10 @@ export interface TennisMarket {
   label: string;
   odds?: string;
   books: Sportsbook[];
+  market_type?: string;
+  selection?: string;
+  line?: number | null;
+  player_key?: number | null;
 }
 
 export interface TennisPlayer {

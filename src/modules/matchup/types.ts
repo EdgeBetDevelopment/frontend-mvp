@@ -2,6 +2,13 @@ import { IGameWithAI } from '@/modules/game/types';
 
 export type Sport = 'nba' | 'tennis';
 
+export interface TennisDescription {
+  market_type: string;
+  selection: string;
+  line: number | null;
+  player_key: number | null;
+}
+
 export interface BetPick {
   game_id: number;
   odds: number;
@@ -14,6 +21,7 @@ export interface BetPick {
   bet_value?: number | null;
   bet_over_under?: string | null;
   bet_player?: string | null;
+  tennis_description?: TennisDescription;
 }
 
 export interface Ticket {

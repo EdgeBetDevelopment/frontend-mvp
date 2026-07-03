@@ -15,7 +15,9 @@ import { toast } from 'sonner';
 import { useIsMobile } from '@/shared/hooks/useIsMobile';
 import { useTennisGames } from '../hooks/useTennisGames';
 import { convertEuropeanToAmerican } from '@/shared/utils';
-import type { TennisMatchup } from '../data/tennisMatchups';
+import type { TennisMatchup, TennisMarket } from '../data/tennisMatchups';
+import type { BetPick } from '@/modules/matchup/types';
+import type { IGameWithAI } from '@/modules/game/types';
 
 interface Props {
   oddsFormat: 'american' | 'european';
@@ -128,32 +130,42 @@ const TennisGrid = ({ oddsFormat, onSelectGame }: Props) => {
     <>
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         {flatGames.map((matchup) => {
-          const handleSelectBet = (market: any) => {
-            setTrackedGame(matchup as any);
+          const handleSelectBet = (market: TennisMarket) => {
+            setTrackedGame(matchup as unknown as IGameWithAI);
 
             const name1 = matchup.player1?.name ?? '';
             const name2 = matchup.player2?.name ?? '';
-            const label = market?.label ?? '';
+            const label = market.label ?? '';
 
             let selectedName = '';
             if (label.includes(name1)) selectedName = name1;
             else if (label.includes(name2)) selectedName = name2;
 
-            const pick = {
-              game_id: matchup.id,
-              odds: market?.odds ? convertEuropeanToAmerican(parseFloat(market.odds)) : 0,
+            const tennisDescription = market.market_type
+              ? {
+                  market_type: market.market_type,
+                  selection: market.selection ?? selectedName,
+                  line: market.line ?? null,
+                  player_key: market.player_key ?? null,
+                }
+              : undefined;
+
+            const pick: BetPick = {
+              game_id: Number(matchup.id),
+              odds: market.odds ? convertEuropeanToAmerican(parseFloat(market.odds)) : 0,
               selected_team_id: '',
               selected_team_name: selectedName,
               description: label,
-              sport: 'tennis' as const,
-              market_type: market?.label ?? '',
-              bet_value: null,
+              sport: 'tennis',
+              market_type: market.market_type ?? market.label ?? '',
+              bet_value: market.line ?? null,
               bet_over_under: null,
               bet_player: null,
+              tennis_description: tennisDescription,
             };
 
-            upsertParlayPick(pick as any);
-            upsertSingle(pick as any);
+            upsertParlayPick(pick);
+            upsertSingle(pick);
             openModal(MODAL_IDS.TRACK_BET);
             if (isMobile) toast.success('Bet successfully recorded in the tracker');
           };
