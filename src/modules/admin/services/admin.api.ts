@@ -134,8 +134,9 @@ export const customDataProvider: DataProvider = {
 
     if (resource === 'pick_of_the_day') {
       const sport = String(params.data?.sport || '').toLowerCase();
+      // Tennis uses the main endpoint (same as NBA) with game_id + settlement
       const url =
-        sport && sport !== 'nba'
+        sport && sport !== 'nba' && sport !== 'tennis'
           ? `/nba/api/v1/pick_of_the_day/create_other_sport`
           : `/nba/api/v1/pick_of_the_day/`;
       const { data } = await axiosInstance.post(url, params.data);

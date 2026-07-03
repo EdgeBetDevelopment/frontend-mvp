@@ -24,13 +24,20 @@ export interface ApiPick {
   game_id: number | string;
   game?: {
     id: number;
-    nba_game_id: string;
-    home_team: string;
-    away_team: string;
+    // NBA
+    nba_game_id?: string;
+    home_team?: string;
+    away_team?: string;
+    // Tennis
+    first_player_name?: string;
+    second_player_name?: string;
+    surface_type?: string;
+    // Other sports
+    name?: string;
+    // Common
     start_time: string;
     status: string;
     final_score: string;
-    name?: string;
   };
   sport: string;
   pick: string;

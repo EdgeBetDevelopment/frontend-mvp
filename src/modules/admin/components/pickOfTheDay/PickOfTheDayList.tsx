@@ -107,16 +107,24 @@ export const PickOfTheDayList = () => (
         label="Game"
         headerClassName="pickoday-game-col"
         cellClassName="pickoday-game-col"
-        render={(record: any) =>
-          record.game?.home_team ? (
-            <div style={{ fontWeight: 500, display: 'flex', gap: '4px' }}>
-              <div>{record.game?.home_team}</div>
-              <div>vs {record.game?.away_team}</div>
-            </div>
-          ) : (
-            <div style={{ fontWeight: 500 }}>{record.game?.name}</div>
-          )
-        }
+        render={(record: any) => {
+          if (record.game?.first_player_name) {
+            return (
+              <div style={{ fontWeight: 500 }}>
+                {record.game.first_player_name} vs {record.game.second_player_name}
+              </div>
+            );
+          }
+          if (record.game?.home_team) {
+            return (
+              <div style={{ fontWeight: 500, display: 'flex', gap: '4px' }}>
+                <div>{record.game?.home_team}</div>
+                <div>vs {record.game?.away_team}</div>
+              </div>
+            );
+          }
+          return <div style={{ fontWeight: 500 }}>{record.game?.name}</div>;
+        }}
       />
       <FunctionField
         label="Start Time"
@@ -130,7 +138,7 @@ export const PickOfTheDayList = () => (
         label="Result"
         render={(record: any) => {
           const sport = String(record?.sport || '').toLowerCase();
-          if (sport && sport !== 'nba') {
+          if (sport && sport !== 'nba' && sport !== 'tennis') {
             return <StatusSelector record={record} />;
           }
           const status = record?.status || 'pending';

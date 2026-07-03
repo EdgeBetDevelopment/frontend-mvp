@@ -28,8 +28,9 @@ export const ApiPickCard = ({
   userStats?: { wins: number; losses: number; win_rate: number };
   onUnlock?: () => void;
 }) => {
-  const gameLabel =
-    pick?.game?.home_team || pick?.game?.away_team
+  const gameLabel = pick?.game?.first_player_name
+    ? `${pick.game.first_player_name} vs ${pick.game.second_player_name}`
+    : pick?.game?.home_team || pick?.game?.away_team
       ? `${pick.game.home_team} vs ${pick.game.away_team}`
       : (pick?.game?.name ?? 'TBD');
 
@@ -76,6 +77,11 @@ export const ApiPickCard = ({
             {!isLocked && (
               <span className="text-sm text-primary">
                 {pick.units} Unit{pick.units > 1 ? 's' : ''}
+              </span>
+            )}
+            {pick.sport && (
+              <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground bg-muted/50 px-2 py-0.5 rounded">
+                {pick.sport}
               </span>
             )}
           </div>

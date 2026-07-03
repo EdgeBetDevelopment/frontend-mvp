@@ -38,7 +38,8 @@ export const sanitizePickOfTheDayPayload = (data: any) => {
   }
   const sport = String(result.sport || '').toLowerCase();
 
-  if (sport && sport !== 'nba') {
+  // Non-NBA, non-Tennis sports use create_other_sport endpoint with game_name + start_time
+  if (sport && sport !== 'nba' && sport !== 'tennis') {
     if (!result.game_name && result.game_id) {
       result.game_name = result.game_id;
     }

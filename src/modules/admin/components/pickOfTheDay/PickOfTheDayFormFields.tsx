@@ -12,14 +12,17 @@ import {
 
 import { gameService } from '@/modules/game';
 import { picksApi } from '@/modules/picks';
+import { tennisApiService } from '@/modules/matchup/services/tennis.api';
 import {
   confidenceLevelChoices,
   confidenceLevelChoicesSimple,
   nbaMarketTypeChoices,
+  tennisMarketTypeChoices,
 } from '@/modules/admin/constants';
 import { unitChoices } from '@/modules/admin/utils';
 import { convertUTCToLocalWithAmPm } from '@/shared/utils';
 import { MarketTypeFields } from './MarketTypeFields';
+import { TennisSettlementFields } from './TennisSettlementFields';
 
 const validateOdds = (value: unknown) => {
   if (value === null || value === undefined || value === '') {
@@ -110,6 +113,8 @@ const NonNbaDefaults = () => {
 
 export const PickOfTheDayFormFields = () => {
   const record = useRecordContext();
+
+  // NBA game state
   const [gameChoices, setGameChoices] = useState<
     {
       id: number;
@@ -121,10 +126,27 @@ export const PickOfTheDayFormFields = () => {
     }[]
   >([]);
   const [selectedGame, setSelectedGame] = useState<any>(null);
+
+  // Tennis game state
+  const [tennisGameChoices, setTennisGameChoices] = useState<
+    {
+      id: number;
+      name: string;
+      first_player_name: string;
+      second_player_name: string;
+    }[]
+  >([]);
+  const [selectedTennisGame, setSelectedTennisGame] = useState<{
+    id: number;
+    first_player_name: string;
+    second_player_name: string;
+  } | null>(null);
+
   const [sportChoices, setSportChoices] = useState<
     { id: string; name: string }[]
   >([]);
 
+  // Fetch NBA games
   useEffect(() => {
     const fetchGames = async () => {
       try {
@@ -146,9 +168,8 @@ export const PickOfTheDayFormFields = () => {
             };
           });
 
-        // Add the record's game if it's not in the list
-        // This is important for finished games that won't come from getGames()
-        if (record?.game && record?.game_id) {
+        // Add the record's game if it's not in the list (e.g. finished NBA games)
+        if (record?.game && record?.game_id && !record?.game?.first_player_name) {
           const gameExists = games.some((g: any) => g.id === record.game_id);
           if (!gameExists && record.game.id) {
             const recordGame = record.game;
@@ -176,6 +197,45 @@ export const PickOfTheDayFormFields = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Fetch tennis games
+  useEffect(() => {
+    const fetchTennisGames = async () => {
+      try {
+        const games = await tennisApiService.getTennisGames();
+        let choices = games.map((game) => ({
+          id: game.id,
+          name: `${game.player1.full_name} vs ${game.player2.full_name} — ${convertUTCToLocalWithAmPm(game.start_time)}`,
+          first_player_name: game.player1.full_name,
+          second_player_name: game.player2.full_name,
+        }));
+
+        // Add the record's tennis game if not in the list (e.g. finished match)
+        if (record?.game?.first_player_name && record?.game_id) {
+          const exists = choices.some((g) => g.id === record.game_id);
+          if (!exists) {
+            choices = [
+              {
+                id: record.game.id,
+                name: `${record.game.first_player_name} vs ${record.game.second_player_name} — ${convertUTCToLocalWithAmPm(record.game.start_time)}`,
+                first_player_name: record.game.first_player_name,
+                second_player_name: record.game.second_player_name,
+              },
+              ...choices,
+            ];
+          }
+        }
+
+        setTennisGameChoices(choices);
+      } catch (error) {
+        console.error('Error fetching tennis games:', error);
+      }
+    };
+
+    fetchTennisGames();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Fetch sports
   useEffect(() => {
     const fetchSports = async () => {
       try {
@@ -213,6 +273,7 @@ export const PickOfTheDayFormFields = () => {
     fetchSports();
   }, [record?.sport]);
 
+  // Restore NBA selected game from record
   useEffect(() => {
     if (!record?.game_id || gameChoices.length === 0) {
       return;
@@ -224,6 +285,18 @@ export const PickOfTheDayFormFields = () => {
     }
   }, [record?.game_id, gameChoices]);
 
+  // Restore tennis selected game from record
+  useEffect(() => {
+    if (!record?.game_id || tennisGameChoices.length === 0) {
+      return;
+    }
+
+    const foundGame = tennisGameChoices.find((g) => g.id === record.game_id);
+    if (foundGame) {
+      setSelectedTennisGame(foundGame);
+    }
+  }, [record?.game_id, tennisGameChoices]);
+
   return (
     <>
       <SelectInput
@@ -234,7 +307,8 @@ export const PickOfTheDayFormFields = () => {
       />
       <FormDataConsumer>
         {({ formData }) => {
-          const isNBA = String(formData?.sport || '').toLowerCase() === 'nba';
+          const sport = String(formData?.sport || '').toLowerCase();
+          const isNBA = sport === 'nba';
           return isNBA ? (
             <TextInput source="pick" label="Pick" validate={required()} />
           ) : (
@@ -243,66 +317,129 @@ export const PickOfTheDayFormFields = () => {
         }}
       </FormDataConsumer>
 
+      {/* Game selector */}
       <FormDataConsumer>
         {({ formData }) => {
-          const isNBA = String(formData?.sport || '').toLowerCase() === 'nba';
-          return isNBA ? (
-            <SelectInput
-              source="game_id"
-              label="Game"
-              choices={gameChoices}
-              validate={required()}
-              parse={(value) => (value ? parseInt(value, 10) : undefined)}
-              onChange={(e) => {
-                const selectedId = parseInt(e.target.value, 10);
-                const foundGame = gameChoices.find((g) => g.id === selectedId);
-                setSelectedGame(foundGame || null);
-              }}
-            />
-          ) : (
+          const sport = String(formData?.sport || '').toLowerCase();
+          const isNBA = sport === 'nba';
+          const isTennis = sport === 'tennis';
+
+          if (isNBA) {
+            return (
+              <SelectInput
+                source="game_id"
+                label="Game"
+                choices={gameChoices}
+                validate={required()}
+                parse={(value) => (value ? parseInt(value, 10) : undefined)}
+                onChange={(e) => {
+                  const selectedId = parseInt(e.target.value, 10);
+                  const foundGame = gameChoices.find((g) => g.id === selectedId);
+                  setSelectedGame(foundGame || null);
+                }}
+              />
+            );
+          }
+
+          if (isTennis) {
+            return (
+              <SelectInput
+                source="game_id"
+                label="Match"
+                choices={tennisGameChoices}
+                validate={required()}
+                parse={(value) => (value ? parseInt(value, 10) : undefined)}
+                onChange={(e) => {
+                  const selectedId = parseInt(e.target.value, 10);
+                  const foundGame = tennisGameChoices.find((g) => g.id === selectedId);
+                  setSelectedTennisGame(foundGame || null);
+                }}
+              />
+            );
+          }
+
+          return (
             <TextInput source="game_name" label="Game" validate={required()} />
           );
         }}
       </FormDataConsumer>
 
+      {/* Settlement / Market type */}
       <FormDataConsumer>
         {({ formData }) => {
-          const isNBA = String(formData?.sport || '').toLowerCase() === 'nba';
-          return isNBA ? (
-            <SelectInput
-              source="settlement.market_type"
-              label="Market Type"
-              choices={nbaMarketTypeChoices}
-              validate={required()}
-            />
-          ) : null;
+          const sport = String(formData?.sport || '').toLowerCase();
+          const isNBA = sport === 'nba';
+          const isTennis = sport === 'tennis';
+
+          if (isNBA) {
+            return (
+              <SelectInput
+                source="settlement.market_type"
+                label="Market Type"
+                choices={nbaMarketTypeChoices}
+                validate={required()}
+              />
+            );
+          }
+
+          if (isTennis) {
+            return (
+              <SelectInput
+                source="settlement.market_type"
+                label="Market Type"
+                choices={tennisMarketTypeChoices}
+                validate={required()}
+              />
+            );
+          }
+
+          return null;
         }}
       </FormDataConsumer>
 
+      {/* Market-type-specific fields */}
       <FormDataConsumer>
         {({ formData }) => {
+          const sport = String(formData?.sport || '').toLowerCase();
           const marketType = formData?.settlement?.market_type;
-          const isNBA = String(formData?.sport || '').toLowerCase() === 'nba';
-          return (
-            <MarketTypeFields
-              marketType={marketType}
-              isNBA={isNBA}
-              selectedGame={selectedGame}
-            />
-          );
+
+          if (sport === 'nba') {
+            return (
+              <MarketTypeFields
+                marketType={marketType}
+                isNBA
+                selectedGame={selectedGame}
+              />
+            );
+          }
+
+          if (sport === 'tennis') {
+            return (
+              <TennisSettlementFields
+                marketType={marketType}
+                selectedGame={selectedTennisGame}
+              />
+            );
+          }
+
+          return null;
         }}
       </FormDataConsumer>
 
+      {/* Non-NBA/Tennis: start time */}
       <FormDataConsumer>
         {({ formData }) => {
-          const isNBA = String(formData?.sport || '').toLowerCase() === 'nba';
+          const sport = String(formData?.sport || '').toLowerCase();
+          const isNBA = sport === 'nba';
+          const isTennis = sport === 'tennis';
+          if (isNBA || isTennis) return null;
           const now = new Date();
           const localMin = new Date(
             now.getTime() - now.getTimezoneOffset() * 60000,
           )
             .toISOString()
             .slice(0, 16);
-          return isNBA ? null : (
+          return (
             <>
               <NonNbaDefaults />
               <DateTimeInput
