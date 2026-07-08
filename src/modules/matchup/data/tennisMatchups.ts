@@ -52,6 +52,9 @@ export interface TennisMatchup {
   h2hScore?: string;
   winProbabilityPlayer1?: number;
   winProbabilityPlayer2?: number;
+  status?: 'scheduled' | 'live' | 'finished' | null;
+  category?: string | null;
+  discipline?: string | null;
 }
 
 const ALL_BOOKS: Sportsbook[] = [

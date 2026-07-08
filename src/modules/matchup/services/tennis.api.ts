@@ -15,6 +15,8 @@ export interface TennisApiTournament {
   round: string;
   season: string;
   event_type: string;
+  category: string | null;
+  discipline: string | null;
 }
 
 export interface TennisApiBet {
@@ -48,6 +50,7 @@ export interface TennisApiGame {
   id: number;
   start_time: string;
   surface_type: string;
+  status: 'scheduled' | 'live' | 'finished' | null;
   player1: TennisApiPlayer;
   player2: TennisApiPlayer;
   tournament: TennisApiTournament;
@@ -125,6 +128,9 @@ export const mapTennisApiGame = (game: TennisApiGame): TennisMatchup => {
     tournament: game.tournament.name,
     tournamentType: game.tournament.event_type,
     round: game.tournament.round,
+    status: game.status ?? null,
+    category: game.tournament.category ?? null,
+    discipline: game.tournament.discipline ?? null,
     surface: getSurface(game.surface_type),
     format: 'Best of 3',
     aiPick: pred?.predicted_winner ?? null,
