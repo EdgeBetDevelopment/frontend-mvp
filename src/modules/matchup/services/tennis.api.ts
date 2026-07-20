@@ -1,4 +1,5 @@
 import { axiosInstance } from '@/shared/lib';
+import { formatUtcToLocalDate, formatUtcToLocalTimeAmPm } from '@/shared/utils';
 
 import type { TennisMatchup } from '../data/tennisMatchups';
 
@@ -85,16 +86,8 @@ const fmtMoneyline = (ml: number): string => {
 };
 
 export const mapTennisApiGame = (game: TennisApiGame): TennisMatchup => {
-  const dt = new Date(game.start_time);
-  const date = dt.toLocaleDateString('en-US', {
-    month: '2-digit',
-    day: '2-digit',
-    year: 'numeric',
-  });
-  const time = dt.toLocaleTimeString('en-US', {
-    hour: '2-digit',
-    minute: '2-digit',
-  });
+  const date = formatUtcToLocalDate(game.start_time);
+  const time = formatUtcToLocalTimeAmPm(game.start_time);
 
   const form1 = Object.values(game.player1.last_5_matches ?? {}).slice(
     0,
