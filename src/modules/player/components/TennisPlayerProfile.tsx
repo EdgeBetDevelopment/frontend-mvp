@@ -164,7 +164,7 @@ const TennisPlayerProfile = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="flex min-h-screen flex-col bg-background">
         <Navigation />
         <div className="container mx-auto px-6 py-24 text-center">
           <p className="text-muted-foreground">Loading...</p>
@@ -176,7 +176,7 @@ const TennisPlayerProfile = () => {
 
   if (isError || !data) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="flex min-h-screen flex-col bg-background">
         <Navigation />
         <div className="container mx-auto px-6 py-24 text-center">
           <h1 className="mb-4 text-2xl font-bold">Player not found</h1>
@@ -197,7 +197,7 @@ const TennisPlayerProfile = () => {
   const careerProgression = mapApiStats(data);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="flex min-h-screen flex-col bg-background">
       <Navigation />
 
       <main className="container mx-auto px-4 py-8">

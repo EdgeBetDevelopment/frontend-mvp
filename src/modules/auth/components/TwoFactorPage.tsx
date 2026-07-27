@@ -47,7 +47,7 @@ const TwoFactorPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="flex min-h-screen flex-col bg-background">
       <Navigation />
       <div className="flex min-h-[calc(100vh-200px)] w-full flex-col items-center justify-center px-4 py-24">
         <div className="w-full max-w-[520px] space-y-6">

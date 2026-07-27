@@ -19,7 +19,7 @@ const Community = () => {
   const { handleConnect, isLoading } = useDiscordConnect();
 
   return (
-    <div className="bg-background min-h-screen">
+    <div className="bg-background flex min-h-screen flex-col">
       <Navigation />
       <div className="container mx-auto px-6 py-24">
         <div className="mb-16 text-center">

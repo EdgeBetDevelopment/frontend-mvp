@@ -355,7 +355,7 @@ const PlayerProfile = () => {
   // Show login screen if not authenticated
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="flex min-h-screen flex-col bg-background">
         <Navigation />
         <main className="container mx-auto px-6 py-8">
           <div className="flex min-h-[60vh] items-center justify-center">
@@ -392,7 +392,7 @@ const PlayerProfile = () => {
   // Show subscription screen for 402 (from backend)
   if (authError === 402) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="flex min-h-screen flex-col bg-background">
         <Navigation />
         <main className="container mx-auto px-6 py-8">
           <div className="flex min-h-[60vh] items-center justify-center">
@@ -448,7 +448,7 @@ const PlayerProfile = () => {
     const isPlayerNotFound = errorMessage.includes('Player not found');
 
     return (
-      <div className="min-h-screen bg-background">
+      <div className="flex min-h-screen flex-col bg-background">
         <Navigation />
         <div className="container mx-auto px-6 py-24 text-center">
           <h1 className="mb-4 text-2xl font-bold">
@@ -479,7 +479,7 @@ const PlayerProfile = () => {
     const isPlayerNotFound = errorMessage.includes('Player not found');
 
     return (
-      <div className="min-h-screen bg-background">
+      <div className="flex min-h-screen flex-col bg-background">
         <Navigation />
         <div className="container mx-auto px-6 py-24 text-center">
           <h1 className="mb-4 text-2xl font-bold">
@@ -501,7 +501,7 @@ const PlayerProfile = () => {
 
   if (!player && !playerNameData) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="flex min-h-screen flex-col bg-background">
         <Navigation />
         <div className="container mx-auto px-6 py-24 text-center">
           <h1 className="mb-4 text-2xl font-bold">Player not found</h1>
@@ -519,7 +519,7 @@ const PlayerProfile = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="flex min-h-screen flex-col bg-background">
       <Navigation />
 
       <main className="container mx-auto px-4 py-8">

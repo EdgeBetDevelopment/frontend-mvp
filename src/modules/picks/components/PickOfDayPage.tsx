@@ -46,10 +46,10 @@ const PickOfDayPage = () => {
 
   return (
     <AuthGuard message="Please login to access the Pick of the Day feature.">
-      <div className="min-h-screen bg-background">
+      <div className="flex min-h-screen flex-col bg-background">
         <Navigation />
 
-        <main className="container mx-auto px-6 py-8">
+        <main className="container mx-auto flex-1 px-6 py-8">
           <div className="mb-10 text-center">
             {isSubscribed && (
               <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2">

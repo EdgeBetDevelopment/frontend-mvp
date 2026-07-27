@@ -4,7 +4,7 @@ import Footer from '@/shared/components/Footer';
 
 const ResetPassword = () => {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="flex min-h-screen flex-col bg-background">
       <Navigation />
       <div className="flex min-h-[calc(100vh-200px)] w-full flex-col items-center justify-center px-4 py-24">
         <VerificationCodeForm />

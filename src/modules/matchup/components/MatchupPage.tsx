@@ -63,7 +63,7 @@ const MatchupPage = () => {
 
   if (authError === 402) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="flex min-h-screen flex-col bg-background">
         <Navigation />
         <main className="container mx-auto px-6 py-8">
           <div className="flex min-h-[60vh] items-center justify-center">
@@ -160,7 +160,7 @@ const MatchupPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="flex min-h-screen flex-col bg-background">
       <Navigation />
       <div className="container mx-auto px-6 py-24">
         <MatchupPageFilters />

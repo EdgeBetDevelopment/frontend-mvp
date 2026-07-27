@@ -43,7 +43,7 @@ const GameBreakdownPage = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="flex min-h-screen flex-col bg-background">
         <Navigation />
         <div className="container mx-auto flex min-h-[60vh] items-center justify-center px-6 py-24">
           <Loader />
@@ -60,7 +60,7 @@ const GameBreakdownPage = () => {
     gameData.scoreboards.length === 0
   ) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="flex min-h-screen flex-col bg-background">
         <Navigation />
         <div className="container mx-auto px-6 py-24">
           <Button
@@ -84,7 +84,7 @@ const GameBreakdownPage = () => {
   const formattedTime = formatUtcToLocalTimeAmPm(gameData.start_time);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="flex min-h-screen flex-col bg-background">
       <Navigation />
 
       <main className="container mx-auto px-6 py-8">

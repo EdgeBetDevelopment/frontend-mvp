@@ -51,7 +51,7 @@ const TeamPage = () => {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="flex min-h-screen flex-col bg-background">
         <Navigation />
         <main className="container mx-auto px-6 py-8">
           <div className="flex min-h-[60vh] items-center justify-center">
@@ -87,7 +87,7 @@ const TeamPage = () => {
 
   if (authError === 402) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="flex min-h-screen flex-col bg-background">
         <Navigation />
         <main className="container mx-auto px-6 py-8">
           <div className="flex min-h-[60vh] items-center justify-center">
@@ -136,7 +136,7 @@ const TeamPage = () => {
 
   if (!team) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="flex min-h-screen flex-col bg-background">
         <Navigation />
         <div className="container mx-auto px-6 py-24 text-center">
           <h1 className="mb-4 text-2xl font-bold">Team not found</h1>
@@ -150,7 +150,7 @@ const TeamPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="flex min-h-screen flex-col bg-background">
       <Navigation />
       <div className="container mx-auto px-6 py-24">
         <TeamHeader team={team} onBack={() => router.back()} />
