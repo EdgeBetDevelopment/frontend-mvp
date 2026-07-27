@@ -37,7 +37,7 @@ const TrackBetsAside = () => {
 
   return (
     <>
-      <Card className="sticky top-24 border-border bg-card p-6">
+      <Card className="sticky top-24 flex max-h-[calc(100vh-7rem)] flex-col border-border bg-card p-6">
         <h2 className="mb-4 font-display text-xl font-bold text-foreground">
           Track Bet
         </h2>
@@ -46,7 +46,7 @@ const TrackBetsAside = () => {
           <BetModeSwitch />
         </div>
 
-        <div className="max-h-[500px] overflow-y-auto pr-1">
+        <div className="min-h-0 flex-1 overflow-y-auto pr-1">
           {!trackedGame ? (
             <div className="flex min-h-[200px] items-center justify-center">
               <p className="font-display text-xl text-muted-foreground">
