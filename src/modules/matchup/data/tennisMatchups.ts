@@ -55,6 +55,7 @@ export interface TennisMatchup {
   status?: 'scheduled' | 'live' | 'finished' | null;
   category?: string | null;
   discipline?: string | null;
+  betsUnpriceableReason?: string | null;
 }
 
 const ALL_BOOKS: Sportsbook[] = [

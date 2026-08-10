@@ -76,6 +76,9 @@ const TennisMatchupCard = ({
     (m) => bookFilter === 'All' || m.books.includes(bookFilter as Sportsbook),
   );
 
+  const noBets = valueBets.length === 0 && conservativeBets.length === 0;
+  const showUnpriceableReason = noBets && !!matchup.betsUnpriceableReason;
+
   return (
     <Card className="overflow-hidden border-border bg-gradient-to-br from-card to-secondary/20 transition-all hover:border-primary/50">
       <div className="border-b border-border/50 p-4">
@@ -132,53 +135,61 @@ const TennisMatchupCard = ({
       </div>
 
       <div className="space-y-4 p-4">
-        <div>
-          <h4 className="mb-3 text-center font-semibold text-foreground">
-            Top 3 Best Value Bets
-          </h4>
-          <div className="space-y-2">
-            {valueBets.length > 0 ? (
-              valueBets.map((m, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => onSelectBet?.(m)}
-                  className="w-full rounded-lg bg-primary/90 px-4 py-2.5 text-center text-sm font-medium text-primary-foreground transition-colors hover:bg-primary"
-                >
-                  {m.label}
-                  {m.odds ? ` (${fmtOdds(m.odds, oddsFormat)})` : ''}
-                </button>
-              ))
-            ) : (
-              <p className="py-2 text-center text-xs text-muted-foreground">
-                No value markets available for selected sportsbook.
-              </p>
-            )}
-          </div>
-        </div>
+        {showUnpriceableReason ? (
+          <p className="rounded-lg border border-border/50 bg-secondary/30 px-4 py-3 text-center text-xs text-muted-foreground">
+            {matchup.betsUnpriceableReason}
+          </p>
+        ) : (
+          <>
+            <div>
+              <h4 className="mb-3 text-center font-semibold text-foreground">
+                Top 3 Best Value Bets
+              </h4>
+              <div className="space-y-2">
+                {valueBets.length > 0 ? (
+                  valueBets.map((m, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => onSelectBet?.(m)}
+                      className="w-full rounded-lg bg-primary/90 px-4 py-2.5 text-center text-sm font-medium text-primary-foreground transition-colors hover:bg-primary"
+                    >
+                      {m.label}
+                      {m.odds ? ` (${fmtOdds(m.odds, oddsFormat)})` : ''}
+                    </button>
+                  ))
+                ) : (
+                  <p className="py-2 text-center text-xs text-muted-foreground">
+                    No value markets available for selected sportsbook.
+                  </p>
+                )}
+              </div>
+            </div>
 
-        <div>
-          <h4 className="mb-3 text-center font-semibold text-foreground">
-            Top 3 Conservative Bets
-          </h4>
-          <div className="space-y-2">
-            {conservativeBets.length > 0 ? (
-              conservativeBets.map((m, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => onSelectBet?.(m)}
-                  className="w-full rounded-lg bg-primary/90 px-4 py-2.5 text-center text-sm font-medium text-primary-foreground transition-colors hover:bg-primary"
-                >
-                  {m.label}
-                  {m.odds ? ` (${fmtOdds(m.odds, oddsFormat)})` : ''}
-                </button>
-              ))
-            ) : (
-              <p className="py-2 text-center text-xs text-muted-foreground">
-                No conservative markets available for selected sportsbook.
-              </p>
-            )}
-          </div>
-        </div>
+            <div>
+              <h4 className="mb-3 text-center font-semibold text-foreground">
+                Top 3 Conservative Bets
+              </h4>
+              <div className="space-y-2">
+                {conservativeBets.length > 0 ? (
+                  conservativeBets.map((m, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => onSelectBet?.(m)}
+                      className="w-full rounded-lg bg-primary/90 px-4 py-2.5 text-center text-sm font-medium text-primary-foreground transition-colors hover:bg-primary"
+                    >
+                      {m.label}
+                      {m.odds ? ` (${fmtOdds(m.odds, oddsFormat)})` : ''}
+                    </button>
+                  ))
+                ) : (
+                  <p className="py-2 text-center text-xs text-muted-foreground">
+                    No conservative markets available for selected sportsbook.
+                  </p>
+                )}
+              </div>
+            </div>
+          </>
+        )}
       </div>
     </Card>
   );

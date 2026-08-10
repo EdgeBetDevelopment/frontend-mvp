@@ -45,6 +45,7 @@ export interface TennisApiPrediction {
   h2h_details: Record<string, unknown>;
   surface_performance_player1: Record<string, unknown>;
   surface_performance_player2: Record<string, unknown>;
+  bets_unpriceable_reason: string | null;
 }
 
 export interface TennisApiGame {
@@ -162,5 +163,6 @@ export const mapTennisApiGame = (game: TennisApiGame): TennisMatchup => {
     h2hScore: pred?.h2h_score ?? null,
     winProbabilityPlayer1: pred?.win_probability_first_player ?? null,
     winProbabilityPlayer2: pred?.win_probability_second_player ?? null,
+    betsUnpriceableReason: pred?.bets_unpriceable_reason ?? null,
   };
 };
