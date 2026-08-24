@@ -18,7 +18,8 @@ export interface TennisRecentGame {
   round: string;
   opponentName: string;
   opponentRank: number | null;
-  result: 'W' | 'L';
+  /** null when the API doesn't report an outcome — never defaulted to 'L'. */
+  result: 'W' | 'L' | null;
   score: string;
   /** null when the API doesn't report aces — never defaulted to 0. */
   aces: number | null;

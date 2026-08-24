@@ -137,16 +137,20 @@ const TennisRecentGames = ({ games }: Props) => {
                   <TableCell>
                     <span
                       className={
-                        game.result === 'W'
-                          ? 'font-semibold text-[#34D399]'
-                          : 'font-semibold text-[#DC2626]'
+                        game.result === null
+                          ? 'text-muted-foreground'
+                          : game.result === 'W'
+                            ? 'font-semibold text-[#34D399]'
+                            : 'font-semibold text-[#DC2626]'
                       }
                     >
-                      {game.result}
+                      {game.result ?? EMPTY}
                     </span>
-                    <div className="text-xs text-muted-foreground">
-                      {game.score}
-                    </div>
+                    {game.score && (
+                      <div className="text-xs text-muted-foreground">
+                        {game.score}
+                      </div>
+                    )}
                   </TableCell>
                   <TableCell
                     className={

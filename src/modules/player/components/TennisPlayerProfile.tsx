@@ -73,6 +73,23 @@ function normalizeSurface(...values: unknown[]): string {
   return raw;
 }
 
+/**
+ * 'W'/'L' only when the API actually says so — an absent result stays null
+ * rather than silently rendering as a loss.
+ */
+function parseResult(...values: unknown[]): 'W' | 'L' | null {
+  for (const v of values) {
+    if (v === true) return 'W';
+    if (v === false) return 'L';
+    if (typeof v === 'string') {
+      const k = v.trim().toLowerCase();
+      if (k === 'w' || k === 'win' || k === 'won') return 'W';
+      if (k === 'l' || k === 'loss' || k === 'lost') return 'L';
+    }
+  }
+  return null;
+}
+
 function mapApiGames(data: unknown): TennisRecentGame[] {
   const container = r(data);
   const raw: unknown[] = Array.isArray(data)
@@ -97,11 +114,47 @@ function mapApiGames(data: unknown): TennisRecentGame[] {
       round: str(g.round, g.round_name),
       opponentName: str(g.opponent, g.opponent_name, g.opponent_full_name),
       opponentRank: num(g.opponent_rank, g.opponent_ranking),
-      result: (g.result === 'W' || g.won === true ? 'W' : 'L') as 'W' | 'L',
+      result: parseResult(g.result, g.won, g.outcome),
       score: str(g.score, g.result_score),
       aces: num(g.aces, g.player_aces, g.aces_total),
     };
   });
+}
+
+/**
+ * Merge two sources of the same match list field-by-field: a value missing from
+ * one payload can still arrive in the other. `primary` wins whenever it has a
+ * real value; `secondary` only fills the gaps.
+ */
+function mergeGames(
+  primary: TennisRecentGame[],
+  secondary: TennisRecentGame[],
+): TennisRecentGame[] {
+  const keyOf = (g: TennisRecentGame) =>
+    `${g.date}|${(g.opponentName || g.tournament).toLowerCase()}`;
+
+  const extra = new Map(secondary.map((g) => [keyOf(g), g]));
+  const merged = primary.map((g) => {
+    const other = extra.get(keyOf(g));
+    if (!other) return g;
+    extra.delete(keyOf(g));
+    return {
+      date: g.date || other.date,
+      tournament: g.tournament || other.tournament,
+      city: g.city || other.city,
+      surface: g.surface || other.surface,
+      round: g.round || other.round,
+      opponentName: g.opponentName || other.opponentName,
+      opponentRank: g.opponentRank ?? other.opponentRank,
+      result: g.result ?? other.result,
+      score: g.score || other.score,
+      aces: g.aces ?? other.aces,
+    };
+  });
+
+  return [...merged, ...extra.values()].sort((a, b) =>
+    b.date.localeCompare(a.date),
+  );
 }
 
 function mapApiStats(data: unknown): TennisCareerSeason[] {
@@ -240,12 +293,12 @@ const TennisPlayerProfile = () => {
   }
 
   const player = mapApiToPlayer(data as R);
-  // The games endpoint is the primary source; some payloads carry recent_games
-  // on the player object itself.
-  const fromGamesEndpoint = gamesLoading ? [] : mapApiGames(gamesData);
-  const recentGames = fromGamesEndpoint.length
-    ? fromGamesEndpoint
-    : mapApiGames(r(data).recent_games);
+  // recent_games ships on the player payload; the /games endpoint carries the
+  // same matches. Either one can be missing a given field, so merge both.
+  const recentGames = mergeGames(
+    mapApiGames(r(data).recent_games),
+    gamesLoading ? [] : mapApiGames(gamesData),
+  );
   const careerProgression = mapApiStats(data);
 
   return (
