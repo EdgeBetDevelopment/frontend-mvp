@@ -32,7 +32,10 @@ const surfaceColors: Record<string, string> = {
   'Hard (Indoor)': 'bg-indigo-500/20 text-indigo-400 border-indigo-500/40',
   Clay: 'bg-orange-500/20 text-orange-400 border-orange-500/40',
   Grass: 'bg-green-500/20 text-green-400 border-green-500/40',
+  Carpet: 'bg-purple-500/20 text-purple-400 border-purple-500/40',
 };
+
+const EMPTY = '—';
 
 interface Props {
   games: TennisRecentGame[];
@@ -94,30 +97,42 @@ const TennisRecentGames = ({ games }: Props) => {
             <TableBody>
               {filtered.map((game, i) => (
                 <TableRow key={i} className="border-border">
-                  <TableCell className="text-foreground">{game.date}</TableCell>
+                  <TableCell className="text-foreground">
+                    {game.date || EMPTY}
+                  </TableCell>
                   <TableCell>
                     <div className="font-medium text-foreground">
-                      {game.tournament}
+                      {game.tournament || EMPTY}
                     </div>
-                    <div className="text-xs text-muted-foreground">
-                      {game.city}
-                    </div>
+                    {game.city && (
+                      <div className="text-xs text-muted-foreground">
+                        {game.city}
+                      </div>
+                    )}
                   </TableCell>
                   <TableCell>
-                    <span
-                      className={`rounded border px-2 py-0.5 text-xs font-medium ${surfaceColors[game.surface] ?? 'bg-secondary text-foreground'}`}
-                    >
-                      {game.surface}
-                    </span>
+                    {game.surface ? (
+                      <span
+                        className={`rounded border px-2 py-0.5 text-xs font-medium ${surfaceColors[game.surface] ?? 'bg-secondary text-foreground'}`}
+                      >
+                        {game.surface}
+                      </span>
+                    ) : (
+                      <span className="text-muted-foreground">{EMPTY}</span>
+                    )}
                   </TableCell>
                   <TableCell className="text-muted-foreground">
-                    {game.round}
+                    {game.round || EMPTY}
                   </TableCell>
                   <TableCell>
-                    <div className="text-foreground">{game.opponentName}</div>
-                    <div className="text-xs text-muted-foreground">
-                      Rank #{game.opponentRank}
+                    <div className="text-foreground">
+                      {game.opponentName || EMPTY}
                     </div>
+                    {game.opponentRank !== null && (
+                      <div className="text-xs text-muted-foreground">
+                        Rank #{game.opponentRank}
+                      </div>
+                    )}
                   </TableCell>
                   <TableCell>
                     <span
@@ -133,11 +148,27 @@ const TennisRecentGames = ({ games }: Props) => {
                       {game.score}
                     </div>
                   </TableCell>
-                  <TableCell className="text-right text-foreground">
-                    {game.aces}
+                  <TableCell
+                    className={
+                      game.aces === null
+                        ? 'text-right text-muted-foreground'
+                        : 'text-right text-foreground'
+                    }
+                  >
+                    {game.aces ?? EMPTY}
                   </TableCell>
                 </TableRow>
               ))}
+              {filtered.length === 0 && (
+                <TableRow className="border-border hover:bg-transparent">
+                  <TableCell
+                    colSpan={7}
+                    className="py-8 text-center text-sm text-muted-foreground"
+                  >
+                    No recent games available for this player.
+                  </TableCell>
+                </TableRow>
+              )}
             </TableBody>
           </Table>
         </div>

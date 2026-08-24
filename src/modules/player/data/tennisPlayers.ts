@@ -2,17 +2,26 @@ export interface TennisPlayerAchievement {
   label: string;
 }
 
+export type TennisSurface =
+  | 'Hard'
+  | 'Hard (Indoor)'
+  | 'Clay'
+  | 'Grass'
+  | 'Carpet';
+
 export interface TennisRecentGame {
   date: string;
   tournament: string;
   city: string;
-  surface: 'Hard' | 'Hard (Indoor)' | 'Clay' | 'Grass';
+  /** Empty string when the API doesn't report a surface — never defaulted. */
+  surface: TennisSurface | string;
   round: string;
   opponentName: string;
-  opponentRank: number;
+  opponentRank: number | null;
   result: 'W' | 'L';
   score: string;
-  aces: number;
+  /** null when the API doesn't report aces — never defaulted to 0. */
+  aces: number | null;
 }
 
 export interface TennisSeasonStats {

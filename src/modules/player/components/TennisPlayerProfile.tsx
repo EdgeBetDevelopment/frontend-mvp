@@ -31,28 +31,75 @@ function parseMoney(value: unknown): number {
   return parseInt(String(value).replace(/[$,]/g, ''), 10) || 0;
 }
 
+/** Number that stays null when the API omits the field, instead of collapsing to 0. */
+function num(...values: unknown[]): number | null {
+  for (const v of values) {
+    if (typeof v === 'number' && Number.isFinite(v)) return v;
+    if (typeof v === 'string' && v.trim() !== '') {
+      const parsed = Number(v);
+      if (Number.isFinite(parsed)) return parsed;
+    }
+  }
+  return null;
+}
+
+/** First non-empty string among the candidate keys, '' if the API reports none. */
+function str(...values: unknown[]): string {
+  for (const v of values) {
+    if (typeof v === 'string' && v.trim() !== '') return v.trim();
+    if (typeof v === 'number') return String(v);
+  }
+  return '';
+}
+
+/**
+ * Map whatever the API calls a surface onto the labels the table colours.
+ * Unknown values pass through verbatim and an absent value stays empty —
+ * we never guess 'Hard'.
+ */
+function normalizeSurface(...values: unknown[]): string {
+  const raw = str(...values);
+  if (!raw) return '';
+
+  const k = raw.toLowerCase();
+  if (k.includes('clay')) return 'Clay';
+  if (k.includes('grass')) return 'Grass';
+  if (k.includes('carpet')) return 'Carpet';
+  if (k.includes('hard')) {
+    return k.includes('indoor') || k.startsWith('i.')
+      ? 'Hard (Indoor)'
+      : 'Hard';
+  }
+  return raw;
+}
+
 function mapApiGames(data: unknown): TennisRecentGame[] {
+  const container = r(data);
   const raw: unknown[] = Array.isArray(data)
     ? data
-    : Array.isArray(r(data).games)
-      ? (r(data).games as unknown[])
-      : data && typeof data === 'object'
-        ? Object.values(r(data))
-        : [];
+    : Array.isArray(container.recent_games)
+      ? (container.recent_games as unknown[])
+      : Array.isArray(container.games)
+        ? (container.games as unknown[])
+        : data && typeof data === 'object'
+          ? Object.values(container).filter(
+              (v) => v && typeof v === 'object' && !Array.isArray(v),
+            )
+          : [];
 
   return raw.map((m) => {
     const g = r(m);
     return {
-      date: s(g.date),
-      tournament: s(g.tournament ?? g.tournament_name),
-      city: s(g.city ?? g.location),
-      surface: (s(g.surface) || 'Hard') as TennisRecentGame['surface'],
-      round: s(g.round),
-      opponentName: s(g.opponent ?? g.opponent_name),
-      opponentRank: n(g.opponent_rank),
+      date: str(g.date, g.match_date, g.start_time),
+      tournament: str(g.tournament, g.tournament_name, g.competition),
+      city: str(g.city, g.location, g.venue),
+      surface: normalizeSurface(g.surface, g.surface_type, g.court_surface),
+      round: str(g.round, g.round_name),
+      opponentName: str(g.opponent, g.opponent_name, g.opponent_full_name),
+      opponentRank: num(g.opponent_rank, g.opponent_ranking),
       result: (g.result === 'W' || g.won === true ? 'W' : 'L') as 'W' | 'L',
-      score: s(g.score),
-      aces: n(g.aces),
+      score: str(g.score, g.result_score),
+      aces: num(g.aces, g.player_aces, g.aces_total),
     };
   });
 }
@@ -193,7 +240,12 @@ const TennisPlayerProfile = () => {
   }
 
   const player = mapApiToPlayer(data as R);
-  const recentGames = gamesLoading ? [] : mapApiGames(gamesData);
+  // The games endpoint is the primary source; some payloads carry recent_games
+  // on the player object itself.
+  const fromGamesEndpoint = gamesLoading ? [] : mapApiGames(gamesData);
+  const recentGames = fromGamesEndpoint.length
+    ? fromGamesEndpoint
+    : mapApiGames(r(data).recent_games);
   const careerProgression = mapApiStats(data);
 
   return (
