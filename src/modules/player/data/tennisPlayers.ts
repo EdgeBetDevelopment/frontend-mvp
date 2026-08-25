@@ -10,8 +10,12 @@ export type TennisSurface =
   | 'Carpet';
 
 export interface TennisRecentGame {
+  /** API `event_key` — stable row identity. */
+  id?: string;
   date: string;
   tournament: string;
+  /** API `event_type`, e.g. 'Wta Singles'. */
+  eventType?: string;
   city: string;
   /** Empty string when the API doesn't report a surface — never defaulted. */
   surface: TennisSurface | string;

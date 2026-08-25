@@ -104,17 +104,24 @@ function mapApiGames(data: unknown): TennisRecentGame[] {
             )
           : [];
 
+  // Live keys first (event_date / event_name / event_round / win), legacy
+  // aliases after — the API names a match by its `event_*` fields.
   return raw.map((m) => {
     const g = r(m);
     return {
-      date: str(g.date, g.match_date, g.start_time),
-      tournament: str(g.tournament, g.tournament_name, g.competition),
+      id: str(g.event_key, g.id),
+      date: str(g.event_date, g.date, g.match_date, g.start_time),
+      tournament: str(g.event_name, g.tournament, g.tournament_name),
+      // `event_type` ('Wta Singles') is the discipline, not a venue — there is
+      // no city in the payload, so it fills that second line instead.
+      eventType: str(g.event_type),
       city: str(g.city, g.location, g.venue),
       surface: normalizeSurface(g.surface, g.surface_type, g.court_surface),
-      round: str(g.round, g.round_name),
-      opponentName: str(g.opponent, g.opponent_name, g.opponent_full_name),
+      round: str(g.event_round, g.round, g.round_name),
+      opponentName: str(g.opponent_name, g.opponent, g.opponent_full_name),
+      // opponent_key is an entity id, never a ranking — deliberately not read.
       opponentRank: num(g.opponent_rank, g.opponent_ranking),
-      result: parseResult(g.result, g.won, g.outcome),
+      result: parseResult(g.win, g.result, g.won, g.outcome),
       score: str(g.score, g.result_score),
       aces: num(g.aces, g.player_aces, g.aces_total),
     };

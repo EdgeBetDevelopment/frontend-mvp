@@ -96,7 +96,7 @@ const TennisRecentGames = ({ games }: Props) => {
             </TableHeader>
             <TableBody>
               {filtered.map((game, i) => (
-                <TableRow key={i} className="border-border">
+                <TableRow key={game.id ?? i} className="border-border">
                   <TableCell className="text-foreground">
                     {game.date || EMPTY}
                   </TableCell>
@@ -104,9 +104,9 @@ const TennisRecentGames = ({ games }: Props) => {
                     <div className="font-medium text-foreground">
                       {game.tournament || EMPTY}
                     </div>
-                    {game.city && (
+                    {(game.city || game.eventType) && (
                       <div className="text-xs text-muted-foreground">
-                        {game.city}
+                        {game.city || game.eventType}
                       </div>
                     )}
                   </TableCell>
