@@ -121,42 +121,6 @@ function mapApiGames(data: unknown): TennisRecentGame[] {
   });
 }
 
-/**
- * Merge two sources of the same match list field-by-field: a value missing from
- * one payload can still arrive in the other. `primary` wins whenever it has a
- * real value; `secondary` only fills the gaps.
- */
-function mergeGames(
-  primary: TennisRecentGame[],
-  secondary: TennisRecentGame[],
-): TennisRecentGame[] {
-  const keyOf = (g: TennisRecentGame) =>
-    `${g.date}|${(g.opponentName || g.tournament).toLowerCase()}`;
-
-  const extra = new Map(secondary.map((g) => [keyOf(g), g]));
-  const merged = primary.map((g) => {
-    const other = extra.get(keyOf(g));
-    if (!other) return g;
-    extra.delete(keyOf(g));
-    return {
-      date: g.date || other.date,
-      tournament: g.tournament || other.tournament,
-      city: g.city || other.city,
-      surface: g.surface || other.surface,
-      round: g.round || other.round,
-      opponentName: g.opponentName || other.opponentName,
-      opponentRank: g.opponentRank ?? other.opponentRank,
-      result: g.result ?? other.result,
-      score: g.score || other.score,
-      aces: g.aces ?? other.aces,
-    };
-  });
-
-  return [...merged, ...extra.values()].sort((a, b) =>
-    b.date.localeCompare(a.date),
-  );
-}
-
 function mapApiStats(data: unknown): TennisCareerSeason[] {
   const raw = r(data);
   const stats: unknown[] = Array.isArray(raw.api_stats)
@@ -250,16 +214,23 @@ const TennisPlayerProfile = () => {
   const playerId = rawId?.replace(/^tennis-/, '');
   const currentYear = new Date().getFullYear();
 
-  const { data, isLoading, isError } = useQuery({
+  const { data, isLoading, isFetched, isError } = useQuery({
     queryKey: ['tennis-player', playerId],
     queryFn: () => playerApi.getTennisPlayerById(playerId),
     enabled: !!playerId,
   });
 
-  const { data: gamesData, isLoading: gamesLoading } = useQuery({
+  // GET /players/{id} is the source of truth for the table: its recent_games
+  // array already arrives in exactly the shape we render.
+  const playerGames = mapApiGames(r(data).recent_games);
+
+  // /players/{id}/games returns the identical shape but costs two provider
+  // round-trips on a cache miss, so it is a fallback only — it never runs, and
+  // never overwrites the table, while the player payload carries the matches.
+  const { data: gamesData } = useQuery({
     queryKey: ['tennis-player-games', playerId],
     queryFn: () => playerApi.getTennisPlayerGames(playerId),
-    enabled: !!playerId,
+    enabled: !!playerId && isFetched && playerGames.length === 0,
   });
 
   if (isLoading) {
@@ -293,12 +264,10 @@ const TennisPlayerProfile = () => {
   }
 
   const player = mapApiToPlayer(data as R);
-  // recent_games ships on the player payload; the /games endpoint carries the
-  // same matches. Either one can be missing a given field, so merge both.
-  const recentGames = mergeGames(
-    mapApiGames(r(data).recent_games),
-    gamesLoading ? [] : mapApiGames(gamesData),
-  );
+  // Backend order is the display order — no client-side re-sort, the date
+  // strings are not guaranteed to be comparable.
+  const recentGames =
+    playerGames.length > 0 ? playerGames : mapApiGames(gamesData);
   const careerProgression = mapApiStats(data);
 
   return (

@@ -79,6 +79,19 @@ const TennisMatchupCard = ({
   const noBets = valueBets.length === 0 && conservativeBets.length === 0;
   const showUnpriceableReason = noBets && !!matchup.betsUnpriceableReason;
 
+  /**
+   * Why a list is empty. A list the backend sent full but the sportsbook filter
+   * emptied is a filter problem; anything else is the model's own reason, which
+   * we render verbatim. Only claim a sportsbook cause when one actually applies.
+   */
+  const emptyReason = (
+    source: TennisMarket[],
+    reason: string | null | undefined,
+  ) =>
+    source.length > 0
+      ? 'No markets from the selected sportsbook.'
+      : (reason ?? 'No bets in this category for this match.');
+
   return (
     <Card className="overflow-hidden border-border bg-gradient-to-br from-card to-secondary/20 transition-all hover:border-primary/50">
       <div className="border-b border-border/50 p-4">
@@ -158,8 +171,11 @@ const TennisMatchupCard = ({
                     </button>
                   ))
                 ) : (
-                  <p className="py-2 text-center text-xs text-muted-foreground">
-                    No value markets available for selected sportsbook.
+                  <p className="py-2 text-center text-xs leading-relaxed text-muted-foreground">
+                    {emptyReason(
+                      matchup.valueBets,
+                      matchup.valueBetsEmptyReason,
+                    )}
                   </p>
                 )}
               </div>
@@ -182,8 +198,11 @@ const TennisMatchupCard = ({
                     </button>
                   ))
                 ) : (
-                  <p className="py-2 text-center text-xs text-muted-foreground">
-                    No conservative markets available for selected sportsbook.
+                  <p className="py-2 text-center text-xs leading-relaxed text-muted-foreground">
+                    {emptyReason(
+                      matchup.conservativeBets,
+                      matchup.conservativeBetsEmptyReason,
+                    )}
                   </p>
                 )}
               </div>

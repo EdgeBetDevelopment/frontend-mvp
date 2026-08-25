@@ -55,6 +55,11 @@ export interface TennisMatchup {
   status?: 'scheduled' | 'live' | 'finished' | null;
   category?: string | null;
   discipline?: string | null;
+  /** Why value bets are empty, straight from the model. */
+  valueBetsEmptyReason?: string | null;
+  /** Why conservative bets are empty, straight from the model. */
+  conservativeBetsEmptyReason?: string | null;
+  /** Why nothing on this fixture could be priced at all. */
   betsUnpriceableReason?: string | null;
 }
 
