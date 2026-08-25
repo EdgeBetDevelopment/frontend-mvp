@@ -1,14 +1,19 @@
 import { axiosInstance } from '@/shared/lib';
 import { formatUtcToLocalDate, formatUtcToLocalTimeAmPm } from '@/shared/utils';
 
-import type { TennisMatchup } from '../data/tennisMatchups';
+import type { TennisMatchup, TennisTour } from '../data/tennisMatchups';
 
 export interface TennisApiPlayer {
   full_name: string;
-  ranking: number;
-  country: string;
-  country_code: string;
-  last_5_matches: Record<string, string>;
+  /** Singles ranking. Null for doubles pairs and unranked players. */
+  ranking_sgl: number | null;
+  /** Doubles ranking. Null for most singles entries. */
+  ranking_dbl: number | null;
+  country: string | null;
+  country_code: string | null;
+  gender: 'male' | 'female' | null;
+  tour: string | null;
+  last_5_matches: Record<string, string> | null;
 }
 
 export interface TennisApiTournament {
@@ -91,37 +96,61 @@ const fmtMoneyline = (ml: number): string => {
   return ml > 0 ? `+${ml}` : String(ml);
 };
 
+/**
+ * A ranking is only meaningful next to the tour it was issued by, so never
+ * assume ATP. Per-player `tour` is the truth when present; otherwise the
+ * tournament category covers doubles pairs, which carry no player fields.
+ */
+const getTour = (
+  player: TennisApiPlayer,
+  tournament: TennisApiTournament,
+): TennisTour | null => {
+  const raw = (
+    player.tour ||
+    tournament.category ||
+    tournament.event_type ||
+    ''
+  ).toUpperCase();
+  if (raw.includes('WTA')) return 'WTA';
+  if (raw.includes('ATP')) return 'ATP';
+  return null;
+};
+
+const isDoublesGame = (tournament: TennisApiTournament) =>
+  tournament.discipline === 'doubles' ||
+  /doubles/i.test(tournament.event_type ?? '');
+
+const mapPlayer = (
+  player: TennisApiPlayer,
+  tournament: TennisApiTournament,
+): TennisMatchup['player1'] => {
+  const rank = isDoublesGame(tournament)
+    ? (player.ranking_dbl ?? player.ranking_sgl)
+    : (player.ranking_sgl ?? player.ranking_dbl);
+
+  return {
+    name: player.full_name,
+    country: player.country_code || player.country || '',
+    rank: rank ?? null,
+    tour: getTour(player, tournament),
+    form: Object.values(player.last_5_matches ?? {}).slice(0, 5),
+    injuryStatus: 'Healthy',
+  };
+};
+
 export const mapTennisApiGame = (game: TennisApiGame): TennisMatchup => {
   const date = formatUtcToLocalDate(game.start_time);
   const time = formatUtcToLocalTimeAmPm(game.start_time);
 
-  const form1 = Object.values(game.player1.last_5_matches ?? {}).slice(
-    0,
-    5,
-  ) as string[];
-  const form2 = Object.values(game.player2.last_5_matches ?? {}).slice(
-    0,
-    5,
-  ) as string[];
-
   const { prediction: pred } = game;
+
+  const player1 = mapPlayer(game.player1, game.tournament);
+  const player2 = mapPlayer(game.player2, game.tournament);
 
   return {
     id: String(game.id),
-    player1: {
-      name: game.player1.full_name,
-      country: game.player1.country_code || game.player1.country,
-      rank: game.player1.ranking,
-      form: form1,
-      injuryStatus: 'Healthy',
-    },
-    player2: {
-      name: game.player2.full_name,
-      country: game.player2.country_code || game.player2.country,
-      rank: game.player2.ranking,
-      form: form2,
-      injuryStatus: 'Healthy',
-    },
+    player1,
+    player2,
     date,
     time,
     tournament: game.tournament.name,
@@ -136,12 +165,12 @@ export const mapTennisApiGame = (game: TennisApiGame): TennisMatchup => {
     markets: [
       {
         category: 'Match Winner',
-        label: `${game.player1.full_name} to Win`,
+        label: `${player1.name} to Win`,
         odds: fmtMoneyline(pred?.moneyline_first_player),
       },
       {
         category: 'Match Winner',
-        label: `${game.player2.full_name} to Win`,
+        label: `${player2.name} to Win`,
         odds: fmtMoneyline(pred?.moneyline_second_player),
       },
     ],
@@ -154,15 +183,17 @@ export const mapTennisApiGame = (game: TennisApiGame): TennisMatchup => {
       line: bet.line ?? null,
       player_key: null,
     })),
-    conservativeBets: (pred?.conservative_bets ?? []).slice(0, 3).map((bet) => ({
-      label: bet.bet_name,
-      odds: bet.coefficient ? String(bet.coefficient) : '',
-      books: [],
-      market_type: bet.market_type,
-      selection: bet.selection,
-      line: bet.line ?? null,
-      player_key: null,
-    })),
+    conservativeBets: (pred?.conservative_bets ?? [])
+      .slice(0, 3)
+      .map((bet) => ({
+        label: bet.bet_name,
+        odds: bet.coefficient ? String(bet.coefficient) : '',
+        books: [],
+        market_type: bet.market_type,
+        selection: bet.selection,
+        line: bet.line ?? null,
+        player_key: null,
+      })),
     overview: pred?.overview ?? null,
     analysis: pred?.analysis ?? null,
     h2hScore: pred?.h2h_score ?? null,

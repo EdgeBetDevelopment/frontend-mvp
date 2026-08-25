@@ -16,13 +16,18 @@ export interface TennisMarket {
   player_key?: number | null;
 }
 
+export type TennisTour = 'ATP' | 'WTA';
+
 export interface TennisPlayer {
   name: string;
   country: string;
-  rank: number;
+  /** Null for doubles pairs and anyone the feed has no ranking for. */
+  rank: number | null;
   seed?: string;
   form: string[];
   injuryStatus: string;
+  /** Which tour the ranking belongs to. Null when the feed doesn't say. */
+  tour?: TennisTour | null;
 }
 
 export interface TennisMarketExtended {

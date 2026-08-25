@@ -120,14 +120,21 @@ const TennisFullAnalysis = ({ open, onOpenChange, matchup }: Props) => {
                         <div className="font-display text-lg font-bold">
                           {p.name}
                         </div>
-                        <Badge variant="outline">
-                          #{p.rank}
-                          {p.seed ? ` · Seed ${p.seed}` : ''}
-                        </Badge>
+                        {(p.rank || p.seed) && (
+                          <Badge variant="outline">
+                            {p.rank
+                              ? `${p.tour ? `${p.tour} ` : ''}#${p.rank}`
+                              : ''}
+                            {p.rank && p.seed ? ' · ' : ''}
+                            {p.seed ? `Seed ${p.seed}` : ''}
+                          </Badge>
+                        )}
                       </div>
-                      <div className="text-xs text-muted-foreground">
-                        {p.country}
-                      </div>
+                      {p.country && (
+                        <div className="text-xs text-muted-foreground">
+                          {p.country}
+                        </div>
+                      )}
                       <div className="flex items-center gap-2 text-sm">
                         <span className="text-muted-foreground">Last 5:</span>
                         <span className="font-mono">{p.form.join(' ')}</span>

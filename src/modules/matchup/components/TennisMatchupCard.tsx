@@ -1,12 +1,16 @@
 'use client';
 
-import { User, Calendar, Clock, BarChart3 } from 'lucide-react';
+import { User, Calendar, Clock, BarChart3, Loader2 } from 'lucide-react';
 
 import { Card } from '@/shared/components/card';
 import { Badge } from '@/shared/components/badge';
 import { Button } from '@/shared/components/button';
 import { cn } from '@/shared/utils/helper';
 
+import {
+  isLinkableTennisPlayer,
+  useTennisPlayerProfile,
+} from '../hooks/useTennisPlayerProfile';
 import type {
   TennisMatchup,
   TennisMarket,
@@ -39,28 +43,72 @@ const surfaceColor: Record<string, string> = {
   'Hard Court': 'bg-blue-500/20 text-blue-400 border-blue-500/40',
 };
 
-const PlayerHeader = ({ p }: { p: TennisMatchup['player1'] }) => (
-  <div className="flex min-w-0 items-center gap-2">
-    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-border bg-secondary/60">
-      <User className="h-4 w-4 text-muted-foreground" />
-    </div>
-    <div className="min-w-0">
-      <div className="flex items-center gap-1.5">
-        {p.seed && (
-          <span className="rounded bg-secondary/60 px-1 py-0.5 font-mono text-[10px] text-muted-foreground">
-            [{p.seed}]
-          </span>
+interface PlayerHeaderProps {
+  p: TennisMatchup['player1'];
+  onOpenProfile: (name: string) => void;
+  isOpening: boolean;
+}
+
+const PlayerHeader = ({ p, onOpenProfile, isOpening }: PlayerHeaderProps) => {
+  /**
+   * Doubles pairs and unranked entrants come through with no country and no
+   * ranking, so this line is built from whatever is actually there — otherwise
+   * it renders as a bare "· ATP #". The tour label follows the ranking; never
+   * hardcode ATP, half the feed is WTA.
+   */
+  const meta = [
+    p.country,
+    p.rank ? `${p.tour ? `${p.tour} ` : ''}#${p.rank}` : null,
+  ].filter(Boolean);
+
+  const linkable = isLinkableTennisPlayer(p.name);
+
+  return (
+    <div className="flex min-w-0 items-center gap-2">
+      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-border bg-secondary/60">
+        <User className="h-4 w-4 text-muted-foreground" />
+      </div>
+      <div className="min-w-0">
+        <div className="flex items-center gap-1.5">
+          {p.seed && (
+            <span className="rounded bg-secondary/60 px-1 py-0.5 font-mono text-[10px] text-muted-foreground">
+              [{p.seed}]
+            </span>
+          )}
+          {linkable ? (
+            <button
+              type="button"
+              // The card itself has no click target of its own, but the bet
+              // buttons below do — stop the event so a name click never
+              // doubles as a bet selection.
+              onClick={(e) => {
+                e.stopPropagation();
+                onOpenProfile(p.name);
+              }}
+              disabled={isOpening}
+              title={`View ${p.name} profile`}
+              className="flex min-w-0 items-center gap-1 truncate font-display text-base font-bold text-foreground transition-colors hover:text-primary hover:underline disabled:cursor-progress disabled:opacity-70"
+            >
+              <span className="truncate">{p.name}</span>
+              {isOpening && (
+                <Loader2 className="h-3.5 w-3.5 shrink-0 animate-spin text-muted-foreground" />
+              )}
+            </button>
+          ) : (
+            <span className="truncate font-display text-base font-bold text-foreground">
+              {p.name}
+            </span>
+          )}
+        </div>
+        {meta.length > 0 && (
+          <div className="text-[11px] text-muted-foreground">
+            {meta.join(' · ')}
+          </div>
         )}
-        <span className="truncate font-display text-base font-bold text-foreground">
-          {p.name}
-        </span>
-      </div>
-      <div className="text-[11px] text-muted-foreground">
-        {p.country} · ATP #{p.rank}
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 const TennisMatchupCard = ({
   matchup,
@@ -75,6 +123,8 @@ const TennisMatchupCard = ({
   const conservativeBets = matchup.conservativeBets.filter(
     (m) => bookFilter === 'All' || m.books.includes(bookFilter as Sportsbook),
   );
+
+  const { openProfile, pendingName } = useTennisPlayerProfile();
 
   const noBets = valueBets.length === 0 && conservativeBets.length === 0;
   const showUnpriceableReason = noBets && !!matchup.betsUnpriceableReason;
@@ -97,11 +147,19 @@ const TennisMatchupCard = ({
       <div className="border-b border-border/50 p-4">
         <div className="mb-3 flex items-start justify-between gap-3">
           <div className="flex min-w-0 flex-1 flex-wrap items-center gap-3">
-            <PlayerHeader p={matchup.player1} />
+            <PlayerHeader
+              p={matchup.player1}
+              onOpenProfile={openProfile}
+              isOpening={pendingName === matchup.player1.name}
+            />
             <span className="text-sm font-normal text-muted-foreground">
               vs
             </span>
-            <PlayerHeader p={matchup.player2} />
+            <PlayerHeader
+              p={matchup.player2}
+              onOpenProfile={openProfile}
+              isOpening={pendingName === matchup.player2.name}
+            />
           </div>
           <Button
             size="sm"
