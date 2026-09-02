@@ -29,6 +29,7 @@ const BaseLoginForm = ({ onSuccessLogin, on2FARequired }: IBaseLoginForm) => {
     <Form {...form}>
       <form
         onSubmit={handleSubmit(onSubmit)}
+        noValidate
         className="flex w-full flex-col items-center justify-center gap-6"
       >
         <div className="flex w-full max-w-[800px] flex-col gap-5">

@@ -41,6 +41,11 @@ export const useLoginForm = ({
       toast.error(getErrorMessage(error, 'Login failed. Please check your credentials.'));
     },
     onSuccess: (data) => {
+      if (!data) {
+        toast.error('Login failed. Please check your credentials.');
+        return;
+      }
+
       // Check if 2FA is required
       if (data.requires_2fa && data.temp_token) {
         if (on2FARequired) {

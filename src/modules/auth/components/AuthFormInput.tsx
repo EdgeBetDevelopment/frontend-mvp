@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useState } from "react";
 import { LuEye, LuEyeClosed, LuPhone } from 'react-icons/lu';
@@ -20,6 +20,8 @@ const filterPhone = (raw: string): string => {
   const digits = raw.replace(/\D/g, '');
   return hasPlus ? '+' + digits : digits;
 };
+
+const sanitizeEmail = (raw: string): string => raw.trim();
 
 const AuthFormInput: React.FC<IAuthFormInputProps> = ({
   placeholder,
@@ -46,7 +48,13 @@ const AuthFormInput: React.FC<IAuthFormInputProps> = ({
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const raw = e.target.value;
-    handleChange(isPhone ? filterPhone(raw) : raw);
+    if (isPhone) {
+      handleChange(filterPhone(raw));
+    } else if (type === 'email') {
+      handleChange(sanitizeEmail(raw));
+    } else {
+      handleChange(raw);
+    }
   };
 
   return (
