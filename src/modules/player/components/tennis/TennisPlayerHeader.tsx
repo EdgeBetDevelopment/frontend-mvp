@@ -45,7 +45,7 @@ const TennisPlayerHeader = ({ player }: Props) => {
         <InfoTile value={player.birthday} label="Birthday" />
         <InfoTile value={player.height} label="Height" />
         <InfoTile value={player.weight} label="Weight" />
-        <InfoTile value={player.experience} label="Experience" />
+        <InfoTile value={player.age || '—'} label="Age" />
       </div>
 
       <div className="flex flex-wrap gap-2">

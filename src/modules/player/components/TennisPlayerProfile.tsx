@@ -26,11 +26,6 @@ const r = (v: unknown): R => (v && typeof v === 'object' ? (v as R) : {});
 const n = (v: unknown): number => (typeof v === 'number' ? v : 0);
 const s = (v: unknown): string => (typeof v === 'string' ? v : String(v ?? ''));
 
-function parseMoney(value: unknown): number {
-  if (!value) return 0;
-  return parseInt(String(value).replace(/[$,]/g, ''), 10) || 0;
-}
-
 /** Number that stays null when the API omits the field, instead of collapsing to 0. */
 function num(...values: unknown[]): number | null {
   for (const v of values) {
@@ -162,23 +157,47 @@ function mapApiToPlayer(data: R): TennisPlayer {
   const latestService = r(latestYearAll.ServiceRecordStats);
   const latestReturn = r(latestYearAll.ReturnRecordStats);
 
-  const wins = n(singleStats.wins);
-  const losses = n(singleStats.losses);
-  const winPct =
-    wins + losses > 0 ? Math.round((wins / (wins + losses)) * 100) : 0;
+  // `season_summary` is the contract: every rendered field is present and
+  // null when unknown. When it is there we read nothing else — a null must
+  // stay null so the block can render an em dash instead of a fake 0. Only
+  // when the payload has no summary at all do we fall back to the older
+  // season_stats_single / stats.Year shape.
+  const summary = r(data.season_summary);
+  const hasSummary = Object.keys(summary).length > 0;
 
-  const seasonStats: TennisSeasonStatsType = {
-    wins,
-    losses,
-    titles: n(singleStats.titles),
-    aces: n(latestService.Aces),
-    firstServePct: n(latestService.FirstServePercentage),
-    winPct,
-    ranking: n(data.ranking_sgl),
-    prizeMoney: parseMoney(singleStats.prize_money),
-    breakPtsWon: n(latestReturn.BreakPointsConvertedPercentage),
-    tieBreaksWon: 0,
-  };
+  const legacyWins = num(singleStats.wins);
+  const legacyLosses = num(singleStats.losses);
+  const legacyPlayed = (legacyWins ?? 0) + (legacyLosses ?? 0);
+
+  const seasonStats: TennisSeasonStatsType = hasSummary
+    ? {
+        season: num(summary.season),
+        wins: num(summary.wins),
+        losses: num(summary.losses),
+        titles: num(summary.titles),
+        aces: num(summary.aces),
+        firstServePct: num(summary.first_serve_pct),
+        winPct: num(summary.win_pct),
+        ranking: num(summary.rank),
+        // Pre-formatted by the API ('$2,451') — kept verbatim.
+        prizeMoney: str(summary.prize_money),
+        breakPtsWon: num(summary.break_points_won_pct),
+      }
+    : {
+        season: null,
+        wins: legacyWins,
+        losses: legacyLosses,
+        titles: num(singleStats.titles),
+        aces: num(latestService.Aces),
+        firstServePct: num(latestService.FirstServePercentage),
+        winPct:
+          legacyPlayed > 0
+            ? Math.round(((legacyWins ?? 0) / legacyPlayed) * 100)
+            : null,
+        ranking: num(data.ranking_sgl),
+        prizeMoney: str(singleStats.prize_money),
+        breakPtsWon: num(latestReturn.BreakPointsConvertedPercentage),
+      };
 
   const careerProgression: TennisCareerSeason[] = yearKeys.map((year) => {
     const yd = r(r(yearStats[year]).ALL);
@@ -202,7 +221,7 @@ function mapApiToPlayer(data: R): TennisPlayer {
       ? `${s(data.height_ft)} (${s(data.height_cm)}cm)`
       : `${s(data.height_cm)}cm`,
     weight: `${s(data.weight_kg ?? data.weight_lb)}${data.weight_kg ? 'kg' : 'lbs'}`,
-    experience: `Age ${s(data.age)}`,
+    age: str(data.age),
     achievements: [
       ...(data.ranking_sgl ? [{ label: `SGL #${s(data.ranking_sgl)}` }] : []),
       ...(data.ranking_dbl ? [{ label: `DBL #${s(data.ranking_dbl)}` }] : []),
@@ -305,4 +324,3 @@ const TennisPlayerProfile = () => {
 };
 
 export default TennisPlayerProfile;
-

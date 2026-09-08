@@ -29,17 +29,28 @@ export interface TennisRecentGame {
   aces: number | null;
 }
 
+/**
+ * Tour-level (ATP/WTA main draw) season record, exactly as the API contract
+ * defines it: every field is present in the payload and `null` when unknown.
+ * A `null` is rendered as an em dash, never as 0 — a rank-960 player with no
+ * tour-level match must not read like a top player who had a quiet week.
+ */
 export interface TennisSeasonStats {
-  wins: number;
-  losses: number;
-  titles: number;
-  aces: number;
-  firstServePct: number;
-  winPct: number;
-  ranking: number;
-  prizeMoney: number;
-  breakPtsWon: number;
-  tieBreaksWon: number;
+  /** The season the numbers belong to (API `season`). */
+  season: number | null;
+  /** Tour-level main-draw record — `0` here is a real zero, not a placeholder. */
+  wins: number | null;
+  losses: number | null;
+  titles: number | null;
+  /** null when there was no tour-level match this season — never 0. */
+  aces: number | null;
+  firstServePct: number | null;
+  /** null when there is nothing to divide (an 0-0 record). */
+  winPct: number | null;
+  ranking: number | null;
+  /** Pre-formatted by the API (e.g. '$2,451') — rendered as-is. */
+  prizeMoney: string;
+  breakPtsWon: number | null;
 }
 
 export interface TennisCareerSeason {
@@ -57,7 +68,8 @@ export interface TennisPlayer {
   birthday: string;
   height: string;
   weight: string;
-  experience: string;
+  /** API `age`, e.g. '27'. */
+  age: string;
   achievements: TennisPlayerAchievement[];
   recentGames: TennisRecentGame[];
   seasonStats: TennisSeasonStats;
@@ -73,7 +85,7 @@ export const TENNIS_PLAYERS: Record<string, TennisPlayer> = {
     birthday: 'Oct 9, 2002',
     height: '6\'4"',
     weight: '195 lbs',
-    experience: '3 years',
+    age: '22',
     achievements: [
       { label: 'US Open SF' },
       { label: 'ATP 500 Winner' },
@@ -214,6 +226,7 @@ export const TENNIS_PLAYERS: Record<string, TennisPlayer> = {
       },
     ],
     seasonStats: {
+      season: 2025,
       wins: 40,
       losses: 24,
       titles: 1,
@@ -221,9 +234,8 @@ export const TENNIS_PLAYERS: Record<string, TennisPlayer> = {
       firstServePct: 63.8,
       winPct: 62.5,
       ranking: 9,
-      prizeMoney: 4600654,
+      prizeMoney: '$4,600,654',
       breakPtsWon: 43.2,
-      tieBreaksWon: 58.3,
     },
     careerProgression: [
       { year: '2022', wins: 10, titles: 0, aces: 187 },
@@ -240,7 +252,7 @@ export const TENNIS_PLAYERS: Record<string, TennisPlayer> = {
     birthday: 'Aug 16, 2001',
     height: '6\'2"',
     weight: '170 lbs',
-    experience: '5 years',
+    age: '24',
     achievements: [
       { label: 'Australian Open' },
       { label: 'US Open' },
@@ -310,6 +322,7 @@ export const TENNIS_PLAYERS: Record<string, TennisPlayer> = {
       },
     ],
     seasonStats: {
+      season: 2025,
       wins: 67,
       losses: 9,
       titles: 8,
@@ -317,9 +330,8 @@ export const TENNIS_PLAYERS: Record<string, TennisPlayer> = {
       firstServePct: 68.2,
       winPct: 88.2,
       ranking: 1,
-      prizeMoney: 18600000,
+      prizeMoney: '$18,600,000',
       breakPtsWon: 52.1,
-      tieBreaksWon: 71.4,
     },
     careerProgression: [
       { year: '2022', wins: 37, titles: 2, aces: 312 },
