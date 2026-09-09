@@ -15,6 +15,7 @@ import type {
   TennisCareerSeason,
   TennisSeasonStats as TennisSeasonStatsType,
 } from '../data/tennisPlayers';
+import { formatBirthday, formatWeight } from '../utils';
 import TennisPlayerHeader from './tennis/TennisPlayerHeader';
 import TennisRecentGames from './tennis/TennisRecentGames';
 import TennisSeasonStats from './tennis/TennisSeasonStats';
@@ -216,11 +217,11 @@ function mapApiToPlayer(data: R): TennisPlayer {
     name: s(data.full_name),
     country: s(data.country),
     position: s(data.plays) || 'Singles Player',
-    birthday: s(data.birth_date),
+    birthday: formatBirthday(data.birth_date),
     height: data.height_ft
       ? `${s(data.height_ft)} (${s(data.height_cm)}cm)`
       : `${s(data.height_cm)}cm`,
-    weight: `${s(data.weight_kg ?? data.weight_lb)}${data.weight_kg ? 'kg' : 'lbs'}`,
+    weight: formatWeight(data.weight_lb, data.weight_kg),
     age: str(data.age),
     achievements: [
       ...(data.ranking_sgl ? [{ label: `SGL #${s(data.ranking_sgl)}` }] : []),

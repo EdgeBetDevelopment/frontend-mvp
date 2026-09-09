@@ -7,6 +7,7 @@ import { useParams, useRouter } from 'next/navigation';
 
 import { useAuth } from '@/context/AuthContext';
 import { usePlayer } from '@/modules/player/hooks';
+import { formatBirthday, formatWeight } from '@/modules/player/utils';
 import Loader from '@/shared/components/loader';
 import { EmptyPlaceholder } from '@/shared/components';
 import {
@@ -587,16 +588,7 @@ const PlayerProfile = () => {
                 return birthDate ? (
                   <div className="rounded-lg border border-primary/30 bg-primary/10 p-3 text-center">
                     <span className="text-sm font-semibold text-primary">
-                      {player?.BIRTH_DATE
-                        ? new Date(player?.BIRTH_DATE).toLocaleDateString(
-                            'en-US',
-                            {
-                              month: 'short',
-                              day: 'numeric',
-                              year: 'numeric',
-                            },
-                          )
-                        : birthDateKey}
+                      {formatBirthday(birthDate)}
                     </span>
                     <p className="mt-1 text-xs text-muted-foreground">
                       Birthday
@@ -615,7 +607,9 @@ const PlayerProfile = () => {
               {(player?.WEIGHT || playerNameData?.profile?.Weight) && (
                 <div className="rounded-lg border border-primary/30 bg-primary/10 p-3 text-center">
                   <span className="text-sm font-semibold text-primary">
-                    {player?.WEIGHT || playerNameData?.profile?.Weight}
+                    {formatWeight(
+                      player?.WEIGHT || playerNameData?.profile?.Weight,
+                    )}
                   </span>
                   <p className="mt-1 text-xs text-muted-foreground">Weight</p>
                 </div>
